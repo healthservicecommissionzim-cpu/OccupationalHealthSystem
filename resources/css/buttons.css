@@ -1,0 +1,635 @@
+/* ═══════════════════════════════════════════════════════════════════════════════════════
+   BUTTON COMPONENT SYSTEM
+   Responsive Primary, Secondary, and Tertiary Buttons
+   Mobile-First Design with Touch-Friendly Sizing (44px minimum)
+   Font: Plus Jakarta Sans (canonical)
+   States: normal, hover (scale/shadow), focus (outline), active (scale down), disabled (opacity)
+   Requirements: 1.5, 3.5, 9.1, 14.1, 14.5
+   ═════════════════════════════════════════════════════════════════════════════════════ */
+
+/* ═════════════════════════════════════════ BUTTON BASE STYLES ════════════════════════ */
+
+/**
+ * Button Base: Common styles for all buttons
+ * - Minimum height: 44px for touch targets (accessibility)
+ * - Font: Plus Jakarta Sans, weight 600-700
+ * - Responsive sizing: adjusts based on screen size
+ * - All states properly defined: normal, hover, focus, active, disabled
+ */
+button,
+.btn,
+input[type='button'],
+input[type='submit'],
+input[type='reset'] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  text-decoration: none;
+  text-align: center;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.625rem 1.5rem;
+  min-height: 44px;
+  min-width: 44px;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Button hover pseudo-element for smooth transitions */
+button::before,
+.btn::before,
+input[type='button']::before,
+input[type='submit']::before,
+input[type='reset']::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.05);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ═════════════════════════════════════════ PRIMARY BUTTON ════════════════════════════ */
+
+/**
+ * Primary Button: Brand green background
+ * - Used for primary actions (Submit, Save, Create, etc.)
+ * - Background: #1D4533 (--brand)
+ * - Text: white, weight 600-700
+ * - Hover: scale 1.05, enhanced shadow, darker background
+ * - Focus: visible outline + shadow
+ * - Active: scale 0.98
+ * - Disabled: 0.6 opacity
+ */
+.btn-primary,
+button:not([class]),
+input[type='submit'] {
+  background-color: var(--brand);
+  color: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover,
+button:not([class]):hover,
+input[type='submit']:hover {
+  background-color: var(--brand-dark);
+  transform: scale( 1.05 );
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active,
+button:not([class]):active,
+input[type='submit']:active {
+  transform: scale( 0.98 );
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:focus,
+.btn-primary:focus-visible,
+button:not([class]):focus,
+button:not([class]):focus-visible,
+input[type='submit']:focus,
+input[type='submit']:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  box-shadow: var(--shadow-focus), var(--shadow-md);
+}
+
+.btn-primary:disabled,
+button:not([class]):disabled,
+input[type='submit']:disabled {
+  background-color: var(--brand);
+  color: var(--white);
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ═════════════════════════════════════════ SECONDARY BUTTON ════════════════════════ */
+
+/**
+ * Secondary Button: Light background, brand text
+ * - Used for secondary actions (Cancel, Clear, etc.)
+ * - Background: #f0fdf4 (--brand-light)
+ * - Text: brand green, weight 600
+ * - Hover: darker background, brand-dark text
+ * - Focus: visible outline + shadow
+ * - Active: scale 0.98
+ * - Disabled: 0.6 opacity
+ */
+.btn-secondary {
+  background-color: var(--brand-light);
+  color: var(--brand);
+  border: 1px solid var(--brand);
+  box-shadow: none;
+}
+
+.btn-secondary:hover {
+  background-color: var(--brand);
+  color: var(--white);
+  transform: scale( 1.05 );
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary:active {
+  transform: scale( 0.98 );
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:focus,
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  box-shadow: var(--shadow-focus);
+}
+
+.btn-secondary:disabled {
+  background-color: var(--brand-light);
+  color: var(--brand);
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  border-color: var(--brand);
+  box-shadow: none;
+}
+
+/* ═════════════════════════════════════════ TERTIARY BUTTON ════════════════════════ */
+
+/**
+ * Tertiary Button: Text-only or minimal background
+ * - Used for less prominent actions (Learn more, Skip, etc.)
+ * - Background: transparent
+ * - Text: brand color, weight 600
+ * - Hover: light background, brand-dark text, underline
+ * - Focus: visible outline + shadow
+ * - Active: scale 0.98
+ * - Disabled: 0.6 opacity
+ */
+.btn-tertiary {
+  background-color: transparent;
+  color: var(--brand);
+  border: none;
+  box-shadow: none;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+.btn-tertiary:hover {
+  background-color: var(--brand-light);
+  color: var(--brand-dark);
+  transform: scale( 1.05 );
+  text-decoration: underline;
+}
+
+.btn-tertiary:active {
+  transform: scale( 0.98 );
+}
+
+.btn-tertiary:focus,
+.btn-tertiary:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  box-shadow: var(--shadow-focus);
+}
+
+.btn-tertiary:disabled {
+  background-color: transparent;
+  color: var(--brand);
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ═════════════════════════════════════════ DANGER BUTTON ════════════════════════ */
+
+/**
+ * Danger Button: Red background for destructive actions
+ * - Used for delete, remove operations
+ * - Background: #ef4444 (--red-500)
+ * - Text: white, weight 600-700
+ * - Hover: darker red, enhanced shadow
+ * - Focus: visible outline
+ * - Active: scale 0.98
+ * - Disabled: 0.6 opacity
+ */
+.btn-danger {
+  background-color: var(--red-500);
+  color: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-danger:hover {
+  background-color: var(--red-600);
+  transform: scale( 1.05 );
+  box-shadow: var(--shadow-md);
+}
+
+.btn-danger:active {
+  transform: scale( 0.98 );
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-danger:focus,
+.btn-danger:focus-visible {
+  outline: 2px solid var(--red-500);
+  outline-offset: 2px;
+  box-shadow: var(--shadow-focus);
+}
+
+.btn-danger:disabled {
+  background-color: var(--red-500);
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ═════════════════════════════════════════ SIZE VARIANTS ════════════════════════ */
+
+/**
+ * Button Size Variants: Responsive sizing based on screen size
+ * - Small: 36px height (mobile)
+ * - Base: 44px height (default, mobile/tablet)
+ * - Large: 48px height (desktop)
+ */
+
+/* Small Button */
+.btn-sm {
+  padding: 0.4rem 1rem;
+  min-height: 36px;
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+@media (min-width: 768px) {
+  .btn-sm {
+    min-height: 40px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Large Button */
+.btn-lg {
+  padding: 0.75rem 2rem;
+  min-height: 48px;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+}
+
+@media (min-width: 768px) {
+  .btn-lg {
+    min-height: 52px;
+    font-size: 1.0625rem;
+    padding: 0.875rem 2.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .btn-lg {
+    min-height: 56px;
+    padding: 1rem 2.5rem;
+  }
+}
+
+/* Full Width Button */
+.btn-full {
+  width: 100%;
+  display: flex;
+}
+
+/* ═════════════════════════════════════════ BUTTON GROUPS ════════════════════════ */
+
+/**
+ * Button Group: Multiple buttons side-by-side
+ * - Mobile: stacked vertically with gap
+ * - Tablet/Desktop: horizontal layout
+ */
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+@media (min-width: 500px) {
+  .btn-group {
+    flex-direction: row;
+    gap: var(--spacing-md);
+  }
+
+  .btn-group .btn,
+  .btn-group button,
+  .btn-group input[type='submit'],
+  .btn-group input[type='button'],
+  .btn-group input[type='reset'] {
+    flex: 1;
+  }
+}
+
+@media (min-width: 768px) {
+  .btn-group {
+    gap: var(--spacing-lg);
+  }
+}
+
+/* Horizontal Button Group (side by side) */
+.btn-group-horizontal {
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-md);
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+@media (min-width: 768px) {
+  .btn-group-horizontal {
+    gap: var(--spacing-lg);
+  }
+}
+
+.btn-group-horizontal .btn,
+.btn-group-horizontal button,
+.btn-group-horizontal input[type='submit'],
+.btn-group-horizontal input[type='button'],
+.btn-group-horizontal input[type='reset'] {
+  flex: 0 1 auto;
+}
+
+/* ═════════════════════════════════════════ BUTTON WITH ICON ════════════════════════ */
+
+/**
+ * Button with icon: Icon + text layout
+ * - Icon positioned before or after text
+ * - Maintains gap between icon and text
+ */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-icon svg,
+.btn-icon i {
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Icon-only button */
+.btn-icon-only {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.btn-icon-only svg,
+.btn-icon-only i {
+  width: 1.25em;
+  height: 1.25em;
+}
+
+/* ═════════════════════════════════════════ BUTTON LOADING STATE ════════════════════ */
+
+/**
+ * Loading State: Show spinner or text change
+ * - Disabled during loading to prevent double-submit
+ * - Optional spinner animation
+ */
+.btn.loading {
+  opacity: 0.8;
+  cursor: progress;
+  pointer-events: none;
+}
+
+.btn.loading::after {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-left: 0.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ═════════════════════════════════════════ DISABLED STATE ════════════════════════ */
+
+/**
+ * Disabled State: Common disabled styling
+ * - Reduced opacity (0.6)
+ * - Not-allowed cursor
+ * - No hover/active effects
+ */
+button:disabled,
+.btn:disabled,
+button[disabled],
+.btn[disabled],
+input[type='button']:disabled,
+input[type='submit']:disabled,
+input[type='reset']:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  pointer-events: none;
+}
+
+/* ═════════════════════════════════════════ RESPONSIVE BUTTON SIZING ════════════════ */
+
+/**
+ * Responsive Sizing: Adjust padding and font based on screen size
+ * - Mobile (≤500px): compact sizing
+ * - Tablet (501-768px): medium sizing
+ * - Desktop (769px+): larger sizing
+ */
+
+/* Mobile-first (base) button sizing */
+button,
+.btn,
+input[type='button'],
+input[type='submit'],
+input[type='reset'] {
+  padding: 0.625rem 1.5rem;
+  font-size: var(--font-size-sm);
+  min-height: 44px;
+}
+
+/* Tablet sizing */
+@media (min-width: 500px) {
+  button,
+  .btn,
+  input[type='button'],
+  input[type='submit'],
+  input[type='reset'] {
+    padding: 0.65rem 1.65rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Desktop sizing */
+@media (min-width: 768px) {
+  button,
+  .btn,
+  input[type='button'],
+  input[type='submit'],
+  input[type='reset'] {
+    padding: 0.7rem 1.75rem;
+    font-size: var(--font-size-base);
+    min-height: 48px;
+  }
+}
+
+/* Large desktop sizing */
+@media (min-width: 1024px) {
+  button,
+  .btn,
+  input[type='button'],
+  input[type='submit'],
+  input[type='reset'] {
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    min-height: 48px;
+  }
+}
+
+/* ═════════════════════════════════════════ ACCESSIBILITY ════════════════════════ */
+
+/**
+ * Accessibility: Focus states and semantic structure
+ * - Visible focus indicators on all buttons
+ * - High contrast for button text/background
+ * - Minimum 44×44px touch targets
+ */
+
+/* Focus visible state for all buttons */
+button:focus-visible,
+.btn:focus-visible,
+input[type='button']:focus-visible,
+input[type='submit']:focus-visible,
+input[type='reset']:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  box-shadow: var(--shadow-focus);
+}
+
+/* Skip button focus (off-screen initially) */
+.btn-skip:focus {
+  position: static;
+}
+
+/* ═════════════════════════════════════════ REDUCED MOTION ════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  button,
+  .btn,
+  input[type='button'],
+  input[type='submit'],
+  input[type='reset'],
+  button::before,
+  .btn::before,
+  input[type='button']::before,
+  input[type='submit']::before,
+  input[type='reset']::before,
+  .btn.loading::after {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  button:hover,
+  .btn:hover,
+  input[type='submit']:hover,
+  button:active,
+  .btn:active,
+  input[type='submit']:active {
+    transform: none !important;
+  }
+}
+
+/* ═════════════════════════════════════════ HIGH CONTRAST MODE ════════════════════ */
+
+@media (prefers-contrast: more) {
+  button,
+  .btn,
+  input[type='button'],
+  input[type='submit'],
+  input[type='reset'] {
+    border: 2px solid currentColor;
+  }
+
+  .btn-primary,
+  button:not([class]),
+  input[type='submit'] {
+    border-color: var(--white);
+  }
+
+  .btn-secondary {
+    border-width: 2px;
+  }
+
+  button:focus-visible,
+  .btn:focus-visible,
+  input[type='button']:focus-visible,
+  input[type='submit']:focus-visible,
+  input[type='reset']:focus-visible {
+    outline-width: 3px;
+  }
+}
+
+/* ═════════════════════════════════════════ DARK MODE ════════════════════════ */
+
+@media (prefers-color-scheme: dark) {
+  .btn-tertiary {
+    color: var(--brand-light);
+  }
+
+  .btn-tertiary:hover {
+    background-color: rgba(29, 69, 51, 0.2);
+    color: var(--white);
+  }
+
+  .btn-secondary {
+    background-color: rgba(29, 69, 51, 0.1);
+    border-color: var(--brand-light);
+    color: var(--brand-light);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--brand);
+    color: var(--white);
+  }
+}

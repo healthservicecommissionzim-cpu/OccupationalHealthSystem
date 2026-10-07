@@ -1,0 +1,5 @@
+<svg class="w-7 h-7 text-blue-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M8 12h8"/>
+    <path d="m12 16 4-4-4-4"/>
+</svg><?php /**PATH D:\OccupationalHealth System\storage\framework\views/4ab8ba2475a243f45c100c1e474a7bd3.blade.php ENDPATH**/ ?>
