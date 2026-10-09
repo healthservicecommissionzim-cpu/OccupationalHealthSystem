@@ -61,27 +61,31 @@ class IncidentController extends Controller
 {
     public function create()
     {
-        $facilityTypes = FacilityType::all();
-        $provinces = Province::all();
-        $districts = District::all();
-        $facilities = Facility::all();
-        $departments = Department::orderBy('name')->get();
-        $designations = Designation::orderBy('name')->get();
-        $incidentTypes = IncidentType::orderBy('name')->get();
+        // Cache form data for 1 hour to avoid repeated DB queries
+        $facilityTypes = cache()->remember('form_facility_types', 3600, fn() => FacilityType::all());
+        $provinces = cache()->remember('form_provinces', 3600, fn() => Province::all());
+        $districts = cache()->remember('form_districts', 3600, fn() => District::all());
+        $facilities = cache()->remember('form_facilities', 3600, fn() => Facility::select('id', 'name', 'facility_type_id', 'district_id')->get());
+        $departments = cache()->remember('form_departments', 3600, fn() => Department::orderBy('name')->get());
+        $designations = cache()->remember('form_designations', 3600, fn() => Designation::orderBy('name')->get());
+        $incidentTypes = cache()->remember('form_incident_types', 3600, fn() => IncidentType::orderBy('name')->get());
 
-        // Get all supervisors (users with supervisor roles/designations)
-        $supervisors = User::whereHas('roles', function ($query) {
-            $query->where('name', 'supervisor');
-        })->orWhere(function($query) {
-            // Include users with supervisor-related designations
+        // Cache supervisor designation IDs
+        $supervisorDesignationIds = cache()->remember('supervisor_designation_ids', 3600, function() {
             $supervisorDesignations = ['Supervisor', 'Senior Supervisor', 'Department Head', 'Manager', 'Matron', 'Sister-in-Charge', 'Principal Nursing Officer', 'Senior Nursing Officer'];
-            $query->whereIn('designation_id', 
-                Designation::whereIn('name', $supervisorDesignations)->pluck('id')->toArray()
-            );
-        })
-        ->select('id', 'name', 'designation_id', 'department_id')
-        ->with(['designation', 'department'])
-        ->get();
+            return Designation::whereIn('name', $supervisorDesignations)->pluck('id')->toArray();
+        });
+
+        // Get all supervisors (optimized query with eager loading)
+        $supervisors = cache()->remember('form_supervisors', 600, function() use ($supervisorDesignationIds) {
+            return User::where(function($query) use ($supervisorDesignationIds) {
+                $query->whereHas('roles', fn($q) => $q->where('name', 'supervisor'))
+                      ->orWhereIn('designation_id', $supervisorDesignationIds);
+            })
+            ->select('id', 'name', 'designation_id', 'department_id')
+            ->with(['designation:id,name', 'department:id,name'])
+            ->get();
+        });
 
         // Create a mapping of designation IDs to supervisors with that designation
         $supervisorsByDesignation = [];

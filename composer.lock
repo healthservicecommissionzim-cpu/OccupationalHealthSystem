@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "853ebd7958e5f08ed1401580cdfbbeab",
+    "content-hash": "57e3ab390ebdb5b001bc8656036498e7",
     "packages": [
         {
             "name": "balping/json-raw-encoder",
@@ -2439,16 +2439,16 @@
         },
         {
             "name": "mallardduck/blade-lucide-icons",
-            "version": "2.0.20",
+            "version": "2.0.25",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mallardduck/blade-lucide-icons.git",
-                "reference": "8fa1c7cb38c384a04efcac8aceaf0c5269a90a7d"
+                "reference": "3b33e2247956ed939226ba90fd36f262bb93eba1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mallardduck/blade-lucide-icons/zipball/8fa1c7cb38c384a04efcac8aceaf0c5269a90a7d",
-                "reference": "8fa1c7cb38c384a04efcac8aceaf0c5269a90a7d",
+                "url": "https://api.github.com/repos/mallardduck/blade-lucide-icons/zipball/3b33e2247956ed939226ba90fd36f262bb93eba1",
+                "reference": "3b33e2247956ed939226ba90fd36f262bb93eba1",
                 "shasum": ""
             },
             "require": {
@@ -2493,9 +2493,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mallardduck/blade-lucide-icons/issues",
-                "source": "https://github.com/mallardduck/blade-lucide-icons/tree/2.0.20"
+                "source": "https://github.com/mallardduck/blade-lucide-icons/tree/2.0.25"
             },
-            "time": "2026-09-25T03:13:33+00:00"
+            "time": "2026-10-09T04:22:01+00:00"
         },
         {
             "name": "masterminds/html5",

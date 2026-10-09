@@ -290,7 +290,7 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
     Route::post('/incidents/{incident}/attachments/{attachment}/reject', [IncidentController::class, 'rejectAttachment'])->name('incidents.reject_attachment_legacy');
     Route::get('/incidents/{incident}/attachments/{attachment}/view', [IncidentController::class, 'viewAttachment'])->name('incidents.view_attachment');
     Route::get('/incidents/{incident}/attachments/{attachment}/download', [IncidentController::class, 'downloadAttachment'])->name('incidents.download_attachment');
-    Route::get('/incidents/witness/{witnessToken}/statement', [IncidentController::class, 'getWitnessStatement'])->name('incidents.witness_statement');
+    Route::get('/incidents/witness/{witnessToken}/statement', [IncidentController::class, 'getWitnessStatement'])->name('incidents.get_witness_statement');
     Route::get('/incidents/first-aid/{recordId}', [IncidentController::class, 'getFirstAidRecord'])->name('incidents.first_aid_record');
     Route::get('/hr/incidents/{incident}/administrative-dispatch', [IncidentController::class, 'administrativeDispatch'])->name('incidents.administrative_dispatch')->middleware('permission:view_incidents');
     Route::post('/hr/incidents/{incident}/save-compliance-notes', [IncidentController::class, 'saveComplianceNotes'])->name('incidents.save_compliance_notes');
