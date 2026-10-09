@@ -167,6 +167,13 @@ return [
     | to the server if the browser has a HTTPS connection. This will keep
     | the cookie from being sent to you when it can't be done securely.
     |
+    | SECURITY IMPLICATIONS:
+    | - When true: Prevents session hijacking via man-in-the-middle attacks
+    |   by ensuring cookies are only transmitted over encrypted connections
+    | - When false: Session cookies can be intercepted in plain text
+    | - RECOMMENDED: true for production environments with HTTPS
+    | - Set via: SESSION_SECURE_COOKIE in .env
+    |
     */
 
     'secure' => env('SESSION_SECURE_COOKIE'),
@@ -180,6 +187,14 @@ return [
     | value of the cookie and the cookie will only be accessible through
     | the HTTP protocol. It's unlikely you should disable this option.
     |
+    | SECURITY IMPLICATIONS:
+    | - When true: Protects against XSS (Cross-Site Scripting) attacks by
+    |   preventing malicious JavaScript from reading session cookies
+    | - When false: Allows JavaScript access to session cookies, creating
+    |   a vulnerability for session theft via XSS attacks
+    | - RECOMMENDED: true (always) - there's rarely a valid reason to disable
+    | - Set via: SESSION_HTTP_ONLY in .env (defaults to true)
+    |
     */
 
     'http_only' => env('SESSION_HTTP_ONLY', true),
@@ -192,6 +207,16 @@ return [
     | This option determines how your cookies behave when cross-site requests
     | take place, and can be used to mitigate CSRF attacks. By default, we
     | will set this value to "lax" to permit secure cross-site requests.
+    |
+    | SECURITY IMPLICATIONS:
+    | - "lax": Cookies sent with top-level navigations and same-site requests
+    |   Provides good CSRF protection while allowing most legitimate use cases
+    | - "strict": Cookies only sent with same-site requests
+    |   Maximum CSRF protection but may break some legitimate workflows
+    | - "none": Cookies sent with all cross-site requests (requires secure=true)
+    |   No CSRF protection from SameSite attribute
+    | - RECOMMENDED: "lax" for most applications, balances security and usability
+    | - Set via: SESSION_SAME_SITE in .env (defaults to lax)
     |
     | See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#samesitesamesite-value
     |

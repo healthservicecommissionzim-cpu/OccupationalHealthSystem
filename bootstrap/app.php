@@ -14,6 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
             \App\Http\Middleware\InjectAuditContext::class,
+            \App\Http\Middleware\SecurityHeadersMiddleware::class,
+            // Temporarily disabled to debug issue
+            // \App\Http\Middleware\DetectSuspiciousActivity::class,
         ]);
 
         $middleware->alias([
@@ -23,6 +26,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \App\Http\Middleware\CheckPermission::class,
             'witness.management.access' => \App\Http\Middleware\CheckWitnessManagementAccess::class,
         ]);
+
+        // Configure throttle middleware for better rate limiting
+        $middleware->throttleApi();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Handle CSRF token mismatch (419 Page Expired) and session timeout

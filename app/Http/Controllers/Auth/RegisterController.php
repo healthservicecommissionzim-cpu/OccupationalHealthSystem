@@ -12,6 +12,7 @@ use App\Models\District;
 use App\Models\FacilityType;
 use App\Models\Facility;
 use App\Models\Role;
+use App\Rules\StrongPassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -45,7 +46,7 @@ class RegisterController extends Controller
             'phone_number' => 'required|string|max:20',
             'organization_id' => 'required|exists:organizations,id',
             'designation_id' => 'required|exists:designations,id',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => ['required', 'string', 'confirmed', new StrongPassword],
         ];
 
         // Check designation type

@@ -15,6 +15,7 @@ use App\Models\IncidentWitnessToken;
 use App\Models\FirstAidRecord;
 use App\Models\User;
 use App\Services\SMSService;
+use App\Services\SecureFileUploadService;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
@@ -331,20 +332,30 @@ class IncidentController extends Controller
 
     private function storeIncidentAttachment($incident, $file, $documentType, $userId)
     {
-        $filename = $incident->reference_number . '_' . $documentType . '_' . time() . '.' . $file->getClientOriginalExtension();
-        $filepath = $file->storeAs(
+        $secureUploadService = new SecureFileUploadService();
+        
+        // Generate custom filename
+        $customFilename = $incident->reference_number . '_' . $documentType . '_' . time();
+        
+        // Validate and store file using SecureFileUploadService
+        $uploadResult = $secureUploadService->upload(
+            $file,
             'incident-attachments/' . $incident->id,
-            $filename,
-            'public'
+            $customFilename
         );
+        
+        // Check if upload was successful
+        if (!$uploadResult['success']) {
+            throw new \Exception($uploadResult['error']);
+        }
 
         return \App\Models\IncidentAttachment::create([
             'incident_id' => $incident->id,
             'document_type' => $documentType,
-            'file_name' => $file->getClientOriginalName(),
-            'file_path' => $filepath,
-            'mime_type' => $file->getMimeType(),
-            'file_size' => $file->getSize(),
+            'file_name' => $uploadResult['filename'],
+            'file_path' => $uploadResult['path'],
+            'mime_type' => $uploadResult['mime_type'],
+            'file_size' => $uploadResult['size'],
             'upload_status' => 'PENDING',
             'uploaded_by_user_id' => $userId,
         ]);
@@ -492,7 +503,7 @@ class IncidentController extends Controller
             'incident_id' => 'required|exists:incidents,id',
             'documents' => 'required|array|min:1|max:13',
             'documents.*.type' => 'required|string|in:doctors_report,injury_report,sick_leave,treatment_records,national_id,banking_details,bank_statement,police_report,death_certificate,heir_certificate,db8_form,termination_letter,marriage_certificate',
-            'documents.*.file' => 'required|file|mimes:pdf,docx,xlsx,jpg,jpeg,png|max:10240',
+            'documents.*.file' => 'required|file|max:10240',
         ], [
             'incident_id.required' => 'Incident ID is required.',
             'incident_id.exists' => 'The specified incident does not exist.',
@@ -501,7 +512,6 @@ class IncidentController extends Controller
             'documents.*.type.required' => 'Document type is required for all documents.',
             'documents.*.type.in' => 'Invalid document type selected.',
             'documents.*.file.required' => 'File is required for all documents.',
-            'documents.*.file.mimes' => 'File must be a PDF, Word, Excel, or image file.',
             'documents.*.file.max' => 'Each file must not exceed 10MB.',
         ]);
 
@@ -537,31 +547,50 @@ class IncidentController extends Controller
 
             // Track if any witness has submitted (for event dispatch)
             $witnessesWithSubmission = [];
+            
+            // Initialize SecureFileUploadService
+            $secureUploadService = new SecureFileUploadService();
 
             foreach ($validated['documents'] as $index => $documentData) {
                 $file = $documentFiles[$index]['file'];
                 $documentType = $documentData['type'];
 
-                // Generate clean filename: PersonName_DocumentType_Timestamp.ext
-                $fileExtension = $file->getClientOriginalExtension();
+                // Generate clean filename: PersonName_DocumentType_Timestamp
                 $timestamp = now()->format('Ymd_His');
                 $documentLabel = $documentTypeLabels[$documentType] ?? 'Document';
-                $cleanFileName = "{$personName}_{$documentLabel}_{$timestamp}.{$fileExtension}";
+                $customFilename = "{$personName}_{$documentLabel}_{$timestamp}";
 
-                // Store file with the clean name
-                $filePath = $file->storeAs(
+                // Validate and store file using SecureFileUploadService
+                $uploadResult = $secureUploadService->upload(
+                    $file,
                     'incident-attachments/' . $incident->id,
-                    $cleanFileName,
-                    'public'
+                    $customFilename
                 );
+
+                // Check if upload was successful
+                if (!$uploadResult['success']) {
+                    DB::rollback();
+                    
+                    Log::warning('File upload rejected by security validation', [
+                        'incident_id' => $incident->id,
+                        'document_type' => $documentType,
+                        'error' => $uploadResult['error'],
+                        'ip_address' => $request->ip(),
+                    ]);
+                    
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'File upload failed: ' . $uploadResult['error'],
+                    ], 400);
+                }
 
                 $attachment = IncidentAttachment::create([
                     'incident_id' => $incident->id,
                     'document_type' => $documentType,
-                    'file_name' => $cleanFileName,
-                    'file_path' => $filePath,
-                    'mime_type' => $file->getMimeType(),
-                    'file_size' => $file->getSize(),
+                    'file_name' => $uploadResult['filename'],
+                    'file_path' => $uploadResult['path'],
+                    'mime_type' => $uploadResult['mime_type'],
+                    'file_size' => $uploadResult['size'],
                     'upload_status' => 'PENDING',
                     'upload_notes' => 'Document uploaded from public track page',
                     'uploaded_by_user_id' => null, // No user since it's public
