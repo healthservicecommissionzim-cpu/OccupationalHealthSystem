@@ -56,17 +56,28 @@
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('mainContent');
             const overlay = document.getElementById('sidebarOverlay');
+            const isDesktop = window.innerWidth >= 768;
             const isHidden = sidebar.classList.contains('-translate-x-full');
+            
             if (isHidden) {
+                // Show sidebar
                 sidebar.classList.remove('-translate-x-full');
-                if (overlay) overlay.classList.remove('hidden');
                 localStorage.setItem('sidebarCollapsed', 'false');
-                if (window.innerWidth >= 768) { mainContent.classList.remove('collapsed'); }
+                
+                if (isDesktop) {
+                    // Desktop: expand content area
+                    mainContent.classList.remove('collapsed');
+                    if (overlay) overlay.classList.add('hidden');
+                } else {
+                    // Mobile: show overlay
+                    if (overlay) overlay.classList.remove('hidden');
+                }
             } else {
+                // Hide sidebar
                 sidebar.classList.add('-translate-x-full');
-                if (overlay) overlay.classList.add('hidden');
                 localStorage.setItem('sidebarCollapsed', 'true');
                 mainContent.classList.add('collapsed');
+                if (overlay) overlay.classList.add('hidden');
             }
         }
         document.addEventListener('DOMContentLoaded', function() {

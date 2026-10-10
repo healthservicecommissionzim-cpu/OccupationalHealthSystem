@@ -140,16 +140,16 @@
 <!-- COMPONENT 1: Macro KPI Banner - National Incident Statistics -->
 <div class="mb-6">
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-        <h2 class="text-lg md:text-xl lg:text-2xl font-bold text-navy flex items-center gap-2">
+        <h2 class="text-[14px] font-bold text-navy flex items-center gap-2">
             <i class="fa-solid fa-chart-pie text-brand"></i> NATIONAL INCIDENT STATISTICS
         </h2>
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 md:gap-3">
-            <button class="flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 bg-white border border-slate-200 rounded-lg text-xs md:text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors shadow-sm w-full sm:w-auto">
-                <i class="fa-regular fa-calendar text-slate-400"></i>All Time
-                <i class="fa-solid fa-chevron-down text-slate-400 text-xs md:text-sm"></i>
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <button class="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-[11px] font-medium text-slate-600 hover:bg-slate-50 transition-colors shadow-sm w-full sm:w-auto">
+                <i class="fa-regular fa-calendar text-slate-400 text-[10px]"></i>All Time
+                <i class="fa-solid fa-chevron-down text-slate-400 text-[10px]"></i>
             </button>
-            <button class="flex items-center justify-center gap-2 px-3 md:px-4 py-2 md:py-2.5 bg-brand text-white rounded-lg text-xs md:text-sm font-medium hover:bg-brand-dark transition-colors shadow-sm w-full sm:w-auto">
-                <i class="fa-solid fa-file-export text-xs md:text-sm"></i>
+            <button class="flex items-center justify-center gap-1.5 px-2.5 py-1.5 bg-brand text-white rounded-lg text-[11px] font-medium hover:bg-brand-dark transition-colors shadow-sm w-full sm:w-auto">
+                <i class="fa-solid fa-file-export text-[10px]"></i>
                 <span class="hidden sm:inline">Export National Report</span>
                 <span class="sm:hidden">Export</span>
             </button>
@@ -232,12 +232,22 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- Last Updated Timestamp -->
-<div id="lastUpdatedSuperAdmin" class="text-right text-xs md:text-sm text-slate-500 mb-6">
-    <i class="fa-solid fa-sync text-xs md:text-sm"></i> Auto-refreshing every 30s...
+        <!-- Open Support Tickets -->
+        <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden" data-stat="support">
+            <div class="h-0.5 bg-brand"></div>
+            <div class="p-2.5 flex items-start justify-between gap-2">
+                <div class="flex-1">
+                    <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Open Tickets</span>
+                    <p class="text-xl font-bold text-slate-900 mt-0.5">{{ number_format(\App\Models\SupportTicket::whereIn('status', ['open', 'in_progress'])->count()) }}</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Need attention</p>
+                </div>
+                <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg flex items-center justify-center">
+                    <i class="fa-solid fa-headset text-orange-600 text-base"></i>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- COMPONENT 3: Injury Types by Province/District Chart -->

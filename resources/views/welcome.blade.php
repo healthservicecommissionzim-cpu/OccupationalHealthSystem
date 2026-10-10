@@ -95,7 +95,7 @@
             color: #f59e0b;
         }
         
-        /* Header */
+        /* Header should stay visible when menu is open on mobile */
         header {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
@@ -107,6 +107,12 @@
             position: sticky;
             top: 0;
             z-index: 1000;
+        }
+        
+        /* When mobile menu is active, increase header z-index */
+        .mobile-menu.active ~ header,
+        body:has(.mobile-menu.active) header {
+            z-index: 1004;
         }
         
         .logo {
@@ -705,13 +711,66 @@
         /* Mobile Menu */
         .menu-toggle {
             display: none;
-            background: none;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: transparent;
             border: none;
-            font-size: 1.5rem;
-            color: var(--brand);
             cursor: pointer;
-            padding: 0.5rem;
-            z-index: 1002;
+            padding: 0;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+            z-index: 1003;
+            position: relative;
+        }
+        
+        .menu-toggle:hover {
+            background-color: rgba(29, 69, 51, 0.1);
+        }
+        
+        .menu-toggle:focus-visible {
+            outline: 2px solid var(--brand);
+            outline-offset: 2px;
+        }
+        
+        .hamburger-icon {
+            width: 24px;
+            height: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            pointer-events: none;
+        }
+        
+        .hamburger-line {
+            width: 100%;
+            height: 3px;
+            background-color: var(--brand);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        
+        /* When menu is open, keep button visible and transform to X */
+        .menu-toggle.open {
+            background-color: white;
+        }
+        
+        .menu-toggle.open .hamburger-line {
+            background-color: var(--brand);
+        }
+        
+        .menu-toggle.open .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        
+        .menu-toggle.open .hamburger-line:nth-child(2) {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        
+        .menu-toggle.open .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
         }
         
         .mobile-menu {
@@ -721,59 +780,60 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
+            background: white;
+            z-index: 1001;
+            overflow-y: auto;
+            padding-top: 5rem;
         }
         
         .mobile-menu.active {
-            display: block;
-            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
         
         .mobile-menu-content {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 280px;
-            height: 100%;
-            background: white;
-            z-index: 1000;
-            padding: 2rem 1.5rem;
+            padding: 2rem;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
-            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
-            animation: slideInRight 0.3s ease;
-            overflow-y: auto;
-        }
-        
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-            }
-            to {
-                transform: translateX(0);
-            }
+            gap: 2rem;
+            flex: 1;
         }
         
         .close-menu {
-            align-self: flex-end;
+            position: fixed;
+            top: 1rem;
+            right: 2%;
             background: none;
             border: none;
-            font-size: 1.5rem;
+            font-size: 2rem;
             color: var(--brand);
             cursor: pointer;
-            padding: 0;
-            margin-bottom: 1rem;
+            padding: 0.5rem;
+            z-index: 1002;
+            display: none;
+        }
+        
+        .mobile-menu.active .close-menu {
+            display: block;
         }
         
         .mobile-menu-nav {
             display: flex !important;
             flex-direction: column;
             gap: 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 1.5rem;
-            margin-bottom: 1rem;
+            padding-bottom: 2rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e2e8f0;
             width: 100%;
         }
         
@@ -781,7 +841,7 @@
             text-decoration: none;
             color: var(--dark);
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             transition: color 0.3s;
             padding: 0.75rem 0;
             display: block !important;
@@ -795,12 +855,14 @@
         .mobile-menu-buttons {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 1rem;
         }
         
         .mobile-menu-buttons .btn {
             width: 100%;
             justify-content: center;
+            padding: 1rem 2rem;
+            font-size: 1rem;
         }
         
         /* Floating Chat Widget */
@@ -1118,7 +1180,7 @@
             }
             
             .menu-toggle {
-                display: block;
+                display: flex;
             }
             
             .features {
@@ -1166,7 +1228,11 @@
         </div>
         
         <button class="menu-toggle">
-            <i class="fas fa-bars"></i>
+            <div class="hamburger-icon">
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+            </div>
         </button>
     </header>
 
@@ -1326,20 +1392,34 @@
         const mobileMenuNav = document.querySelector('.mobile-menu-nav');
         const mobileMenuButtons = document.querySelector('.mobile-menu-buttons');
 
-        // Open menu
+        // Toggle menu open/close with hamburger button
         menuToggle.addEventListener('click', () => {
-            mobileMenu.classList.add('active');
+            const isOpen = mobileMenu.classList.contains('active');
+            
+            if (isOpen) {
+                // Close menu
+                mobileMenu.classList.remove('active');
+                menuToggle.classList.remove('open');
+            } else {
+                // Open menu
+                mobileMenu.classList.add('active');
+                menuToggle.classList.add('open');
+            }
         });
 
-        // Close menu when X button is clicked
-        closeMenu.addEventListener('click', () => {
-            mobileMenu.classList.remove('active');
-        });
+        // Close menu when X button is clicked (if exists)
+        if (closeMenu) {
+            closeMenu.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                menuToggle.classList.remove('open');
+            });
+        }
 
-        // Close menu when clicking outside (on the overlay)
+        // Close menu when clicking outside (on the menu background)
         mobileMenu.addEventListener('click', (e) => {
             if (e.target === mobileMenu) {
                 mobileMenu.classList.remove('active');
+                menuToggle.classList.remove('open');
             }
         });
 
@@ -1348,6 +1428,7 @@
             mobileMenuNav.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', () => {
                     mobileMenu.classList.remove('active');
+                    menuToggle.classList.remove('open');
                 });
             });
         }
@@ -1357,6 +1438,7 @@
             mobileMenuButtons.querySelectorAll('a').forEach(btn => {
                 btn.addEventListener('click', () => {
                     mobileMenu.classList.remove('active');
+                    menuToggle.classList.remove('open');
                 });
             });
         }
