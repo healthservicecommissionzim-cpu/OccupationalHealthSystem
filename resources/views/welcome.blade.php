@@ -75,24 +75,43 @@
             50% { transform: translateY(-10px); }
         }
         
-        /* Hero Section with Integrated Header */
-        .hero-header {
-            background: rgba(255, 255, 255, 0.98);
+        /* Emergency Banner */
+        .emergency-banner {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            padding: 0.6rem 4%;
+            text-align: center;
+            font-weight: 600;
+            color: var(--yellow-dark);
+            border-bottom: 2px solid #fbbf24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            font-size: 0.8rem;
+            flex-wrap: wrap;
+        }
+        
+        .emergency-banner i {
+            color: #f59e0b;
+        }
+        
+        /* Header should stay visible when menu is open on mobile */
+        header {
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
-            padding: 1.25rem 4%;
+            padding: 1rem 4%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: absolute;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            position: sticky;
             top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
+            z-index: 1000;
         }
         
         /* When mobile menu is active, increase header z-index */
-        .mobile-menu.active ~ .hero .hero-header,
-        body:has(.mobile-menu.active) .hero-header {
+        .mobile-menu.active ~ header,
+        body:has(.mobile-menu.active) header {
             z-index: 1004;
         }
         
@@ -178,14 +197,10 @@
         /* Hero Section */
         .hero {
             background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
-            padding: 0;
+            padding: 4rem 4% 3rem;
             text-align: center;
             position: relative;
             overflow: hidden;
-            min-height: 65vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
         }
             content: '';
             position: absolute;
@@ -214,11 +229,6 @@
             z-index: 1;
         }
         
-        .hero-content {
-            margin-top: 2rem;
-            padding: 3rem 4% 3rem;
-        }
-        
         .hero-badge {
             display: inline-flex;
             align-items: center;
@@ -236,7 +246,7 @@
         
         .hero h1 {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-size: clamp(1.5rem, 5vw, 3.5rem);
             font-weight: 800;
             color: var(--dark);
             margin-bottom: 1rem;
@@ -250,7 +260,7 @@
         
         .hero p {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            font-size: clamp(0.95rem, 2vw, 1.1rem);
+            font-size: 1.1rem;
             color: var(--slate);
             max-width: 700px;
             margin: 0 auto 2rem;
@@ -269,30 +279,28 @@
             background: linear-gradient(to bottom, #ffffff 0%, #f0fdf4 100%);
         }
         
-        /* Mobile Large: 1 column */
+        /* Tablet: 2 columns */
         @media (min-width: 501px) and (max-width: 768px) {
             .features {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-                padding: 2.5rem 4% 3rem;
-            }
-        }
-        
-        /* Tablet/Laptop: 3 columns */
-        @media (min-width: 769px) and (max-width: 1199px) {
-            .features {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 2rem;
-                padding: 3rem 5% 4rem;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+                padding: 2.5rem 3% 3rem;
             }
         }
         
         /* Desktop: 3 columns */
-        @media (min-width: 1200px) {
+        @media (min-width: 769px) {
             .features {
                 grid-template-columns: repeat(3, 1fr);
-                gap: 2.5rem;
-                padding: 3rem 4% 4rem;
+                gap: 1.5rem;
+            }
+        }
+        
+        /* Large Desktop: 3-4 columns maintained */
+        @media (min-width: 1440px) {
+            .features {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 2rem;
             }
         }
         
@@ -328,7 +336,6 @@
             gap: 1rem;
             position: relative;
             border: none;
-            min-height: 200px;
         }
         
         .feature-card:hover {
@@ -1101,29 +1108,13 @@
                 max-width: 95%;
                 padding: 1.5rem;
             }
-            
-            .hero-header {
-                padding: 1rem 3%;
-            }
-            
-            .logo img {
-                height: 45px;
-            }
-            
-            .logo-text {
-                font-size: 0.85rem;
-            }
         }
         /* Hero Section - Responsive Breakpoints */
         
         /* Mobile: 320px-500px */
         @media (max-width: 500px) {
             .hero {
-                min-height: 60vh;
-            }
-            
-            .hero-content {
-                padding: 2rem 3% 2rem;
+                padding: 1.5rem 2%;
             }
             
             .hero h1 {
@@ -1143,11 +1134,7 @@
         /* Tablet: 501px-768px */
         @media (min-width: 501px) and (max-width: 768px) {
             .hero {
-                min-height: 62vh;
-            }
-            
-            .hero-content {
-                padding: 2.5rem 4% 2.5rem;
+                padding: 2.5rem 3%;
             }
             
             .hero h1 {
@@ -1162,11 +1149,7 @@
         /* Desktop: 769px+ */
         @media (min-width: 769px) {
             .hero {
-                min-height: 65vh;
-            }
-            
-            .hero-content {
-                padding: 3rem 4% 3rem;
+                padding: 4rem 4% 3rem;
             }
             
             .hero h1 {
@@ -1178,51 +1161,14 @@
             }
         }
         
-        /* Laptop screens (1024-1440px) optimization */
-        @media (min-width: 1024px) and (max-width: 1440px) {
-            .hero {
-                min-height: 65vh;
-            }
-            
-            .hero-content {
-                padding: 3rem 5% 3rem;
-            }
-            
-            .hero h1 {
-                font-size: 2.8rem;
-            }
-            
-            .hero p {
-                font-size: 1.05rem;
-                max-width: 650px;
-            }
-            
-            .features {
-                padding: 3rem 5% 4rem;
-                gap: 2rem;
-            }
-            
-            .feature-card {
-                padding: 1.75rem;
-            }
-            
-            .feature-card h3 {
-                font-size: 1.2rem;
-            }
-            
-            .feature-card p {
-                font-size: 0.88rem;
-            }
-        }
-        
         @media (max-width: 768px) {
             .emergency-banner {
                 font-size: 0.7rem;
                 padding: 0.5rem 2%;
             }
             
-            .hero-header {
-                padding: 1rem 3%;
+            header {
+                padding: 1rem 2%;
             }
             
             nav {
@@ -1263,46 +1209,43 @@
     </style>
 </head>
 <body>
-    <!-- Hero Section with Integrated Header -->
-    <section class="hero">
-        <!-- Header Navigation -->
-        <div class="hero-header">
-            <a href="{{ route('welcome') }}" class="logo">
-                <img src="{{ asset('images/hsc-logo.png') }}" alt="HSC Logo">
-                <span class="logo-text">HEALTH SERVICE COMMISSION</span>
-            </a>
-            
-            <nav>
-                <a href="{{ route('resources') }}">Resources</a>
-                <a href="{{ route('safety_protocols') }}">Safety Protocols</a>
-                <a href="javascript:void(0);" onclick="document.getElementById('floatingChatBtn').click()">Help Desk</a>
-            </nav>
-            
-            <div class="nav-buttons">
-                <a href="{{ route('login') }}" class="btn btn-primary">Log In</a>
-                <a href="{{ route('register') }}" class="btn btn-primary">Register</a>
-            </div>
-            
-            <button class="menu-toggle">
-                <div class="hamburger-icon">
-                    <div class="hamburger-line"></div>
-                    <div class="hamburger-line"></div>
-                    <div class="hamburger-line"></div>
-                </div>
-            </button>
+    <!-- Header -->
+    <header>
+        <a href="{{ route('welcome') }}" class="logo">
+            <img src="{{ asset('images/hsc-logo.png') }}" alt="HSC Logo">
+            <span class="logo-text">HEALTH SERVICE COMMISSION</span>
+        </a>
+        
+        <nav>
+            <a href="{{ route('resources') }}">Resources</a>
+            <a href="{{ route('safety_protocols') }}">Safety Protocols</a>
+            <a href="javascript:void(0);" onclick="document.getElementById('floatingChatBtn').click()">Help Desk</a>
+        </nav>
+        
+        <div class="nav-buttons">
+            <a href="{{ route('login') }}" class="btn btn-primary">Log In</a>
+            <a href="{{ route('register') }}" class="btn btn-primary">Register</a>
         </div>
+        
+        <button class="menu-toggle">
+            <div class="hamburger-icon">
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+            </div>
+        </button>
+    </header>
 
-        <!-- Hero Content -->
-        <div class="hero-content">
-            <div class="hero-badge">
-                <i class="fas fa-shield-alt"></i>
-                SECURE & CONFIDENTIAL PORTAL
-            </div>
-            
-            <h1>Occupational <span>Health</span><br>Reimagined.</h1>
-            
-            <p>Empowering Zimbabwe's healthcare workforce with a modern, secure, and comprehensive occupational health, safety, and wellness management system.</p>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-badge">
+            <i class="fas fa-shield-alt"></i>
+            SECURE & CONFIDENTIAL PORTAL
         </div>
+        
+        <h1>Occupational <span>Health</span><br>Reimagined.</h1>
+        
+        <p>Empowering Zimbabwe's healthcare workforce with a modern, secure, and comprehensive occupational health, safety, and wellness management system.</p>
     </section>
 
     <!-- Feature Cards -->
@@ -1504,7 +1447,7 @@
         const floatingChatBtn = document.getElementById('floatingChatBtn');
         const supportModal = document.getElementById('supportModal');
         const closeSupportModal = document.getElementById('closeSupportModal');
-        const heroHeader = document.querySelector('.hero-header');
+        const header = document.querySelector('header');
         const supportForm = document.getElementById('supportForm');
         const responseModal = document.getElementById('responseModal');
         const closeResponseModal = document.getElementById('closeResponseModal');
@@ -1512,20 +1455,20 @@
         // Open support modal
         floatingChatBtn.addEventListener('click', () => {
             supportModal.classList.add('active');
-            if (heroHeader) heroHeader.style.display = 'none';
+            if (header) header.style.display = 'none';
         });
 
         // Close support modal
         closeSupportModal.addEventListener('click', () => {
             supportModal.classList.remove('active');
-            if (heroHeader) heroHeader.style.display = '';
+            if (header) header.style.display = '';
         });
 
         // Close support modal when clicking outside
         supportModal.addEventListener('click', (e) => {
             if (e.target === supportModal) {
                 supportModal.classList.remove('active');
-                if (heroHeader) heroHeader.style.display = '';
+                if (header) header.style.display = '';
             }
         });
 
@@ -1584,7 +1527,7 @@
         // Close response modal
         closeResponseModal.addEventListener('click', () => {
             responseModal.classList.remove('active');
-            if (heroHeader) heroHeader.style.display = '';
+            if (header) header.style.display = '';
             // Reset form
             supportForm.reset();
         });
