@@ -75,43 +75,24 @@
             50% { transform: translateY(-10px); }
         }
         
-        /* Emergency Banner */
-        .emergency-banner {
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-            padding: 0.6rem 4%;
-            text-align: center;
-            font-weight: 600;
-            color: var(--yellow-dark);
-            border-bottom: 2px solid #fbbf24;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            font-size: 0.8rem;
-            flex-wrap: wrap;
-        }
-        
-        .emergency-banner i {
-            color: #f59e0b;
-        }
-        
-        /* Header should stay visible when menu is open on mobile */
-        header {
-            background: rgba(255, 255, 255, 0.95);
+        /* Hero Section with Integrated Header */
+        .hero-header {
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(12px);
-            padding: 1rem 4%;
+            padding: 1.25rem 4%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            position: sticky;
+            position: absolute;
             top: 0;
-            z-index: 1000;
+            left: 0;
+            right: 0;
+            z-index: 100;
         }
         
         /* When mobile menu is active, increase header z-index */
-        .mobile-menu.active ~ header,
-        body:has(.mobile-menu.active) header {
+        .mobile-menu.active ~ .hero .hero-header,
+        body:has(.mobile-menu.active) .hero-header {
             z-index: 1004;
         }
         
@@ -197,10 +178,14 @@
         /* Hero Section */
         .hero {
             background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
-            padding: 3rem 4% 2.5rem;
+            padding: 0;
             text-align: center;
             position: relative;
             overflow: hidden;
+            min-height: 65vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
             content: '';
             position: absolute;
@@ -227,6 +212,11 @@
         .hero > * {
             position: relative;
             z-index: 1;
+        }
+        
+        .hero-content {
+            margin-top: 2rem;
+            padding: 3rem 4% 3rem;
         }
         
         .hero-badge {
@@ -1111,13 +1101,29 @@
                 max-width: 95%;
                 padding: 1.5rem;
             }
+            
+            .hero-header {
+                padding: 1rem 3%;
+            }
+            
+            .logo img {
+                height: 45px;
+            }
+            
+            .logo-text {
+                font-size: 0.85rem;
+            }
         }
         /* Hero Section - Responsive Breakpoints */
         
         /* Mobile: 320px-500px */
         @media (max-width: 500px) {
             .hero {
-                padding: 1.5rem 2%;
+                min-height: 60vh;
+            }
+            
+            .hero-content {
+                padding: 2rem 3% 2rem;
             }
             
             .hero h1 {
@@ -1137,7 +1143,11 @@
         /* Tablet: 501px-768px */
         @media (min-width: 501px) and (max-width: 768px) {
             .hero {
-                padding: 2.5rem 3%;
+                min-height: 62vh;
+            }
+            
+            .hero-content {
+                padding: 2.5rem 4% 2.5rem;
             }
             
             .hero h1 {
@@ -1152,7 +1162,11 @@
         /* Desktop: 769px+ */
         @media (min-width: 769px) {
             .hero {
-                padding: 4rem 4% 3rem;
+                min-height: 65vh;
+            }
+            
+            .hero-content {
+                padding: 3rem 4% 3rem;
             }
             
             .hero h1 {
@@ -1167,7 +1181,11 @@
         /* Laptop screens (1024-1440px) optimization */
         @media (min-width: 1024px) and (max-width: 1440px) {
             .hero {
-                padding: 3.5rem 5% 3rem;
+                min-height: 65vh;
+            }
+            
+            .hero-content {
+                padding: 3rem 5% 3rem;
             }
             
             .hero h1 {
@@ -1203,8 +1221,8 @@
                 padding: 0.5rem 2%;
             }
             
-            header {
-                padding: 1rem 2%;
+            .hero-header {
+                padding: 1rem 3%;
             }
             
             nav {
@@ -1245,43 +1263,46 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <a href="{{ route('welcome') }}" class="logo">
-            <img src="{{ asset('images/hsc-logo.png') }}" alt="HSC Logo">
-            <span class="logo-text">HEALTH SERVICE COMMISSION</span>
-        </a>
-        
-        <nav>
-            <a href="{{ route('resources') }}">Resources</a>
-            <a href="{{ route('safety_protocols') }}">Safety Protocols</a>
-            <a href="javascript:void(0);" onclick="document.getElementById('floatingChatBtn').click()">Help Desk</a>
-        </nav>
-        
-        <div class="nav-buttons">
-            <a href="{{ route('login') }}" class="btn btn-primary">Log In</a>
-            <a href="{{ route('register') }}" class="btn btn-primary">Register</a>
-        </div>
-        
-        <button class="menu-toggle">
-            <div class="hamburger-icon">
-                <div class="hamburger-line"></div>
-                <div class="hamburger-line"></div>
-                <div class="hamburger-line"></div>
-            </div>
-        </button>
-    </header>
-
-    <!-- Hero Section -->
+    <!-- Hero Section with Integrated Header -->
     <section class="hero">
-        <div class="hero-badge">
-            <i class="fas fa-shield-alt"></i>
-            SECURE & CONFIDENTIAL PORTAL
+        <!-- Header Navigation -->
+        <div class="hero-header">
+            <a href="{{ route('welcome') }}" class="logo">
+                <img src="{{ asset('images/hsc-logo.png') }}" alt="HSC Logo">
+                <span class="logo-text">HEALTH SERVICE COMMISSION</span>
+            </a>
+            
+            <nav>
+                <a href="{{ route('resources') }}">Resources</a>
+                <a href="{{ route('safety_protocols') }}">Safety Protocols</a>
+                <a href="javascript:void(0);" onclick="document.getElementById('floatingChatBtn').click()">Help Desk</a>
+            </nav>
+            
+            <div class="nav-buttons">
+                <a href="{{ route('login') }}" class="btn btn-primary">Log In</a>
+                <a href="{{ route('register') }}" class="btn btn-primary">Register</a>
+            </div>
+            
+            <button class="menu-toggle">
+                <div class="hamburger-icon">
+                    <div class="hamburger-line"></div>
+                    <div class="hamburger-line"></div>
+                    <div class="hamburger-line"></div>
+                </div>
+            </button>
         </div>
-        
-        <h1>Occupational <span>Health</span><br>Reimagined.</h1>
-        
-        <p>Empowering Zimbabwe's healthcare workforce with a modern, secure, and comprehensive occupational health, safety, and wellness management system.</p>
+
+        <!-- Hero Content -->
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-shield-alt"></i>
+                SECURE & CONFIDENTIAL PORTAL
+            </div>
+            
+            <h1>Occupational <span>Health</span><br>Reimagined.</h1>
+            
+            <p>Empowering Zimbabwe's healthcare workforce with a modern, secure, and comprehensive occupational health, safety, and wellness management system.</p>
+        </div>
     </section>
 
     <!-- Feature Cards -->
@@ -1483,7 +1504,7 @@
         const floatingChatBtn = document.getElementById('floatingChatBtn');
         const supportModal = document.getElementById('supportModal');
         const closeSupportModal = document.getElementById('closeSupportModal');
-        const header = document.querySelector('header');
+        const heroHeader = document.querySelector('.hero-header');
         const supportForm = document.getElementById('supportForm');
         const responseModal = document.getElementById('responseModal');
         const closeResponseModal = document.getElementById('closeResponseModal');
@@ -1491,20 +1512,20 @@
         // Open support modal
         floatingChatBtn.addEventListener('click', () => {
             supportModal.classList.add('active');
-            if (header) header.style.display = 'none';
+            if (heroHeader) heroHeader.style.display = 'none';
         });
 
         // Close support modal
         closeSupportModal.addEventListener('click', () => {
             supportModal.classList.remove('active');
-            if (header) header.style.display = '';
+            if (heroHeader) heroHeader.style.display = '';
         });
 
         // Close support modal when clicking outside
         supportModal.addEventListener('click', (e) => {
             if (e.target === supportModal) {
                 supportModal.classList.remove('active');
-                if (header) header.style.display = '';
+                if (heroHeader) heroHeader.style.display = '';
             }
         });
 
@@ -1563,7 +1584,7 @@
         // Close response modal
         closeResponseModal.addEventListener('click', () => {
             responseModal.classList.remove('active');
-            if (header) header.style.display = '';
+            if (heroHeader) heroHeader.style.display = '';
             // Reset form
             supportForm.reset();
         });
