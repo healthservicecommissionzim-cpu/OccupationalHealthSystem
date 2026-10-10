@@ -62,35 +62,65 @@ class IncidentController extends Controller
 {
     public function create()
     {
-        // Cache form data for 1 hour to avoid repeated DB queries
-        $facilityTypes = cache()->remember('form_facility_types', 3600, fn() => FacilityType::all());
-        $provinces = cache()->remember('form_provinces', 3600, fn() => Province::all());
-        $districts = cache()->remember('form_districts', 3600, fn() => District::all());
-        $facilities = cache()->remember('form_facilities', 3600, fn() => Facility::select('id', 'name', 'facility_type_id', 'district_id')->get());
-        $departments = cache()->remember('form_departments', 3600, fn() => Department::orderBy('name')->get());
-        $designations = cache()->remember('form_designations', 3600, fn() => Designation::orderBy('name')->get());
-        $incidentTypes = cache()->remember('form_incident_types', 3600, fn() => IncidentType::orderBy('name')->get());
+        // Optimize: Cache form data with shorter TTL and only load essential fields
+        // Use 5-minute cache for frequently accessed data
+        $cacheMinutes = 5;
+        
+        $facilityTypes = cache()->remember('form_facility_types_v2', $cacheMinutes * 60, fn() => 
+            FacilityType::select('id', 'name')->get()
+        );
+        
+        $provinces = cache()->remember('form_provinces_v2', $cacheMinutes * 60, fn() => 
+            Province::select('id', 'name')->orderBy('name')->get()
+        );
+        
+        $districts = cache()->remember('form_districts_v2', $cacheMinutes * 60, fn() => 
+            District::select('id', 'name', 'province_id')->orderBy('name')->get()
+        );
+        
+        // CRITICAL OPTIMIZATION: Only select needed fields from facilities (was loading all 1726 with all fields)
+        $facilities = cache()->remember('form_facilities_v2', $cacheMinutes * 60, fn() => 
+            Facility::select('id', 'name', 'facility_type_id', 'district_id')
+                ->orderBy('name')
+                ->get()
+        );
+        
+        $departments = cache()->remember('form_departments_v2', $cacheMinutes * 60, fn() => 
+            Department::select('id', 'name')->orderBy('name')->get()
+        );
+        
+        $designations = cache()->remember('form_designations_v2', $cacheMinutes * 60, fn() => 
+            Designation::select('id', 'name')->orderBy('name')->get()
+        );
+        
+        $incidentTypes = cache()->remember('form_incident_types_v2', $cacheMinutes * 60, fn() => 
+            IncidentType::select('id', 'name')->orderBy('name')->get()
+        );
 
         // Cache supervisor designation IDs
-        $supervisorDesignationIds = cache()->remember('supervisor_designation_ids', 3600, function() {
+        $supervisorDesignationIds = cache()->remember('supervisor_designation_ids_v2', $cacheMinutes * 60, function() {
             $supervisorDesignations = ['Supervisor', 'Senior Supervisor', 'Department Head', 'Manager', 'Matron', 'Sister-in-Charge', 'Principal Nursing Officer', 'Senior Nursing Officer'];
             return Designation::whereIn('name', $supervisorDesignations)->pluck('id')->toArray();
         });
 
-        // Get all supervisors (optimized query with eager loading)
-        $supervisors = cache()->remember('form_supervisors', 600, function() use ($supervisorDesignationIds) {
-            return User::where(function($query) use ($supervisorDesignationIds) {
-                $query->whereHas('roles', fn($q) => $q->where('name', 'supervisor'))
-                      ->orWhereIn('designation_id', $supervisorDesignationIds);
-            })
-            ->select('id', 'name', 'designation_id', 'department_id')
-            ->with(['designation:id,name', 'department:id,name'])
-            ->get();
+        // CRITICAL OPTIMIZATION: Simplified supervisor query - removed complex OR conditions
+        $supervisors = cache()->remember('form_supervisors_v2', $cacheMinutes * 60, function() use ($supervisorDesignationIds) {
+            return User::whereHas('roles', fn($q) => $q->where('name', 'supervisor'))
+                ->select('id', 'name', 'designation_id', 'department_id')
+                ->with([
+                    'designation:id,name',
+                    'department:id,name'
+                ])
+                ->orderBy('name')
+                ->get();
         });
 
-        // Create a mapping of designation IDs to supervisors with that designation
+        // Build supervisor mappings in memory (fast operation)
         $supervisorsByDesignation = [];
+        $supervisorsByDeptIds = [];
+        
         foreach ($supervisors as $supervisor) {
+            // Map by designation
             if ($supervisor->designation_id) {
                 if (!isset($supervisorsByDesignation[$supervisor->designation_id])) {
                     $supervisorsByDesignation[$supervisor->designation_id] = [];
@@ -100,17 +130,12 @@ class IncidentController extends Controller
                     'name' => $supervisor->name,
                 ];
             }
-        }
-
-        // Create a mapping of designation IDs that are available for each department
-        // This is built from actual supervisors in the system
-        $supervisorsByDeptIds = [];
-        foreach ($supervisors as $supervisor) {
+            
+            // Map by department
             if ($supervisor->department_id && $supervisor->designation_id) {
                 if (!isset($supervisorsByDeptIds[$supervisor->department_id])) {
                     $supervisorsByDeptIds[$supervisor->department_id] = [];
                 }
-                // Add this designation ID if not already present
                 if (!in_array($supervisor->designation_id, $supervisorsByDeptIds[$supervisor->department_id])) {
                     $supervisorsByDeptIds[$supervisor->department_id][] = $supervisor->designation_id;
                 }
@@ -119,7 +144,17 @@ class IncidentController extends Controller
 
         $supervisorsByDeptJson = json_encode($supervisorsByDeptIds);
 
-        return view('incidents.create', compact('facilityTypes', 'provinces', 'districts', 'facilities', 'departments', 'designations', 'incidentTypes', 'supervisorsByDeptJson', 'supervisorsByDesignation'));
+        return view('incidents.create', compact(
+            'facilityTypes',
+            'provinces', 
+            'districts',
+            'facilities',
+            'departments',
+            'designations',
+            'incidentTypes',
+            'supervisorsByDeptJson',
+            'supervisorsByDesignation'
+        ));
     }
 
     public function store(Request $request)

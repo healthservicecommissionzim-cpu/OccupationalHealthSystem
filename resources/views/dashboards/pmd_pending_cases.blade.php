@@ -37,41 +37,44 @@
 
 <!-- Statistics Cards -->
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-6">
-    <div class="bg-white rounded-xl border border-border p-4 md:p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all cursor-default">
-        <div class="flex items-start justify-between gap-4">
-            <div>
-                <p class="text-xs md:text-sm uppercase font-bold text-slate-400 tracking-wider">Total Pending</p>
-                <p class="text-2xl md:text-3xl font-bold text-amber-600 tracking-tight mt-1 md:mt-2">{{ $statistics['total_pending'] }}</p>
-                <p class="text-xs md:text-sm font-semibold text-amber-600 mt-2">Awaiting Review</p>
+    <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden">
+        <div class="h-0.5 bg-brand"></div>
+        <div class="p-2.5 flex items-start justify-between gap-2">
+            <div class="flex-1">
+                <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Total Pending</span>
+                <p class="text-xl font-bold text-slate-900 mt-0.5">{{ $statistics['total_pending'] }}</p>
+                <p class="text-xs text-slate-500 mt-0.5">Awaiting Review</p>
             </div>
-            <div class="bg-gradient-to-br from-amber-50 to-amber-100 w-12 h-12 md:w-14 md:h-14 rounded-lg flex items-center justify-center flex-shrink-0">
-                <x-lucide-inbox class="w-6 h-6 md:w-7 md:h-7 text-amber-600" />
-            </div>
-        </div>
-    </div>
-
-    <div class="bg-white rounded-xl border border-border p-4 md:p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all cursor-default">
-        <div class="flex items-start justify-between gap-4">
-            <div>
-                <p class="text-xs md:text-sm uppercase font-bold text-slate-400 tracking-wider">Escalated to PMD</p>
-                <p class="text-2xl md:text-3xl font-bold text-blue-600 tracking-tight mt-1 md:mt-2">{{ $statistics['escalated_to_pmd'] }}</p>
-                <p class="text-xs md:text-sm font-semibold text-blue-600 mt-2">Ready for Review</p>
-            </div>
-            <div class="bg-gradient-to-br from-blue-50 to-blue-100 w-12 h-12 md:w-14 md:h-14 rounded-lg flex items-center justify-center flex-shrink-0">
-                <x-lucide-arrow-right-circle class="w-6 h-6 md:w-7 md:h-7 text-blue-600" />
+            <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg flex items-center justify-center">
+                <x-lucide-inbox class="w-4 h-4 text-amber-600" />
             </div>
         </div>
     </div>
 
-    <div class="bg-white rounded-xl border border-border p-4 md:p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all cursor-default">
-        <div class="flex items-start justify-between gap-4">
-            <div>
-                <p class="text-xs md:text-sm uppercase font-bold text-slate-400 tracking-wider">Pending Review</p>
-                <p class="text-2xl md:text-3xl font-bold text-emerald-600 tracking-tight mt-1 md:mt-2">{{ $statistics['pending_pmd_review'] }}</p>
-                <p class="text-xs md:text-sm font-semibold text-emerald-600 mt-2">In Review</p>
+    <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden">
+        <div class="h-0.5 bg-brand"></div>
+        <div class="p-2.5 flex items-start justify-between gap-2">
+            <div class="flex-1">
+                <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Escalated to PMD</span>
+                <p class="text-xl font-bold text-slate-900 mt-0.5">{{ $statistics['escalated_to_pmd'] }}</p>
+                <p class="text-xs text-slate-500 mt-0.5">Ready for Review</p>
             </div>
-            <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 w-12 h-12 md:w-14 md:h-14 rounded-lg flex items-center justify-center flex-shrink-0">
-                <x-lucide-check-circle-2 class="w-6 h-6 md:w-7 md:h-7 text-emerald-600" />
+            <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex items-center justify-center">
+                <x-lucide-arrow-right-circle class="w-4 h-4 text-blue-600" />
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden">
+        <div class="h-0.5 bg-brand"></div>
+        <div class="p-2.5 flex items-start justify-between gap-2">
+            <div class="flex-1">
+                <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Pending Review</span>
+                <p class="text-xl font-bold text-slate-900 mt-0.5">{{ $statistics['pending_pmd_review'] }}</p>
+                <p class="text-xs text-slate-500 mt-0.5">In Review</p>
+            </div>
+            <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg flex items-center justify-center">
+                <x-lucide-check-circle-2 class="w-4 h-4 text-emerald-600" />
             </div>
         </div>
     </div>

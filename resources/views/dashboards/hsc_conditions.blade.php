@@ -71,17 +71,11 @@
 @endsection
 
 @section('dashboard_content')
-<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2">
-    <div>
-        <h1 class="text-[15px] font-bold text-navy tracking-wide">HSC CONDITIONS DASHBOARD</h1>
-    </div>
-</div>
-<div class="h-px w-full bg-border mb-4"></div>
 
 <!-- KPI Cards -->
 <div>
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-        <h2 class="text-[15px] font-bold text-navy">Performance Metrics</h2>
+        <h2 class="text-[13px] font-bold text-navy">Performance Metrics</h2>
         <div class="flex items-center gap-2">
             <button class="flex items-center gap-2 px-3.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors shadow-sm">
                 <i class="fa-regular fa-calendar text-slate-400"></i>Last 30 days

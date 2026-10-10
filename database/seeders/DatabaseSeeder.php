@@ -26,7 +26,6 @@ class DatabaseSeeder extends Seeder
             SuperAdminSeeder::class,
             IncidentSeeder::class,
             AuditLogSeeder::class,
-            JohnMashizhaHRSeeder::class,
         ]);
     }
 }

@@ -57,9 +57,7 @@
 <!-- KPI Cards -->
 <div class="mb-6">
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-        <h2 class="text-lg md:text-xl lg:text-2xl font-bold text-navy flex items-center gap-2">
-            <i class="fa-solid fa-chart-pie text-brand"></i> INCIDENT STATISTICS
-        </h2>
+        <h2 class="text-[13px] font-bold text-navy">Performance Metrics</h2>
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 md:gap-3">
             <div class="relative" x-data="{ open: false }">
                 <button @click="open = !open" class="flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 bg-white border border-slate-200 rounded-lg text-xs md:text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors shadow-sm w-full sm:w-auto">
@@ -108,45 +106,45 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
         <!-- Total Incidents Card -->
         <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden" data-stat="total">
-            <div class="h-0.5 md:h-1 bg-brand"></div>
-            <div class="p-4 md:p-5 flex items-start justify-between gap-4">
+            <div class="h-0.5 bg-brand"></div>
+            <div class="p-2.5 flex items-start justify-between gap-2">
                 <div class="flex-1">
-                    <span class="text-xs md:text-sm font-semibold text-slate-600 uppercase tracking-wide">Total Incidents</span>
-                    <p class="text-2xl md:text-3xl font-bold text-slate-900 mt-1 md:mt-2">{{ number_format($statistics['total_incidents']) }}</p>
-                    <p class="text-xs md:text-sm text-slate-500 mt-2">All assigned cases</p>
+                    <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Total Incidents</span>
+                    <p class="text-xl font-bold text-slate-900 mt-0.5">{{ number_format($statistics['total_incidents']) }}</p>
+                    <p class="text-xs text-slate-500 mt-0.5">All assigned cases</p>
                 </div>
-                <div class="flex-shrink-0 w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg flex items-center justify-center">
-                    <x-lucide-inbox class="w-6 h-6 md:w-7 md:h-7 text-amber-600" stroke-width="1.5" />
+                <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg flex items-center justify-center">
+                    <x-lucide-inbox class="w-4 h-4 text-amber-600" stroke-width="1.5" />
                 </div>
             </div>
         </div>
 
         <!-- Pending Verification Card -->
         <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden" data-stat="pending">
-            <div class="h-0.5 md:h-1 bg-brand"></div>
-            <div class="p-4 md:p-5 flex items-start justify-between gap-4">
+            <div class="h-0.5 bg-brand"></div>
+            <div class="p-2.5 flex items-start justify-between gap-2">
                 <div class="flex-1">
-                    <span class="text-xs md:text-sm font-semibold text-slate-600 uppercase tracking-wide">Pending Review</span>
-                    <p class="text-2xl md:text-3xl font-bold text-slate-900 mt-1 md:mt-2">{{ number_format($statistics['pending_verification']) }}</p>
-                    <p class="text-xs md:text-sm text-slate-500 mt-2">Awaiting action</p>
+                    <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Pending Review</span>
+                    <p class="text-xl font-bold text-slate-900 mt-0.5">{{ number_format($statistics['pending_verification']) }}</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Awaiting action</p>
                 </div>
-                <div class="flex-shrink-0 w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex items-center justify-center">
-                    <x-lucide-alert-circle class="w-6 h-6 md:w-7 md:h-7 text-blue-600" stroke-width="1.5" />
+                <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex items-center justify-center">
+                    <x-lucide-alert-circle class="w-4 h-4 text-blue-600" stroke-width="1.5" />
                 </div>
             </div>
         </div>
 
         <!-- Verified & Escalated Card -->
         <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden" data-stat="verified">
-            <div class="h-0.5 md:h-1 bg-brand"></div>
-            <div class="p-4 md:p-5 flex items-start justify-between gap-4">
+            <div class="h-0.5 bg-brand"></div>
+            <div class="p-2.5 flex items-start justify-between gap-2">
                 <div class="flex-1">
-                    <span class="text-xs md:text-sm font-semibold text-slate-600 uppercase tracking-wide">Verified & Escalated</span>
-                    <p class="text-2xl md:text-3xl font-bold text-slate-900 mt-1 md:mt-2">{{ number_format($statistics['verified_escalated']) }}</p>
-                    <p class="text-xs md:text-sm text-slate-500 mt-2">Processed cases</p>
+                    <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Verified & Escalated</span>
+                    <p class="text-xl font-bold text-slate-900 mt-0.5">{{ number_format($statistics['verified_escalated']) }}</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Processed cases</p>
                 </div>
-                <div class="flex-shrink-0 w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg flex items-center justify-center">
-                    <x-lucide-check-circle-2 class="w-6 h-6 md:w-7 md:h-7 text-emerald-600" stroke-width="1.5" />
+                <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg flex items-center justify-center">
+                    <x-lucide-check-circle-2 class="w-4 h-4 text-emerald-600" stroke-width="1.5" />
                 </div>
             </div>
         </div>

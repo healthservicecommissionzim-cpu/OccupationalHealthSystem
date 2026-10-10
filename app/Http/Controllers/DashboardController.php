@@ -38,6 +38,15 @@ class DashboardController extends Controller
         $supervisor = auth()->user();
         $dateRange = $request->get('date_range', 'all');
 
+        // Create cache key based on supervisor ID and date range
+        $cacheKey = "supervisor_dashboard_{$supervisor->id}_{$dateRange}";
+        
+        // Check cache first (30 second TTL for real-time feel)
+        $cachedData = \Illuminate\Support\Facades\Cache::get($cacheKey);
+        if ($cachedData && !$request->has('refresh')) {
+            return view('dashboards.supervisor', $cachedData);
+        }
+
         // Determine date filter
         $query = \App\Models\Incident::with('incidentType', 'facility')
         ->where('assigned_supervisor_id', $supervisor->id)
@@ -142,7 +151,7 @@ class DashboardController extends Controller
 
         $unreadNotificationCount = $newNotifications->count();
 
-        return view('dashboards.supervisor', array_merge(compact(
+        $viewData = compact(
             'allIncidents',
             'statistics',
             'complianceStats',
@@ -152,8 +161,14 @@ class DashboardController extends Controller
             'incidentsByStatus',
             'dateRange',
             'newNotifications',
-            'unreadNotificationCount'
-        ), ['allNotifications' => $newNotifications]));
+            'unreadNotificationCount',
+            'allNotifications'
+        );
+
+        // Cache for 30 seconds
+        \Illuminate\Support\Facades\Cache::put($cacheKey, $viewData, 30);
+
+        return view('dashboards.supervisor', $viewData);
     }
 
     public function supervisorAllIncidents()
@@ -332,6 +347,15 @@ class DashboardController extends Controller
         $user = auth()->user();
         $dateRange = $request->get('date_range', 'all');
 
+        // Create cache key
+        $cacheKey = "hr_dashboard_{$user->id}_{$dateRange}";
+        
+        // Check cache first (30 second TTL)
+        $cachedData = \Illuminate\Support\Facades\Cache::get($cacheKey);
+        if ($cachedData && !$request->has('refresh')) {
+            return view('dashboards.hr', $cachedData);
+        }
+
         // Calculate date filter
         $dateFrom = null;
         $dateTo = now();
@@ -482,7 +506,12 @@ class DashboardController extends Controller
 
         $unreadNotificationCount = $allNotifications->count();
 
-        return view('dashboards.hr', compact('statistics', 'incidentsByStatus', 'incidentsByFacility', 'incidentsByInjuryType', 'incidentsByDepartment', 'pendingReviewIncidents', 'dateRange', 'allNotifications', 'unreadNotificationCount'));
+        $viewData = compact('statistics', 'incidentsByStatus', 'incidentsByFacility', 'incidentsByInjuryType', 'incidentsByDepartment', 'pendingReviewIncidents', 'dateRange', 'allNotifications', 'unreadNotificationCount');
+
+        // Cache for 30 seconds
+        \Illuminate\Support\Facades\Cache::put($cacheKey, $viewData, 30);
+
+        return view('dashboards.hr', $viewData);
     }
 
     /**
@@ -493,13 +522,23 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
+        // Create cache key based on user ID and role
+        $userRole = $user->hasRole('dmo') ? 'dmo' : ($user->hasRole('medical_superintendent') ? 'med_super' : 'cmo');
+        $dateRange = $request->query('date_range', 'all');
+        $cacheKey = "clinical_exec_{$user->id}_{$userRole}_{$dateRange}";
+        
+        // Check cache first (30 second TTL)
+        $cachedData = \Illuminate\Support\Facades\Cache::get($cacheKey);
+        if ($cachedData && !$request->has('refresh')) {
+            return view('dashboards.clinical_executive', $cachedData);
+        }
+
         $allIncidents = collect();
         $filterScope = 'N/A';
         $incidentsByUnit = collect();
         $statistics = [];
         
         // Get date range filter (default: all time)
-        $dateRange = $request->query('date_range', 'all');
         $startDate = null;
         $endDate = now();
         
@@ -763,7 +802,7 @@ class DashboardController extends Controller
         $allNotifications = $newNotifications->concat($pendingDocuments)->sortByDesc('created_at')->take(10);
         $unreadNotificationCount = $newNotifications->count() + $pendingDocuments->count();
 
-        return view('dashboards.clinical_executive', compact(
+        $viewData = compact(
             'statistics',
             'recentIncidents',
             'allIncidents',
@@ -773,7 +812,12 @@ class DashboardController extends Controller
             'pendingDocuments',
             'allNotifications',
             'unreadNotificationCount'
-        ));
+        );
+
+        // Cache for 30 seconds
+        \Illuminate\Support\Facades\Cache::put($cacheKey, $viewData, 30);
+
+        return view('dashboards.clinical_executive', $viewData);
     }
 
     public function executiveReviewCase(Incident $incident)
@@ -1510,6 +1554,16 @@ class DashboardController extends Controller
      */
     public function superAdmin(Request $request)
     {
+        // Create cache key based on organization filter
+        $organizationId = $request->input('organization_id');
+        $cacheKey = "super_admin_dashboard_" . ($organizationId ?? 'all');
+        
+        // Check cache first (30 second TTL)
+        $cachedData = \Illuminate\Support\Facades\Cache::get($cacheKey);
+        if ($cachedData && !$request->has('refresh')) {
+            return view('dashboards.super_admin', $cachedData);
+        }
+
         // User Management Statistics
         $userStatistics = [
             'pending_count' => \App\Models\User::where('status', 'pending')->count(),
@@ -1550,7 +1604,6 @@ class DashboardController extends Controller
 
         // Organization-specific filtering
         $organizations = \App\Models\Organization::all();
-        $organizationId = $request->input('organization_id');
         
         $organizationStats = null;
         if ($organizationId) {
@@ -1608,7 +1661,7 @@ class DashboardController extends Controller
             ->limit(20)
             ->get();
 
-        return view('dashboards.super_admin', compact(
+        $viewData = compact(
             'userStatistics',
             'incidentStatistics',
             'workflowDistribution',
@@ -1620,7 +1673,12 @@ class DashboardController extends Controller
             'recentIncidents',
             'injuryTypesByProvince',
             'injuryTypesByDistrict'
-        ));
+        );
+
+        // Cache for 30 seconds
+        \Illuminate\Support\Facades\Cache::put($cacheKey, $viewData, 30);
+
+        return view('dashboards.super_admin', $viewData);
     }
 
     // API endpoint to get live injury types data

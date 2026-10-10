@@ -26,6 +26,11 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
+// ─── CSRF Token Refresh Route ───────────────────────────────────────────
+Route::get('/refresh-csrf', function () {
+    return response()->json(['token' => csrf_token()]);
+});
+
 Route::get('/resources', function () {
     return view('resources');
 })->name('resources');

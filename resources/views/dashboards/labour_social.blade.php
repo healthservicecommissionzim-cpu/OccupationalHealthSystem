@@ -71,17 +71,11 @@
 @endsection
 
 @section('dashboard_content')
-<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2">
-    <div>
-        <h1 class="text-[15px] font-bold text-navy tracking-wide">LABOUR & SOCIAL AFFAIRS DASHBOARD</h1>
-    </div>
-</div>
-<div class="h-px w-full bg-border mb-4"></div>
 
 <!-- KPI Cards -->
 <div>
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-        <h2 class="text-[15px] font-bold text-navy">Performance Metrics</h2>
+        <h2 class="text-[13px] font-bold text-navy">Performance Metrics</h2>
         <div class="flex items-center gap-2">
             <button class="flex items-center gap-2 px-3.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors shadow-sm">
                 <i class="fa-regular fa-calendar text-slate-400"></i>Last 30 days
@@ -138,15 +132,15 @@
     </div>
 
     <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden">
-        <div class="h-0.5 md:h-1 bg-brand"></div>
-        <div class="p-4 md:p-5 flex items-start justify-between gap-4">
+        <div class="h-0.5 bg-brand"></div>
+        <div class="p-2.5 flex items-start justify-between gap-2">
             <div class="flex-1">
-                <span class="text-xs md:text-sm font-semibold text-slate-600 uppercase tracking-wide">Labour Disputes</span>
-                <p class="text-2xl md:text-3xl font-bold text-slate-900 mt-1 md:mt-2">5</p>
-                <p class="text-xs md:text-sm text-slate-500 mt-2">Pending</p>
+                <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Labour Disputes</span>
+                <p class="text-xl font-bold text-slate-900 mt-0.5">5</p>
+                <p class="text-xs text-slate-500 mt-0.5">Pending</p>
             </div>
-            <div class="flex-shrink-0 w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-red-50 to-red-100 rounded-lg flex items-center justify-center">
-                <x-lucide-gavel class="w-6 h-6 md:w-7 md:h-7 text-red-600" stroke-width="1.5" />
+            <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-red-50 to-red-100 rounded-lg flex items-center justify-center">
+                <x-lucide-gavel class="w-4 h-4 text-red-600" stroke-width="1.5" />
             </div>
         </div>
     </div>

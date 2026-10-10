@@ -544,6 +544,73 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
+        // Auto-refresh CSRF token every 5 minutes to prevent expiration
+        (function() {
+            function refreshCsrfToken() {
+                fetch('/refresh-csrf', {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.token) {
+                        const csrfInput = document.querySelector('input[name="_token"]');
+                        if (csrfInput) {
+                            csrfInput.value = data.token;
+                        }
+                        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+                        if (csrfMeta) {
+                            csrfMeta.setAttribute('content', data.token);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.log('CSRF token refresh skipped');
+                });
+            }
+
+            // Refresh CSRF token every 5 minutes
+            setInterval(refreshCsrfToken, 300000);
+
+            // Refresh token when page becomes visible again
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    refreshCsrfToken();
+                }
+            });
+        })();
+
+        // SVG icon fallback for Font Awesome
+        (function() {
+            const svgIcons = {
+                'fa-eye': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 1.25rem; height: 1.25rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>',
+                'fa-eye-slash': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 1.25rem; height: 1.25rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>'
+            };
+
+            function replaceFAIcons() {
+                const icons = document.querySelectorAll('i[class*="fa-"]');
+                icons.forEach(icon => {
+                    const hasContent = icon.textContent.trim().length > 0 || icon.querySelector('svg');
+                    if (!hasContent) {
+                        const classes = Array.from(icon.classList);
+                        for (const cls of classes) {
+                            if (svgIcons[cls]) {
+                                icon.innerHTML = svgIcons[cls];
+                                icon.style.display = 'inline-flex';
+                                icon.style.alignItems = 'center';
+                                icon.style.justifyContent = 'center';
+                                break;
+                            }
+                        }
+                    }
+                });
+            }
+
+            window.addEventListener('DOMContentLoaded', replaceFAIcons);
+        })();
+
         // Initialize Select2 on searchable dropdowns ONLY (Department, Designation, District, Facility)
         $(document).ready(function() {
             $('#department_id, #designation_id, #district_id, #facility_id').select2({
