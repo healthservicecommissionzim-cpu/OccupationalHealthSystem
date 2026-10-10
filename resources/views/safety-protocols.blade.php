@@ -45,23 +45,24 @@
             background: linear-gradient(to bottom, var(--white) 0%, var(--slate-50) 100%);
         }
 
-        /* Header */
-        header {
-            background: rgba(255, 255, 255, 0.95);
+        /* Hero Section with Integrated Header */
+        .hero-header {
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(12px);
-            padding: 1rem 2%;
+            padding: 1.25rem 4%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            position: sticky;
+            position: absolute;
             top: 0;
-            z-index: 1000;
+            left: 0;
+            right: 0;
+            z-index: 100;
         }
 
-        @media (min-width: 768px) {
-            header {
-                padding: 1rem 4%;
+        @media (max-width: 768px) {
+            .hero-header {
+                padding: 1rem 3%;
             }
         }
 
@@ -185,27 +186,44 @@
         /* Hero Section */
         .hero {
             background: linear-gradient(135deg, var(--brand-light) 0%, var(--white) 100%);
-            padding: 1.5rem 2%;
+            padding: 0;
             text-align: center;
             position: relative;
             overflow: hidden;
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .hero-content {
+            padding: 3rem 4% 3rem;
+            margin-top: 2rem;
         }
 
-        @media (min-width: 500px) {
+        @media (max-width: 500px) {
             .hero {
-                padding: 2.5rem 4%;
+                min-height: 45vh;
+            }
+            
+            .hero-content {
+                padding: 2rem 3% 2rem;
             }
         }
 
-        @media (min-width: 768px) {
+        @media (min-width: 501px) and (max-width: 768px) {
             .hero {
-                padding: 3.5rem 4%;
+                min-height: 47vh;
+            }
+            
+            .hero-content {
+                padding: 2.5rem 4% 2.5rem;
             }
         }
 
         @media (min-width: 1024px) {
             .hero {
-                padding: 4rem 4%;
+                min-height: 50vh;
             }
         }
 
@@ -727,25 +745,28 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <a href="{{ route('welcome') }}" class="logo">
-            <img src="{{ asset('images/hsc-logo.png') }}" alt="HSC Logo">
-            <span class="logo-text">SAFETY PROTOCOLS</span>
-        </a>
-        <nav>
-            <a href="{{ route('welcome') }}">Home</a>
-            <a href="{{ route('resources') }}">Resources</a>
-        </nav>
-        <div class="nav-buttons">
-            <a href="{{ route('login') }}" class="btn btn-primary">Log In</a>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
+    <!-- Hero Section with Integrated Header -->
     <section class="hero">
-        <h1>Safety <span>Protocols</span> & Procedures</h1>
-        <p>Critical operational guidelines and emergency procedures designed to protect Zimbabwe's healthcare workforce from occupational hazards and exposures.</p>
+        <!-- Header Navigation -->
+        <div class="hero-header">
+            <a href="{{ route('welcome') }}" class="logo">
+                <img src="{{ asset('images/hsc-logo.png') }}" alt="HSC Logo">
+                <span class="logo-text">SAFETY PROTOCOLS</span>
+            </a>
+            <nav>
+                <a href="{{ route('welcome') }}">Home</a>
+                <a href="{{ route('resources') }}">Resources</a>
+            </nav>
+            <div class="nav-buttons">
+                <a href="{{ route('login') }}" class="btn btn-primary">Log In</a>
+            </div>
+        </div>
+
+        <!-- Hero Content -->
+        <div class="hero-content">
+            <h1>Safety <span>Protocols</span> & Procedures</h1>
+            <p>Critical operational guidelines and emergency procedures designed to protect Zimbabwe's healthcare workforce from occupational hazards and exposures.</p>
+        </div>
     </section>
 
     <!-- Protocols Section -->

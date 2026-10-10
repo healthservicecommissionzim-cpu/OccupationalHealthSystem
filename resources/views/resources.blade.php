@@ -33,18 +33,19 @@
             background: linear-gradient(to bottom, #ffffff 0%, #f9fafb 100%);
         }
 
-        /* Header */
-        header {
-            background: rgba(255, 255, 255, 0.95);
+        /* Hero Section with Integrated Header */
+        .hero-header {
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(12px);
-            padding: 1rem 4%;
+            padding: 1.25rem 4%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            position: sticky;
+            position: absolute;
             top: 0;
-            z-index: 1000;
+            left: 0;
+            right: 0;
+            z-index: 100;
         }
 
         .logo {
@@ -118,10 +119,19 @@
         /* Hero Section */
         .hero {
             background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
-            padding: 4rem 4%;
+            padding: 0;
             text-align: center;
             position: relative;
             overflow: hidden;
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .hero-content {
+            padding: 3rem 4% 3rem;
+            margin-top: 2rem;
         }
 
         .hero h1 {
@@ -379,12 +389,24 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            header {
-                padding: 1rem 2%;
+            .hero-header {
+                padding: 1rem 3%;
+            }
+            
+            .logo img {
+                height: 45px;
+            }
+            
+            .logo-text {
+                font-size: 0.85rem;
             }
 
             .hero {
-                padding: 2.5rem 2%;
+                min-height: 45vh;
+            }
+            
+            .hero-content {
+                padding: 2rem 3% 2rem;
             }
 
             .resources-container {
@@ -407,30 +429,33 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <a href="{{ route('welcome') }}" class="logo">
-            <img src="{{ asset('images/hsc-logo.png') }}" alt="HSC Logo">
-            <span class="logo-text">RESOURCES HUB</span>
-        </a>
-        <nav>
-            <a href="{{ route('welcome') }}">Home</a>
-            <a href="#resources">Resources</a>
-        </nav>
-        <div class="nav-buttons">
-            <a href="{{ route('login') }}" class="btn btn-primary">Log In</a>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
+    <!-- Hero Section with Integrated Header -->
     <section class="hero">
-        <h1>Knowledge Hub & <span>Compliance</span> Resources</h1>
-        <p>Centralized operational guidelines, legal frameworks, and wellness toolkits optimized for Zimbabwean healthcare facilities.</p>
+        <!-- Header Navigation -->
+        <div class="hero-header">
+            <a href="{{ route('welcome') }}" class="logo">
+                <img src="{{ asset('images/hsc-logo.png') }}" alt="HSC Logo">
+                <span class="logo-text">RESOURCES HUB</span>
+            </a>
+            <nav>
+                <a href="{{ route('welcome') }}">Home</a>
+                <a href="#resources">Resources</a>
+            </nav>
+            <div class="nav-buttons">
+                <a href="{{ route('login') }}" class="btn btn-primary">Log In</a>
+            </div>
+        </div>
 
-        <div class="search-container">
-            <div class="search-input-wrapper">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" class="search-input" id="resourceSearch" placeholder="Search by keyword, form name, or regulation (e.g., NSSA, PEP)...">
+        <!-- Hero Content -->
+        <div class="hero-content">
+            <h1>Knowledge Hub & <span>Compliance</span> Resources</h1>
+            <p>Centralized operational guidelines, legal frameworks, and wellness toolkits optimized for Zimbabwean healthcare facilities.</p>
+
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" id="resourceSearch" placeholder="Search by keyword, form name, or regulation (e.g., NSSA, PEP)...">
+                </div>
             </div>
         </div>
     </section>
