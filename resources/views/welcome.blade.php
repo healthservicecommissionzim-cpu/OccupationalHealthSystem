@@ -197,7 +197,7 @@
         /* Hero Section */
         .hero {
             background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
-            padding: 4rem 4% 3rem;
+            padding: 3rem 4% 2.5rem;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -246,7 +246,7 @@
         
         .hero h1 {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            font-size: clamp(1.5rem, 5vw, 3.5rem);
+            font-size: clamp(2rem, 5vw, 3.5rem);
             font-weight: 800;
             color: var(--dark);
             margin-bottom: 1rem;
@@ -260,7 +260,7 @@
         
         .hero p {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            font-size: 1.1rem;
+            font-size: clamp(0.95rem, 2vw, 1.1rem);
             color: var(--slate);
             max-width: 700px;
             margin: 0 auto 2rem;
@@ -279,28 +279,30 @@
             background: linear-gradient(to bottom, #ffffff 0%, #f0fdf4 100%);
         }
         
-        /* Tablet: 2 columns */
+        /* Mobile Large: 1 column */
         @media (min-width: 501px) and (max-width: 768px) {
             .features {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1.5rem;
-                padding: 2.5rem 3% 3rem;
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 2.5rem 4% 3rem;
+            }
+        }
+        
+        /* Tablet/Laptop: 3 columns */
+        @media (min-width: 769px) and (max-width: 1199px) {
+            .features {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 2rem;
+                padding: 3rem 5% 4rem;
             }
         }
         
         /* Desktop: 3 columns */
-        @media (min-width: 769px) {
+        @media (min-width: 1200px) {
             .features {
                 grid-template-columns: repeat(3, 1fr);
-                gap: 1.5rem;
-            }
-        }
-        
-        /* Large Desktop: 3-4 columns maintained */
-        @media (min-width: 1440px) {
-            .features {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 2rem;
+                gap: 2.5rem;
+                padding: 3rem 4% 4rem;
             }
         }
         
@@ -336,6 +338,7 @@
             gap: 1rem;
             position: relative;
             border: none;
+            min-height: 200px;
         }
         
         .feature-card:hover {
@@ -1158,6 +1161,39 @@
             
             .hero p {
                 font-size: 1.1rem;
+            }
+        }
+        
+        /* Laptop screens (1024-1440px) optimization */
+        @media (min-width: 1024px) and (max-width: 1440px) {
+            .hero {
+                padding: 3.5rem 5% 3rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .hero p {
+                font-size: 1.05rem;
+                max-width: 650px;
+            }
+            
+            .features {
+                padding: 3rem 5% 4rem;
+                gap: 2rem;
+            }
+            
+            .feature-card {
+                padding: 1.75rem;
+            }
+            
+            .feature-card h3 {
+                font-size: 1.2rem;
+            }
+            
+            .feature-card p {
+                font-size: 0.88rem;
             }
         }
         
