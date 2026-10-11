@@ -778,7 +778,7 @@ select:focus-visible,
 
 /* Header Logo Image */
 .header__logo-image {
-  height: 35px;
+  height: 28px;
   width: auto;
   object-fit: contain;
   display: block;
@@ -786,13 +786,13 @@ select:focus-visible,
 
 @media (min-width: 768px) {
   .header__logo-image {
-    height: 50px;
+    height: 32px;
   }
 }
 
 @media (min-width: 1024px) {
   .header__logo-image {
-    height: 55px;
+    height: 36px;
   }
 }
 
@@ -952,6 +952,45 @@ select:focus-visible,
 
 .header__hamburger.open .header__hamburger-line:nth-child(3) {
   transform: rotate(-45deg) translateY(-10px);
+}
+
+/* Auth Buttons */
+.header__auth-button {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--slate-700);
+  text-decoration: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+}
+
+.header__auth-button:hover {
+  color: var(--brand);
+}
+
+.header__auth-button:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.header__auth-button--primary {
+  background-color: var(--brand);
+  color: white;
+  font-weight: var(--font-weight-bold);
+}
+
+.header__auth-button--primary:hover {
+  background-color: var(--brand-dark);
+  color: white;
 }
 
 /* User Menu Button */

@@ -37,7 +37,7 @@
         header {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
-            padding: 1rem 4%;
+            padding: 1rem 2%;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -47,28 +47,74 @@
             z-index: 1000;
         }
 
+        @media (min-width: 768px) {
+            header {
+                padding: 1rem 4%;
+            }
+        }
+
         .logo {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
             text-decoration: none;
+            flex-shrink: 0;
+            max-width: 70%;
         }
 
         .logo img {
-            height: 55px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        @media (min-width: 768px) {
+            .logo img {
+                height: 28px;
+            }
+            
+            .logo {
+                max-width: none;
+            }
         }
 
         .logo-text {
             font-weight: 800;
-            font-size: 1rem;
+            font-size: 0.6rem;
             color: var(--brand);
             letter-spacing: -0.02em;
+            line-height: 1.1;
+            display: block;
         }
 
+        @media (min-width: 400px) {
+            .logo-text {
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (min-width: 500px) {
+            .logo-text {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .logo-text {
+                font-size: 1rem;
+            }
+        }
+
+        /* Desktop Navigation */
         nav {
-            display: flex;
+            display: none;
             gap: 2rem;
             align-items: center;
+        }
+
+        @media (min-width: 769px) {
+            nav {
+                display: flex;
+            }
         }
 
         nav a {
@@ -83,10 +129,162 @@
             color: var(--brand);
         }
 
-        .nav-buttons {
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
             display: flex;
-            gap: 0.75rem;
             align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            width: 44px;
+            height: 44px;
+        }
+
+        @media (min-width: 769px) {
+            .mobile-menu-toggle {
+                display: none;
+            }
+        }
+
+        .mobile-menu-toggle:focus-visible {
+            outline: 2px solid var(--brand);
+            outline-offset: 2px;
+        }
+
+        .hamburger-icon {
+            width: 24px;
+            height: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            pointer-events: none;
+        }
+
+        .hamburger-line {
+            width: 100%;
+            height: 3px;
+            background-color: var(--brand);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .mobile-menu-toggle.open .hamburger-line {
+            background-color: var(--brand);
+        }
+
+        .mobile-menu-toggle.open .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .mobile-menu-toggle.open .hamburger-line:nth-child(2) {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .mobile-menu-toggle.open .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--slate);
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu-nav {
+            display: flex;
+            flex-direction: column;
+            padding: 1rem 0;
+        }
+
+        .mobile-menu-nav a {
+            text-decoration: none;
+            color: var(--slate);
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            transition: all 0.3s;
+        }
+
+        .mobile-menu-nav a:hover {
+            background: var(--brand-light);
+            color: var(--brand);
+        }
+
+        .mobile-menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+        }
+
+        .mobile-menu-buttons .btn {
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* Mobile Menu Backdrop */
+        .mobile-menu-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1999;
+        }
+
+        .mobile-menu-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .nav-buttons {
+            display: none;
+        }
+
+        @media (min-width: 769px) {
+            .nav-buttons {
+                display: flex;
+                gap: 0.75rem;
+                align-items: center;
+            }
         }
 
         .btn {
@@ -411,16 +609,45 @@
     <header>
         <a href="<?php echo e(route('welcome')); ?>" class="logo">
             <img src="<?php echo e(asset('images/hsc-logo.png')); ?>" alt="HSC Logo">
-            <span class="logo-text">RESOURCES HUB</span>
+            <span class="logo-text">HEALTH SERVICE COMMISSION</span>
         </a>
         <nav>
             <a href="<?php echo e(route('welcome')); ?>">Home</a>
-            <a href="#resources">Resources</a>
+            <a href="<?php echo e(route('resources')); ?>">Resources</a>
+            <a href="<?php echo e(route('safety_protocols')); ?>">Safety Protocols</a>
         </nav>
         <div class="nav-buttons">
             <a href="<?php echo e(route('login')); ?>" class="btn btn-primary">Log In</a>
+            <a href="<?php echo e(route('register')); ?>" class="btn btn-primary">Register</a>
         </div>
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            <div class="hamburger-icon">
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+            </div>
+        </button>
     </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu-backdrop" onclick="toggleMobileMenu()"></div>
+    <div class="mobile-menu">
+        <div class="mobile-menu-header">
+            <span style="font-weight: 700; color: var(--brand);">Menu</span>
+            <button class="mobile-menu-close" onclick="toggleMobileMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="mobile-menu-nav">
+            <a href="<?php echo e(route('welcome')); ?>">Home</a>
+            <a href="<?php echo e(route('resources')); ?>">Resources</a>
+            <a href="<?php echo e(route('safety_protocols')); ?>">Safety Protocols</a>
+        </nav>
+        <div class="mobile-menu-buttons">
+            <a href="<?php echo e(route('login')); ?>" class="btn btn-primary">Log In</a>
+            <a href="<?php echo e(route('register')); ?>" class="btn btn-primary">Register</a>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -646,6 +873,19 @@
     </footer>
 
     <script>
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.querySelector('.mobile-menu');
+            const backdrop = document.querySelector('.mobile-menu-backdrop');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            
+            menu.classList.toggle('active');
+            backdrop.classList.toggle('active');
+            toggle.classList.toggle('open');
+            
+            document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
+        }
+
         // Simple search functionality
         document.getElementById('resourceSearch').addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();

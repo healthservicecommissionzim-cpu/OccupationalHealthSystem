@@ -13,24 +13,21 @@
         <div class="header__inner">
             <!-- Logo -->
             <a href="/" class="header__logo" aria-label="HSC-OHS Home">
-                <span class="header__logo-text">HSC-OHS</span>
-                <span class="header__subtitle">Occupational Health System</span>
+                <img src="/images/hsc-logo.png" alt="HSC Logo" class="header__logo-image">
+                <span class="header__logo-text">HEALTH SERVICE COMMISSION</span>
             </a>
 
             <!-- Desktop Navigation -->
             <nav class="header__nav" aria-label="Main Navigation">
                 <ul class="header__nav-list">
                     <li class="header__nav-item">
-                        <a href="/" class="header__nav-link {{ request()->is('/') ? 'active' : '' }}">Home</a>
-                    </li>
-                    <li class="header__nav-item">
-                        <a href="/resources" class="header__nav-link {{ request()->is('resources') ? 'active' : '' }}">Resources</a>
+                        <a href="/" class="header__nav-link {{ request()->is('/') ? 'active' : '' }}">Resources</a>
                     </li>
                     <li class="header__nav-item">
                         <a href="/safety-protocols" class="header__nav-link {{ request()->is('safety-protocols') ? 'active' : '' }}">Safety Protocols</a>
                     </li>
                     <li class="header__nav-item">
-                        <a href="/support" class="header__nav-link {{ request()->is('support') ? 'active' : '' }}">Support</a>
+                        <a href="/support" class="header__nav-link {{ request()->is('support') ? 'active' : '' }}">Help Desk</a>
                     </li>
                 </ul>
             </nav>
@@ -46,11 +43,14 @@
                     </div>
                 </button>
 
-                <!-- User Profile Button -->
+                <!-- Auth Buttons -->
                 @auth
                     <button class="header__user-button" title="User Profile" aria-label="User Profile Menu">
                         {{ auth()->user()->name[0] ?? 'U' }}
                     </button>
+                @else
+                    <a href="/login" class="header__auth-button">Log In</a>
+                    <a href="/register" class="header__auth-button header__auth-button--primary">Register</a>
                 @endauth
             </div>
         </div>
@@ -71,16 +71,13 @@
             <div class="mobile-menu__content">
                 <ul class="mobile-menu__nav-list">
                     <li class="mobile-menu__nav-item">
-                        <a href="/" class="mobile-menu__nav-link {{ request()->is('/') ? 'active' : '' }}">Home</a>
-                    </li>
-                    <li class="mobile-menu__nav-item">
-                        <a href="/resources" class="mobile-menu__nav-link {{ request()->is('resources') ? 'active' : '' }}">Resources</a>
+                        <a href="/" class="mobile-menu__nav-link {{ request()->is('/') ? 'active' : '' }}">Resources</a>
                     </li>
                     <li class="mobile-menu__nav-item">
                         <a href="/safety-protocols" class="mobile-menu__nav-link {{ request()->is('safety-protocols') ? 'active' : '' }}">Safety Protocols</a>
                     </li>
                     <li class="mobile-menu__nav-item">
-                        <a href="/support" class="mobile-menu__nav-link {{ request()->is('support') ? 'active' : '' }}">Support</a>
+                        <a href="/support" class="mobile-menu__nav-link {{ request()->is('support') ? 'active' : '' }}">Help Desk</a>
                     </li>
                 </ul>
             </div>
