@@ -421,10 +421,10 @@
                         <p class="text-[11px] text-slate-500 mt-1">{{ Auth::user()->email }}</p>
                     </div>
                     <div class="p-2 border-b border-border space-y-1">
-                        <a href="{{ route('profile.show') }}" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded transition-colors">
+                        <button onclick="openProfileModal()" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded transition-colors">
                             <i class="fa-solid fa-user text-slate-600 w-4"></i>
                             <span>View Profile</span>
-                        </a>
+                        </button>
                         <a href="{{ route('support.create_ticket') }}" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded transition-colors">
                             <i class="fa-solid fa-circle-question text-slate-600 w-4"></i>
                             <span>Get IT Help</span>
@@ -499,73 +499,8 @@
 
 @yield('scripts')
 
-<!-- Welcome Modal -->
-<div id="welcomeModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 invisible transition-all duration-300">
-    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 transform scale-95 transition-all duration-300">
-        <!-- Welcome Icon -->
-        <div class="flex justify-center mb-6">
-            <div class="w-20 h-20 bg-gradient-to-br from-brand to-brand-light rounded-full flex items-center justify-center animate-bounce">
-                <i class="fas fa-hand-wave text-white text-3xl"></i>
-            </div>
-        </div>
-
-        <!-- Welcome Text -->
-        <div class="text-center">
-            <h2 class="text-3xl font-bold text-slate-900 mb-2">Welcome!</h2>
-            <p class="text-lg text-brand font-semibold mb-4">
-                {{ auth()->user()->name ?? 'User' }}
-            </p>
-            <p class="text-slate-600 text-sm">
-                You're now logged into the Health Service Commission system. Let's make today productive!
-            </p>
-        </div>
-
-        <!-- Progress Bar -->
-        <div class="mt-6 h-1 bg-slate-200 rounded-full overflow-hidden">
-            <div class="h-full bg-brand rounded-full animate-pulse" style="animation: shrink 3s linear forwards;"></div>
-        </div>
-    </div>
-</div>
-
-<style>
-    @keyframes shrink {
-        0% { width: 100%; }
-        100% { width: 0%; }
-    }
-    
-    #welcomeModal.show {
-        opacity: 1;
-        visibility: visible;
-    }
-    
-    #welcomeModal.show .bg-white {
-        scale: 1;
-    }
-</style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const welcomeModal = document.getElementById('welcomeModal');
-        if (welcomeModal) {
-            // Check if welcome modal has already been shown in this session
-            const hasSeenWelcome = sessionStorage.getItem('hasSeenWelcomeModal');
-            
-            if (!hasSeenWelcome) {
-                // Show modal with animation
-                setTimeout(() => {
-                    welcomeModal.classList.add('show');
-                    // Mark that the welcome modal has been shown
-                    sessionStorage.setItem('hasSeenWelcomeModal', 'true');
-                }, 100);
-                
-                // Auto close after 3 seconds
-                setTimeout(() => {
-                    welcomeModal.classList.remove('show');
-                }, 3100);
-            }
-        }
-    });
-</script>
+<!-- Profile Modal Component -->
+@include('components.profile-modal')
 
 </body>
 </html>

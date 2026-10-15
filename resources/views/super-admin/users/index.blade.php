@@ -4,346 +4,128 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>User Management · Super Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400,500,600,700&display=swap" rel="stylesheet" />
+    <title>All Users · Super Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { height: 100%; }
-        body { font-family: Tahoma, sans-serif; background: offwhite; padding: 2.5rem 0; min-height: 100vh; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 1rem; }
-        .header { margin-bottom: 1rem; }
-        .header h1 { 
-            font-size: 32px; 
-            font-weight: 800; 
-            color: #0f172a; 
-            display: flex; 
-            align-items: center; 
-            gap: 0.75rem; 
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.5px;
-        }
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: white;
-            color: #1D4533;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            border: 2px solid #1D4533;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-        }
-        .back-button:hover {
-            background: #1D4533;
-            color: white;
-            transform: translateX(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        .back-button i {
-            font-size: 13px;
-        }
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        .alert {
-            padding: 1rem 1.25rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-        }
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
-        }
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-        .table-wrapper { background: white; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); overflow: hidden; margin-bottom: 3rem; }
-        .table-header { 
-            padding: 1.5rem; 
-            background: linear-gradient(135deg, #1D4533 0%, #1e5140 100%);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-        }
-        .table-header h2 { 
-            font-size: 16px; 
-            font-weight: 700; 
-            color: white; 
-            display: flex; 
-            align-items: center; 
-            gap: 0.75rem;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { margin: 0; background: #f5f7fa; color: #263149; font: 14px Inter, 'Segoe UI', Arial, sans-serif; }
+        .page { max-width: 1400px; margin: auto; padding: 35px 25px 70px; }
+        
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
+        .head { display: flex; gap: 14px; }
+        .icon { width: 46px; height: 46px; border-radius: 12px; background: #e9f8f3; color: #079b6d; display: grid; place-items: center; font-size: 22px; }
+        .title { margin: 0; color: #101a31; font-size: 24px; font-weight: 750; }
+        .sub { margin-top: 5px; color: #718096; font-size: 13px; }
+        .case { display: inline-block; margin-top: 9px; padding: 5px 10px; border-radius: 6px; background: #eef2f6; color: #5d687b; font-size: 11px; font-weight: 700; }
+        .back { padding: 10px 17px; border: 1px solid #ccd6df; border-radius: 8px; background: white; color: #101a31; font-weight: 650; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .back:hover { background: #f8fafb; }
+        
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 22px; }
+        .stat-card { background: #f8fafb; border: 1px solid #e4e9ee; border-radius: 10px; padding: 18px; text-align: center; }
+        .stat-card.total { border-left: 3px solid #079b6d; }
+        .stat-card.pending { border-left: 3px solid #f59e0b; }
+        .stat-card.approved { border-left: 3px solid #22c55e; }
+        .stat-card.rejected { border-left: 3px solid #ef4444; }
+        .stat-number { font-size: 32px; font-weight: 750; color: #101a31; display: block; margin-bottom: 6px; }
+        .stat-label { font-size: 10px; color: #8a95a5; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+        
+        /* Alert */
+        .alert { padding: 16px 20px; border-radius: 10px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px; }
+        .alert-success { background: #e9f8f3; color: #067c58; border: 1px solid #d0e8df; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .alert i { font-size: 18px; margin-top: 2px; }
+        
+        /* Card */
+        .card { background: #fff; border: 1px solid #e1e7ee; border-radius: 14px; box-shadow: 0 8px 25px rgba(16,26,49,.06); overflow: hidden; margin-bottom: 22px; }
+        .chead { padding: 18px 22px; border-bottom: 1px solid #e1e7ee; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .ctitle { display: flex; align-items: center; gap: 9px; color: #101a31; font-size: 12px; font-weight: 750; text-transform: uppercase; letter-spacing: .55px; }
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; }
+        
+        /* Search and Filter */
+        .search-box { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: white; border: 1px solid #e4e9ee; border-radius: 8px; min-width: 250px; }
+        .search-box:focus-within { border-color: #079b6d; box-shadow: 0 0 0 3px rgba(7, 155, 109, 0.1); }
+        .search-box input { border: none; background: transparent; outline: none; width: 100%; font-size: 12px; color: #263149; }
+        .search-box input::placeholder { color: #8a95a5; }
+        .search-box i { color: #8a95a5; font-size: 13px; }
+        
+        .filter-select { padding: 8px 12px; background: white; border: 1px solid #e4e9ee; border-radius: 8px; font-size: 12px; color: #263149; font-weight: 600; cursor: pointer; outline: none; }
+        .filter-select:hover { border-color: #079b6d; }
+        .filter-select:focus { border-color: #079b6d; box-shadow: 0 0 0 3px rgba(7, 155, 109, 0.1); }
+        
+        /* Table */
         .table-container { overflow-x: auto; }
-        table { width: 100%; font-size: 13px; border-collapse: collapse; }
-        thead { background: #f7fafc; }
-        th { 
-            text-align: left; 
-            padding: 0.4rem 0.75rem; 
-            font-weight: 700; 
-            color: #2d3748; 
-            border-bottom: 2px solid #e2e8f0;
-            white-space: nowrap;
-            line-height: 1.2;
-        }
-        td { 
-            padding: 0.4rem 0.75rem; 
-            border-bottom: 1px solid #e2e8f0;
-            color: #4a5568;
-            font-family: Tahoma, sans-serif;
-            line-height: 1.3;
-        }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        thead { background: #f8fafb; }
+        th { text-align: left; padding: 12px; font-size: 10px; font-weight: 750; color: #8a95a5; text-transform: uppercase; border-bottom: 2px solid #e4e9ee; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        td { padding: 14px 12px; border-bottom: 1px solid #e4e9ee; color: #4e596c; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         tbody tr { transition: background-color 0.2s ease; }
-        tbody tr:hover { background: #f7fafc; }
+        tbody tr:hover { background: #f8fafb; }
         tbody tr:last-child td { border-bottom: none; }
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+        
+        .user-name { font-weight: 700; color: #079b6d; font-size: 12px; }
+        .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px; font-size: 9px; font-weight: 750; white-space: nowrap; text-transform: uppercase; }
+        .status-badge.pending { background: #fff8e7; color: #c67a00; }
+        .status-badge.approved { background: #e9f8f3; color: #067c58; }
+        .status-badge.rejected { background: #fee2e2; color: #991b1b; }
+        
+        .action-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; background: #079b6d; color: white; text-decoration: none; border-radius: 6px; font-size: 10px; font-weight: 650; transition: all 0.2s; border: none; cursor: pointer; }
+        .action-btn:hover { background: #067c58; transform: translateY(-1px); }
+        
+        /* Empty State */
+        .empty-state { text-align: center; padding: 60px 20px; }
+        .empty-state i { font-size: 48px; color: #e4e9ee; display: block; margin-bottom: 12px; }
+        .empty-state p { font-size: 14px; color: #8a95a5; font-weight: 600; }
+        
+        /* Pagination */
+        .pagination-wrapper { padding: 16px 22px; background: white; border-top: 1px solid #e4e9ee; }
+        .pagination { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; align-items: center; }
+        .pagination a, .pagination span { padding: 8px 12px; border: 1px solid #e4e9ee; background: white; cursor: pointer; border-radius: 6px; font-size: 11px; font-weight: 650; transition: all 0.2s; text-decoration: none; color: #4e596c; min-width: 36px; text-align: center; }
+        .pagination a:hover { border-color: #079b6d; color: #079b6d; background: #f0f9f7; }
+        .pagination .active span { background: #079b6d; color: white; border-color: #079b6d; }
+        .pagination .disabled span { color: #cbd5e1; cursor: not-allowed; background: #f8fafb; }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .chead { flex-direction: column; align-items: stretch; }
+            .filters { flex-direction: column; }
+            .search-box { min-width: 100%; }
+            table { table-layout: auto; }
+            th:nth-child(4), th:nth-child(5), th:nth-child(6), th:nth-child(7), th:nth-child(8),
+            td:nth-child(4), td:nth-child(5), td:nth-child(6), td:nth-child(7), td:nth-child(8) { display: none; }
         }
-        .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #1D4533;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.7rem;
-        }
-        .user-name { 
-            font-weight: 600; 
-            color: #1D4533;
-        }
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            padding: 0.4rem 0.75rem;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-        .badge-pending {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-        .badge-approved {
-            background: #d1fae5;
-            color: #065f46;
-        }
-        .badge-rejected {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-        .action-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.4rem 0.8rem;
-            background: #1D4533;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-        .action-btn:hover {
-            background: #0f2818;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(29, 69, 51, 0.3);
-        }
-        .empty-state { 
-            text-align: center; 
-            padding: 3rem 1.5rem;
-        }
-        .empty-state i { 
-            font-size: 48px; 
-            color: #cbd5e1; 
-            margin-bottom: 1rem; 
-        }
-        .empty-state p { 
-            font-size: 16px; 
-            color: #64748b; 
-            font-weight: 600; 
-        }
-        .pagination-wrapper { 
-            padding: 1rem; 
-            text-align: center; 
-            background: white; 
-            border-top: 1px solid #e2e8f0;
-        }
-        .pagination { 
-            display: flex; 
-            justify-content: center; 
-            gap: 0.3rem; 
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .pagination a, .pagination span { 
-            padding: 0.4rem 0.6rem; 
-            border: 1px solid #e2e8f0;
-            background: white;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            color: #4a5568;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 30px;
-            height: 30px;
-        }
-        .pagination a:hover {
-            border-color: #1D4533;
-            color: #1D4533;
-            background: #f0f4f2;
-        }
-        .pagination .active span, .pagination .active a { 
-            background: linear-gradient(135deg, #1D4533 0%, #1e5140 100%);
-            color: white; 
-            border-color: #1D4533; 
-        }
-        .pagination .disabled span {
-            color: #cbd5e1;
-            cursor: not-allowed;
-            background: #f7fafc;
-        }
-        /* Hide previous/next text but keep page numbers */
-        .pagination a:contains("Previous"),
-        .pagination a:contains("Next"),
-        .pagination span:contains("Previous"),
-        .pagination span:contains("Next") {
-            display: none !important;
-        }
-        .search-box {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.6rem 1rem;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 13px;
-            transition: all 0.2s ease;
-        }
-        .search-box:focus-within {
-            border-color: #1D4533;
-            box-shadow: 0 0 0 3px rgba(29, 69, 51, 0.1);
-        }
-        .search-box input {
-            border: none;
-            background: transparent;
-            outline: none;
-            width: 100%;
-            font-size: 13px;
-            color: #2d3748;
-            font-family: 'Roboto', sans-serif;
-        }
-        .search-box input::placeholder {
-            color: #a0aec0;
-        }
-        .search-box i {
-            color: #64748b;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-        .filter-dropdown {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.6rem 1rem;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: #2d3748;
-            font-weight: 600;
-        }
-        .filter-dropdown:hover {
-            border-color: #1D4533;
-        }
-        .filter-dropdown i {
-            color: #64748b;
-            font-size: 14px;
-        }
-        .records-per-page {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.6rem 1rem;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 12px;
-            transition: all 0.2s ease;
-        }
-        .records-per-page:focus-within {
-            border-color: #1D4533;
-            box-shadow: 0 0 0 3px rgba(29, 69, 51, 0.1);
-        }
-        .records-per-page select {
-            border: none;
-            background: transparent;
-            outline: none;
-            cursor: pointer;
-            font-size: 12px;
-            color: #2d3748;
-            font-weight: 600;
-            font-family: Tahoma, sans-serif;
-        }
-        .records-per-page label {
-            color: #64748b;
-            font-weight: 600;
-            margin: 0;
-            white-space: nowrap;
-        }
-        @media (max-width: 768px) {
-            body { padding: 1.5rem 0; }
-            .header h1 { font-size: 24px; }
-            .header-top { flex-direction: column; align-items: flex-start; gap: 1rem; }
-            .table-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-            th, td { padding: 0.75rem; font-size: 12px; }
+        @media (max-width: 650px) {
+            .page { padding: 22px 15px; }
+            .header { flex-direction: column; gap: 15px; }
+            .back { width: 100%; text-align: center; justify-content: center; }
+            .stats-grid { grid-template-columns: 1fr; }
+            table { font-size: 11px; }
+            th, td { padding: 10px 8px; }
+            th:nth-child(3), td:nth-child(3) { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="page">
+        <!-- Header -->
         <div class="header">
-            <div class="header-top">
-                <h3><i class="fa-solid fa-users"></i> User Management</h3>
-                <a href="{{ route('dashboards.super_admin') }}" class="back-button">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    Back to Dashboard
-                </a>
+            <div class="head">
+                <div class="icon"><i class="fa-solid fa-users"></i></div>
+                <div>
+                    <h1 class="title">User Management</h1>
+                    <div class="sub">Review and manage all system users</div>
+                    <span class="case">Total: {{ $users->total() }} users</span>
+                </div>
             </div>
+            <a href="{{ route('dashboards.super_admin') }}" class="back"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
         </div>
 
-        <!-- Alerts -->c
+        <!-- Alerts -->
         @if (session('success'))
             <div class="alert alert-success">
                 <i class="fa-solid fa-circle-check"></i>
@@ -358,29 +140,20 @@
             </div>
         @endif
 
-        <div class="table-wrapper">
-            <div class="table-header">
-                <h2><i class="fa-solid fa-table-list"></i> User Registry [<span id="userCount">{{ $users->total() }}</span>]</h2>
-                <div style="display: flex; gap: 0.75rem; align-items: center;">
-                    <select id="statusFilter" class="filter-dropdown">
+        <!-- Users Table -->
+        <div class="card">
+            <div class="chead">
+                <div class="ctitle"><i class="fa-solid fa-table-list"></i> &nbsp; User Registry</div>
+                <div class="filters">
+                    <select id="statusFilter" class="filter-select">
                         <option value="all">All Status</option>
                         <option value="pending">Pending</option>
                         <option value="approved">Approved</option>
                         <option value="rejected">Rejected</option>
                     </select>
-                    <div class="records-per-page">
-                        <label for="recordsPerPage">Show:</label>
-                        <select id="recordsPerPage">
-                            <option value="10">10</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                            <option value="500">500</option>
-                            <option value="1000">1000</option>
-                        </select>
-                    </div>
                     <div class="search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="tableSearch" placeholder="Search by name or email..." />
+                        <input type="text" id="tableSearch" placeholder="Search by name, email, phone..." />
                     </div>
                 </div>
             </div>
@@ -402,31 +175,38 @@
                             <th style="width: 100px; text-align: center;">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @forelse($users ?? [] as $user)
+                    <tbody id="usersTable">
+                        @forelse($users as $user)
                             <tr data-status="{{ $user->status ?? '' }}">
-                                <td style="text-align: center; font-weight: 600; color: #64748b;">{{ $loop->iteration }}</td>
-                                <td>
-                                    <div class="user-name">{{ $user->name }}</div>
-                                </td>
+                                <td style="text-align: center; font-weight: 700; color: #8a95a5;">{{ $loop->iteration }}</td>
+                                <td><span class="user-name">{{ $user->name }}</span></td>
                                 <td>{{ $user->email }}</td>
-                                <td>{{ $user->phone_number ?? '-' }}</td>
-                                <td>{{ $user->roles->pluck('display_name')->implode(', ') ?: '-' }}</td>
-                                <td>{{ $user->province->name ?? '-' }}</td>
-                                <td>{{ $user->district->name ?? '-' }}</td>
-                                <td>{{ $user->facility->name ?? '-' }}</td>
+                                <td>{{ $user->phone_number ?? 'N/A' }}</td>
+                                <td>{{ $user->roles->pluck('display_name')->implode(', ') ?: 'N/A' }}</td>
+                                <td>{{ $user->province->name ?? 'N/A' }}</td>
+                                <td>{{ $user->district->name ?? 'N/A' }}</td>
+                                <td>{{ Str::limit($user->facility->name ?? 'N/A', 25) }}</td>
                                 <td>
                                     @if ($user->status === 'pending')
-                                        <span class="badge badge-pending"><i class="fa-solid fa-hourglass"></i> Pending</span>
+                                        <span class="status-badge pending">
+                                            <i class="fa-solid fa-circle" style="font-size: 6px;"></i>
+                                            Pending
+                                        </span>
                                     @elseif ($user->status === 'approved')
-                                        <span class="badge badge-approved"><i class="fa-solid fa-check"></i> Approved</span>
+                                        <span class="status-badge approved">
+                                            <i class="fa-solid fa-circle" style="font-size: 6px;"></i>
+                                            Approved
+                                        </span>
                                     @elseif ($user->status === 'rejected')
-                                        <span class="badge badge-rejected"><i class="fa-solid fa-times"></i> Rejected</span>
+                                        <span class="status-badge rejected">
+                                            <i class="fa-solid fa-circle" style="font-size: 6px;"></i>
+                                            Rejected
+                                        </span>
                                     @endif
                                 </td>
-                                <td>{{ $user->created_at->format('M d, Y') }}</td>
+                                <td>{{ $user->created_at->format('d M Y') }}</td>
                                 <td style="text-align: center;">
-                                    <a href="{{ route('user-approval.show', $user) }}" class="action-btn" title="Manage User">
+                                    <a href="{{ route('user-approval.show', $user) }}" class="action-btn">
                                         <i class="fa-solid fa-cog"></i> Manage
                                     </a>
                                 </td>
@@ -456,56 +236,33 @@
     </div>
 
     <script>
+        // Search and Filter
+        function filterTable() {
+            const searchTerm = document.getElementById('tableSearch').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const rows = document.querySelectorAll('#usersTable tr');
+            
+            rows.forEach(row => {
+                // Skip empty state row
+                if (row.cells.length === 1 && row.cells[0].colSpan > 1) return;
+                
+                const text = row.textContent.toLowerCase();
+                const rowStatus = row.getAttribute('data-status') || '';
+                
+                const searchMatch = searchTerm === '' || text.includes(searchTerm);
+                
+                let statusMatch = true;
+                if (statusFilter !== 'all') {
+                    statusMatch = rowStatus === statusFilter;
+                }
+                
+                row.style.display = (searchMatch && statusMatch) ? '' : 'none';
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('tableSearch').addEventListener('keyup', filterTable);
             document.getElementById('statusFilter').addEventListener('change', filterTable);
-            document.getElementById('recordsPerPage').addEventListener('change', filterTable);
-
-            function filterTable() {
-                const searchTerm = document.getElementById('tableSearch').value.toLowerCase();
-                const statusFilter = document.getElementById('statusFilter').value;
-                const recordsPerPage = document.getElementById('recordsPerPage').value;
-                const rows = document.querySelectorAll('table tbody tr');
-                let visibleCount = 0;
-                let displayedCount = 0;
-
-                rows.forEach((row, index) => {
-                    // Skip empty state row
-                    if (row.cells.length === 1 && row.cells[0].colSpan > 1) {
-                        return;
-                    }
-
-                    const text = row.textContent.toLowerCase();
-                    const rowStatus = row.getAttribute('data-status') || '';
-                    
-                    // Check search term match
-                    const searchMatch = searchTerm === '' || text.includes(searchTerm);
-                    
-                    // Check status filter match
-                    const statusMatch = statusFilter === 'all' || rowStatus === statusFilter;
-                    
-                    if (searchMatch && statusMatch) {
-                        visibleCount++;
-                        // Check if we should display this row based on records per page
-                        const limit = parseInt(recordsPerPage);
-                        if (displayedCount < limit) {
-                            row.style.display = '';
-                            displayedCount++;
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-
-                // Update the count in the header
-                const headerH2 = document.querySelector('.table-header h2');
-                if (headerH2) {
-                    const suffix = searchTerm !== '' || statusFilter !== 'all' || recordsPerPage !== '10' ? ` [${displayedCount} of ${visibleCount} results]` : ` [${displayedCount}]`;
-                    headerH2.innerHTML = '<i class="fa-solid fa-table-list"></i> User Registry' + suffix;
-                }
-            }
         });
     </script>
 </body>

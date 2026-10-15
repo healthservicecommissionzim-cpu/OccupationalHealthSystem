@@ -12,31 +12,23 @@
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
         :root {
-            --brand: #1D4533;
-            --brand-dark: #0f2818;
-            --brand-light: #f0fdf4;
-            --brand-glow: rgba(29, 69, 51, 0.25);
-            --slate-50: #FBFBFA;
-            --slate-100: #f1f5f9;
-            --slate-200: #e2e8f0;
-            --slate-300: #cbd5e1;
-            --slate-400: #94a3b8;
-            --slate-500: #64748b;
-            --slate-600: #475569;
-            --slate-700: #334155;
-            --slate-800: #1e293b;
-            --slate-900: #0f172a;
-            --white: #ffffff;
-            --red-500: #ef4444;
-            --green-500: #22c55e;
-            --red-error-bg: #fef2f2;
-            --red-error-text: #991b1b;
-            --green-success-bg: #ecfdf5;
-            --green-success-text: #065f46;
+            --brand: #079b6d;
+            --brand-deep: #067c58;
+            --brand-soft: #e9f8f3;
+            --ink: #101a31;
+            --ink-soft: #4e596c;
+            --muted: #718096;
+            --line: #e1e7ee;
+            --surface: #ffffff;
+            --canvas: #f5f7fa;
+            --danger: #ef4444;
+            --danger-soft: #fef2f2;
+            --success: #22c55e;
+            --success-soft: #ecfdf5;
             --radius: 14px;
             --radius-sm: 8px;
             --shadow-card: 0 20px 60px -12px rgba(0, 0, 0, 0.08), 0 4px 24px -6px rgba(0, 0, 0, 0.02);
@@ -47,7 +39,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: #f5f5f5;
             min-height: 100vh;
             display: flex;
@@ -98,7 +90,7 @@
 
         nav a {
             text-decoration: none;
-            color: var(--slate-600);
+            color: var(--ink-soft);
             font-weight: 500;
             font-size: 0.9rem;
             transition: color 0.3s;
@@ -130,14 +122,14 @@
 
         .btn-primary {
             background: var(--brand);
-            color: white;
-            box-shadow: 0 4px 12px rgba(29, 69, 51, 0.2);
+            color: var(--surface);
+            box-shadow: 0 4px 12px rgba(7, 155, 109, 0.2);
         }
 
         .btn-primary:hover {
-            background: var(--brand-dark);
+            background: var(--brand-deep);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(29, 69, 51, 0.3);
+            box-shadow: 0 6px 20px rgba(7, 155, 109, 0.3);
         }
 
         /* ═══════════════════════════════════════MAIN LAYOUT════════════════════════════════════════ */
@@ -173,7 +165,7 @@
         }
 
         .card {
-            background: var(--white);
+            background: var(--surface);
             border-radius: var(--radius);
             padding: 2rem;
             box-shadow: var(--shadow-card);
@@ -215,7 +207,7 @@
             font-size: 1rem;
             font-weight: 700;
             letter-spacing: -0.02em;
-            color: var(--slate-900);
+            color: var(--ink);
         }
 
         .brand-title span {
@@ -225,14 +217,14 @@
         .page-title {
             font-size: 1.3rem;
             font-weight: 800;
-            color: var(--slate-900);
+            color: var(--ink);
             margin-bottom: 0.5rem;
             text-align: center;
         }
 
         .page-description {
             font-size: 0.85rem;
-            color: var(--slate-500);
+            color: var(--muted);
             text-align: center;
             margin-bottom: 1.5rem;
             line-height: 1.5;
@@ -242,17 +234,17 @@
             display: flex;
             align-items: flex-start;
             gap: 0.5rem;
-            color: var(--red-error-text);
+            color: #7f1d1d;
             font-size: 0.8rem;
             padding: 0.6rem 0.9rem;
-            background: var(--red-error-bg);
+            background: var(--danger-soft);
             border-radius: var(--radius-sm);
-            border-left: 3px solid var(--red-500);
+            border-left: 3px solid var(--danger);
             margin-bottom: 1.25rem;
         }
 
         .alert-error i {
-            color: var(--red-500);
+            color: var(--danger);
             font-size: 0.85rem;
             margin-top: 2px;
             flex-shrink: 0;
@@ -275,7 +267,7 @@
             display: block;
             font-size: 0.78rem;
             font-weight: 600;
-            color: var(--slate-700);
+            color: var(--ink-soft);
             margin-bottom: 0.25rem;
         }
 
@@ -288,7 +280,7 @@
             left: 0.75rem;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--slate-400);
+            color: var(--muted);
             font-size: 0.85rem;
             pointer-events: none;
         }
@@ -298,12 +290,12 @@
         input[type="text"] {
             width: 100%;
             padding: 0.6rem 0.9rem 0.6rem 2.5rem;
-            border: 1.5px solid var(--slate-200);
+            border: 1.5px solid var(--line);
             border-radius: var(--radius-sm);
             font-size: 0.9rem;
             font-family: inherit;
-            background: var(--white);
-            color: var(--slate-900);
+            background: var(--surface);
+            color: var(--ink);
             outline: none;
             transition: border-color var(--transition), box-shadow var(--transition);
             min-height: 44px;
@@ -315,17 +307,17 @@
         }
 
         input::placeholder {
-            color: var(--slate-400);
+            color: var(--muted);
             font-size: 0.85rem;
         }
 
         .input-wrapper.error input {
-            border-color: var(--red-500);
+            border-color: var(--danger);
             box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
         }
 
         .error-text {
-            color: var(--red-500);
+            color: var(--danger);
             font-size: 0.75rem;
             margin-top: 0.25rem;
             display: flex;
@@ -346,7 +338,7 @@
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: var(--slate-400);
+            color: var(--muted);
             cursor: pointer;
             font-size: 0.9rem;
             padding: 0.5rem;
@@ -359,7 +351,7 @@
         }
 
         .toggle-password-btn:hover {
-            color: var(--slate-600);
+            color: var(--ink-soft);
         }
 
         .toggle-password-btn:focus {
@@ -387,7 +379,7 @@
             margin-bottom: 0;
             cursor: pointer;
             font-size: 0.82rem;
-            color: var(--slate-600);
+            color: var(--ink-soft);
             font-weight: 500;
         }
 
@@ -398,7 +390,7 @@
 
         .btn-submit {
             background: var(--brand);
-            color: var(--white);
+            color: var(--surface);
             padding: 0.6rem 1.6rem;
             border-radius: var(--radius-sm);
             font-weight: 600;
@@ -411,15 +403,15 @@
             justify-content: center;
             gap: 0.5rem;
             white-space: nowrap;
-            box-shadow: 0 2px 8px rgba(29, 69, 51, 0.25);
+            box-shadow: 0 2px 8px rgba(7, 155, 109, 0.25);
             width: 100%;
             min-height: 44px;
         }
 
         .btn-submit:hover:not(:disabled) {
-            background: var(--brand-dark);
+            background: var(--brand-deep);
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(29, 69, 51, 0.3);
+            box-shadow: 0 6px 20px rgba(7, 155, 109, 0.3);
         }
 
         .btn-submit:active:not(:disabled) {
@@ -432,26 +424,45 @@
         }
 
         .forgot-password-link {
-            text-align: right;
+            color: var(--brand) !important;
+            text-decoration: none !important;
+            font-weight: 600;
+            font-size: 0.82rem;
+            transition: all var(--transition);
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 6px;
             margin-bottom: 1.5rem;
         }
 
-        .forgot-password-link a {
-            color: var(--slate-600) !important;
-            text-decoration: none !important;
-            font-weight: 500;
-            font-size: 0.82rem;
-            transition: color var(--transition);
+        .forgot-password-link::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--brand);
+            transition: width var(--transition);
         }
 
-        .forgot-password-link a:hover {
-            color: var(--brand) !important;
+        .forgot-password-link:hover {
+            color: var(--brand-deep) !important;
+            background: rgba(7, 155, 109, 0.08);
             text-decoration: none !important;
         }
 
-        .forgot-password-link a:focus {
+        .forgot-password-link:hover::before {
+            width: 100%;
+        }
+
+        .forgot-password-link:focus {
             outline: 2px solid var(--brand);
             outline-offset: 2px;
+            background: rgba(7, 155, 109, 0.08);
         }
 
         /* Form Actions Row */
@@ -476,9 +487,9 @@
             text-align: center;
             margin-top: 1.25rem;
             font-size: 0.82rem;
-            color: var(--slate-500);
+            color: var(--muted);
             padding-top: 1rem;
-            border-top: 1px solid var(--slate-100);
+            border-top: 1px solid var(--line);
         }
 
         .footer-text a {
@@ -489,7 +500,7 @@
         }
 
         .footer-text a:hover {
-            color: var(--brand-dark);
+            color: var(--brand-deep);
             text-decoration: underline;
         }
 

@@ -5,417 +5,123 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>Audit Logs · Super Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400,500,600,700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { height: 100%; }
-        body { font-family: Tahoma, sans-serif; background: offwhite; padding: 2.5rem 0; min-height: 100vh; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 1rem; }
-        .header { margin-bottom: 1rem; }
-        .header h1 { 
-            font-size: 32px; 
-            font-weight: 800; 
-            color: #0f172a; 
-            display: flex; 
-            align-items: center; 
-            gap: 0.75rem; 
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.5px;
-        }
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: white;
-            color: #1D4533;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            border: 2px solid #1D4533;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-        }
-        .back-button:hover {
-            background: #1D4533;
-            color: white;
-            transform: translateX(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        .back-button i {
-            font-size: 13px;
-        }
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        .alert {
-            padding: 1rem 1.25rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-        }
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
-        }
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-        .table-wrapper { background: white; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); overflow: hidden; margin-bottom: 3rem; }
-        .table-header { 
-            padding: 1.5rem; 
-            background: linear-gradient(135deg, #1D4533 0%, #1e5140 100%);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-        }
-        .table-header h2 { 
-            font-size: 16px; 
-            font-weight: 700; 
-            color: white; 
-            display: flex; 
-            align-items: center; 
-            gap: 0.75rem;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { margin: 0; background: #f5f7fa; color: #263149; font: 14px Inter, 'Segoe UI', Arial, sans-serif; }
+        .page { max-width: 1400px; margin: auto; padding: 35px 25px 70px; }
+        
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
+        .head { display: flex; gap: 14px; }
+        .icon { width: 46px; height: 46px; border-radius: 12px; background: #e9f8f3; color: #079b6d; display: grid; place-items: center; font-size: 22px; }
+        .title { margin: 0; color: #101a31; font-size: 24px; font-weight: 750; }
+        .sub { margin-top: 5px; color: #718096; font-size: 13px; }
+        .case { display: inline-block; margin-top: 9px; padding: 5px 10px; border-radius: 6px; background: #eef2f6; color: #5d687b; font-size: 11px; font-weight: 700; }
+        .back { padding: 10px 17px; border: 1px solid #ccd6df; border-radius: 8px; background: white; color: #101a31; font-weight: 650; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .back:hover { background: #f8fafb; }
+        
+        /* Card */
+        .card { background: #fff; border: 1px solid #e1e7ee; border-radius: 14px; box-shadow: 0 8px 25px rgba(16,26,49,.06); overflow: hidden; margin-bottom: 22px; }
+        .chead { padding: 18px 22px; border-bottom: 1px solid #e1e7ee; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .ctitle { display: flex; align-items: center; gap: 9px; color: #101a31; font-size: 12px; font-weight: 750; text-transform: uppercase; letter-spacing: .55px; }
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        
+        /* Filter Select */
+        .filter-select { padding: 8px 12px; background: white; border: 1px solid #e4e9ee; border-radius: 8px; font-size: 12px; color: #263149; font-weight: 600; cursor: pointer; outline: none; }
+        .filter-select:hover { border-color: #079b6d; }
+        .filter-select:focus { border-color: #079b6d; box-shadow: 0 0 0 3px rgba(7, 155, 109, 0.1); }
+        
+        /* Search and Filter */
+        .search-box { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: white; border: 1px solid #e4e9ee; border-radius: 8px; min-width: 250px; }
+        .search-box:focus-within { border-color: #079b6d; box-shadow: 0 0 0 3px rgba(7, 155, 109, 0.1); }
+        .search-box input { border: none; background: transparent; outline: none; width: 100%; font-size: 12px; color: #263149; }
+        .search-box input::placeholder { color: #8a95a5; }
+        .search-box i { color: #8a95a5; font-size: 13px; }
+        
+        /* Table */
         .table-container { overflow-x: auto; }
-        table { width: 100%; font-size: 13px; border-collapse: collapse; }
-        thead { background: #f7fafc; }
-        th { 
-            text-align: left; 
-            padding: 0.4rem 0.75rem; 
-            font-weight: 700; 
-            color: #2d3748; 
-            border-bottom: 2px solid #e2e8f0;
-            white-space: nowrap;
-            line-height: 1.2;
-        }
-        td { 
-            padding: 0.4rem 0.75rem; 
-            border-bottom: 1px solid #e2e8f0;
-            color: #4a5568;
-            font-family: Tahoma, sans-serif;
-            line-height: 1.3;
-        }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f8fafb; }
+        th { text-align: left; padding: 12px; font-size: 10px; font-weight: 750; color: #8a95a5; text-transform: uppercase; border-bottom: 2px solid #e4e9ee; letter-spacing: 0.5px; white-space: nowrap; }
+        td { padding: 14px 12px; border-bottom: 1px solid #e4e9ee; color: #4e596c; font-size: 12px; }
         tbody tr { transition: background-color 0.2s ease; }
-        tbody tr:hover { background: #f7fafc; }
+        tbody tr:hover { background: #f8fafb; }
         tbody tr:last-child td { border-bottom: none; }
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            padding: 0.4rem 0.75rem;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 700;
+        
+        .badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px; font-size: 9px; font-weight: 750; white-space: nowrap; text-transform: uppercase; }
+        .badge-role { background: #dbeafe; color: #1e40af; }
+        .badge-rejection { background: #fee2e2; color: #991b1b; }
+        .badge-activity { background: #fef3c7; color: #92400e; }
+        .badge-access { background: #dbeafe; color: #1e40af; }
+        .badge-login { background: #fee2e2; color: #991b1b; }
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-failed { background: #fee2e2; color: #991b1b; }
+        
+        .action-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; background: #079b6d; color: white; border: none; border-radius: 6px; font-size: 10px; font-weight: 650; text-decoration: none; cursor: pointer; transition: all 0.2s; }
+        .action-btn:hover { background: #067c58; transform: translateY(-1px); }
+        
+        /* Empty State */
+        .empty-state { text-align: center; padding: 60px 20px; }
+        .empty-state i { font-size: 48px; color: #e4e9ee; display: block; margin-bottom: 12px; }
+        .empty-state p { font-size: 14px; color: #8a95a5; font-weight: 600; }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; align-items: flex-start; justify-content: center; overflow-y: auto; backdrop-filter: blur(4px); padding: 40px 20px; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 14px; max-width: 700px; width: 100%; box-shadow: 0 25px 80px rgba(0,0,0,0.4); border: 2px solid #e1e7ee; max-height: 90vh; overflow-y: auto; margin: auto; }
+        .modal-header { position: sticky; top: 0; background: linear-gradient(135deg, #079b6d 0%, #067c58 100%); padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #079b6d; z-index: 2001; }
+        .modal-header h2 { color: white; font-size: 18px; font-weight: 750; margin: 0; display: flex; align-items: center; gap: 10px; }
+        .modal-close { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 20px; cursor: pointer; padding: 8px 12px; border-radius: 8px; transition: all 0.2s; }
+        .modal-close:hover { background: rgba(255,255,255,0.3); }
+        .modal-body { padding: 24px; }
+        
+        .detail-section { margin-bottom: 24px; }
+        .detail-section h3 { font-size: 12px; font-weight: 750; color: #079b6d; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; border-bottom: 2px solid #e4e9ee; padding-bottom: 8px; }
+        .detail-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 12px; border-bottom: 1px solid #e4e9ee; }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { font-weight: 650; color: #4e596c; min-width: 150px; }
+        .detail-value { color: #263149; word-break: break-word; }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .chead { flex-direction: column; align-items: stretch; }
+            .filters { flex-direction: column; }
+            .search-box { min-width: 100%; }
         }
-        .badge-active {
-            background: #d1fae5;
-            color: #065f46;
-        }
-        .badge-removed {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-        .empty-state { 
-            text-align: center; 
-            padding: 3rem 1.5rem;
-        }
-        .empty-state i { 
-            font-size: 48px; 
-            color: #cbd5e1; 
-            margin-bottom: 1rem; 
-        }
-        .empty-state p { 
-            font-size: 16px; 
-            color: #64748b; 
-            font-weight: 600; 
-        }
-        .pagination-wrapper { 
-            padding: 1rem; 
-            text-align: center; 
-            background: white; 
-            border-top: 1px solid #e2e8f0;
-        }
-        .pagination { 
-            display: flex; 
-            justify-content: center; 
-            gap: 0.3rem; 
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .pagination a, .pagination span { 
-            padding: 0.4rem 0.6rem; 
-            border: 1px solid #e2e8f0;
-            background: white;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            color: #4a5568;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 30px;
-            height: 30px;
-        }
-        .pagination a:hover {
-            border-color: #1D4533;
-            color: #1D4533;
-            background: #f0f4f2;
-        }
-        .pagination .active span, .pagination .active a { 
-            background: linear-gradient(135deg, #1D4533 0%, #1e5140 100%);
-            color: white; 
-            border-color: #1D4533; 
-        }
-        .pagination .disabled span {
-            color: #cbd5e1;
-            cursor: not-allowed;
-            background: #f7fafc;
-        }
-        .search-box {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.6rem 1rem;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 13px;
-            transition: all 0.2s ease;
-        }
-        .search-box:focus-within {
-            border-color: #1D4533;
-            box-shadow: 0 0 0 3px rgba(29, 69, 51, 0.1);
-        }
-        .search-box input {
-            border: none;
-            background: transparent;
-            outline: none;
-            width: 100%;
-            font-size: 13px;
-            color: #2d3748;
-            font-family: 'Roboto', sans-serif;
-        }
-        .search-box input::placeholder {
-            color: #a0aec0;
-        }
-        .search-box i {
-            color: #64748b;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-        .filter-dropdown {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.6rem 1rem;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: #2d3748;
-            font-weight: 600;
-        }
-        .filter-dropdown:hover {
-            border-color: #1D4533;
-        }
-        .filter-dropdown i {
-            color: #64748b;
-            font-size: 14px;
-        }
-        .records-per-page {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.6rem 1rem;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 12px;
-            transition: all 0.2s ease;
-        }
-        .records-per-page:focus-within {
-            border-color: #1D4533;
-            box-shadow: 0 0 0 3px rgba(29, 69, 51, 0.1);
-        }
-        .records-per-page select {
-            border: none;
-            background: transparent;
-            outline: none;
-            cursor: pointer;
-            font-size: 12px;
-            color: #2d3748;
-            font-weight: 600;
-            font-family: Tahoma, sans-serif;
-        }
-        .records-per-page label {
-            color: #64748b;
-            font-weight: 600;
-            margin: 0;
-            white-space: nowrap;
-        }
-        .action-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.4rem 0.8rem;
-            background: #1D4533;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-        .action-btn:hover {
-            background: #0f2818;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(29, 69, 51, 0.3);
-        }
-        /* Modal Styles */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            animation: fadeIn 0.3s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 700px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            animation: slideUp 0.3s ease;
-        }
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .modal-header {
-            padding: 1rem 1.5rem;
-            background: linear-gradient(135deg, #1D4533 0%, #1e5140 100%);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .modal-header h2 {
-            font-size: 16px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin: 0;
-        }
-        .modal-close {
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            padding: 0.3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-        .modal-close:hover {
-            transform: scale(1.1);
-        }
-        .modal-body {
-            padding: 1.5rem;
-        }
-        .detail-section {
-            margin-bottom: 1.5rem;
-        }
-        .detail-section h3 {
-            font-size: 13px;
-            font-weight: 700;
-            color: #1D4533;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.75rem;
-            border-bottom: 2px solid #1D4533;
-            padding-bottom: 0.5rem;
-        }
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-            font-size: 13px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .detail-row:last-child {
-            border-bottom: none;
-        }
-        .detail-label {
-            font-weight: 600;
-            color: #2d3748;
-            min-width: 150px;
-        }
-        .detail-value {
-            color: #4a5568;
-            word-break: break-word;
-        }
-        @media (max-width: 768px) {
-            body { padding: 1.5rem 0; }
-            .header h1 { font-size: 24px; }
-            .header-top { flex-direction: column; align-items: flex-start; gap: 1rem; }
-            .table-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-            th, td { padding: 0.75rem; font-size: 12px; }
+        @media (max-width: 650px) {
+            .page { padding: 22px 15px; }
+            .header { flex-direction: column; gap: 15px; }
+            .back { width: 100%; text-align: center; justify-content: center; }
+            table { font-size: 11px; }
+            th, td { padding: 10px 8px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="page">
+        <!-- Header -->
         <div class="header">
-            <div class="header-top">
-                <h3><i class="fa-solid fa-history"></i> Audit Logs</h3>
-                <a href="javascript:history.back()" class="back-button">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    Back
-                </a>
+            <div class="head">
+                <div class="icon"><i class="fa-solid fa-history"></i></div>
+                <div>
+                    <h1 class="title">Audit Logs</h1>
+                    <div class="sub">Track system activities and user actions</div>
+                    <span class="case">Activity Log</span>
+                </div>
             </div>
+            <a href="javascript:history.back()" class="back"><i class="fa-solid fa-arrow-left"></i> Back</a>
         </div>
 
-        <!-- Combined Audit Log -->
-        <div class="table-wrapper">
-            <div class="table-header">
-                <h2><i class="fa-solid fa-table-list"></i> Audit Log [<span id="auditCount">0</span>]</h2>
-                <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-                    <select id="logTypeFilter" class="filter-dropdown">
+        <!-- Audit Log Table -->
+        <div class="card">
+            <div class="chead">
+                <div class="ctitle"><i class="fa-solid fa-table-list"></i> &nbsp; Audit Records [<span id="auditCount">0</span>]</div>
+                <div class="filters">
+                    <select id="logTypeFilter" class="filter-select">
                         <option value="all">All Logs</option>
                         <option value="role">Role Assignments</option>
                         <option value="rejection">User Rejections</option>
@@ -424,19 +130,15 @@
                         <option value="login">Failed Logins</option>
                         <option value="auditlog">All Audit Logs</option>
                     </select>
-                    <div class="records-per-page">
-                        <label for="auditRecordsPerPage">Show:</label>
-                        <select id="auditRecordsPerPage">
-                            <option value="10">10</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                            <option value="500">500</option>
-                            <option value="999999" selected>All</option>
-                        </select>
-                    </div>
+                    <select class="filter-select">
+                        <option value="all">Show: All</option>
+                        <option value="10">Show: 10</option>
+                        <option value="50">Show: 50</option>
+                        <option value="100">Show: 100</option>
+                    </select>
                     <div class="search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="auditTableSearch" placeholder="Search audit logs..." />
+                        <input type="text" id="auditTableSearch" placeholder="Search logs..." />
                     </div>
                 </div>
             </div>
@@ -459,24 +161,24 @@
                         <!-- Role Assignments -->
                         @forelse($roleAssignments ?? [] as $assignment)
                             <tr data-log-type="role" data-audit-row>
-                                <td style="text-align: center; font-weight: 600; color: #64748b;">{{ $loop->iteration }}</td>
+                                <td style="text-align: center; font-weight: 700; color: #8a95a5;">{{ $loop->iteration }}</td>
                                 <td>
-                                    <span class="badge" style="background: #dbeafe; color: #1e40af;">
-                                        <i class="fa-solid fa-user-check"></i> Role Assignment
+                                    <span class="badge badge-role">
+                                        <i class="fa-solid fa-user-check"></i> Role
                                     </span>
                                 </td>
                                 <td>
-                                    <div style="font-weight: 600; color: #1D4533;">{{ $assignment->user->name }}</div>
-                                    <div style="font-size: 11px; color: #64748b;">{{ $assignment->user->email }}</div>
+                                    <div style="font-weight: 650; color: #101a31;">{{ $assignment->user->name }}</div>
+                                    <div style="font-size: 11px; color: #718096;">{{ $assignment->user->email }}</div>
                                 </td>
-                                <td>Assigned role: <strong>{{ $assignment->role->display_name ?? $assignment->role->name }}</strong></td>
+                                <td>Assigned: <strong>{{ $assignment->role->display_name ?? $assignment->role->name }}</strong></td>
                                 <td>{{ $assignment->assignedByUser->name ?? 'System' }}</td>
                                 <td>{{ $assignment->assigned_at->format('M d, Y H:i') }}</td>
                                 <td>
                                     @if($assignment->removed_at)
-                                        <span class="badge badge-removed"><i class="fa-solid fa-times"></i> Removed</span>
+                                        <span class="badge badge-failed"><i class="fa-solid fa-times"></i> Removed</span>
                                     @else
-                                        <span class="badge badge-active"><i class="fa-solid fa-check"></i> Active</span>
+                                        <span class="badge badge-success"><i class="fa-solid fa-check"></i> Active</span>
                                     @endif
                                 </td>
                                 <td style="text-align: center;">
@@ -491,21 +193,21 @@
                         <!-- Rejections -->
                         @forelse($rejectionLogs ?? [] as $rejection)
                             <tr data-log-type="rejection" data-audit-row>
-                                <td style="text-align: center; font-weight: 600; color: #64748b;">{{ $loop->iteration }}</td>
+                                <td style="text-align: center; font-weight: 700; color: #8a95a5;">{{ $loop->iteration }}</td>
                                 <td>
-                                    <span class="badge" style="background: #fee2e2; color: #991b1b;">
-                                        <i class="fa-solid fa-ban"></i> User Rejection
+                                    <span class="badge badge-rejection">
+                                        <i class="fa-solid fa-ban"></i> Rejection
                                     </span>
                                 </td>
                                 <td>
-                                    <div style="font-weight: 600; color: #1D4533;">{{ $rejection->user->name }}</div>
-                                    <div style="font-size: 11px; color: #64748b;">{{ $rejection->user->email }}</div>
+                                    <div style="font-weight: 650; color: #101a31;">{{ $rejection->user->name }}</div>
+                                    <div style="font-size: 11px; color: #718096;">{{ $rejection->user->email }}</div>
                                 </td>
                                 <td>Reason: <strong>{{ $rejection->reason }}</strong></td>
                                 <td>{{ $rejection->rejectedByUser->name ?? 'System' }}</td>
                                 <td>{{ $rejection->created_at->format('M d, Y H:i') }}</td>
                                 <td>
-                                    <span class="badge badge-removed"><i class="fa-solid fa-times"></i> Rejected</span>
+                                    <span class="badge badge-failed"><i class="fa-solid fa-times"></i> Rejected</span>
                                 </td>
                                 <td style="text-align: center;">
                                     <button class="action-btn" onclick="viewAuditDetail('rejection', {{ $rejection->id }})">
@@ -520,21 +222,21 @@
                         @forelse($auditLogs ?? [] as $log)
                             @if(in_array($log->action, ['USER_APPROVED', 'USER_REJECTED', 'DATA_ACCESS', 'USER_APPROVAL_FAILED', 'USER_REJECTION_FAILED']))
                             <tr data-log-type="activity" data-audit-row>
-                                <td style="text-align: center; font-weight: 600; color: #64748b;">{{ $loop->iteration }}</td>
+                                <td style="text-align: center; font-weight: 700; color: #8a95a5;">{{ $loop->iteration }}</td>
                                 <td>
-                                    <span class="badge" style="background: #fef3c7; color: #92400e;">
-                                        <i class="fa-solid fa-person"></i> User Activity
+                                    <span class="badge badge-activity">
+                                        <i class="fa-solid fa-person"></i> Activity
                                     </span>
                                 </td>
                                 <td>
-                                    <div style="font-weight: 600; color: #1D4533;">{{ $log->user->name ?? 'System' }}</div>
-                                    <div style="font-size: 11px; color: #64748b;">{{ $log->user->email ?? 'N/A' }}</div>
+                                    <div style="font-weight: 650; color: #101a31;">{{ $log->user->name ?? 'System' }}</div>
+                                    <div style="font-size: 11px; color: #718096;">{{ $log->user->email ?? 'N/A' }}</div>
                                 </td>
                                 <td>{{ $log->action }}: {{ $log->affected_entity ?? $log->resource_path }}</td>
                                 <td>{{ $log->user->name ?? 'System' }}</td>
                                 <td>{{ $log->timestamp_utc->format('M d, Y H:i') }}</td>
                                 <td>
-                                    <span class="badge" style="background: {{ $log->status === 'SUCCESS' ? '#d1fae5' : '#fee2e2' }}; color: {{ $log->status === 'SUCCESS' ? '#065f46' : '#991b1b' }};">
+                                    <span class="badge {{ $log->status === 'SUCCESS' ? 'badge-success' : 'badge-failed' }}">
                                         <i class="fa-solid {{ $log->status === 'SUCCESS' ? 'fa-check' : 'fa-times' }}"></i> {{ $log->status }}
                                     </span>
                                 </td>
@@ -552,21 +254,21 @@
                         @forelse($auditLogs ?? [] as $log)
                             @if(in_array($log->action, ['LOGIN_SUCCESS', 'LOGOUT', 'SESSION_CREATED']))
                             <tr data-log-type="access" data-audit-row>
-                                <td style="text-align: center; font-weight: 600; color: #64748b;">{{ $loop->iteration }}</td>
+                                <td style="text-align: center; font-weight: 700; color: #8a95a5;">{{ $loop->iteration }}</td>
                                 <td>
-                                    <span class="badge" style="background: #dbeafe; color: #1e40af;">
-                                        <i class="fa-solid fa-lock"></i> System Access
+                                    <span class="badge badge-access">
+                                        <i class="fa-solid fa-lock"></i> Access
                                     </span>
                                 </td>
                                 <td>
-                                    <div style="font-weight: 600; color: #1D4533;">{{ $log->user->name ?? 'System' }}</div>
-                                    <div style="font-size: 11px; color: #64748b;">{{ $log->user->email ?? $log->ip_address }}</div>
+                                    <div style="font-weight: 650; color: #101a31;">{{ $log->user->name ?? 'System' }}</div>
+                                    <div style="font-size: 11px; color: #718096;">{{ $log->user->email ?? $log->ip_address }}</div>
                                 </td>
                                 <td>{{ $log->action }}: {{ $log->ip_address }}</td>
                                 <td>{{ $log->user->name ?? 'System' }}</td>
                                 <td>{{ $log->timestamp_utc->format('M d, Y H:i') }}</td>
                                 <td>
-                                    <span class="badge" style="background: {{ $log->status === 'SUCCESS' ? '#d1fae5' : '#fee2e2' }}; color: {{ $log->status === 'SUCCESS' ? '#065f46' : '#991b1b' }};">
+                                    <span class="badge {{ $log->status === 'SUCCESS' ? 'badge-success' : 'badge-failed' }}">
                                         <i class="fa-solid {{ $log->status === 'SUCCESS' ? 'fa-check' : 'fa-times' }}"></i> {{ $log->status }}
                                     </span>
                                 </td>
@@ -584,21 +286,21 @@
                         @forelse($auditLogs ?? [] as $log)
                             @if($log->action === 'LOGIN_FAILED')
                             <tr data-log-type="login" data-audit-row>
-                                <td style="text-align: center; font-weight: 600; color: #64748b;">{{ $loop->iteration }}</td>
+                                <td style="text-align: center; font-weight: 700; color: #8a95a5;">{{ $loop->iteration }}</td>
                                 <td>
-                                    <span class="badge" style="background: #fee2e2; color: #991b1b;">
-                                        <i class="fa-solid fa-exclamation-triangle"></i> Failed Login
+                                    <span class="badge badge-login">
+                                        <i class="fa-solid fa-exclamation-triangle"></i> Login Failed
                                     </span>
                                 </td>
                                 <td>
-                                    <div style="font-weight: 600; color: #1D4533;">{{ $log->user->name ?? 'Unknown User' }}</div>
-                                    <div style="font-size: 11px; color: #64748b;">{{ $log->user->email ?? $log->affected_entity }}</div>
+                                    <div style="font-weight: 650; color: #101a31;">{{ $log->user->name ?? 'Unknown' }}</div>
+                                    <div style="font-size: 11px; color: #718096;">{{ $log->user->email ?? $log->affected_entity }}</div>
                                 </td>
-                                <td>Failed login attempt from {{ $log->ip_address }}</td>
+                                <td>Failed attempt from {{ $log->ip_address }}</td>
                                 <td>-</td>
                                 <td>{{ $log->timestamp_utc->format('M d, Y H:i') }}</td>
                                 <td>
-                                    <span class="badge badge-removed"><i class="fa-solid fa-times"></i> Failed</span>
+                                    <span class="badge badge-failed"><i class="fa-solid fa-times"></i> Failed</span>
                                 </td>
                                 <td style="text-align: center;">
                                     <button class="action-btn" onclick="viewAuditDetail('auditlog', {{ $log->id }})">
@@ -623,21 +325,21 @@
                                 }
                             @endphp
                             <tr data-log-type="{{ $logType }}" data-audit-row>
-                                <td style="text-align: center; font-weight: 600; color: #64748b;">{{ $loop->iteration }}</td>
+                                <td style="text-align: center; font-weight: 700; color: #8a95a5;">{{ $loop->iteration }}</td>
                                 <td>
                                     <span class="badge" style="background: #e0e7ff; color: #3730a3;">
-                                        <i class="fa-solid fa-file-lines"></i> {{ $log->action }}
+                                        <i class="fa-solid fa-file-lines"></i> Log
                                     </span>
                                 </td>
                                 <td>
-                                    <div style="font-weight: 600; color: #1D4533;">{{ $log->user->name ?? 'System' }}</div>
-                                    <div style="font-size: 11px; color: #64748b;">{{ $log->user->email ?? $log->ip_address ?? 'N/A' }}</div>
+                                    <div style="font-weight: 650; color: #101a31;">{{ $log->user->name ?? 'System' }}</div>
+                                    <div style="font-size: 11px; color: #718096;">{{ $log->user->email ?? $log->ip_address ?? 'N/A' }}</div>
                                 </td>
                                 <td>{{ $log->component }}: {{ $log->affected_entity ?? $log->resource_path }}</td>
                                 <td>{{ $log->user->name ?? 'System' }}</td>
                                 <td>{{ $log->timestamp_utc->format('M d, Y H:i') }}</td>
                                 <td>
-                                    <span class="badge" style="background: {{ $log->status === 'SUCCESS' ? '#d1fae5' : '#fee2e2' }}; color: {{ $log->status === 'SUCCESS' ? '#065f46' : '#991b1b' }};">
+                                    <span class="badge {{ $log->status === 'SUCCESS' ? 'badge-success' : 'badge-failed' }}">
                                         <i class="fa-solid {{ $log->status === 'SUCCESS' ? 'fa-check' : 'fa-times' }}"></i> {{ $log->status }}
                                     </span>
                                 </td>
@@ -656,13 +358,11 @@
     </div>
 
     <!-- Detail Modal -->
-    <div id="detailModal" class="modal" style="display: none;">
+    <div id="detailModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2><i class="fa-solid fa-file-lines"></i> Audit Details</h2>
-                <button class="modal-close" onclick="closeAuditDetail()">
-                    <i class="fa-solid fa-times"></i>
-                </button>
+                <button class="modal-close" onclick="closeAuditDetail()"><i class="fa-solid fa-times"></i></button>
             </div>
             <div class="modal-body" id="detailContent">
                 <!-- Content will be loaded here -->
@@ -672,16 +372,14 @@
 
     <script>
         function viewAuditDetail(type, id) {
-            // Show loading state
-            document.getElementById('detailContent').innerHTML = '<div style="text-align: center; padding: 2rem;"><i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; color: #1D4533;"></i><p style="margin-top: 1rem; color: #64748b;">Loading details...</p></div>';
-            document.getElementById('detailModal').style.display = 'flex';
+            document.getElementById('detailContent').innerHTML = '<div style="text-align: center; padding: 2rem;"><i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; color: #079b6d;"></i><p style="margin-top: 1rem; color: #718096;">Loading details...</p></div>';
+            document.getElementById('detailModal').classList.add('active');
 
-            // Fetch data from API
             fetch(`/api/audit-detail?type=${type}&id=${id}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
-                        document.getElementById('detailContent').innerHTML = `<div style="padding: 2rem; text-align: center; color: #991b1b;"><i class="fa-solid fa-exclamation-circle" style="font-size: 24px;"></i><p style="margin-top: 1rem;">${data.error}</p></div>`;
+                        document.getElementById('detailContent').innerHTML = `<div style="padding: 2rem; text-align: center; color: #dc2626;"><i class="fa-solid fa-exclamation-circle" style="font-size: 24px;"></i><p style="margin-top: 1rem;">${data.error}</p></div>`;
                         return;
                     }
 
@@ -690,7 +388,7 @@
                     if (type === 'role') {
                         details = `
                             <div class="detail-section">
-                                <h3>${data.logType} Details</h3>
+                                <h3>Details</h3>
                                 <div class="detail-row">
                                     <span class="detail-label">User Name:</span>
                                     <span class="detail-value">${data.user.name}</span>
@@ -713,7 +411,7 @@
                                 </div>
                                 <div class="detail-row">
                                     <span class="detail-label">Status:</span>
-                                    <span class="detail-value" style="color: ${data.status === 'Active' ? '#065f46' : '#991b1b'}; font-weight: 600;">${data.status}</span>
+                                    <span class="detail-value" style="color: ${data.status === 'Active' ? '#065f46' : '#991b1b'}; font-weight: 650;">${data.status}</span>
                                 </div>
                             </div>
                             <div class="detail-section">
@@ -728,14 +426,14 @@
                                 </div>
                                 <div class="detail-row">
                                     <span class="detail-label">Total Actions:</span>
-                                    <span class="detail-value" style="font-weight: 600;">${data.actionsPerformed['Total Actions']}</span>
+                                    <span class="detail-value" style="font-weight: 650;">${data.actionsPerformed['Total Actions']}</span>
                                 </div>
                             </div>
                         `;
                     } else if (type === 'rejection') {
                         details = `
                             <div class="detail-section">
-                                <h3>${data.logType} Details</h3>
+                                <h3>Details</h3>
                                 <div class="detail-row">
                                     <span class="detail-label">User Name:</span>
                                     <span class="detail-value">${data.user.name}</span>
@@ -769,14 +467,14 @@
                                 </div>
                                 <div class="detail-row">
                                     <span class="detail-label">Total Actions:</span>
-                                    <span class="detail-value" style="font-weight: 600;">${data.actionsPerformed['Total Actions']}</span>
+                                    <span class="detail-value" style="font-weight: 650;">${data.actionsPerformed['Total Actions']}</span>
                                 </div>
                             </div>
                         `;
-                    } else if (type === 'auditlog' || type === 'activity' || type === 'access' || type === 'login') {
+                    } else {
                         details = `
                             <div class="detail-section">
-                                <h3>${data.logType} Details</h3>
+                                <h3>Details</h3>
                                 ${Object.entries(data.details).map(([key, value]) => `
                                     <div class="detail-row">
                                         <span class="detail-label">${key}:</span>
@@ -800,53 +498,39 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    document.getElementById('detailContent').innerHTML = `<div style="padding: 2rem; text-align: center; color: #991b1b;"><i class="fa-solid fa-exclamation-circle" style="font-size: 24px;"></i><p style="margin-top: 1rem;">Failed to load audit details. Please try again.</p></div>`;
+                    document.getElementById('detailContent').innerHTML = `<div style="padding: 2rem; text-align: center; color: #dc2626;"><i class="fa-solid fa-exclamation-circle" style="font-size: 24px;"></i><p style="margin-top: 1rem;">Failed to load audit details. Please try again.</p></div>`;
                 });
         }
 
         function closeAuditDetail() {
-            document.getElementById('detailModal').style.display = 'none';
+            document.getElementById('detailModal').classList.remove('active');
         }
 
-        // Close modal when clicking outside
         window.addEventListener('click', function(e) {
             const modal = document.getElementById('detailModal');
-            if (e.target === modal) {
-                closeAuditDetail();
-            }
+            if (e.target === modal) closeAuditDetail();
         });
 
         document.addEventListener('DOMContentLoaded', function() {
             const logTypeFilter = document.getElementById('logTypeFilter');
             const auditSearch = document.getElementById('auditTableSearch');
-            const auditPerPage = document.getElementById('auditRecordsPerPage');
 
             function filterAuditTable() {
                 const searchTerm = auditSearch.value.toLowerCase();
                 const logType = logTypeFilter.value;
-                const limit = parseInt(auditPerPage.value);
                 const rows = document.querySelectorAll('table tbody tr[data-audit-row]');
-                let visibleCount = 0;
                 let displayedCount = 0;
 
                 rows.forEach(row => {
                     const rowLogType = row.getAttribute('data-log-type');
                     const text = row.textContent.toLowerCase();
                     
-                    // Check log type filter
                     const typeMatch = logType === 'all' || rowLogType === logType;
-                    
-                    // Check search term match
                     const searchMatch = searchTerm === '' || text.includes(searchTerm);
                     
                     if (typeMatch && searchMatch) {
-                        visibleCount++;
-                        if (displayedCount < limit) {
-                            row.style.display = '';
-                            displayedCount++;
-                        } else {
-                            row.style.display = 'none';
-                        }
+                        row.style.display = '';
+                        displayedCount++;
                     } else {
                         row.style.display = 'none';
                     }
@@ -857,9 +541,7 @@
 
             logTypeFilter.addEventListener('change', filterAuditTable);
             auditSearch.addEventListener('keyup', filterAuditTable);
-            auditPerPage.addEventListener('change', filterAuditTable);
             
-            // Initial count
             filterAuditTable();
         });
     </script>

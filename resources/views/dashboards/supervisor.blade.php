@@ -10,46 +10,38 @@
 
 @section('sidebar_content')
 <!-- OVERVIEW SECTION -->
-<div class="px-5 pt-3 pb-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Overview</div>
-<a href="{{ route('dashboards.supervisor') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-brand transition-all font-medium text-[13px]">
-    <i class="fa-solid fa-chart-pie w-5 text-center text-slate-700 text-sm"></i>
+<div class="px-5 pt-3 pb-1 text-[10px] font-bold text-muted uppercase tracking-widest">Overview</div>
+<a href="{{ route('dashboards.supervisor') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-ink-soft hover:bg-brand-soft border-l-[3px] border-brand transition-all font-medium text-[13px]">
+    <i class="fa-solid fa-chart-pie w-5 text-center text-ink text-sm"></i>
     <span>Dashboard</span>
 </a>
 
 @can('view_incidents')
-<a href="{{ route('supervisor.all_incidents') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
-    <i class="fa-solid fa-triangle-exclamation w-5 text-center text-slate-700 text-sm"></i>
+<a href="{{ route('supervisor.all_incidents') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-ink-soft hover:bg-brand-soft border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
+    <i class="fa-solid fa-triangle-exclamation w-5 text-center text-ink text-sm"></i>
     <span>All Incidents</span>
 </a>
 @endcan
 
-@can('create_incidents')
-<a href="{{ route('incidents.create') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
-    <i class="fa-solid fa-clipboard w-5 text-center text-slate-700 text-sm"></i>
-    <span>Report Incident</span>
-</a>
-@endcan
-
-<a href="{{ route('supervisor.return_to_work_tracking') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
-    <i class="fa-solid fa-person-hiking w-5 text-center text-slate-700 text-sm"></i>
+<a href="{{ route('supervisor.return_to_work_tracking') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-ink-soft hover:bg-brand-soft border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
+    <i class="fa-solid fa-person-hiking w-5 text-center text-ink text-sm"></i>
     <span>Return-to-Work Tracking</span>
 </a>
 
-<a href="{{ route('supervisor.monthly_summary') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
-    <i class="fa-solid fa-calendar w-5 text-center text-slate-700 text-sm"></i>
+<a href="{{ route('supervisor.compliance_metrics') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-ink-soft hover:bg-brand-soft border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
+    <i class="fa-solid fa-shield-check w-5 text-center text-ink text-sm"></i>
+    <span>Compliance Metrics</span>
+</a>
+
+<a href="{{ route('supervisor.monthly_summary') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-ink-soft hover:bg-brand-soft border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
+    <i class="fa-solid fa-calendar w-5 text-center text-ink text-sm"></i>
     <span>Monthly Summary</span>
 </a>
 
 <!-- IT Support -->
-<a href="{{ route('support.create_ticket') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
-    <i class="fa-solid fa-headset w-5 text-center text-slate-700 text-sm"></i>
+<a href="{{ route('support.create_ticket') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-ink-soft hover:bg-brand-soft border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
+    <i class="fa-solid fa-headset w-5 text-center text-ink text-sm"></i>
     <span>IT Support</span>
-</a>
-
-<!-- My Support Tickets -->
-<a href="{{ route('support.my_tickets') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
-    <i class="fa-solid fa-ticket w-5 text-center text-slate-700 text-sm"></i>
-    <span>My Support Tickets</span>
 </a>
 @endsection
 
@@ -57,11 +49,11 @@
 <!-- KPI Cards -->
 <div class="mb-6">
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-        <h2 class="text-[13px] font-bold text-navy">Performance Metrics</h2>
+        <h2 class="text-sm font-bold text-ink">Performance Metrics</h2>
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 md:gap-3">
             <div class="relative" x-data="{ open: false }">
-                <button @click="open = !open" class="flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 bg-white border border-slate-200 rounded-lg text-xs md:text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors shadow-sm w-full sm:w-auto">
-                    <i class="fa-regular fa-calendar text-slate-400"></i>
+                <button @click="open = !open" class="flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 bg-surface border border-line rounded-lg text-xs md:text-sm font-medium text-ink-soft hover:bg-canvas transition-colors shadow-sm w-full sm:w-auto">
+                    <i class="fa-regular fa-calendar text-muted"></i>
                     <span>
                         @if($dateRange === '7days')
                             Last 7 days
@@ -73,29 +65,29 @@
                             Last 30 days
                         @endif
                     </span>
-                    <i class="fa-solid fa-chevron-down text-slate-400 text-xs md:text-sm"></i>
+                    <i class="fa-solid fa-chevron-down text-muted text-xs md:text-sm"></i>
                 </button>
-                <div x-show="open" @click.outside="open = false" class="absolute right-0 mt-2 w-40 md:w-48 bg-white border border-slate-200 rounded-lg shadow-lg z-10">
-                    <a href="{{ route('dashboards.supervisor', ['date_range' => '7days']) }}" class="flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm text-slate-600 hover:bg-slate-50 border-b border-slate-100 {{ $dateRange === '7days' ? 'bg-slate-50' : '' }}">
+                <div x-show="open" @click.outside="open = false" class="absolute right-0 mt-2 w-40 md:w-48 bg-surface border border-line rounded-lg shadow-lg z-10">
+                    <a href="{{ route('dashboards.supervisor', ['date_range' => '7days']) }}" class="flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm text-ink-soft hover:bg-canvas border-b border-line {{ $dateRange === '7days' ? 'bg-canvas' : '' }}">
                         <i class="fa-solid fa-check text-brand {{ $dateRange === '7days' ? '' : 'opacity-0' }}"></i>
                         <span>Last 7 days</span>
                     </a>
-                    <a href="{{ route('dashboards.supervisor', ['date_range' => '30days']) }}" class="flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm text-slate-600 hover:bg-slate-50 border-b border-slate-100 {{ $dateRange === '30days' ? 'bg-slate-50' : '' }}">
+                    <a href="{{ route('dashboards.supervisor', ['date_range' => '30days']) }}" class="flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm text-ink-soft hover:bg-canvas border-b border-line {{ $dateRange === '30days' ? 'bg-canvas' : '' }}">
                         <i class="fa-solid fa-check text-brand {{ $dateRange === '30days' ? '' : 'opacity-0' }}"></i>
                         <span>Last 30 days</span>
                     </a>
-                    <a href="{{ route('dashboards.supervisor', ['date_range' => '90days']) }}" class="flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm text-slate-600 hover:bg-slate-50 border-b border-slate-100 {{ $dateRange === '90days' ? 'bg-slate-50' : '' }}">
+                    <a href="{{ route('dashboards.supervisor', ['date_range' => '90days']) }}" class="flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm text-ink-soft hover:bg-canvas border-b border-line {{ $dateRange === '90days' ? 'bg-canvas' : '' }}">
                         <i class="fa-solid fa-check text-brand {{ $dateRange === '90days' ? '' : 'opacity-0' }}"></i>
                         <span>Last 90 days</span>
                     </a>
-                    <a href="{{ route('dashboards.supervisor', ['date_range' => 'all']) }}" class="flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm text-slate-600 hover:bg-slate-50 {{ $dateRange === 'all' ? 'bg-slate-50' : '' }}">
+                    <a href="{{ route('dashboards.supervisor', ['date_range' => 'all']) }}" class="flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm text-ink-soft hover:bg-canvas {{ $dateRange === 'all' ? 'bg-canvas' : '' }}">
                         <i class="fa-solid fa-check text-brand {{ $dateRange === 'all' ? '' : 'opacity-0' }}"></i>
                         <span>All time</span>
                     </a>
                 </div>
             </div>
             @can('export_reports')
-            <button class="flex items-center justify-center gap-2 px-3 md:px-4 py-2 md:py-2.5 bg-brand text-white rounded-lg text-xs md:text-sm font-medium hover:bg-brand-dark transition-colors shadow-sm w-full sm:w-auto">
+            <button class="flex items-center justify-center gap-2 px-3 md:px-4 py-2 md:py-2.5 bg-brand text-surface rounded-lg text-xs md:text-sm font-medium hover:bg-brand-deep transition-colors shadow-sm w-full sm:w-auto">
                 <i class="fa-solid fa-file-export text-xs md:text-sm"></i>
                 <span class="hidden sm:inline">Export Report</span>
                 <span class="sm:hidden">Export</span>
@@ -105,13 +97,13 @@
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
         <!-- Total Incidents Card -->
-        <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden" data-stat="total">
+        <div class="bg-surface rounded-lg border border-line shadow-sm hover:shadow-md transition-all overflow-hidden" data-stat="total">
             <div class="h-0.5 bg-brand"></div>
             <div class="p-2.5 flex items-start justify-between gap-2">
                 <div class="flex-1">
-                    <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Total Incidents</span>
-                    <p class="text-xl font-bold text-slate-900 mt-0.5">{{ number_format($statistics['total_incidents']) }}</p>
-                    <p class="text-xs text-slate-500 mt-0.5">All assigned cases</p>
+                    <span class="text-xs font-semibold text-muted uppercase tracking-wide">Total Incidents</span>
+                    <p class="text-xl font-bold text-ink mt-0.5">{{ number_format($statistics['total_incidents']) }}</p>
+                    <p class="text-xs text-muted mt-0.5">All assigned cases</p>
                 </div>
                 <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg flex items-center justify-center">
                     <x-lucide-inbox class="w-4 h-4 text-amber-600" stroke-width="1.5" />
@@ -120,13 +112,13 @@
         </div>
 
         <!-- Pending Verification Card -->
-        <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden" data-stat="pending">
+        <div class="bg-surface rounded-lg border border-line shadow-sm hover:shadow-md transition-all overflow-hidden" data-stat="pending">
             <div class="h-0.5 bg-brand"></div>
             <div class="p-2.5 flex items-start justify-between gap-2">
                 <div class="flex-1">
-                    <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Pending Review</span>
-                    <p class="text-xl font-bold text-slate-900 mt-0.5">{{ number_format($statistics['pending_verification']) }}</p>
-                    <p class="text-xs text-slate-500 mt-0.5">Awaiting action</p>
+                    <span class="text-xs font-semibold text-muted uppercase tracking-wide">Pending Review</span>
+                    <p class="text-xl font-bold text-ink mt-0.5">{{ number_format($statistics['pending_verification']) }}</p>
+                    <p class="text-xs text-muted mt-0.5">Awaiting action</p>
                 </div>
                 <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex items-center justify-center">
                     <x-lucide-alert-circle class="w-4 h-4 text-blue-600" stroke-width="1.5" />
@@ -135,13 +127,13 @@
         </div>
 
         <!-- Verified & Escalated Card -->
-        <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden" data-stat="verified">
+        <div class="bg-surface rounded-lg border border-line shadow-sm hover:shadow-md transition-all overflow-hidden" data-stat="verified">
             <div class="h-0.5 bg-brand"></div>
             <div class="p-2.5 flex items-start justify-between gap-2">
                 <div class="flex-1">
-                    <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Verified & Escalated</span>
-                    <p class="text-xl font-bold text-slate-900 mt-0.5">{{ number_format($statistics['verified_escalated']) }}</p>
-                    <p class="text-xs text-slate-500 mt-0.5">Processed cases</p>
+                    <span class="text-xs font-semibold text-muted uppercase tracking-wide">Verified & Escalated</span>
+                    <p class="text-xl font-bold text-ink mt-0.5">{{ number_format($statistics['verified_escalated']) }}</p>
+                    <p class="text-xs text-muted mt-0.5">Processed cases</p>
                 </div>
                 <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg flex items-center justify-center">
                     <x-lucide-check-circle-2 class="w-4 h-4 text-emerald-600" stroke-width="1.5" />
@@ -149,18 +141,17 @@
             </div>
         </div>
 
-
     </div>
 </div>
 
 <!-- Charts Row -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
-    <div class="lg:col-span-2 bg-white rounded-lg border border-slate-200 shadow-sm p-4 md:p-6">
-        <h3 class="text-sm md:text-base lg:text-lg font-semibold text-navy mb-4 md:mb-6">Incidents by Type</h3>
+    <div class="lg:col-span-2 bg-surface rounded-lg border border-line shadow-sm p-4 md:p-6">
+        <h3 class="text-sm md:text-base lg:text-lg font-semibold text-ink mb-4 md:mb-6">Incidents by Type</h3>
         <div id="incidentTypeChart" style="height: 220px;"></div>
     </div>
-    <div class="bg-white rounded-lg border border-slate-200 shadow-sm p-4 md:p-6">
-        <h3 class="text-sm md:text-base lg:text-lg font-semibold text-navy mb-4 md:mb-6">First Aid Recording Rate</h3>
+    <div class="bg-surface rounded-lg border border-line shadow-sm p-4 md:p-6">
+        <h3 class="text-sm md:text-base lg:text-lg font-semibold text-ink mb-4 md:mb-6">First Aid Recording Rate</h3>
         <div id="firstAidChart" style="height: 220px;"></div>
     </div>
 </div>
@@ -170,42 +161,79 @@
 @php
     $totalCount = $recentIncidents->count();
 @endphp
-<div class="bg-white rounded-lg border border-slate-200 shadow-sm p-4 md:p-6 mb-6" x-data="{ expanded: false }">
-    <div class="flex items-center justify-between mb-4 md:mb-6">
-        <h3 class="text-sm md:text-base lg:text-lg font-semibold text-navy">Assigned Cases - Pending Review <span class="text-slate-500">[{{ $totalCount }}]</span></h3>
-        <button @click="expanded = !expanded" class="px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm font-medium text-brand hover:bg-brand/5 rounded-lg transition-colors">
+<div class="bg-surface rounded-lg border border-line shadow-sm mb-6 overflow-hidden" x-data="{ expanded: false }">
+    <!-- Header Section -->
+    <div class="p-4 md:p-6 border-b border-line flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-brand-soft flex items-center justify-center">
+                <i class="fa-solid fa-list-check text-brand text-lg"></i>
+            </div>
+            <div>
+                <h3 class="text-sm md:text-base font-semibold text-ink">
+                    Assigned Cases - Pending Review
+                </h3>
+            </div>
+        </div>
+        <button @click="expanded = !expanded" class="px-3 py-1.5 bg-brand text-surface rounded-lg text-xs font-semibold hover:bg-brand-deep transition-colors whitespace-nowrap">
             <span x-show="!expanded">View All</span>
             <span x-show="expanded">Show Less</span>
         </button>
     </div>
-    
+
+
+
+    <!-- Table Section -->
     <div class="overflow-x-auto">
-        <table class="w-full text-xs md:text-sm">
+        <table class="w-full">
             <thead>
-                <tr class="border-b border-slate-200">
-                    <th class="text-left py-3 px-2 md:px-4 font-semibold text-slate-700">Reference</th>
-                    <th class="text-left py-3 px-2 md:px-4 font-semibold text-slate-700 hidden sm:table-cell">Employee</th>
-                    <th class="text-left py-3 px-2 md:px-4 font-semibold text-slate-700 hidden md:table-cell">Facility</th>
-                    <th class="text-left py-3 px-2 md:px-4 font-semibold text-slate-700 hidden lg:table-cell">Incident Type</th>
-                    <th class="text-left py-3 px-2 md:px-4 font-semibold text-slate-700">Date</th>
-                    <th class="text-center py-3 px-2 md:px-4 font-semibold text-slate-700">Action</th>
+                <tr class="border-b border-line bg-canvas">
+                    <th class="text-left py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider">Reference</th>
+                    <th class="text-left py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider hidden sm:table-cell">Employee</th>
+                    <th class="text-left py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider hidden md:table-cell">Facility</th>
+                    <th class="text-left py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider hidden lg:table-cell">Type</th>
+                    <th class="text-left py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider">Date</th>
+                    <th class="text-center py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider">Status</th>
+                    <th class="text-center py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider">Action</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($recentIncidents as $incident)
                     @php
                         $displayCount = $loop->iteration;
+                        $status = $incident->status ?? 'PENDING_SUPERVISOR_VERIFICATION';
+                        $statusLabel = '';
+                        $statusClass = '';
+                        
+                        switch($status) {
+                            case 'VERIFIED_SUPERVISOR':
+                                $statusLabel = 'Verified';
+                                $statusClass = 'bg-emerald-50 text-emerald-700';
+                                break;
+                            case 'ESCALATED_TO_HR':
+                                $statusLabel = 'Escalated';
+                                $statusClass = 'bg-blue-50 text-blue-700';
+                                break;
+                            default:
+                                $statusLabel = 'Pending';
+                                $statusClass = 'bg-amber-50 text-amber-700';
+                        }
                     @endphp
-                    <tr x-show="expanded || {{ $displayCount }} <= 3" class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                        <td class="py-3 px-2 md:px-4 text-xs md:text-sm font-medium text-slate-900">{{ $incident->reference_number }}</td>
-                        <td class="py-3 px-2 md:px-4 text-xs md:text-sm text-slate-700 hidden sm:table-cell">{{ $incident->first_name }} {{ $incident->surname }}</td>
-                        <td class="py-3 px-2 md:px-4 text-xs md:text-sm text-slate-700 hidden md:table-cell">{{ $incident->facility?->name ?? 'N/A' }}</td>
-                        <td class="py-3 px-2 md:px-4 text-xs md:text-sm text-slate-700 hidden lg:table-cell">{{ $incident->incidentType?->name ?? 'Unknown' }}</td>
-                        <td class="py-3 px-2 md:px-4 text-xs md:text-sm text-slate-600">{{ $incident->created_at->format('M d, Y') }}</td>
-                        <td class="py-3 px-2 md:px-4 text-center">
-                            <a href="{{ route('incidents.supervisor_view', ['incident' => $incident]) }}" class="inline-flex items-center gap-1 px-2 md:px-3 py-1 md:py-1.5 bg-brand text-white rounded text-xs md:text-sm font-medium hover:bg-brand-dark transition-colors">
-                                <i class="fa-solid fa-eye text-xs md:text-sm"></i>
-                                <span class="hidden sm:inline">Review</span><span class="sm:hidden">View</span>
+                    <tr x-show="expanded || {{ $displayCount }} <= 5" class="border-b border-line hover:bg-canvas transition-colors">
+                        <td class="py-3 px-4 text-xs md:text-sm font-semibold text-brand">{{ $incident->reference_number }}</td>
+                        <td class="py-3 px-4 text-xs md:text-sm text-ink-soft hidden sm:table-cell">{{ $incident->first_name }} {{ $incident->surname }}</td>
+                        <td class="py-3 px-4 text-xs md:text-sm text-ink-soft hidden md:table-cell truncate">{{ $incident->facility?->name ?? 'N/A' }}</td>
+                        <td class="py-3 px-4 text-xs md:text-sm text-ink-soft hidden lg:table-cell">{{ $incident->incidentType?->name ?? 'Unknown' }}</td>
+                        <td class="py-3 px-4 text-xs md:text-sm text-muted">{{ $incident->created_at->format('M d, Y') }}</td>
+                        <td class="py-3 px-4 text-center">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold {{ $statusClass }}">
+                                <i class="fa-solid fa-circle" style="font-size: 5px;"></i>
+                                {{ $statusLabel }}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            <a href="{{ route('incidents.supervisor_view', ['incident' => $incident]) }}" class="inline-flex items-center gap-1 px-2 py-1 bg-brand text-surface rounded text-xs font-semibold hover:bg-brand-deep transition-colors">
+                                <i class="fa-solid fa-eye text-xs"></i>
+                                <span class="hidden sm:inline">Review</span>
                             </a>
                         </td>
                     </tr>
@@ -214,9 +242,11 @@
         </table>
     </div>
     
-    @if($totalCount > 3)
-    <div class="mt-3 text-center text-xs md:text-sm text-slate-500">
-        Showing <span x-text="expanded ? '{{ $totalCount }}' : '3'"></span> of {{ $totalCount }} cases
+    @if($totalCount > 1)
+    <div class="px-4 md:px-6 py-3 text-center border-t border-line bg-canvas">
+        <p class="text-xs md:text-sm text-muted font-medium">
+            Showing <span x-text="expanded ? '{{ $totalCount }}' : Math.min(5, {{ $totalCount }})"></span> of <span class="inline-block px-2.5 py-0.5 rounded-full bg-brand-soft text-brand font-semibold">{{ $totalCount }}</span> cases
+        </p>
     </div>
     @endif
 </div>

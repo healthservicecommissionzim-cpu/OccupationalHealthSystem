@@ -132,7 +132,7 @@
                 <div>
                     <h1 class="title">All Incidents</h1>
                     <div class="sub">Review and manage all incidents</div>
-                    <span class="case">Total: {{ $incidents->total() }} incidents</span>
+                    <span class="case">Total: {{ $incidents->count() }} incidents</span>
                 </div>
             </div>
             <a href="javascript:history.back()" class="back"><i class="fa-solid fa-arrow-left"></i> Back</a>
@@ -241,13 +241,7 @@
                 </table>
             </div>
 
-            @if($incidents->hasPages())
-            <div class="pagination-wrapper">
-                <div class="pagination">
-                    {{ $incidents->links() }}
-                </div>
-            </div>
-            @endif
+
         </div>
     </div>
 

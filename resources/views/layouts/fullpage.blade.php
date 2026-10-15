@@ -91,10 +91,10 @@
                     <p class="text-[11px] text-slate-500 mt-1">{{ Auth::user()->email }}</p>
                 </div>
                 <div class="p-2 border-b border-border space-y-1">
-                    <a href="{{ route('profile.show') }}" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded transition-colors">
+                    <button onclick="openProfileModal()" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded transition-colors">
                         <i class="fa-solid fa-user text-slate-600 w-4"></i>
                         <span>View Profile</span>
-                    </a>
+                    </button>
                     <a href="{{ route('support.create_ticket') }}" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded transition-colors">
                         <i class="fa-solid fa-circle-question text-slate-600 w-4"></i>
                         <span>Get IT Help</span>
@@ -126,5 +126,8 @@
 </main>
 
 @yield('scripts')
+
+<!-- Profile Modal Component -->
+@include('components.profile-modal')
 </body>
 </html>

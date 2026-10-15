@@ -19,13 +19,13 @@
                     },
                     colors: {
                         brand: {
-                            DEFAULT: '#0d7a3d',
-                            light: '#1bb74d',
-                            dark: '#0a5f30',
+                            DEFAULT: '#079b6d',
+                            light: '#e9f8f3',
+                            dark: '#067c58',
                         },
-                        navy: '#1e3a5f',
-                        surface: '#f8fafc',
-                        border: '#e8ecf1',
+                        navy: '#101a31',
+                        surface: '#f5f7fa',
+                        border: '#e1e7ee',
                     }
                 }
             }

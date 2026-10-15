@@ -2000,10 +2000,10 @@ class IncidentController extends Controller
 
         // Get pending incidents assigned to this specific HR user
         // The routed_to_hr_user_id is already assigned based on their role, so no need to filter by route type
-        $query = \App\Models\Incident::where('status', 'VERIFIED_SUPERVISOR')
-            ->where('routed_to_hr_user_id', $user->id);
-
-        $incidents = $query->orderBy('escalated_to_hr_at', 'asc')->paginate(15);
+        $incidents = \App\Models\Incident::where('status', 'VERIFIED_SUPERVISOR')
+            ->where('routed_to_hr_user_id', $user->id)
+            ->orderBy('escalated_to_hr_at', 'asc')
+            ->get();
 
         return view('incidents.hr_pending_review', compact('incidents'));
     }
@@ -2170,7 +2170,7 @@ class IncidentController extends Controller
         }
 
         // Check if file exists
-        $filePath = storage_path('app/public/' . $attachment->file_path);
+        $filePath = storage_path('app/private/' . $attachment->file_path);
         if (!file_exists($filePath)) {
             abort(404, 'File not found');
         }
@@ -2452,7 +2452,7 @@ class IncidentController extends Controller
         }
 
         // Check if file exists
-        $filePath = storage_path('app/public/' . $attachment->file_path);
+        $filePath = storage_path('app/private/' . $attachment->file_path);
         if (!file_exists($filePath)) {
             abort(404, 'File not found');
         }

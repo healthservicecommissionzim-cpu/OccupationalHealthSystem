@@ -28,6 +28,55 @@ class ProfileController extends Controller
     }
 
     /**
+     * Get profile data as JSON (for modal)
+     */
+    public function getProfileData()
+    {
+        $user = Auth::user();
+        
+        return response()->json([
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone_number' => $user->phone_number,
+                'status' => $user->status,
+                'created_at' => $user->created_at->format('F d, Y'),
+                'updated_at' => $user->updated_at->format('F d, Y \a\t h:i A'),
+                'initials' => strtoupper(substr(implode('', array_map(fn($word) => substr($word, 0, 1), explode(' ', trim($user->name)))), 0, 2)),
+            ],
+            'roles' => $user->roles->map(fn($role) => [
+                'id' => $role->id,
+                'display_name' => $role->display_name,
+            ]),
+            'organization' => $user->organization ? [
+                'id' => $user->organization->id,
+                'name' => $user->organization->name,
+            ] : null,
+            'facility' => $user->facility ? [
+                'id' => $user->facility->id,
+                'name' => $user->facility->name,
+            ] : null,
+            'department' => $user->department ? [
+                'id' => $user->department->id,
+                'name' => $user->department->name,
+            ] : null,
+            'designation' => $user->designation ? [
+                'id' => $user->designation->id,
+                'name' => $user->designation->name,
+            ] : null,
+            'province' => $user->province ? [
+                'id' => $user->province->id,
+                'name' => $user->province->name,
+            ] : null,
+            'district' => $user->district ? [
+                'id' => $user->district->id,
+                'name' => $user->district->name,
+            ] : null,
+        ]);
+    }
+
+    /**
      * Get the appropriate back route based on user's role
      */
     private function getBackRoute($user)

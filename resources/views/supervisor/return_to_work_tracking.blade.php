@@ -4,450 +4,208 @@
 
 @section('page_content')
 
-<style>
-    .container { max-width: 1400px; margin: 0 auto; padding: 0 1rem; }
-    .header { margin-bottom: 1rem; }
-    .header h3 { 
-        font-size: 20px; 
-        font-weight: 700; 
-        color: #0f172a; 
-        display: flex; 
-        align-items: center; 
-        gap: 0.75rem; 
-        margin: 0 0 0.5rem 0;
-    }
-    .header p { 
-        font-size: 14px; 
-        color: #64748b; 
-        font-weight: 500;
-        margin: 0;
-    }
-    .header-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.5rem;
-    }
-    .back-button {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        background: white;
-        color: #1D4533;
-        text-decoration: none;
-        border-radius: 8px;
-        font-size: 12px;
-        font-weight: 600;
-        border: 2px solid #1D4533;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-    }
-    .back-button:hover {
-        background: #1D4533;
-        color: white;
-        transform: translateX(-2px);
-    }
-    .table-wrapper { 
-        background: white; 
-        border-radius: 12px; 
-        box-shadow: 0 4px 16px rgba(0,0,0,0.12); 
-        overflow: hidden; 
-        margin-bottom: 3rem; 
-    }
-    .table-header { 
-        padding: 1.5rem; 
-        background: linear-gradient(135deg, #1D4533 0%, #1e5140 100%);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-        flex-wrap: wrap;
-    }
-    .table-header h2 { 
-        font-size: 16px; 
-        font-weight: 700; 
-        color: white; 
-        display: flex; 
-        align-items: center; 
-        gap: 0.75rem;
-        margin: 0;
-    }
-    .header-controls {
-        display: flex;
-        gap: 0.75rem;
-        align-items: center;
-    }
-    .filter-select, .search-input {
-        padding: 0.6rem 1rem;
-        background: white;
-        border: 1px solid #e2e8f0;
-        border-radius: 6px;
-        font-size: 12px;
-        font-family: Tahoma, sans-serif;
-    }
-    .filter-select {
-        cursor: pointer;
-    }
-    .search-input {
-        width: 200px;
-    }
-    .search-input::placeholder {
-        color: #a0aec0;
-    }
-    .table-container { 
-        overflow-x: auto; 
-    }
-    table { 
-        width: 100%; 
-        font-size: 13px; 
-        border-collapse: collapse; 
-    }
-    thead { 
-        background: #f7fafc; 
-    }
-    th { 
-        text-align: left; 
-        padding: 0.75rem; 
-        font-weight: 700; 
-        color: #2d3748; 
-        border-bottom: 2px solid #e2e8f0;
-        white-space: nowrap;
-    }
-    td { 
-        padding: 0.75rem; 
-        border-bottom: 1px solid #e2e8f0;
-        color: #4a5568;
-    }
-    tbody tr:hover { 
-        background: #f7fafc; 
-    }
-    tbody tr:last-child td { 
-        border-bottom: none; 
-    }
-    .ref-number { 
-        font-weight: 600; 
-        color: #1D4533;
-    }
-    .status-badge { 
-        display: inline-block; 
-        padding: 0.4rem 0.75rem; 
-        border-radius: 6px; 
-        font-size: 11px; 
-        font-weight: 700;
-    }
-    .status-active { 
-        background: #dbeafe; 
-        color: #1e40af; 
-    }
-    .status-on-track { 
-        background: #d1f2eb; 
-        color: #0f766e; 
-    }
-    .status-requires-intervention { 
-        background: #fef3c7; 
-        color: #92400e; 
-    }
-    .status-completed { 
-        background: #d1fae5; 
-        color: #065f46; 
-    }
-    .progress-bar {
-        width: 100%;
-        height: 6px;
-        background: #e2e8f0;
-        border-radius: 3px;
-        overflow: hidden;
-        margin: 0.4rem 0;
-    }
-    .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #1D4533 0%, #1e5140 100%);
-    }
-    .action-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 0.4rem 0.8rem;
-        background: #1D4533;
-        color: white;
-        text-decoration: none;
-        border: none;
-        border-radius: 6px;
-        font-size: 11px;
-        font-weight: 600;
-        transition: all 0.2s ease;
-        cursor: pointer;
-    }
-    .action-link:hover {
-        background: #0f2818;
-        transform: translateY(-1px);
-    }
-    .details-row {
-        display: none;
-    }
-    .details-row.show {
-        display: table-row;
-        background: #f7fafc;
-        animation: slideDown 0.3s ease-out;
-    }
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    .details-content {
-        padding: 1.5rem;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
-    }
-    .detail-section h4 {
-        font-size: 12px;
-        font-weight: 700;
-        color: #2d3748;
-        margin: 0 0 0.75rem 0;
-        text-transform: uppercase;
-    }
-    .detail-section p {
-        font-size: 13px;
-        color: #4a5568;
-        margin: 0;
-    }
-    .empty-state { 
-        text-align: center; 
-        padding: 3rem 1.5rem;
-    }
-    .empty-state i { 
-        font-size: 48px; 
-        color: #cbd5e1; 
-        margin-bottom: 1rem;
-        display: block;
-    }
-    .empty-state p { 
-        font-size: 16px; 
-        color: #64748b; 
-        font-weight: 600;
-        margin: 0;
-    }
-    .pagination-wrapper { 
-        padding: 1rem; 
-        text-align: center; 
-        background: white; 
-        border-top: 1px solid #e2e8f0;
-    }
-    @media (max-width: 768px) {
-        .header h3 { font-size: 24px; }
-        .header-top { flex-direction: column; align-items: flex-start; gap: 1rem; }
-        .table-header { flex-direction: column; align-items: flex-start; }
-        .header-controls { flex-direction: column; width: 100%; }
-        th, td { padding: 0.5rem; font-size: 12px; }
-    }
-</style>
-
-<div class="container">
-    <div class="header">
-        <div class="header-top">
-            <h3><i class="fa-solid fa-person-hiking"></i> Return-to-Work Tracking</h3>
-            <a href="{{ route('dashboard') }}" class="back-button">
-                <i class="fa-solid fa-arrow-left"></i>
-                Back
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+                <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-brand-light flex items-center justify-center">
+                    <i class="fa-solid fa-person-hiking text-brand text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-ink">Return-to-Work Tracking</h1>
+                    <p class="text-sm text-muted mt-1">Monitor worker recovery and return schedules</p>
+                </div>
+            </div>
+            <a href="{{ route('dashboards.supervisor') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-brand text-surface rounded-lg font-medium hover:bg-brand-deep transition-colors">
+                <i class="fa-solid fa-arrow-left text-sm"></i>
+                <span class="hidden sm:inline">Back to Dashboard</span>
+                <span class="sm:hidden">Back</span>
             </a>
         </div>
-        <p>Monitor worker return-to-work status and schedule reviews</p>
     </div>
 
-    <div class="table-wrapper">
-        <div class="table-header">
-            <h2><i class="fa-solid fa-table-list"></i> Return-to-Work Cases [{{ $incidents->total() }}]</h2>
-            <div class="header-controls">
-                <select id="recordsPerPage" class="filter-select">
-                    <option value="all" selected>All Records</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="300">300</option>
-                    <option value="500">500</option>
-                </select>
-                <input type="text" id="tableSearch" class="search-input" placeholder="Search..." />
+    <!-- Search & Filter Section -->
+    <div class="mb-6 flex flex-col sm:flex-row gap-3">
+        <input type="text" id="tableSearch" placeholder="Search reference, worker name..." class="flex-1 px-4 py-2.5 bg-surface border border-line rounded-lg text-sm placeholder-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent">
+        <select id="recordsPerPage" class="px-4 py-2.5 bg-surface border border-line rounded-lg text-sm font-medium text-ink cursor-pointer hover:border-brand transition-colors">
+            <option value="all">All Records</option>
+            <option value="50">50 Records</option>
+            <option value="100">100 Records</option>
+            <option value="300">300 Records</option>
+        </select>
+    </div>
+
+    <!-- Return-to-Work Cases Table -->
+    <div class="bg-surface rounded-lg border border-line shadow-sm overflow-hidden">
+        <!-- Header -->
+        <div class="p-4 md:p-6 border-b border-line flex items-center justify-between gap-4">
+            <div>
+                <h3 class="text-base md:text-lg font-semibold text-ink">
+                    Return-to-Work Cases
+                </h3>
+                <p class="text-xs text-muted mt-1">{{ $incidents->total() }} total cases</p>
             </div>
         </div>
 
-        <div class="table-container">
-            <table>
-                <thead>
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="border-b border-line bg-canvas">
                     <tr>
-                        <th style="width: 50px; text-align: center;">#</th>
-                        <th>Reference</th>
-                        <th>Worker</th>
-                        <th>Facility</th>
-                        <th>RTW Status</th>
-                        <th>Progress</th>
-                        <th>Days</th>
-                        <th>Next Review</th>
-                        <th style="width: 80px; text-align: center;">Action</th>
+                        <th class="text-left py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider">#</th>
+                        <th class="text-left py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider">Reference</th>
+                        <th class="text-left py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider hidden sm:table-cell">Worker</th>
+                        <th class="text-left py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider hidden md:table-cell">Facility</th>
+                        <th class="text-left py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider">RTW Status</th>
+                        <th class="text-left py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider hidden lg:table-cell">Progress</th>
+                        <th class="text-left py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider">Next Review</th>
+                        <th class="text-center py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($incidents as $incident)
-                        <tr data-incident-id="{{ $incident->id }}">
-                            <td style="text-align: center; font-weight: 600; color: #64748b;">{{ $loop->iteration }}</td>
-                            <td><span class="ref-number">{{ $incident->reference_number }}</span></td>
-                            <td>
-                                <div style="font-weight: 600;">{{ $incident->first_name }} {{ $incident->surname }}</div>
-                                <div style="font-size: 11px; color: #64748b;">ID: {{ $incident->id_number }}</div>
+                        @php
+                            $statusClass = match($incident->rtw_status) {
+                                'on_track' => 'bg-emerald-50 text-emerald-700',
+                                'requires_intervention' => 'bg-amber-50 text-amber-700',
+                                'completed' => 'bg-green-50 text-green-700',
+                                default => 'bg-blue-50 text-blue-700',
+                            };
+                        @endphp
+                        <tr class="border-b border-line hover:bg-canvas transition-colors" data-incident-id="{{ $incident->id }}">
+                            <td class="py-3 px-4 text-xs font-semibold text-muted">{{ $loop->iteration }}</td>
+                            <td class="py-3 px-4 text-xs md:text-sm font-semibold text-brand">{{ $incident->reference_number }}</td>
+                            <td class="py-3 px-4 text-xs md:text-sm text-ink-soft hidden sm:table-cell">
+                                <div>{{ $incident->first_name }} {{ $incident->surname }}</div>
+                                <div class="text-muted text-xs">ID: {{ $incident->id_number }}</div>
                             </td>
-                            <td>{{ $incident->facility?->name ?? 'N/A' }}</td>
-                            <td>
-                                @php
-                                    $statusColor = match($incident->rtw_status) {
-                                        'active' => 'status-active',
-                                        'on_track' => 'status-on-track',
-                                        'requires_intervention' => 'status-requires-intervention',
-                                        'completed' => 'status-completed',
-                                        default => 'status-active',
-                                    };
-                                @endphp
-                                <span class="status-badge {{ $statusColor }}">
-                                    {{ str_replace('_', ' ', ucfirst($incident->rtw_status)) }}
+                            <td class="py-3 px-4 text-xs md:text-sm text-ink-soft hidden md:table-cell truncate">{{ $incident->facility?->name ?? 'N/A' }}</td>
+                            <td class="py-3 px-4">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold {{ $statusClass }}">
+                                    <i class="fa-solid fa-circle" style="font-size: 4px;"></i>
+                                    {{ str_replace('_', ' ', ucfirst($incident->rtw_status ?? 'active')) }}
                                 </span>
                             </td>
-                            <td>
+                            <td class="py-3 px-4 text-xs md:text-sm text-ink-soft hidden lg:table-cell">
                                 @if($incident->rtw_start_date && $incident->rtw_end_date)
                                     @php $progress = $incident->getRTWProgressPercentage(); @endphp
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: {{ $progress }}%"></div>
+                                    <div class="w-full bg-line rounded-full h-1.5">
+                                        <div class="bg-brand h-1.5 rounded-full transition-all" style="width: {{ $progress }}%"></div>
                                     </div>
-                                    <div style="font-size: 11px; color: #64748b;">{{ $progress }}%</div>
+                                    <span class="text-xs text-muted mt-1 block">{{ $progress }}%</span>
                                 @else
-                                    <span style="color: #a0aec0;">—</span>
+                                    <span class="text-muted">—</span>
                                 @endif
                             </td>
-                            <td>
-                                @if($incident->rtw_start_date)
-                                    <div style="font-size: 12px;">
-                                        <div style="font-weight: 600;">{{ $incident->getRTWDaysElapsed() }} days elapsed</div>
-                                        @if($incident->rtw_end_date)
-                                            <div style="font-size: 11px; color: #64748b;">{{ $incident->getRTWDaysRemaining() }} remaining</div>
-                                        @endif
-                                    </div>
-                                @else
-                                    <span style="color: #a0aec0;">Not started</span>
-                                @endif
-                            </td>
-                            <td>
+                            <td class="py-3 px-4 text-xs md:text-sm">
                                 @if($incident->rtw_next_review_date)
-                                    <div style="font-size: 12px;">
-                                        <div style="font-weight: 600;">{{ $incident->rtw_next_review_date->format('M d, Y') }}</div>
-                                        @php
-                                            $daysUntilReview = now()->diffInDays($incident->rtw_next_review_date, false);
-                                        @endphp
-                                        <div style="font-size: 11px; {{ $daysUntilReview < 0 ? 'color: #dc2626; font-weight: 600;' : 'color: #64748b;' }}">
-                                            {{ $daysUntilReview < 0 ? 'Overdue' : "$daysUntilReview days" }}
-                                        </div>
+                                    <div class="font-semibold text-ink">{{ $incident->rtw_next_review_date->format('M d') }}</div>
+                                    @php
+                                        $daysUntilReview = now()->diffInDays($incident->rtw_next_review_date, false);
+                                    @endphp
+                                    <div class="text-xs {{ $daysUntilReview < 0 ? 'text-red-600 font-semibold' : 'text-muted' }}">
+                                        {{ $daysUntilReview < 0 ? 'Overdue' : "$daysUntilReview days" }}
                                     </div>
                                 @else
-                                    <span style="color: #a0aec0;">Not scheduled</span>
+                                    <span class="text-muted">Not scheduled</span>
                                 @endif
                             </td>
-                            <td style="text-align: center;">
-                                <button class="action-link" onclick="toggleDetails({{ $incident->id }})" title="View Details">
-                                    <i class="fa-solid fa-eye"></i> View
+                            <td class="py-3 px-4 text-center">
+                                <button onclick="toggleDetails({{ $incident->id }})" class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-brand text-surface rounded-lg text-xs font-semibold hover:bg-brand-deep transition-colors">
+                                    <i class="fa-solid fa-eye text-xs"></i>
+                                    <span class="hidden sm:inline">View</span>
                                 </button>
                             </td>
                         </tr>
-                        <tr id="details-{{ $incident->id }}" class="details-row">
-                            <td colspan="9">
-                                <div class="details-content">
-                                    <div class="detail-section">
-                                        <h4>Medical Restrictions</h4>
-                                        @php $restrictions = $incident->getMedicalRestrictions(); @endphp
-                                        @if($restrictions)
-                                            @foreach($restrictions as $restriction)
-                                                <p>• {{ $restriction }}</p>
-                                            @endforeach
-                                        @else
-                                            <p style="color: #a0aec0;">No restrictions recorded</p>
-                                        @endif
+                        <!-- Details Row -->
+                        <tr id="details-{{ $incident->id }}" class="details-row hidden">
+                            <td colspan="8" class="py-4 px-4 bg-canvas">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                                    <div>
+                                        <label class="text-xs font-semibold text-muted uppercase tracking-wide">Medical Restrictions</label>
+                                        <div class="mt-2 text-sm text-ink-soft space-y-1">
+                                            @php $restrictions = $incident->getMedicalRestrictions(); @endphp
+                                            @if($restrictions)
+                                                @foreach($restrictions as $restriction)
+                                                    <div class="flex items-start gap-2">
+                                                        <span class="text-brand mt-0.5">•</span>
+                                                        <span>{{ $restriction }}</span>
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <span class="text-muted">No restrictions</span>
+                                            @endif
+                                        </div>
                                     </div>
 
-                                    <div class="detail-section">
-                                        <h4>Modified Duties</h4>
-                                        @php $duties = $incident->getModifiedDuties(); @endphp
-                                        @if($duties)
-                                            @foreach($duties as $duty)
-                                                <p>• {{ $duty }}</p>
-                                            @endforeach
-                                        @else
-                                            <p style="color: #a0aec0;">No duties assigned</p>
-                                        @endif
+                                    <div>
+                                        <label class="text-xs font-semibold text-muted uppercase tracking-wide">Modified Duties</label>
+                                        <div class="mt-2 text-sm text-ink-soft space-y-1">
+                                            @php $duties = $incident->getModifiedDuties(); @endphp
+                                            @if($duties)
+                                                @foreach($duties as $duty)
+                                                    <div class="flex items-start gap-2">
+                                                        <span class="text-brand mt-0.5">•</span>
+                                                        <span>{{ $duty }}</span>
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <span class="text-muted">Not assigned</span>
+                                            @endif
+                                        </div>
                                     </div>
 
-                                    <div class="detail-section">
-                                        <h4>Work Schedule</h4>
-                                        @php $schedule = $incident->getWorkSchedule(); @endphp
-                                        @if($schedule)
-                                            @foreach($schedule as $week => $hours)
-                                                <p><span style="font-weight: 600;">{{ $week }}:</span> {{ $hours }}</p>
-                                            @endforeach
-                                        @else
-                                            <p style="color: #a0aec0;">No schedule defined</p>
-                                        @endif
+                                    <div>
+                                        <label class="text-xs font-semibold text-muted uppercase tracking-wide">Accommodations</label>
+                                        <p class="mt-2 text-sm text-ink-soft">{{ $incident->rtw_accommodations ?? 'None recorded' }}</p>
                                     </div>
 
-                                    <div class="detail-section">
-                                        <h4>Accommodations</h4>
-                                        @if($incident->rtw_accommodations)
-                                            <p>{{ $incident->rtw_accommodations }}</p>
-                                        @else
-                                            <p style="color: #a0aec0;">No accommodations recorded</p>
-                                        @endif
+                                    <div>
+                                        <label class="text-xs font-semibold text-muted uppercase tracking-wide">Doctor Clearance</label>
+                                        <div class="mt-2">
+                                            <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-semibold {{ $incident->rtw_doctor_clearance_received ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' }}">
+                                                <i class="fa-solid {{ $incident->rtw_doctor_clearance_received ? 'fa-check-circle' : 'fa-circle-xmark' }} text-xs"></i>
+                                                {{ $incident->rtw_doctor_clearance_received ? 'Received' : 'Pending' }}
+                                            </span>
+                                        </div>
                                     </div>
 
-                                    <div class="detail-section">
-                                        <h4>Doctor Clearance</h4>
-                                        <p style="{{ $incident->rtw_doctor_clearance_received ? 'color: #0f766e; font-weight: 600;' : 'color: #64748b;' }}">
-                                            {{ $incident->rtw_doctor_clearance_received ? '✓ Received' : '✗ Pending' }}
-                                        </p>
+                                    <div>
+                                        <label class="text-xs font-semibold text-muted uppercase tracking-wide">Plan Sign-Off</label>
+                                        <div class="mt-2">
+                                            <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-semibold {{ $incident->rtw_plan_signed_off ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' }}">
+                                                <i class="fa-solid {{ $incident->rtw_plan_signed_off ? 'fa-check-circle' : 'fa-circle-xmark' }} text-xs"></i>
+                                                {{ $incident->rtw_plan_signed_off ? 'Signed' : 'Pending' }}
+                                            </span>
+                                        </div>
                                     </div>
 
-                                    <div class="detail-section">
-                                        <h4>Plan Signed Off</h4>
-                                        <p style="{{ $incident->rtw_plan_signed_off ? 'color: #0f766e; font-weight: 600;' : 'color: #64748b;' }}">
-                                            {{ $incident->rtw_plan_signed_off ? '✓ Yes' : '✗ No' }}
-                                        </p>
+                                    <div>
+                                        <label class="text-xs font-semibold text-muted uppercase tracking-wide">Days Status</label>
+                                        <div class="mt-2 text-sm text-ink-soft space-y-1">
+                                            <div><span class="font-semibold">{{ $incident->getRTWDaysElapsed() ?? 0 }}</span> days elapsed</div>
+                                            @if($incident->rtw_end_date)
+                                                <div><span class="font-semibold">{{ $incident->getRTWDaysRemaining() ?? 0 }}</span> days remaining</div>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
+
                                 @if($incident->rtw_review_notes)
-                                    <div style="padding: 0 1.5rem; padding-top: 1rem; border-top: 1px solid #e2e8f0; margin-top: 1rem;">
-                                        <h4 style="font-size: 12px; font-weight: 700; color: #2d3748; margin: 0 0 0.5rem 0;">Review Notes</h4>
-                                        <p style="font-size: 13px; color: #4a5568;">{{ $incident->rtw_review_notes }}</p>
-                                    </div>
-                                @endif
-                                <div style="padding: 0 1.5rem 1.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem; border-top: 1px solid #e2e8f0; padding-top: 1rem;">
-                                    <div>
-                                        <p style="font-size: 11px; font-weight: 700; color: #64748b; margin: 0 0 0.5rem 0; text-transform: uppercase;">Last Review</p>
-                                        <p style="font-size: 13px; color: #2d3748; font-weight: 600; margin: 0;">{{ $incident->rtw_last_review_date ? $incident->rtw_last_review_date->format('M d, Y') : 'Not yet reviewed' }}</p>
-                                    </div>
-                                    <div>
-                                        <p style="font-size: 11px; font-weight: 700; color: #64748b; margin: 0 0 0.5rem 0; text-transform: uppercase;">Next Review Due</p>
-                                        <p style="font-size: 13px; margin: 0; {{ $incident->isRTWReviewOverdue() ? 'color: #dc2626; font-weight: 600;' : 'color: #2d3748; font-weight: 600;' }}">
-                                            {{ $incident->rtw_next_review_date ? $incident->rtw_next_review_date->format('M d, Y') : 'Not scheduled' }}
-                                        </p>
-                                    </div>
+                                <div class="pt-4 border-t border-line">
+                                    <label class="text-xs font-semibold text-muted uppercase tracking-wide">Review Notes</label>
+                                    <p class="mt-2 text-sm text-ink-soft">{{ $incident->rtw_review_notes }}</p>
                                 </div>
+                                @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9">
-                                <div class="empty-state">
-                                    <i class="fa-solid fa-inbox"></i>
-                                    <p>No return-to-work cases assigned yet</p>
+                            <td colspan="8" class="py-12 px-4 text-center">
+                                <div class="flex flex-col items-center gap-3">
+                                    <i class="fa-solid fa-inbox text-4xl text-line"></i>
+                                    <p class="text-sm font-medium text-muted">No return-to-work cases assigned yet</p>
                                 </div>
                             </td>
                         </tr>
@@ -456,8 +214,9 @@
             </table>
         </div>
 
+        <!-- Pagination -->
         @if($incidents->hasPages())
-        <div class="pagination-wrapper">
+        <div class="px-4 md:px-6 py-3 border-t border-line bg-canvas text-center">
             {{ $incidents->links() }}
         </div>
         @endif
@@ -468,39 +227,30 @@
 function toggleDetails(incidentId) {
     const detailsRow = document.getElementById('details-' + incidentId);
     if (detailsRow) {
-        detailsRow.classList.toggle('show');
+        detailsRow.classList.toggle('hidden');
     }
 }
 
-document.getElementById('recordsPerPage').addEventListener('change', function() {
+document.getElementById('recordsPerPage')?.addEventListener('change', function() {
     const perPage = this.value;
-    const rows = document.querySelectorAll('tbody tr');
+    const rows = document.querySelectorAll('tbody tr:not(.details-row)');
     let visibleCount = 0;
     
     rows.forEach(row => {
-        if (row.querySelector('.empty-state')) {
+        visibleCount++;
+        if (perPage === 'all') {
             row.style.display = 'table-row';
-            return;
-        }
-        if (!row.id.startsWith('details-')) {
-            visibleCount++;
-            if (perPage === 'all') {
-                row.style.display = 'table-row';
-            } else {
-                row.style.display = visibleCount <= parseInt(perPage) ? 'table-row' : 'none';
-            }
+        } else {
+            row.style.display = visibleCount <= parseInt(perPage) ? 'table-row' : 'none';
         }
     });
 });
 
-document.getElementById('tableSearch').addEventListener('keyup', function() {
+document.getElementById('tableSearch')?.addEventListener('keyup', function() {
     const searchTerm = this.value.toLowerCase();
-    const rows = document.querySelectorAll('tbody tr');
+    const rows = document.querySelectorAll('tbody tr:not(.details-row)');
     
     rows.forEach(row => {
-        if (row.querySelector('.empty-state')) return;
-        if (row.id.startsWith('details-')) return;
-        
         const text = row.innerText.toLowerCase();
         const isVisible = text.includes(searchTerm);
         row.style.display = isVisible ? 'table-row' : 'none';
@@ -509,7 +259,7 @@ document.getElementById('tableSearch').addEventListener('keyup', function() {
         if (incidentId) {
             const detailsRow = document.getElementById('details-' + incidentId);
             if (detailsRow && !isVisible) {
-                detailsRow.classList.remove('show');
+                detailsRow.classList.add('hidden');
             }
         }
     });

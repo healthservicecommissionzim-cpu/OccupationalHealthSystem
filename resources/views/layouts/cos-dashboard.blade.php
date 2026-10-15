@@ -19,7 +19,7 @@
                             </span>
                         @endif
                     </a>
-                    <a href="{{ route('profile.show') }}" class="hover:bg-blue-600 px-3 py-2 rounded">{{ auth()->user()->name }}</a>
+                    <button onclick="openProfileModal()" class="hover:bg-blue-600 px-3 py-2 rounded cursor-pointer">{{ auth()->user()->name }}</button>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
                         <button type="submit" class="hover:bg-blue-600 px-3 py-2 rounded text-sm">Logout</button>
@@ -148,3 +148,6 @@
     }
 </style>
 @endsection
+
+<!-- Profile Modal Component -->
+@include('components.profile-modal')

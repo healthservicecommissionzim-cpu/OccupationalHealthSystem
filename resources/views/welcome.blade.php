@@ -1309,7 +1309,7 @@
     </div>
 
     <!-- Floating Chat Widget -->
-    <button class="floating-chat-btn" id="floatingChatBtn">
+    <button class="floating-chat-btn" id="floatingChatBtn" title="Get Help" aria-label="Get Help - Contact Support">
         <i class="fas fa-comments"></i>
         <span>Chat</span>
     </button>

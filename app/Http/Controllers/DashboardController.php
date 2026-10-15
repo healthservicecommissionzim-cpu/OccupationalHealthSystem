@@ -150,6 +150,7 @@ class DashboardController extends Controller
             ->get();
 
         $unreadNotificationCount = $newNotifications->count();
+        $allNotifications = $newNotifications; // Alias for view compatibility
 
         $viewData = compact(
             'allIncidents',
@@ -1558,78 +1559,118 @@ class DashboardController extends Controller
         $organizationId = $request->input('organization_id');
         $cacheKey = "super_admin_dashboard_" . ($organizationId ?? 'all');
         
-        // Check cache first (30 second TTL)
+        // Check cache first (60 second TTL)
         $cachedData = \Illuminate\Support\Facades\Cache::get($cacheKey);
         if ($cachedData && !$request->has('refresh')) {
             return view('dashboards.super_admin', $cachedData);
         }
 
-        // User Management Statistics
+        // Get all user statistics in single query
+        $userStats = \DB::table('users')
+            ->selectRaw("
+                SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_count,
+                SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved_count,
+                SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected_count,
+                COUNT(*) as total_count
+            ")
+            ->first();
+
         $userStatistics = [
-            'pending_count' => \App\Models\User::where('status', 'pending')->count(),
-            'approved_count' => \App\Models\User::where('status', 'approved')->count(),
-            'rejected_count' => \App\Models\User::where('status', 'rejected')->count(),
-            'total_count' => \App\Models\User::count(),
+            'pending_count' => $userStats->pending_count ?? 0,
+            'approved_count' => $userStats->approved_count ?? 0,
+            'rejected_count' => $userStats->rejected_count ?? 0,
+            'total_count' => $userStats->total_count ?? 0,
         ];
 
-        // National Incident Statistics (Macro KPIs)
+        // Get all incident statistics in single optimized query
+        $incidentStats = \DB::table('incidents')
+            ->selectRaw("
+                COUNT(*) as total_count,
+                SUM(CASE WHEN status = 'PENDING_SUPERVISOR_VERIFICATION' THEN 1 ELSE 0 END) as pending_incidents,
+                SUM(CASE WHEN status IN ('ESCALATED_TO_HR', 'PENDING_HR_REVIEW', 'ESCALATED_TO_DMO', 'PENDING_PMD_REVIEW') THEN 1 ELSE 0 END) as active_workflows,
+                SUM(CASE WHEN status IN ('RESOLVED', 'APPROVED_BY_PMD', 'CLOSED') THEN 1 ELSE 0 END) as resolved_incidents,
+                SUM(CASE WHEN status IN ('REJECTED_BY_HR', 'REJECTED', 'REJECTED_SUPERVISOR') THEN 1 ELSE 0 END) as rejected_incidents
+            ")
+            ->first();
+
         $incidentStatistics = [
-            'total_cases' => \App\Models\Incident::count(),
-            'pending_incidents' => \App\Models\Incident::where('status', 'PENDING_SUPERVISOR_VERIFICATION')->count(),
-            'active_workflows' => \App\Models\Incident::whereIn('status', ['ESCALATED_TO_HR', 'PENDING_HR_REVIEW', 'ESCALATED_TO_DMO', 'PENDING_PMD_REVIEW'])->count(),
-            'resolved_incidents' => \App\Models\Incident::whereIn('status', ['RESOLVED', 'APPROVED_BY_PMD', 'CLOSED'])->count(),
-            'rejected_incidents' => \App\Models\Incident::whereIn('status', ['REJECTED_BY_HR', 'REJECTED', 'REJECTED_SUPERVISOR'])->count(),
-            'total_incidents' => \App\Models\Incident::count(),
+            'total_cases' => $incidentStats->total_count ?? 0,
+            'pending_incidents' => $incidentStats->pending_incidents ?? 0,
+            'active_workflows' => $incidentStats->active_workflows ?? 0,
+            'resolved_incidents' => $incidentStats->resolved_incidents ?? 0,
+            'rejected_incidents' => $incidentStats->rejected_incidents ?? 0,
+            'total_incidents' => $incidentStats->total_count ?? 0,
         ];
 
-        // Workflow Pipeline Distribution (Nationwide Case Distribution)
+        // Workflow Pipeline Distribution in single query
+        $statusCounts = \DB::table('incidents')
+            ->selectRaw('status, COUNT(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status');
+
         $workflowDistribution = [
-            'PENDING_SUPERVISOR_VERIFICATION' => \App\Models\Incident::where('status', 'PENDING_SUPERVISOR_VERIFICATION')->count(),
-            'VERIFIED_SUPERVISOR' => \App\Models\Incident::where('status', 'VERIFIED_SUPERVISOR')->count(),
-            'HR_REVIEW' => \App\Models\Incident::whereIn('status', ['ESCALATED_TO_HR', 'PENDING_HR_REVIEW'])->count(),
-            'CLINICAL_EXECUTIVE_REVIEW' => \App\Models\Incident::whereIn('status', ['ESCALATED_TO_DMO', 'ESCALATED_TO_MEDICAL_SUPERINTENDENT', 'ESCALATED_TO_CMO'])->count(),
-            'PENDING_PROVINCIAL_APPROVAL' => \App\Models\Incident::whereIn('status', ['ESCALATED_TO_PMD', 'PENDING_PMD_REVIEW'])->count(),
-            'PENDING_MEDICAL_BOARD' => \App\Models\Incident::where('status', 'REFERRED_TO_MEDICAL_BOARD')->count(),
-            'MINISTRY_LEVEL' => \App\Models\Incident::where('status', 'REFERRED_TO_MINISTRY_HQ')->count(),
+            'PENDING_SUPERVISOR_VERIFICATION' => $statusCounts['PENDING_SUPERVISOR_VERIFICATION'] ?? 0,
+            'VERIFIED_SUPERVISOR' => $statusCounts['VERIFIED_SUPERVISOR'] ?? 0,
+            'HR_REVIEW' => ($statusCounts['ESCALATED_TO_HR'] ?? 0) + ($statusCounts['PENDING_HR_REVIEW'] ?? 0),
+            'CLINICAL_EXECUTIVE_REVIEW' => ($statusCounts['ESCALATED_TO_DMO'] ?? 0) + ($statusCounts['ESCALATED_TO_MEDICAL_SUPERINTENDENT'] ?? 0) + ($statusCounts['ESCALATED_TO_CMO'] ?? 0),
+            'PENDING_PROVINCIAL_APPROVAL' => ($statusCounts['ESCALATED_TO_PMD'] ?? 0) + ($statusCounts['PENDING_PMD_REVIEW'] ?? 0),
+            'PENDING_MEDICAL_BOARD' => $statusCounts['REFERRED_TO_MEDICAL_BOARD'] ?? 0,
+            'MINISTRY_LEVEL' => $statusCounts['REFERRED_TO_MINISTRY_HQ'] ?? 0,
         ];
 
-        // System Configuration Data
-        $systemConfig = [
-            'total_facilities' => \App\Models\Facility::count(),
-            'total_provinces' => \App\Models\Province::count(),
-            'total_districts' => \App\Models\District::count(),
-            'total_roles' => \App\Models\Role::count(),
-            'total_permissions' => \App\Models\Permission::count(),
-        ];
+        // System Configuration - cache these separately (they rarely change)
+        $systemConfig = \Illuminate\Support\Facades\Cache::remember('system_config_counts', 3600, function() {
+            return [
+                'total_facilities' => \App\Models\Facility::count(),
+                'total_provinces' => \App\Models\Province::count(),
+                'total_districts' => \App\Models\District::count(),
+                'total_roles' => \App\Models\Role::count(),
+                'total_permissions' => \App\Models\Permission::count(),
+            ];
+        });
 
-        // Organization-specific filtering
-        $organizations = \App\Models\Organization::all();
+        // Organization filtering with optimized query
+        $organizations = \App\Models\Organization::select('id', 'name')->get();
         
         $organizationStats = null;
         if ($organizationId) {
+            $orgStats = \DB::table('users')
+                ->where('organization_id', $organizationId)
+                ->selectRaw("
+                    SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_count,
+                    SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved_count,
+                    SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected_count,
+                    COUNT(*) as total_count
+                ")
+                ->first();
+
             $organizationStats = [
-                'pending_count' => \App\Models\User::where('organization_id', $organizationId)->where('status', 'pending')->count(),
-                'approved_count' => \App\Models\User::where('organization_id', $organizationId)->where('status', 'approved')->count(),
-                'rejected_count' => \App\Models\User::where('organization_id', $organizationId)->where('status', 'rejected')->count(),
-                'total_count' => \App\Models\User::where('organization_id', $organizationId)->count(),
+                'pending_count' => $orgStats->pending_count ?? 0,
+                'approved_count' => $orgStats->approved_count ?? 0,
+                'rejected_count' => $orgStats->rejected_count ?? 0,
+                'total_count' => $orgStats->total_count ?? 0,
             ];
         }
 
-        // Recent Activity
+        // Recent Activity with eager loading
         $recentApprovals = \App\Models\User::where('status', 'approved')
+            ->select('id', 'name', 'email', 'approved_at')
             ->orderBy('approved_at', 'desc')
             ->limit(5)
             ->get();
 
-        $recentRejections = \App\Models\RejectionLog::orderBy('created_at', 'desc')
+        $recentRejections = \App\Models\RejectionLog::with('user:id,name,email')
+            ->select('id', 'user_id', 'reason', 'created_at')
+            ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
 
-        // Recent incidents (monthly trend for current year)
+        // Recent incidents monthly trend
         $currentYear = now()->year;
-        $recentIncidents = \App\Models\Incident::where('created_at', '>=', now()->startOfYear())
+        $recentIncidents = \DB::table('incidents')
             ->selectRaw('MONTH(created_at) as month, COUNT(*) as count')
             ->whereYear('created_at', $currentYear)
+            ->where('created_at', '>=', now()->startOfYear())
             ->groupBy('month')
             ->orderBy('month', 'asc')
             ->get()
@@ -1639,23 +1680,22 @@ class DashboardController extends Controller
                     'count' => $incident->count
                 ];
             });
-        ;
 
-        // Injury types by province for the chart (using database queries for live data)
+        // Injury types by province (optimized with limit)
         $injuryTypesByProvince = \DB::table('incidents')
             ->join('provinces', 'incidents.province_id', '=', 'provinces.id')
             ->whereNotNull('incidents.province_id')
-            ->select('provinces.name as province', \DB::raw('COUNT(*) as count'))
+            ->selectRaw('provinces.name as province, COUNT(*) as count')
             ->groupBy('provinces.id', 'provinces.name')
             ->orderByDesc('count')
             ->limit(10)
             ->get();
 
-        // Injury types by district for the chart (using database queries for live data)
+        // Injury types by district (optimized with limit)
         $injuryTypesByDistrict = \DB::table('incidents')
             ->join('districts', 'incidents.district_id', '=', 'districts.id')
             ->whereNotNull('incidents.district_id')
-            ->select('districts.name as district', \DB::raw('COUNT(*) as count'))
+            ->selectRaw('districts.name as district, COUNT(*) as count')
             ->groupBy('districts.id', 'districts.name')
             ->orderByDesc('count')
             ->limit(20)
@@ -1675,8 +1715,8 @@ class DashboardController extends Controller
             'injuryTypesByDistrict'
         );
 
-        // Cache for 30 seconds
-        \Illuminate\Support\Facades\Cache::put($cacheKey, $viewData, 30);
+        // Cache for 60 seconds
+        \Illuminate\Support\Facades\Cache::put($cacheKey, $viewData, 60);
 
         return view('dashboards.super_admin', $viewData);
     }
@@ -2340,10 +2380,10 @@ class DashboardController extends Controller
         $incidents = \App\Models\Incident::where('routed_to_hr_user_id', $user->id)
             ->with('facility', 'assignedSupervisor', 'department')
             ->orderBy('created_at', 'desc')
-            ->paginate(20);
+            ->get();
 
         $statistics = [
-            'total' => \App\Models\Incident::where('routed_to_hr_user_id', $user->id)->count(),
+            'total' => $incidents->count(),
         ];
 
         return view('hr.all_incidents', compact('incidents', 'statistics'));
@@ -2433,6 +2473,58 @@ class DashboardController extends Controller
         ];
 
         return view('hr.resolved_cases', compact('incidents', 'statistics'));
+    }
+
+    public function hrPerformanceMetrics()
+    {
+        $user = auth()->user();
+        $userDistrict = $user->district_id;
+        
+        // Review Rate Data
+        $totalCases = \App\Models\Incident::whereHas('facility', function($q) use ($userDistrict) {
+            $q->where('district_id', $userDistrict);
+        })->count();
+        
+        $reviewedCases = \App\Models\Incident::whereHas('facility', function($q) use ($userDistrict) {
+            $q->where('district_id', $userDistrict);
+        })->whereNotNull('hr_reviewed_at')->count();
+
+        $reviewRate = $totalCases > 0 ? round(($reviewedCases / $totalCases) * 100, 1) : 0;
+
+        // Processing Time Data
+        $reviewedIncidents = \App\Models\Incident::whereHas('facility', function($q) use ($userDistrict) {
+            $q->where('district_id', $userDistrict);
+        })->whereNotNull('hr_reviewed_at')->get();
+
+        $avgProcessingTime = 0;
+        if ($reviewedIncidents->count() > 0) {
+            $totalTime = $reviewedIncidents->sum(function($incident) {
+                return $incident->created_at->diffInHours(now());
+            });
+            $avgProcessingTime = round($totalTime / $reviewedIncidents->count(), 1);
+        }
+
+        // Monthly Summary Data
+        $monthlyData = \App\Models\Incident::whereHas('facility', function($q) use ($userDistrict) {
+            $q->where('district_id', $userDistrict);
+        })
+        ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as total')
+        ->groupBy('month')
+        ->orderByDesc('month')
+        ->limit(12)
+        ->get();
+
+        $statistics = [
+            'total_cases' => $totalCases,
+            'reviewed_cases' => $reviewedCases,
+            'pending_review' => $totalCases - $reviewedCases,
+            'review_rate' => $reviewRate,
+            'avg_hours' => $avgProcessingTime,
+            'avg_days' => round($avgProcessingTime / 24, 1),
+            'reviewed_count' => $reviewedIncidents->count(),
+        ];
+
+        return view('hr.performance_metrics', compact('monthlyData', 'statistics'));
     }
 
     public function hrReviewRate()

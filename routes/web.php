@@ -103,12 +103,17 @@ Route::middleware(['auth', 'role:super_admin', 'prevent_back'])->group(function 
     Route::post('/user-approval/{user}/approve', [UserApprovalController::class, 'approve'])->name('user-approval.approve');
     Route::post('/user-approval/{user}/reject', [UserApprovalController::class, 'reject'])->name('user-approval.reject');
     Route::post('/user-approval/{user}/assign-role', [UserApprovalController::class, 'assignRole'])->name('user-approval.assign_role');
+    Route::post('/user-approval/{user}/reset-password', [UserApprovalController::class, 'resetPassword'])->name('user-approval.reset-password');
+    Route::post('/user-approval/{user}/update-personal', [UserApprovalController::class, 'updatePersonal'])->name('user-approval.update-personal');
+    Route::post('/user-approval/{user}/update-org', [UserApprovalController::class, 'updateOrg'])->name('user-approval.update-org');
+    Route::get('/user-approval/get-org-options', [UserApprovalController::class, 'getOrgOptions'])->name('user-approval.get-org-options');
     Route::get('/api/audit-detail', [UserApprovalController::class, 'getAuditDetail'])->name('api.audit_detail');
 });
 
 // Profile routes (requires auth but NOT approval_status to allow profile updates)
 Route::middleware(['auth', 'prevent_back'])->group(function () {
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/data', [\App\Http\Controllers\ProfileController::class, 'getProfileData'])->name('profile.data');
     Route::get('/profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Route::get('/profile/change-password', [\App\Http\Controllers\ProfileController::class, 'showChangePassword'])->name('profile.change-password');
@@ -254,6 +259,16 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
         Route::put('/dashboard-mappings/{mapping}', [\App\Http\Controllers\SuperAdmin\DashboardMappingController::class, 'update'])->name('dashboard_mappings.update');
         Route::delete('/dashboard-mappings/{mapping}', [\App\Http\Controllers\SuperAdmin\DashboardMappingController::class, 'destroy'])->name('dashboard_mappings.destroy');
         Route::post('/dashboard-mappings/{mapping}/toggle', [\App\Http\Controllers\SuperAdmin\DashboardMappingController::class, 'toggle'])->name('dashboard_mappings.toggle');
+        
+        // Database Backup Routes
+        Route::get('/database-backup', [\App\Http\Controllers\SuperAdmin\DatabaseBackupController::class, 'index'])->name('database_backup');
+        Route::post('/database-backup/create', [\App\Http\Controllers\SuperAdmin\DatabaseBackupController::class, 'create'])->name('database_backup.create');
+        Route::get('/database-backup/download/{filename}', [\App\Http\Controllers\SuperAdmin\DatabaseBackupController::class, 'download'])->name('database_backup.download');
+        Route::delete('/database-backup/delete/{filename}', [\App\Http\Controllers\SuperAdmin\DatabaseBackupController::class, 'delete'])->name('database_backup.delete');
+        
+        // System Documentation Routes
+        Route::get('/documentation', [\App\Http\Controllers\SuperAdmin\DocumentationController::class, 'index'])->name('documentation');
+        Route::get('/documentation/{slug}', [\App\Http\Controllers\SuperAdmin\DocumentationController::class, 'show'])->name('documentation.show');
     });
 
     // Security & Audit Routes (Super Admin)
@@ -275,10 +290,6 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
     Route::get('/hr/incidents/escalated-to-dmo', [DashboardController::class, 'hrEscalatedToDmo'])->name('incidents.hr_escalated_to_dmo')->middleware('permission:view_incidents');
     Route::get('/hr/incidents/rejected', [DashboardController::class, 'hrRejectedCases'])->name('incidents.hr_rejected')->middleware('permission:view_incidents');
     Route::get('/hr/incidents/resolved', [DashboardController::class, 'hrResolvedCases'])->name('incidents.hr_resolved')->middleware('permission:view_incidents');
-    Route::get('/hr/reports/review-rate', [DashboardController::class, 'hrReviewRate'])->name('hr.review_rate')->middleware('permission:view_incidents');
-    Route::get('/hr/reports/processing-time', [DashboardController::class, 'hrProcessingTime'])->name('hr.processing_time')->middleware('permission:view_incidents');
-    Route::get('/hr/reports/compliance-metrics', [DashboardController::class, 'hrComplianceMetrics'])->name('hr.compliance_metrics')->middleware('permission:view_incidents');
-    Route::get('/hr/reports/monthly-summary', [DashboardController::class, 'hrMonthlySummary'])->name('hr.monthly_summary')->middleware('permission:view_incidents');
     Route::get('/hr/reports/incident-facility', [DashboardController::class, 'hrIncidentByFacility'])->name('hr.incident_facility')->middleware('permission:view_incidents');
     Route::get('/hr/reports/incident-department', [DashboardController::class, 'hrIncidentByDepartment'])->name('hr.incident_department')->middleware('permission:view_incidents');
     Route::get('/hr/reports/compliance', [DashboardController::class, 'hrComplianceReport'])->name('hr.compliance_report')->middleware('permission:view_incidents');

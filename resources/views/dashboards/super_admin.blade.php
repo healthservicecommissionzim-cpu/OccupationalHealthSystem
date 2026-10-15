@@ -101,6 +101,15 @@
             <i class="fa-solid fa-arrow-right-to-bracket w-4 text-center text-slate-700"></i>
             <span>Dashboard Routing</span>
         </a>
+        <div class="border-t border-slate-200 my-2 mx-4"></div>
+        <a href="{{ route('system.database_backup') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
+            <i class="fa-solid fa-database w-4 text-center text-blue-600"></i>
+            <span class="font-semibold">Database Backup</span>
+        </a>
+        <a href="{{ route('system.documentation') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
+            <i class="fa-solid fa-book w-4 text-center text-purple-600"></i>
+            <span class="font-semibold">System Documentation</span>
+        </a>
     </div>
 </div>
 
@@ -155,7 +164,7 @@
             </button>
         </div>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
         <!-- Total Cases -->
         <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden" data-stat="total">
             <div class="h-0.5 bg-brand"></div>

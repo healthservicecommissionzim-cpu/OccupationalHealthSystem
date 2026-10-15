@@ -5,111 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>Provinces & Districts · System Configuration</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400,500,600,700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { height: 100%; }
-        body { font-family: Tahoma, sans-serif; background: offwhite; padding: 2.5rem 0; min-height: 100vh; }
-        .container { max-width: 900px; margin: 0 auto; padding: 0 1rem; }
-        .header { margin-bottom: 1rem; }
-        .header h1 { 
-            font-size: 32px; 
-            font-weight: 800; 
-            color: #0f172a; 
-            display: flex; 
-            align-items: center; 
-            gap: 0.75rem; 
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.5px;
-        }
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: white;
-            color: #1D4533;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            border: 2px solid #1D4533;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-        }
-        .back-button:hover {
-            background: #1D4533;
-            color: white;
-            transform: translateX(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        .btn-group {
-            display: flex;
-            gap: 0.5rem;
-        }
-        .btn-primary {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: #1D4533;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-        }
-        .btn-primary:hover {
-            background: #0f2818;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        .stats-inline { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 0.5rem; 
-            margin-bottom: 1rem;
-        }
-        .stat-inline { 
-            background: white; 
-            padding: 0.5rem 0.75rem; 
-            border-radius: 8px; 
-            text-align: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border-top: 3px solid #1D4533;
-            transition: all 0.3s ease;
-        }
-        .stat-inline:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-        }
-        .stat-inline p { 
-            font-size: 9px; 
-            color: #64748b; 
-            font-weight: 600; 
-            margin-bottom: 0.3rem; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px; 
-        }
-        .stat-inline strong { 
-            font-size: 18px; 
-            font-weight: 700; 
-            color: #1D4533;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { margin: 0; background: #f5f7fa; color: #263149; font: 14px Inter, 'Segoe UI', Arial, sans-serif; }
+        .page { max-width: 1400px; margin: auto; padding: 35px 25px 70px; }
+        
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
+        .head { display: flex; gap: 14px; }
+        .icon { width: 46px; height: 46px; border-radius: 12px; background: #e9f8f3; color: #079b6d; display: grid; place-items: center; font-size: 22px; }
+        .title { margin: 0; color: #101a31; font-size: 24px; font-weight: 750; }
+        .sub { margin-top: 5px; color: #718096; font-size: 13px; }
+        .case { display: inline-block; margin-top: 9px; padding: 5px 10px; border-radius: 6px; background: #eef2f6; color: #5d687b; font-size: 11px; font-weight: 700; }
+        .back { padding: 10px 17px; border: 1px solid #ccd6df; border-radius: 8px; background: white; color: #101a31; font-weight: 650; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .back:hover { background: #f8fafb; }
+        
+        /* Card */
+        .card { background: #fff; border: 1px solid #e1e7ee; border-radius: 14px; box-shadow: 0 8px 25px rgba(16,26,49,.06); overflow: hidden; margin-bottom: 22px; }
+        .chead { padding: 18px 22px; border-bottom: 1px solid #e1e7ee; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .ctitle { display: flex; align-items: center; gap: 9px; color: #101a31; font-size: 12px; font-weight: 750; text-transform: uppercase; letter-spacing: .55px; }
+        
+        /* Tree/Hierarchy */
         .tree-wrapper { background: white; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); overflow: hidden; margin-bottom: 3rem; }
         .tree-header { 
             padding: 1.5rem; 
-            background: linear-gradient(135deg, #1D4533 0%, #1e5140 100%);
+            background: linear-gradient(135deg, #079b6d 0%, #067c58 100%);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -142,11 +66,11 @@
         }
         .province-row:hover {
             background: #eef2f5;
-            border-color: #1D4533;
+            border-color: #079b6d;
         }
         .province-row.expanded {
             background: #e0f2fe;
-            border-color: #1D4533;
+            border-color: #079b6d;
         }
         .province-info {
             flex: 1;
@@ -161,7 +85,7 @@
             width: 24px;
             height: 24px;
             transition: transform 0.2s ease;
-            color: #1D4533;
+            color: #079b6d;
             font-size: 12px;
         }
         .province-row.expanded .toggle-icon {
@@ -169,12 +93,12 @@
         }
         .province-name {
             font-weight: 600;
-            color: #1D4533;
+            color: #101a31;
             font-size: 14px;
         }
         .province-meta {
             font-size: 11px;
-            color: #64748b;
+            color: #718096;
             margin-top: 0.2rem;
         }
         .action-btn {
@@ -182,7 +106,7 @@
             align-items: center;
             gap: 0.3rem;
             padding: 0.4rem 0.6rem;
-            background: #1D4533;
+            background: #079b6d;
             color: white;
             border: none;
             border-radius: 6px;
@@ -193,9 +117,9 @@
             margin-right: 0.3rem;
         }
         .action-btn:hover {
-            background: #0f2818;
+            background: #067c58;
             transform: translateY(-1px);
-            box-shadow: 0 2px 6px rgba(29, 69, 51, 0.2);
+            box-shadow: 0 2px 6px rgba(7, 155, 109, 0.2);
         }
         .districts-container {
             display: none;
@@ -221,7 +145,7 @@
         }
         .district-row:hover {
             background: #f7fafc;
-            border-color: #1D4533;
+            border-color: #079b6d;
         }
         .district-name {
             font-weight: 500;
@@ -238,48 +162,36 @@
         }
         .empty-state p { 
             font-size: 16px; 
-            color: #64748b; 
+            color: #718096; 
             font-weight: 600; 
         }
         @media (max-width: 768px) {
-            body { padding: 1.5rem 0; }
-            .header h1 { font-size: 24px; }
-            .header-top { flex-direction: column; align-items: flex-start; gap: 1rem; }
-            .btn-group { flex-direction: column; }
-            .stats-inline { grid-template-columns: 1fr; }
+            .page { padding: 22px 15px; }
+            .title { font-size: 20px; }
+            .header { flex-direction: column; gap: 15px; }
+            .back { width: 100%; text-align: center; justify-content: center; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="page">
+        <!-- Header -->
         <div class="header">
-            <div class="header-top">
-                <h3><i class="fa-solid fa-map"></i> Provinces & Districts</h3>
-                <a href="javascript:history.back()" class="back-button">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    Back
-                </a>
+            <div class="head">
+                <div class="icon"><i class="fa-solid fa-map"></i></div>
+                <div>
+                    <h1 class="title">Provinces & Districts</h1>
+                    <div class="sub">Manage geographic hierarchy</div>
+                    <span class="case">Total: {{ count($provinces) }} provinces</span>
+                </div>
             </div>
+            <a href="javascript:history.back()" class="back"><i class="fa-solid fa-arrow-left"></i> Back</a>
         </div>
 
-        <div class="stats-inline">
-            <div class="stat-inline">
-                <p>Total Provinces</p>
-                <strong>{{ $statistics['total_provinces'] ?? 0 }}</strong>
-            </div>
-            <div class="stat-inline">
-                <p>Total Districts</p>
-                <strong>{{ $statistics['total_districts'] ?? 0 }}</strong>
-            </div>
-            <div class="stat-inline">
-                <p>Total Facilities</p>
-                <strong>{{ $statistics['total_facilities'] ?? 0 }}</strong>
-            </div>
-        </div>
-
+        <!-- Hierarchy Card -->
         <div class="tree-wrapper">
             <div class="tree-header">
-                <h2><i class="fa-solid fa-sitemap"></i> Hierarchy [<span id="provinceCount">{{ count($provinces) }}</span>]</h2>
+                <h2><i class="fa-solid fa-sitemap"></i> Geographic Hierarchy</h2>
             </div>
 
             <div class="tree-content">
@@ -307,7 +219,7 @@
                                     <button class="action-btn" onclick="editDistrict({{ $district->id }}, '{{ $district->name }}', {{ $province->id }}, event)" title="Edit District"><i class="fa-solid fa-edit"></i> Edit</button>
                                 </div>
                             @empty
-                                <div style="text-align: center; padding: 1rem; color: #64748b; font-size: 13px;">
+                                <div style="text-align: center; padding: 1rem; color: #718096; font-size: 13px;">
                                     <i class="fa-solid fa-inbox" style="margin-right: 0.5rem;"></i>
                                     No districts
                                 </div>

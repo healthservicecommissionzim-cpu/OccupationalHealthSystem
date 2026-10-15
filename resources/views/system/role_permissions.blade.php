@@ -4,421 +4,130 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>Access Control Management · System Configuration</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400,500,600,700&display=swap" rel="stylesheet" />
+    <title>Role Permissions · System Configuration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { height: 100%; }
-        body { font-family: Tahoma, sans-serif; background: offwhite; padding: 2.5rem 0; min-height: 100vh; }
-        .container { max-width: 1000px; margin: 0 auto; padding: 0 1rem; }
-        .header { margin-bottom: 1rem; }
-        .header h1 { 
-            font-size: 32px; 
-            font-weight: 800; 
-            color: #0f172a; 
-            display: flex; 
-            align-items: center; 
-            gap: 0.75rem; 
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.5px;
-        }
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: white;
-            color: #1D4533;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            border: 2px solid #1D4533;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-        }
-        .back-button:hover {
-            background: #1D4533;
-            color: white;
-            transform: translateX(-2px);
-        }
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        .stats-inline { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 0.5rem; 
-            margin-bottom: 1.5rem;
-        }
-        .stat-inline { 
-            background: white; 
-            padding: 0.75rem; 
-            border-radius: 8px; 
-            text-align: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border-top: 3px solid #1D4533;
-        }
-        .stat-inline p { 
-            font-size: 9px; 
-            color: #64748b; 
-            font-weight: 600; 
-            margin-bottom: 0.3rem; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px; 
-        }
-        .stat-inline strong { 
-            font-size: 18px; 
-            font-weight: 700; 
-            color: #1D4533;
-        }
-        .tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid #e2e8f0;
-            overflow-x: auto;
-        }
-        .tab-btn {
-            padding: 0.75rem 1.25rem;
-            background: none;
-            border: none;
-            border-bottom: 3px solid transparent;
-            color: #64748b;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            white-space: nowrap;
-        }
-        .tab-btn:hover {
-            color: #1D4533;
-        }
-        .tab-btn.active {
-            color: #1D4533;
-            border-bottom-color: #1D4533;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .table-wrapper { background: white; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); overflow: hidden; }
-        .table-header { 
-            padding: 1.5rem; 
-            background: linear-gradient(135deg, #1D4533 0%, #1e5140 100%);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-        }
-        .table-header h2 { 
-            font-size: 16px; 
-            font-weight: 700; 
-            color: white; 
-            display: flex; 
-            align-items: center; 
-            gap: 0.75rem;
-            margin: 0;
-        }
+        body { font-family: Inter, 'Segoe UI', Arial, sans-serif; background: #f5f7fa; padding: 35px 25px 70px; min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* Header */
+        .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; gap: 15px; }
+        .head { display: flex; gap: 14px; }
+        .icon { width: 46px; height: 46px; border-radius: 12px; background: #e9f8f3; color: #079b6d; display: grid; place-items: center; font-size: 22px; }
+        .title { margin: 0; color: #101a31; font-size: 24px; font-weight: 800; }
+        .sub { margin-top: 5px; color: #718096; font-size: 13px; }
+        .back { padding: 10px 17px; border: 1px solid #ccd6df; border-radius: 8px; background: white; color: #101a31; font-weight: 650; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .back:hover { background: #f8fafb; }
+        
+        /* Card */
+        .card { background: #fff; border: 1px solid #e1e7ee; border-radius: 14px; box-shadow: 0 8px 25px rgba(16,26,49,.06); overflow: hidden; margin-bottom: 22px; }
+        .chead { padding: 18px 22px; border-bottom: 1px solid #e1e7ee; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .ctitle { display: flex; align-items: center; gap: 9px; color: #101a31; font-size: 12px; font-weight: 750; text-transform: uppercase; letter-spacing: .55px; }
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; }
+        
+        /* Search and Filter */
+        .search-box { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: white; border: 1px solid #e4e9ee; border-radius: 8px; min-width: 250px; }
+        .search-box:focus-within { border-color: #079b6d; box-shadow: 0 0 0 3px rgba(7, 155, 109, 0.1); }
+        .search-box input { border: none; background: transparent; outline: none; width: 100%; font-size: 12px; color: #263149; }
+        .search-box input::placeholder { color: #8a95a5; }
+        .search-box i { color: #8a95a5; font-size: 13px; }
+        
+        /* Table */
         .table-container { overflow-x: auto; }
-        table { width: 100%; font-size: 13px; border-collapse: collapse; }
-        thead { background: #f7fafc; }
-        th { 
-            text-align: left; 
-            padding: 0.75rem; 
-            font-weight: 700; 
-            color: #2d3748; 
-            border-bottom: 2px solid #e2e8f0;
-            white-space: nowrap;
-        }
-        td { 
-            padding: 0.75rem; 
-            border-bottom: 1px solid #e2e8f0;
-            color: #4a5568;
-        }
-        tbody tr:hover { background: #f7fafc; }
-        .role-name { 
-            font-weight: 600; 
-            color: #1D4533;
-        }
-        .count-badge {
-            background: #1D4533;
-            color: white;
-            padding: 0.25rem 0.6rem;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            display: inline-block;
-        }
-        .action-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            padding: 0.4rem 0.8rem;
-            background: #1D4533;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-        .action-btn:hover {
-            background: #0f2818;
-            transform: translateY(-1px);
-        }
-        .empty-state { 
-            text-align: center; 
-            padding: 3rem 1.5rem;
-        }
-        .empty-state i { 
-            font-size: 48px; 
-            color: #cbd5e1; 
-            margin-bottom: 1rem; 
-        }
-        .empty-state p { 
-            font-size: 16px; 
-            color: #64748b; 
-            font-weight: 600; 
-        }
-        .search-box {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.6rem 1rem;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 13px;
-            margin-bottom: 1.5rem;
-        }
-        .search-box:focus-within {
-            border-color: #1D4533;
-            box-shadow: 0 0 0 3px rgba(29, 69, 51, 0.1);
-        }
-        .search-box input {
-            border: none;
-            background: transparent;
-            outline: none;
-            width: 100%;
-            font-size: 13px;
-            color: #2d3748;
-        }
-        .search-box input::placeholder {
-            color: #a0aec0;
-        }
-        .search-box i {
-            color: #64748b;
-            font-size: 14px;
-        }
-        .alert {
-            padding: 0.75rem 1rem;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-            display: none;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 13px;
-            font-weight: 600;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .alert.show {
-            opacity: 1;
-            animation: slideDown 0.3s ease;
-        }
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes slideUp {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-10px); }
-        }
-        .alert.success {
-            background: #d1fae5;
-            color: #065f46;
-            border-left: 4px solid #10b981;
-        }
-        .alert.error {
-            background: #fee2e2;
-            color: #991b1b;
-            border-left: 4px solid #ef4444;
-        }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f8fafb; }
+        th { text-align: left; padding: 12px; font-size: 10px; font-weight: 750; color: #8a95a5; text-transform: uppercase; border-bottom: 2px solid #e4e9ee; letter-spacing: 0.5px; white-space: nowrap; }
+        td { padding: 14px 12px; border-bottom: 1px solid #e4e9ee; color: #4e596c; font-size: 12px; }
+        tbody tr { transition: background-color 0.2s ease; }
+        tbody tr:hover { background: #f8fafb; }
+        tbody tr:last-child td { border-bottom: none; }
+        
+        .role-name { font-weight: 700; color: #079b6d; font-size: 12px; }
+        .count-badge { display: inline-flex; align-items: center; justify-content: center; background: #079b6d; color: white; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 750; }
+        
+        .action-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; background: #079b6d; color: white; text-decoration: none; border-radius: 6px; font-size: 10px; font-weight: 650; transition: all 0.2s; border: none; cursor: pointer; }
+        .action-btn:hover { background: #067c58; transform: translateY(-1px); }
+        
+        /* Empty State */
+        .empty-state { text-align: center; padding: 60px 20px; }
+        .empty-state i { font-size: 48px; color: #e4e9ee; display: block; margin-bottom: 12px; }
+        .empty-state p { font-size: 14px; color: #8a95a5; font-weight: 600; }
+        
+        /* Tabs */
+        .tab-bar { display: flex; flex-wrap: wrap; background: white; border-bottom: 2px solid #e4e9ee; padding: 0; gap: 0; margin-bottom: 22px; border-radius: 14px 14px 0 0; }
+        .tab-btn { padding: 14px 16px; font-size: 12px; font-weight: 600; color: #8a95a5; background: transparent; border: none; border-bottom: 3px solid transparent; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 6px; font-family: Inter, sans-serif; }
+        .tab-btn:hover { color: #079b6d; }
+        .tab-btn.active { color: #079b6d; border-bottom-color: #079b6d; }
+        .tab-btn i { font-size: 14px; }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
         /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: flex-start; justify-content: center; overflow-y: auto; backdrop-filter: blur(4px); padding: 40px 20px; }
         .modal.show { display: flex; }
-        .modal-content {
-            background-color: white;
-            margin: auto;
-            padding: 0;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-            width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
+        .modal-content { background: white; margin: auto; border-radius: 14px; box-shadow: 0 25px 80px rgba(0,0,0,.4); width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+        .modal-header { background: linear-gradient(135deg, #079b6d 0%, #067c58 100%); color: white; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #079b6d; }
+        .modal-header h2 { margin: 0; font-size: 18px; font-weight: 750; display: flex; align-items: center; gap: 10px; }
+        .modal-close { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 20px; cursor: pointer; padding: 8px 12px; border-radius: 8px; transition: all 0.2s; }
+        .modal-close:hover { background: rgba(255,255,255,0.3); }
+        .modal-body { padding: 24px; }
+        
+        .role-info { background: #f8fafb; border: 1px solid #e4e9ee; border-radius: 10px; padding: 14px; margin-bottom: 18px; border-left: 4px solid #079b6d; }
+        .role-info label { font-size: 10px; color: #8a95a5; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .role-info p { margin: 0; font-size: 14px; font-weight: 700; color: #101a31; }
+        
+        .permissions-title { font-size: 11px; font-weight: 700; color: #8a95a5; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; }
+        .permission-checklist { display: flex; flex-direction: column; gap: 8px; max-height: 350px; overflow-y: auto; }
+        .permission-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; border: 1px solid #e4e9ee; transition: all 0.2s; }
+        .permission-item:hover { background: #f8fafb; border-color: #079b6d; }
+        .permission-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: #079b6d; }
+        .permission-item label { flex: 1; cursor: pointer; font-size: 13px; color: #4e596c; font-weight: 500; margin: 0; }
+        
+        .modal-footer { display: flex; gap: 10px; padding: 16px 24px; border-top: 1px solid #e4e9ee; background: #f8fafb; }
+        .modal-btn { flex: 1; padding: 10px 16px; border: none; border-radius: 8px; font-size: 12px; font-weight: 650; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .modal-btn-save { background: #079b6d; color: white; }
+        .modal-btn-save:hover { background: #067c58; }
+        .modal-btn-cancel { background: #e4e9ee; color: #4e596c; }
+        .modal-btn-cancel:hover { background: #cbd5e1; }
+        
+        .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; display: none; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; opacity: 0; transition: opacity 0.3s ease; }
+        .alert.show { opacity: 1; animation: slideDown 0.3s ease; display: flex; }
+        .alert.success { background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; }
+        .alert.error { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+        
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-10px); } }
+        
+        @media (max-width: 900px) {
+            .page-header { flex-direction: column; align-items: flex-start; }
+            .search-box { min-width: 100%; }
         }
-        .modal-header {
-            background: linear-gradient(135deg, #1D4533 0%, #1e5140 100%);
-            color: white;
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .modal-header h2 {
-            margin: 0;
-            font-size: 18px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .modal-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 0;
-        }
-        .modal-body {
-            padding: 1.5rem;
-        }
-        .role-info {
-            background: #f7fafc;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid #1D4533;
-        }
-        .role-info label {
-            font-size: 11px;
-            color: #64748b;
-            font-weight: 600;
-            text-transform: uppercase;
-            display: block;
-            margin-bottom: 0.3rem;
-        }
-        .role-info p {
-            margin: 0;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1D4533;
-        }
-        .permissions-title {
-            font-size: 12px;
-            font-weight: 700;
-            color: #2d3748;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .permission-checklist {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            max-height: 350px;
-            overflow-y: auto;
-        }
-        .permission-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.65rem;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
-            transition: all 0.2s ease;
-        }
-        .permission-item:hover {
-            background: #f7fafc;
-            border-color: #1D4533;
-        }
-        .permission-item input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-            accent-color: #1D4533;
-        }
-        .permission-item label {
-            flex: 1;
-            cursor: pointer;
-            font-size: 13px;
-            color: #2d3748;
-            font-weight: 500;
-            margin: 0;
-        }
-        .modal-footer {
-            display: flex;
-            gap: 0.75rem;
-            padding: 1.5rem;
-            border-top: 1px solid #e2e8f0;
-            background: #f7fafc;
-        }
-        .modal-btn {
-            flex: 1;
-            padding: 0.6rem 1rem;
-            border: none;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-        }
-        .modal-btn-save {
-            background: #1D4533;
-            color: white;
-        }
-        .modal-btn-save:hover {
-            background: #0f2818;
-        }
-        .modal-btn-cancel {
-            background: #e2e8f0;
-            color: #64748b;
-        }
-        .modal-btn-cancel:hover {
-            background: #cbd5e1;
-        }
-        @media (max-width: 768px) {
-            body { padding: 1.5rem 0; }
-            .header h1 { font-size: 24px; }
-            .header-top { flex-direction: column; align-items: flex-start; gap: 1rem; }
-            .stats-inline { grid-template-columns: repeat(2, 1fr); }
-            .tabs { flex-wrap: wrap; }
+        @media (max-width: 650px) {
+            body { padding: 22px 15px; }
+            .title { font-size: 20px; }
+            .tab-btn { padding: 12px 10px; font-size: 11px; }
+            .tab-btn span { display: none; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <div class="header-top">
+        <!-- Header -->
+        <div class="page-header">
+            <div class="head">
+                <div class="icon"><i class="fa-solid fa-lock"></i></div>
+                <div>
+                    <h1 class="title">Role Permissions</h1>
+                    <div class="sub">Manage role-permission assignments</div>
+                </div>
             </div>
+            <a href="javascript:history.back()" class="back"><i class="fa-solid fa-arrow-left"></i> Back</a>
         </div>
 
         <div class="alert" id="successAlert">
@@ -431,92 +140,86 @@
             <span id="errorMessage"></span>
         </div>
 
-        <!-- Tabs with Back Button -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0;">
-            <div class="tabs" style="border-bottom: none; margin-bottom: 0;">
-                <button class="tab-btn active" onclick="switchTab('role-permissions', this)">
+        <!-- Card with Tabs -->
+        <div class="card">
+            <div class="tab-bar" role="tablist">
+                <button class="tab-btn active" data-tab="role-permissions" role="tab" onclick="switchTab('role-permissions', this)">
                     <i class="fa-solid fa-link"></i> Role Permission Mapping
                 </button>
-                <button class="tab-btn" onclick="switchTab('roles', this)">
+                <button class="tab-btn" data-tab="roles" role="tab" onclick="switchTab('roles', this)">
                     <i class="fa-solid fa-user-tag"></i> Roles
                 </button>
-                <button class="tab-btn" onclick="switchTab('permissions', this)">
+                <button class="tab-btn" data-tab="permissions" role="tab" onclick="switchTab('permissions', this)">
                     <i class="fa-solid fa-shield-halved"></i> Permissions
                 </button>
             </div>
-            <a href="javascript:history.back()" class="back-button" style="margin: 0;">
-                <i class="fa-solid fa-arrow-left"></i> Back
-            </a>
-        </div>
 
-        <!-- Role Permissions Tab -->
-        <div id="role-permissions" class="tab-content active">
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="roleSearch" placeholder="Search roles by name..." />
+            <div class="tab-content active" data-tab="role-permissions">
+                <div style="padding: 18px 22px;">
+                    <div class="chead" style="padding: 0; border: none; margin-bottom: 16px;">
+                        <div class="ctitle"><i class="fa-solid fa-table-list"></i> Role-Permission Mappings</div>
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="roleSearch" placeholder="Search roles by name..." />
+                        </div>
+                    </div>
+
+                    @if($roles->count() > 0)
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px; text-align: center;">#</th>
+                                        <th>Role Name</th>
+                                        <th style="width: 120px; text-align: center;">Permissions</th>
+                                        <th style="width: 100px; text-align: center;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($roles as $role)
+                                        <tr class="role-row" data-role-id="{{ $role->id }}" data-role-name="{{ $role->name }}">
+                                            <td style="text-align: center; font-weight: 600; color: #8a95a5;">{{ $loop->iteration }}</td>
+                                            <td><span class="role-name">{{ $role->display_name ?? $role->name }}</span></td>
+                                            <td style="text-align: center;">
+                                                <span class="count-badge" id="permCount{{ $role->id }}">
+                                                    {{ count($rolePermissions[$role->id]['permissions'] ?? []) }}
+                                                </span>
+                                            </td>
+                                            <td style="text-align: center;">
+                                                <button class="action-btn" onclick="openModal({{ $role->id }}, '{{ $role->display_name ?? $role->name }}')">
+                                                    <i class="fa-solid fa-edit"></i> Manage
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4">
+                                                <div class="empty-state">
+                                                    <i class="fa-solid fa-inbox"></i>
+                                                    <p>No roles found</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="empty-state">
+                            <i class="fa-solid fa-inbox"></i>
+                            <p>No roles found</p>
+                        </div>
+                    @endif
+                </div>
             </div>
 
-            @if($roles->count() > 0)
-                <div class="table-wrapper">
-                    <div class="table-header">
-                        <h2><i class="fa-solid fa-table-list"></i> Role-Permission Mapping [<span id="roleCount">{{ $roles->count() }}</span>]</h2>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th style="width: 50px; text-align: center;">#</th>
-                                    <th>Role Name</th>
-                                    <th style="width: 120px; text-align: center;">Permissions</th>
-                                    <th style="width: 100px; text-align: center;">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($roles as $role)
-                                    <tr class="role-row" data-role-id="{{ $role->id }}" data-role-name="{{ $role->name }}">
-                                        <td style="text-align: center; font-weight: 600; color: #64748b;">{{ $loop->iteration }}</td>
-                                        <td><span class="role-name">{{ $role->display_name ?? $role->name }}</span></td>
-                                        <td style="text-align: center;">
-                                            <span class="count-badge" id="permCount{{ $role->id }}">
-                                                {{ count($rolePermissions[$role->id]['permissions'] ?? []) }}
-                                            </span>
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <button class="action-btn" onclick="openModal({{ $role->id }}, '{{ $role->display_name ?? $role->name }}')">
-                                                <i class="fa-solid fa-edit"></i> Manage
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4">
-                                            <div class="empty-state">
-                                                <i class="fa-solid fa-inbox"></i>
-                                                <p>No roles found</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            @else
-                <div class="empty-state">
-                    <i class="fa-solid fa-inbox"></i>
-                    <p>No roles found</p>
-                </div>
-            @endif
-        </div>
+            <div class="tab-content" data-tab="roles" style="padding: 18px 22px;">
+                <iframe src="{{ route('system.roles') }}" style="width: 100%; height: 600px; border: none; border-radius: 12px;"></iframe>
+            </div>
 
-        <!-- Roles Tab -->
-        <div id="roles" class="tab-content">
-            <iframe src="{{ route('system.roles') }}" style="width: 100%; height: 600px; border: none; border-radius: 12px;"></iframe>
-        </div>
-
-        <!-- Permissions Tab -->
-        <div id="permissions" class="tab-content">
-            <iframe src="{{ route('system.permissions') }}" style="width: 100%; height: 600px; border: none; border-radius: 12px;"></iframe>
+            <div class="tab-content" data-tab="permissions" style="padding: 18px 22px;">
+                <iframe src="{{ route('system.permissions') }}" style="width: 100%; height: 600px; border: none; border-radius: 12px;"></iframe>
+            </div>
         </div>
     </div>
 
@@ -566,7 +269,12 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             
-            document.getElementById(tabName).classList.add('active');
+            const tabElements = document.querySelectorAll(`[data-tab="${tabName}"]`);
+            tabElements.forEach(el => {
+                if (el.classList.contains('tab-btn')) el.classList.add('active');
+                else el.classList.add('active');
+            });
+            
             btn.classList.add('active');
         }
 
@@ -584,8 +292,6 @@
                     row.style.display = 'none';
                 }
             });
-
-            document.getElementById('roleCount').textContent = visibleCount;
         });
 
         function openModal(roleId, roleName) {
@@ -656,7 +362,6 @@
                     if (permCountElement) {
                         permCountElement.textContent = permissionIds.length;
                     }
-                    updateConfiguredCount();
                     setTimeout(() => closeModal(), 2000);
                 } else {
                     showModalError(data.message || 'Failed to save permissions');
@@ -669,15 +374,7 @@
         }
 
         function showModalSuccess(message) {
-            const modal = document.getElementById('permissionModal');
-            const modalContent = modal.querySelector('.modal-content');
-            
             const msgDiv = document.createElement('div');
-            msgDiv.className = 'modal-message success';
-            msgDiv.innerHTML = `
-                <i class="fa-solid fa-check-circle"></i>
-                <span>${message}</span>
-            `;
             msgDiv.style.cssText = `
                 position: fixed;
                 top: 50%;
@@ -696,6 +393,12 @@
                 min-width: 300px;
                 box-shadow: 0 8px 24px rgba(0,0,0,0.15);
                 animation: slideDown 0.3s ease;
+                font-family: Inter, sans-serif;
+                font-size: 13px;
+            `;
+            msgDiv.innerHTML = `
+                <i class="fa-solid fa-check-circle"></i>
+                <span>${message}</span>
             `;
             document.body.appendChild(msgDiv);
             
@@ -706,15 +409,7 @@
         }
 
         function showModalError(message) {
-            const modal = document.getElementById('permissionModal');
-            const modalContent = modal.querySelector('.modal-content');
-            
             const msgDiv = document.createElement('div');
-            msgDiv.className = 'modal-message error';
-            msgDiv.innerHTML = `
-                <i class="fa-solid fa-exclamation-circle"></i>
-                <span>${message}</span>
-            `;
             msgDiv.style.cssText = `
                 position: fixed;
                 top: 50%;
@@ -733,6 +428,12 @@
                 min-width: 300px;
                 box-shadow: 0 8px 24px rgba(0,0,0,0.15);
                 animation: slideDown 0.3s ease;
+                font-family: Inter, sans-serif;
+                font-size: 13px;
+            `;
+            msgDiv.innerHTML = `
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>${message}</span>
             `;
             document.body.appendChild(msgDiv);
             
@@ -742,28 +443,12 @@
             }, 4000);
         }
 
-        function updateConfiguredCount() {
-            let count = 0;
-            Object.values(rolePermissionsMap).forEach(role => {
-                if (role.permissions && role.permissions.length > 0) {
-                    count++;
-                }
-            });
-            const configuredCountElement = document.getElementById('configuredCount');
-            if (configuredCountElement) {
-                configuredCountElement.textContent = count;
-            }
-        }
-
-
         window.addEventListener('click', function(event) {
             const modal = document.getElementById('permissionModal');
             if (event.target === modal) {
                 closeModal();
             }
         });
-
-        updateConfiguredCount();
     </script>
 </body>
 </html>

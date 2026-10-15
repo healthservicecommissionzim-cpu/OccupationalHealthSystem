@@ -203,6 +203,12 @@
                     <span class="status pending">Pending review</span>
                 @elseif ($user->status === 'approved')
                     <span class="status approved">Approved</span>
+                    @if ($user)
+                        <form method="POST" action="{{ route('user-approval.reset-password', $user) }}" id="passwordResetForm" style="margin-top: 12px;">
+                            @csrf
+                            <button type="submit" class="btn btn-primary" style="width: auto; font-size: .75rem; padding: 6px 12px;"><i class="fa-solid fa-key" aria-hidden="true"></i>Reset password</button>
+                        </form>
+                    @endif
                 @elseif ($user->status === 'rejected')
                     <span class="status rejected">Rejected</span>
                 @endif
@@ -223,8 +229,9 @@
                                 <p>Basic contact details for this account.</p>
                             </div>
                         </div>
+                        <button id="editPersonalBtn" type="button" class="btn" style="width: auto; padding: 8px 14px; font-size: .75rem; background: var(--brand-soft); color: var(--brand); border: 1px solid #c9d8ce; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all var(--ease);"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>Edit</button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" id="viewPersonalInfo">
                         <dl class="details-grid">
                             <div class="detail">
                                 <dt class="detail-label">Full name</dt>
@@ -244,6 +251,26 @@
                             </div>
                         </dl>
                     </div>
+                    <div class="card-body" id="editPersonalInfo" style="display: none;">
+                        <form id="editPersonalForm">
+                            <div class="form-group">
+                                <label for="edit_name">Full name</label>
+                                <input type="text" id="edit_name" name="name" value="{{ $user->name }}" required style="width: 100%; border: 1px solid #d8e1dc; border-radius: var(--radius-sm); outline: none; background: #fbfdfb; color: var(--ink); transition: all var(--ease); font-size: .85rem; padding: 8px 10px;">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_email">Email address</label>
+                                <input type="email" id="edit_email" name="email" value="{{ $user->email }}" required style="width: 100%; border: 1px solid #d8e1dc; border-radius: var(--radius-sm); outline: none; background: #fbfdfb; color: var(--ink); transition: all var(--ease); font-size: .85rem; padding: 8px 10px;">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_phone">Phone number</label>
+                                <input type="tel" id="edit_phone" name="phone_number" value="{{ $user->phone_number ?? '' }}" style="width: 100%; border: 1px solid #d8e1dc; border-radius: var(--radius-sm); outline: none; background: #fbfdfb; color: var(--ink); transition: all var(--ease); font-size: .85rem; padding: 8px 10px;">
+                            </div>
+                            <div style="display: flex; gap: 12px; margin-top: 16px;">
+                                <button type="button" id="cancelEditPersonalBtn" class="btn" style="flex: 1; background: var(--line); color: var(--ink-soft); padding: 9px 14px;"><i class="fa-solid fa-xmark" aria-hidden="true"></i>Cancel</button>
+                                <button type="submit" class="btn btn-primary" style="flex: 1;"><i class="fa-solid fa-check" aria-hidden="true"></i>Save changes</button>
+                            </div>
+                        </form>
+                    </div>
                 </section>
 
                 <!-- Organization & placement -->
@@ -256,8 +283,9 @@
                                 <p>Where this user belongs in the organization.</p>
                             </div>
                         </div>
+                        <button id="editOrgBtn" type="button" class="btn" style="width: auto; padding: 8px 14px; font-size: .75rem; background: var(--brand-soft); color: var(--brand); border: 1px solid #c9d8ce; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all var(--ease);"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>Edit</button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" id="viewOrgInfo">
                         <dl class="details-grid">
                             <div class="detail">
                                 <dt class="detail-label">Organization</dt>
@@ -288,6 +316,56 @@
                                 <dd class="detail-value {{ $user->district ? '' : 'empty' }}">{{ $user->district?->name ?? 'Not assigned' }}</dd>
                             </div>
                         </dl>
+                    </div>
+                    <div class="card-body" id="editOrgInfo" style="display: none;">
+                        <form id="editOrgForm">
+                            <div class="form-group">
+                                <label for="edit_organization">Organization</label>
+                                <select id="edit_organization" name="organization_id" style="width: 100%; border: 1px solid #d8e1dc; border-radius: var(--radius-sm); outline: none; background: #fbfdfb; color: var(--ink); transition: all var(--ease); font-size: .85rem; padding: 8px 10px; appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 14px) 14px, calc(100% - 10px) 14px; background-size: 4px 4px, 4px 4px; background-repeat: no-repeat;">
+                                    <option value="">Select organization</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_department">Department</label>
+                                <select id="edit_department" name="department_id" style="width: 100%; border: 1px solid #d8e1dc; border-radius: var(--radius-sm); outline: none; background: #fbfdfb; color: var(--ink); transition: all var(--ease); font-size: .85rem; padding: 8px 10px; appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 14px) 14px, calc(100% - 10px) 14px; background-size: 4px 4px, 4px 4px; background-repeat: no-repeat;">
+                                    <option value="">Select department</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_designation">Designation</label>
+                                <select id="edit_designation" name="designation_id" style="width: 100%; border: 1px solid #d8e1dc; border-radius: var(--radius-sm); outline: none; background: #fbfdfb; color: var(--ink); transition: all var(--ease); font-size: .85rem; padding: 8px 10px; appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 14px) 14px, calc(100% - 10px) 14px; background-size: 4px 4px, 4px 4px; background-repeat: no-repeat;">
+                                    <option value="">Select designation</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_province">Province</label>
+                                <select id="edit_province" name="province_id" style="width: 100%; border: 1px solid #d8e1dc; border-radius: var(--radius-sm); outline: none; background: #fbfdfb; color: var(--ink); transition: all var(--ease); font-size: .85rem; padding: 8px 10px; appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 14px) 14px, calc(100% - 10px) 14px; background-size: 4px 4px, 4px 4px; background-repeat: no-repeat;">
+                                    <option value="">Select province</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_district">District</label>
+                                <select id="edit_district" name="district_id" style="width: 100%; border: 1px solid #d8e1dc; border-radius: var(--radius-sm); outline: none; background: #fbfdfb; color: var(--ink); transition: all var(--ease); font-size: .85rem; padding: 8px 10px; appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 14px) 14px, calc(100% - 10px) 14px; background-size: 4px 4px, 4px 4px; background-repeat: no-repeat;">
+                                    <option value="">Select district</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_facility_type">Facility type</label>
+                                <select id="edit_facility_type" name="facility_type_id" style="width: 100%; border: 1px solid #d8e1dc; border-radius: var(--radius-sm); outline: none; background: #fbfdfb; color: var(--ink); transition: all var(--ease); font-size: .85rem; padding: 8px 10px; appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 14px) 14px, calc(100% - 10px) 14px; background-size: 4px 4px, 4px 4px; background-repeat: no-repeat;">
+                                    <option value="">Select facility type</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_facility">Facility</label>
+                                <select id="edit_facility" name="facility_id" style="width: 100%; border: 1px solid #d8e1dc; border-radius: var(--radius-sm); outline: none; background: #fbfdfb; color: var(--ink); transition: all var(--ease); font-size: .85rem; padding: 8px 10px; appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 14px) 14px, calc(100% - 10px) 14px; background-size: 4px 4px, 4px 4px; background-repeat: no-repeat;">
+                                    <option value="">Select facility</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; gap: 12px; margin-top: 16px;">
+                                <button type="button" id="cancelEditOrgBtn" class="btn" style="flex: 1; background: var(--line); color: var(--ink-soft); padding: 9px 14px;"><i class="fa-solid fa-xmark" aria-hidden="true"></i>Cancel</button>
+                                <button type="submit" class="btn btn-primary" style="flex: 1;"><i class="fa-solid fa-check" aria-hidden="true"></i>Save changes</button>
+                            </div>
+                        </form>
                     </div>
                 </section>
 
@@ -329,7 +407,7 @@
                                     <textarea name="rejection_reason" id="rejection_reason" maxlength="500" placeholder="Briefly explain why this application is being rejected."></textarea>
                                 </div>
                                 <p class="form-hint">The user may reapply after the configured waiting period.</p>
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to reject this user?');"><i class="fa-solid fa-xmark" aria-hidden="true"></i>Reject application</button>
+                                <button type="submit" class="btn btn-danger"><i class="fa-solid fa-xmark" aria-hidden="true"></i>Reject application</button>
                             </form>
                         </div>
                     </section>
@@ -497,52 +575,313 @@
     <div id="successModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
         <div style="background: white; border-radius: 20px; padding: 40px; max-width: 400px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
             <div style="width: 80px; height: 80px; margin: 0 auto 20px; border-radius: 50%; background: #eaf4ee; display: flex; align-items: center; justify-content: center;">
-                <i class="fa-solid fa-circle-check" style="font-size: 2.5rem; color: #218653;"></i>
+                <i class="fa-solid fa-circle-check" style="font-size: 2.5rem; color: #1d4533;"></i>
             </div>
-            <h2 style="margin: 0 0 10px; font-size: 1.3rem; color: var(--ink); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700;">User Approved</h2>
+            <h2 id="successTitle" style="margin: 0 0 10px; font-size: 1.3rem; color: var(--ink); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700;">Changes Saved</h2>
             <p id="successMessage" style="margin: 0 0 20px; color: var(--ink-soft); font-size: 0.95rem;"></p>
-            <p id="countdownText" style="margin: 0; color: var(--muted); font-size: 0.85rem; font-weight: 600;">Redirecting in <span id="countdown">3</span>s...</p>
+            <p id="countdownText" style="margin: 0; color: var(--muted); font-size: 0.85rem; font-weight: 600;">Reloading in <span id="countdown">2</span>s...</p>
+        </div>
+    </div>
+
+    <!-- Password Reset Confirmation Modal -->
+    <div id="passwordResetModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: white; border-radius: 20px; padding: 40px; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            <div style="width: 80px; height: 80px; margin: 0 auto 20px; border-radius: 50%; background: #eaf4ee; display: flex; align-items: center; justify-content: center;">
+                <i class="fa-solid fa-key" style="font-size: 2.5rem; color: #1d4533;"></i>
+            </div>
+            <h2 style="margin: 0 0 10px; font-size: 1.3rem; color: var(--ink); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; text-align: center;">Reset Password?</h2>
+            <p id="resetConfirmMessage" style="margin: 0 0 24px; color: var(--ink-soft); font-size: 0.95rem; text-align: center;"></p>
+            <div style="display: flex; gap: 12px;">
+                <button id="cancelResetBtn" type="button" style="flex: 1; padding: 10px 16px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-soft); border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                    Cancel
+                </button>
+                <button id="confirmResetBtn" type="button" style="flex: 1; padding: 10px 16px; border: none; background: var(--brand); color: white; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                    Reset Password
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const approvalForm = document.getElementById('approvalForm');
+            const rejectForm = document.getElementById('rejectForm');
+            const passwordResetForm = document.getElementById('passwordResetForm');
+
+            // ─── Edit Personal Information ───
+            const editPersonalBtn = document.getElementById('editPersonalBtn');
+            const cancelEditPersonalBtn = document.getElementById('cancelEditPersonalBtn');
+            const editPersonalForm = document.getElementById('editPersonalForm');
+            const viewPersonalInfo = document.getElementById('viewPersonalInfo');
+            const editPersonalInfo = document.getElementById('editPersonalInfo');
+
+            if (editPersonalBtn) {
+                editPersonalBtn.addEventListener('click', () => {
+                    viewPersonalInfo.style.display = 'none';
+                    editPersonalInfo.style.display = 'block';
+                });
+            }
+
+            if (cancelEditPersonalBtn) {
+                cancelEditPersonalBtn.addEventListener('click', () => {
+                    editPersonalInfo.style.display = 'none';
+                    viewPersonalInfo.style.display = 'block';
+                });
+            }
+
+            if (editPersonalForm) {
+                editPersonalForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Saving...';
+
+                    fetch("{{ route('user-approval.update-personal', $user) }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json',
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.success === true) {
+                            // Show success modal
+                            const modal = document.getElementById('successModal');
+                            const successTitle = document.getElementById('successTitle');
+                            const successMsg = document.getElementById('successMessage');
+                            
+                            successTitle.textContent = 'Personal Information Updated';
+                            successMsg.textContent = 'Your changes have been saved successfully.';
+                            modal.style.display = 'flex';
+
+                            let seconds = 2;
+                            const countdownSpan = document.getElementById('countdown');
+                            const countdownInterval = setInterval(() => {
+                                seconds--;
+                                countdownSpan.textContent = seconds;
+                                if (seconds <= 0) {
+                                    clearInterval(countdownInterval);
+                                    location.reload();
+                                }
+                            }, 1000);
+                        } else {
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = originalText;
+                            alert('Error: ' + (data.message || 'Unknown error occurred'));
+                        }
+                    })
+                    .catch(error => {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                        alert('An error occurred. Please try again.');
+                    });
+                });
+            }
+
+            // ─── Edit Organization & Placement ───
+            const editOrgBtn = document.getElementById('editOrgBtn');
+            const cancelEditOrgBtn = document.getElementById('cancelEditOrgBtn');
+            const editOrgForm = document.getElementById('editOrgForm');
+            const viewOrgInfo = document.getElementById('viewOrgInfo');
+            const editOrgInfo = document.getElementById('editOrgInfo');
+
+            if (editOrgBtn) {
+                editOrgBtn.addEventListener('click', () => {
+                    viewOrgInfo.style.display = 'none';
+                    editOrgInfo.style.display = 'block';
+                    loadOrgOptions();
+                });
+            }
+
+            if (cancelEditOrgBtn) {
+                cancelEditOrgBtn.addEventListener('click', () => {
+                    editOrgInfo.style.display = 'none';
+                    viewOrgInfo.style.display = 'block';
+                });
+            }
+
+            function loadOrgOptions() {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                
+                fetch("{{ route('user-approval.get-org-options') }}", {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Populate organizations
+                    const orgSelect = document.getElementById('edit_organization');
+                    orgSelect.innerHTML = '<option value="">Select organization</option>';
+                    data.organizations.forEach(org => {
+                        const option = document.createElement('option');
+                        option.value = org.id;
+                        option.textContent = org.name;
+                        if (org.id === {{ $user->organization_id ?? 'null' }}) option.selected = true;
+                        orgSelect.appendChild(option);
+                    });
+
+                    // Populate departments
+                    const deptSelect = document.getElementById('edit_department');
+                    deptSelect.innerHTML = '<option value="">Select department</option>';
+                    data.departments.forEach(dept => {
+                        const option = document.createElement('option');
+                        option.value = dept.id;
+                        option.textContent = dept.name;
+                        if (dept.id === {{ $user->department_id ?? 'null' }}) option.selected = true;
+                        deptSelect.appendChild(option);
+                    });
+
+                    // Populate designations
+                    const desigSelect = document.getElementById('edit_designation');
+                    desigSelect.innerHTML = '<option value="">Select designation</option>';
+                    data.designations.forEach(desig => {
+                        const option = document.createElement('option');
+                        option.value = desig.id;
+                        option.textContent = desig.name;
+                        if (desig.id === {{ $user->designation_id ?? 'null' }}) option.selected = true;
+                        desigSelect.appendChild(option);
+                    });
+
+                    // Populate provinces
+                    const provSelect = document.getElementById('edit_province');
+                    provSelect.innerHTML = '<option value="">Select province</option>';
+                    data.provinces.forEach(prov => {
+                        const option = document.createElement('option');
+                        option.value = prov.id;
+                        option.textContent = prov.name;
+                        if (prov.id === {{ $user->province_id ?? 'null' }}) option.selected = true;
+                        provSelect.appendChild(option);
+                    });
+
+                    // Populate districts
+                    const distSelect = document.getElementById('edit_district');
+                    distSelect.innerHTML = '<option value="">Select district</option>';
+                    data.districts.forEach(dist => {
+                        const option = document.createElement('option');
+                        option.value = dist.id;
+                        option.textContent = dist.name;
+                        if (dist.id === {{ $user->district_id ?? 'null' }}) option.selected = true;
+                        distSelect.appendChild(option);
+                    });
+
+                    // Populate facility types
+                    const ftSelect = document.getElementById('edit_facility_type');
+                    ftSelect.innerHTML = '<option value="">Select facility type</option>';
+                    data.facility_types.forEach(ft => {
+                        const option = document.createElement('option');
+                        option.value = ft.id;
+                        option.textContent = ft.name;
+                        if (ft.id === {{ $user->facility_type_id ?? 'null' }}) option.selected = true;
+                        ftSelect.appendChild(option);
+                    });
+
+                    // Populate facilities
+                    const facSelect = document.getElementById('edit_facility');
+                    facSelect.innerHTML = '<option value="">Select facility</option>';
+                    data.facilities.forEach(fac => {
+                        const option = document.createElement('option');
+                        option.value = fac.id;
+                        option.textContent = fac.name;
+                        if (fac.id === {{ $user->facility_id ?? 'null' }}) option.selected = true;
+                        facSelect.appendChild(option);
+                    });
+                });
+            }
+
+            if (editOrgForm) {
+                editOrgForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Saving...';
+
+                    fetch("{{ route('user-approval.update-org', $user) }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json',
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.success === true) {
+                            // Show success modal
+                            const modal = document.getElementById('successModal');
+                            const successTitle = document.getElementById('successTitle');
+                            const successMsg = document.getElementById('successMessage');
+                            
+                            successTitle.textContent = 'Organization Information Updated';
+                            successMsg.textContent = 'Your changes have been saved successfully.';
+                            modal.style.display = 'flex';
+
+                            let seconds = 2;
+                            const countdownSpan = document.getElementById('countdown');
+                            const countdownInterval = setInterval(() => {
+                                seconds--;
+                                countdownSpan.textContent = seconds;
+                                if (seconds <= 0) {
+                                    clearInterval(countdownInterval);
+                                    location.reload();
+                                }
+                            }, 1000);
+                        } else {
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = originalText;
+                            alert('Error: ' + (data.message || 'Unknown error occurred'));
+                        }
+                    })
+                    .catch(error => {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                        alert('An error occurred. Please try again.');
+                    });
+                });
+            }
+
+            // Handle approval form
             if (approvalForm) {
                 approvalForm.addEventListener('submit', function(e) {
                     e.preventDefault();
 
+                    const roleSelect = document.getElementById('role_id');
+                    if (!roleSelect.value) {
+                        alert('Please select a role');
+                        return;
+                    }
+
                     const formData = new FormData(this);
                     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                    // Disable button to prevent double submission
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Processing...';
 
                     fetch(this.action, {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': csrfToken,
                             'Accept': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest',
                         },
                         body: formData
                     })
-                    .then(response => {
-                        console.log('Response status:', response.status);
-                        const contentType = response.headers.get('content-type');
-                        console.log('Content-Type:', contentType);
-                        if (!response.ok && response.status !== 200) {
-                            throw new Error('HTTP error! status: ' + response.status);
-                        }
-                        return response.text().then(text => {
-                            console.log('Response text:', text);
-                            try {
-                                return JSON.parse(text);
-                            } catch (e) {
-                                console.error('Failed to parse JSON:', e);
-                                throw e;
-                            }
-                        });
-                    })
+                    .then(response => response.json())
                     .then(data => {
-                        console.log('Parsed data:', data);
                         if (data && data.success === true) {
                             const modal = document.getElementById('successModal');
                             const message = document.getElementById('successMessage');
@@ -560,14 +899,142 @@
                                 }
                             }, 1000);
                         } else {
-                            console.error('Success flag not true:', data);
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = originalText;
                             alert('Error: ' + (data.message || 'Unknown error occurred'));
                         }
                     })
                     .catch(error => {
-                        console.error('Fetch error:', error);
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
                         alert('An error occurred. Please try again.');
                     });
+                });
+            }
+
+            // Handle reject form
+            if (rejectForm) {
+                rejectForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    if (!confirm('Are you sure you want to reject this user?')) {
+                        return;
+                    }
+
+                    const formData = new FormData(this);
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                    // Disable button to prevent double submission
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Processing...';
+
+                    fetch(this.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json',
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.success === true) {
+                            alert('User has been rejected successfully.');
+                            window.location.href = data.redirect_url || '{{ route('user-approval.index') }}';
+                        } else {
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = originalText;
+                            alert('Error: ' + (data.message || 'Unknown error occurred'));
+                        }
+                    })
+                    .catch(error => {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                        alert('An error occurred. Please try again.');
+                    });
+                });
+            }
+
+            // Handle password reset form
+            if (passwordResetForm) {
+                passwordResetForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    // Show confirmation modal instead of alert
+                    const modal = document.getElementById('passwordResetModal');
+                    const message = document.getElementById('resetConfirmMessage');
+                    message.textContent = 'A temporary password will be set to "password123" and sent to {{ $user->email }}. Are you sure?';
+                    modal.style.display = 'flex';
+
+                    // Handle confirm button
+                    const confirmBtn = document.getElementById('confirmResetBtn');
+                    const cancelBtn = document.getElementById('cancelResetBtn');
+
+                    const handleConfirm = () => {
+                        modal.style.display = 'none';
+                        submitPasswordReset();
+                        confirmBtn.removeEventListener('click', handleConfirm);
+                        cancelBtn.removeEventListener('click', handleCancel);
+                    };
+
+                    const handleCancel = () => {
+                        modal.style.display = 'none';
+                        confirmBtn.removeEventListener('click', handleConfirm);
+                        cancelBtn.removeEventListener('click', handleCancel);
+                    };
+
+                    confirmBtn.addEventListener('click', handleConfirm);
+                    cancelBtn.addEventListener('click', handleCancel);
+
+                    const submitPasswordReset = () => {
+                        const formData = new FormData(passwordResetForm);
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                        // Disable button to prevent double submission
+                        const submitBtn = passwordResetForm.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.textContent;
+                        submitBtn.disabled = true;
+                        submitBtn.textContent = 'Processing...';
+
+                        fetch(passwordResetForm.action, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Accept': 'application/json',
+                            },
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data && data.success === true) {
+                                // Show success message
+                                const successModal = document.getElementById('successModal');
+                                const successTitle = document.getElementById('successTitle');
+                                const successMsg = document.getElementById('successMessage');
+                                const countdownText = document.getElementById('countdownText');
+                                
+                                successTitle.textContent = 'Password Reset Successfully';
+                                successMsg.textContent = 'The password has been reset to "password123" and has been sent to ' + data.user_email + '.';
+                                countdownText.style.display = 'none';
+                                successModal.style.display = 'flex';
+
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 2000);
+                            } else {
+                                submitBtn.disabled = false;
+                                submitBtn.textContent = originalText;
+                                alert('Error: ' + (data.message || 'Unknown error occurred'));
+                            }
+                        })
+                        .catch(error => {
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = originalText;
+                            alert('An error occurred. Please try again.');
+                        });
+                    };
                 });
             }
         });

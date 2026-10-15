@@ -4,119 +4,102 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Provincial Summary · Reports & Analytics</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400,500,600,700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { height: 100%; }
-        body { font-family: 'Inter', sans-serif; background: #e5e7eb; padding: 2rem 0; min-height: 100vh; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
-        .header { margin-bottom: 1.5rem; }
-        .header h1 { font-size: 28px; font-weight: 700; color: #1a202c; display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
-        .header p { font-size: 14px; color: #718096; }
-        .table-wrapper { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; }
-        .table-header { 
-            padding: 1.5rem; 
-            background: linear-gradient(135deg, #1D4533 0%, #1e5140 100%);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-        }
-        .table-header h2 { font-size: 16px; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.5rem; }
-        .search-box {
-            flex: 1;
-            max-width: 400px;
-        }
-        .search-box input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: none;
-            border-radius: 6px;
-            font-size: 13px;
-            font-family: 'Inter', sans-serif;
-            background: rgba(255, 255, 255, 0.95);
-            color: #2d3748;
-        }
-        .search-box input::placeholder {
-            color: #a0aec0;
-        }
-        .search-box input:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { margin: 0; background: #f5f7fa; color: #263149; font: 14px Inter, 'Segoe UI', Arial, sans-serif; }
+        .page { max-width: 1400px; margin: auto; padding: 35px 25px 70px; }
+        
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
+        .head { display: flex; gap: 14px; }
+        .icon { width: 46px; height: 46px; border-radius: 12px; background: #e9f8f3; color: #079b6d; display: grid; place-items: center; font-size: 22px; }
+        .title { margin: 0; color: #101a31; font-size: 24px; font-weight: 750; }
+        .sub { margin-top: 5px; color: #718096; font-size: 13px; }
+        .case { display: inline-block; margin-top: 9px; padding: 5px 10px; border-radius: 6px; background: #eef2f6; color: #5d687b; font-size: 11px; font-weight: 700; }
+        .back { padding: 10px 17px; border: 1px solid #ccd6df; border-radius: 8px; background: white; color: #101a31; font-weight: 650; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .back:hover { background: #f8fafb; }
+        
+        /* Card */
+        .card { background: #fff; border: 1px solid #e1e7ee; border-radius: 14px; box-shadow: 0 8px 25px rgba(16,26,49,.06); overflow: hidden; margin-bottom: 22px; }
+        .chead { padding: 18px 22px; border-bottom: 1px solid #e1e7ee; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .ctitle { display: flex; align-items: center; gap: 9px; color: #101a31; font-size: 12px; font-weight: 750; text-transform: uppercase; letter-spacing: .55px; }
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; }
+        
+        /* Search and Filter */
+        .search-box { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: white; border: 1px solid #e4e9ee; border-radius: 8px; min-width: 250px; }
+        .search-box:focus-within { border-color: #079b6d; box-shadow: 0 0 0 3px rgba(7, 155, 109, 0.1); }
+        .search-box input { border: none; background: transparent; outline: none; width: 100%; font-size: 12px; color: #263149; }
+        .search-box input::placeholder { color: #8a95a5; }
+        .search-box i { color: #8a95a5; font-size: 13px; }
+        
+        /* Table */
         .table-container { overflow-x: auto; }
-        table { width: 100%; font-size: 13px; border-collapse: collapse; }
-        thead { background: #f7fafc; }
-        th { 
-            text-align: left; 
-            padding: 1rem 1.25rem; 
-            font-weight: 700; 
-            color: #2d3748; 
-            border-bottom: 2px solid #e2e8f0;
-            white-space: nowrap;
-        }
-        td { 
-            padding: 1rem 1.25rem; 
-            border-bottom: 1px solid #e2e8f0;
-            color: #4a5568;
-        }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f8fafb; }
+        th { text-align: left; padding: 12px; font-size: 10px; font-weight: 750; color: #8a95a5; text-transform: uppercase; border-bottom: 2px solid #e4e9ee; letter-spacing: 0.5px; white-space: nowrap; }
+        td { padding: 14px 12px; border-bottom: 1px solid #e4e9ee; color: #4e596c; font-size: 12px; }
         tbody tr { transition: background-color 0.2s ease; }
-        tbody tr:hover { background: #f7fafc; }
+        tbody tr:hover { background: #f8fafb; }
         tbody tr:last-child td { border-bottom: none; }
-        .province-name { font-weight: 700; color: #1D4533; }
+        
+        .province-name { font-weight: 700; color: #079b6d; font-size: 12px; }
         .progress-bar { background: #e2e8f0; border-radius: 4px; height: 6px; overflow: hidden; margin-bottom: 0.3rem; }
-        .progress-fill { background: #1D4533; height: 100%; border-radius: 4px; }
+        .progress-fill { background: #079b6d; height: 100%; border-radius: 4px; }
         .stat-small { font-size: 11px; color: #718096; font-weight: 600; }
-        .empty-state { 
-            text-align: center; 
-            padding: 3rem 1.5rem;
+        
+        /* Empty State */
+        .empty-state { text-align: center; padding: 60px 20px; }
+        .empty-state i { font-size: 48px; color: #e4e9ee; display: block; margin-bottom: 12px; }
+        .empty-state p { font-size: 14px; color: #8a95a5; font-weight: 600; }
+        .empty-state-sub { font-size: 12px; color: #a0afc1; margin-top: 4px; }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .chead { flex-direction: column; align-items: stretch; }
+            .filters { flex-direction: column; }
+            .search-box { min-width: 100%; }
         }
-        .empty-state i { 
-            font-size: 48px; 
-            color: #10b981; 
-            margin-bottom: 1rem; 
-        }
-        .empty-state p { 
-            font-size: 16px; 
-            color: #718096; 
-            margin-bottom: 0.5rem;
-        }
-        .empty-state-sub { 
-            font-size: 13px; 
-            color: #6b7280;
-        }
-        @media (max-width: 768px) {
-            body { padding: 1rem 0; }
-            .header h1 { font-size: 22px; }
-            th, td { padding: 0.75rem 1rem; font-size: 12px; }
-            .table-header { 
-                padding: 1rem; 
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .search-box { max-width: 100%; }
+        @media (max-width: 650px) {
+            .page { padding: 22px 15px; }
+            .header { flex-direction: column; gap: 15px; }
+            .back { width: 100%; text-align: center; justify-content: center; }
+            table { font-size: 11px; }
+            th, td { padding: 10px 8px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="page">
+        <!-- Header -->
         <div class="header">
-            <h1><i class="fa-solid fa-map-marked-alt"></i> Provincial Summary</h1>
-            <p>Incident statistics by province</p>
+            <div class="head">
+                <div class="icon"><i class="fa-solid fa-map-marked-alt"></i></div>
+                <div>
+                    <h1 class="title">Provincial Summary</h1>
+                    <div class="sub">Incident statistics by province</div>
+                    <span class="case">Provinces Report</span>
+                </div>
+            </div>
+            <a href="javascript:history.back()" class="back"><i class="fa-solid fa-arrow-left"></i> Back</a>
         </div>
 
-        <div class="table-wrapper">
+        <!-- Provincial Summary Table -->
+        <div class="card">
             @if($provinces->count() > 0)
-                <div class="table-header">
-                    <h2>
-                        <i class="fa-solid fa-chart-bar"></i> 
-                        PROVINCE-WISE BREAKDOWN
-                    </h2>
-                    <div class="search-box">
-                        <input type="text" id="searchInput" placeholder="Search by province name..." />
+                <div class="chead">
+                    <div class="ctitle"><i class="fa-solid fa-chart-bar"></i> &nbsp; Province-wise Breakdown</div>
+                    <div class="filters">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="searchInput" placeholder="Search by province..." />
+                        </div>
                     </div>
                 </div>
+
                 <div class="table-container">
                     <table id="provincesTable">
                         <thead>
@@ -160,11 +143,8 @@
                     </table>
                 </div>
             @else
-                <div class="table-header">
-                    <h2>
-                        <i class="fa-solid fa-chart-bar"></i> 
-                        PROVINCE-WISE BREAKDOWN
-                    </h2>
+                <div class="chead">
+                    <div class="ctitle"><i class="fa-solid fa-chart-bar"></i> &nbsp; Province-wise Breakdown</div>
                 </div>
                 <div class="empty-state">
                     <i class="fa-solid fa-inbox"></i>

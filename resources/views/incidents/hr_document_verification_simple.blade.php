@@ -106,11 +106,15 @@
                     $uploadedByType[$attachment->document_type] = $attachment;
                 }
                 $uploadedMandatoryCount = 0;
+                $verifiedMandatoryCount = 0;
                 $missingDocuments = [];
                 
                 foreach($mandatoryDocuments as $key => $label) {
                     if(isset($uploadedByType[$key])) {
                         $uploadedMandatoryCount++;
+                        if($uploadedByType[$key]->upload_status === 'VERIFIED') {
+                            $verifiedMandatoryCount++;
+                        }
                     } else {
                         $missingDocuments[] = $label;
                     }
@@ -118,6 +122,9 @@
                 foreach($mandatoryConditional as $key => $label) {
                     if(isset($uploadedByType[$key])) {
                         $uploadedMandatoryCount++;
+                        if($uploadedByType[$key]->upload_status === 'VERIFIED') {
+                            $verifiedMandatoryCount++;
+                        }
                     } else {
                         $missingDocuments[] = $label;
                     }
@@ -125,8 +132,21 @@
                 
                 $totalMandatory = count($mandatoryDocuments) + count($mandatoryConditional);
                 $hasAllDocs = $uploadedMandatoryCount === $totalMandatory;
+                $verificationPercentage = $uploadedMandatoryCount > 0 ? round(($verifiedMandatoryCount / $uploadedMandatoryCount) * 100) : 0;
             @endphp
-            <h3><i class="fa-solid fa-file-check"></i> Mandatory Documents ({{ $uploadedMandatoryCount }}/{{ $totalMandatory }} Uploaded)</h3>
+            <div style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <h3 style="margin: 0; display: flex; align-items: center; gap: 9px;"><i class="fa-solid fa-file-check"></i> Mandatory Documents ({{ $uploadedMandatoryCount }}/{{ $totalMandatory }} Uploaded)</h3>
+                    <span style="font-size: 12px; font-weight: 700; color: #079b6d;">{{ $verificationPercentage }}% Verified</span>
+                </div>
+                <div style="width: 100%; height: 24px; background: #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
+                    <div style="height: 100%; background: linear-gradient(90deg, #079b6d 0%, #067c58 100%); width: {{ $verificationPercentage }}%; transition: width 0.3s ease; display: flex; align-items: center; justify-content: center;">
+                        @if($verificationPercentage > 10)
+                            <span style="color: white; font-size: 11px; font-weight: 700;">{{ $verifiedMandatoryCount }}/{{ $uploadedMandatoryCount }}</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
             
             @if(!$hasAllDocs)
             <div class="alert alert-warning">
@@ -172,11 +192,11 @@
                                         <i class="fa-solid fa-clock"></i> Pending Review
                                     </span>
                                 @endif
-                                <a href="{{ route('incidents.view_attachment', ['incident' => $incident, 'attachment' => $uploaded]) }}" class="btn" style="padding: 6px 12px; font-size: 10px; background: #079b6d; color: white; border-radius: 6px; text-decoration: none; flex: 0; justify-content: center; border: none;" title="View Document" target="_blank" onclick="viewedDocuments.add({{ $uploaded->id }}); updateVerifyButtonState({{ $uploaded->id }});">
-                                    <i class="fa-solid fa-eye"></i>
+                                <a href="{{ route('incidents.view_attachment', ['incident' => $incident, 'attachment' => $uploaded]) }}" class="btn" style="padding: 6px 12px; font-size: 10px; background: #079b6d; color: white; border-radius: 6px; text-decoration: none; flex: 0; justify-content: center; border: none; display: inline-flex; align-items: center; gap: 4px;" title="View Document" target="_blank" onclick="viewedDocuments.add({{ $uploaded->id }}); updateVerifyButtonState({{ $uploaded->id }});">
+                                    <i class="fa-solid fa-eye"></i> View
                                 </a>
-                                <a href="{{ route('incidents.download_attachment', ['incident' => $incident, 'attachment' => $uploaded]) }}" class="btn" style="padding: 6px 12px; font-size: 10px; background: #079b6d; color: white; border-radius: 6px; text-decoration: none; flex: 0; justify-content: center; border: none;" title="Download Document">
-                                    <i class="fa-solid fa-download"></i>
+                                <a href="{{ route('incidents.download_attachment', ['incident' => $incident, 'attachment' => $uploaded]) }}" class="btn" style="padding: 6px 12px; font-size: 10px; background: #079b6d; color: white; border-radius: 6px; text-decoration: none; flex: 0; justify-content: center; border: none; display: inline-flex; align-items: center; gap: 4px;" title="Download Document">
+                                    <i class="fa-solid fa-download"></i> Download
                                 </a>
                                 @if(!$isVerified && !$isRejected)
                                 <button onclick="verifyDocument({{ $uploaded->id }}, {{ $incident->id }})" class="btn verify-btn" data-attachment-id="{{ $uploaded->id }}" style="padding: 6px 12px; font-size: 10px; background: #079b6d; color: white; border-radius: 6px; border: none; cursor: not-allowed; flex: 0; justify-content: center; opacity: 0.5;" title="View document first before verifying" disabled>
@@ -230,11 +250,11 @@
                                                 <i class="fa-solid fa-clock"></i> Pending Review
                                             </span>
                                         @endif
-                                        <a href="{{ route('incidents.view_attachment', ['incident' => $incident, 'attachment' => $uploaded]) }}" class="btn" style="padding: 6px 12px; font-size: 10px; background: #079b6d; color: white; border-radius: 6px; text-decoration: none; flex: 0; justify-content: center; border: none;" title="View Document" target="_blank" onclick="viewedDocuments.add({{ $uploaded->id }}); updateVerifyButtonState({{ $uploaded->id }});">
-                                            <i class="fa-solid fa-eye"></i>
+                                        <a href="{{ route('incidents.view_attachment', ['incident' => $incident, 'attachment' => $uploaded]) }}" class="btn" style="padding: 6px 12px; font-size: 10px; background: #079b6d; color: white; border-radius: 6px; text-decoration: none; flex: 0; justify-content: center; border: none; display: inline-flex; align-items: center; gap: 4px;" title="View Document" target="_blank" onclick="viewedDocuments.add({{ $uploaded->id }}); updateVerifyButtonState({{ $uploaded->id }});">
+                                            <i class="fa-solid fa-eye"></i> View
                                         </a>
-                                        <a href="{{ route('incidents.download_attachment', ['incident' => $incident, 'attachment' => $uploaded]) }}" class="btn" style="padding: 6px 12px; font-size: 10px; background: #079b6d; color: white; border-radius: 6px; text-decoration: none; flex: 0; justify-content: center; border: none;" title="Download Document">
-                                            <i class="fa-solid fa-download"></i>
+                                        <a href="{{ route('incidents.download_attachment', ['incident' => $incident, 'attachment' => $uploaded]) }}" class="btn" style="padding: 6px 12px; font-size: 10px; background: #079b6d; color: white; border-radius: 6px; text-decoration: none; flex: 0; justify-content: center; border: none; display: inline-flex; align-items: center; gap: 4px;" title="Download Document">
+                                            <i class="fa-solid fa-download"></i> Download
                                         </a>
                                         @if(!$isVerified && !$isRejected)
                                         <button onclick="verifyDocument({{ $uploaded->id }}, {{ $incident->id }})" class="btn verify-btn" data-attachment-id="{{ $uploaded->id }}" style="padding: 6px 12px; font-size: 10px; background: #079b6d; color: white; border-radius: 6px; border: none; cursor: not-allowed; flex: 0; justify-content: center; opacity: 0.5;" title="View document first before verifying" disabled>
@@ -434,7 +454,6 @@
             }
 
             const btn = event.target.closest('button');
-            const container = btn.closest('[style*="display: flex"]');
             
             // Show loading state
             btn.disabled = true;
@@ -454,33 +473,8 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Find the parent row and update it
-                    const row = btn.closest('.doc-item');
-                    
-                    // Hide the status badge
-                    const statusBadge = row.querySelector('[style*="background: #fef3c7"]');
-                    if (statusBadge) {
-                        statusBadge.style.display = 'none';
-                    }
-                    
-                    // Replace with verified badge
-                    const verifiedBadge = document.createElement('span');
-                    verifiedBadge.style.cssText = 'display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #d1fae5; color: #065f46;';
-                    verifiedBadge.innerHTML = '<i class="fa-solid fa-check"></i> Verified';
-                    
-                    if (statusBadge) {
-                        statusBadge.replaceWith(verifiedBadge);
-                    } else {
-                        row.querySelector('.actions')?.insertBefore(verifiedBadge, row.querySelector('.actions').firstChild);
-                    }
-                    
-                    // Hide verify and reject buttons
-                    const verifyBtn = row.querySelector('button[onclick*="verifyDocument"]');
-                    const rejectBtn = row.querySelector('button[onclick*="rejectDocument"]');
-                    if (verifyBtn) verifyBtn.style.display = 'none';
-                    if (rejectBtn) rejectBtn.style.display = 'none';
-                    
-                    // Keep view and download buttons visible
+                    // Reload the page to refresh everything
+                    location.reload();
                 } else {
                     alert('Error: ' + (data.message || 'Failed to verify document'));
                     btn.disabled = false;
@@ -493,6 +487,50 @@
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> Verify';
             });
+        }
+
+        function updateProgressBar() {
+            // Count verified documents
+            const verifiedBadges = document.querySelectorAll('span:contains("Verified")').length;
+            const allStatusSpans = document.querySelectorAll('[style*="background: #d1fae5"], [style*="background: #fef3c7"], [style*="background: #fee2e2"]');
+            
+            // Count uploaded documents (excluding missing ones)
+            const uploadedDocs = document.querySelectorAll('.doc-item').length;
+            const missingDocs = document.querySelectorAll('[style*="background: #fee2e2"]').length;
+            const actualUploaded = uploadedDocs - missingDocs;
+            
+            // Count verified (green badges)
+            const verifiedDocs = document.querySelectorAll('span[style*="background: #d1fae5"]').length;
+            
+            // Calculate percentage
+            const percentage = actualUploaded > 0 ? Math.round((verifiedDocs / actualUploaded) * 100) : 0;
+            
+            // Update the progress bar
+            const progressBar = document.querySelector('div[style*="background: linear-gradient"]');
+            if (progressBar) {
+                progressBar.style.width = percentage + '%';
+                
+                // Update the text inside the bar
+                const barText = progressBar.querySelector('span');
+                if (barText) {
+                    barText.textContent = verifiedDocs + '/' + actualUploaded;
+                    // Show text only if percentage > 10
+                    if (percentage <= 10) {
+                        barText.style.display = 'none';
+                    }
+                } else if (percentage > 10) {
+                    const textSpan = document.createElement('span');
+                    textSpan.style.cssText = 'color: white; font-size: 11px; font-weight: 700;';
+                    textSpan.textContent = verifiedDocs + '/' + actualUploaded;
+                    progressBar.appendChild(textSpan);
+                }
+            }
+            
+            // Update percentage text
+            const percentageText = document.querySelector('span:contains("%")');
+            if (percentageText) {
+                percentageText.textContent = percentage + '% Verified';
+            }
         }
 
         function rejectDocument(attachmentId, incidentId, docType) {

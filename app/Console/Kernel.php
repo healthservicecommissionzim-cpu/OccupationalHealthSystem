@@ -19,6 +19,12 @@ class Kernel extends ConsoleKernel
             ->name('check-leave-milestones')
             ->withoutOverlapping()
             ->onOneServer();
+
+        // Optimize dashboard every hour to ensure optimal performance
+        $schedule->command('dashboard:optimize')
+            ->hourly()
+            ->name('dashboard-optimization')
+            ->withoutOverlapping();
     }
 
     /**
