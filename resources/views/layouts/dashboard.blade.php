@@ -208,10 +208,27 @@
     </script>
     
     <script>
-        // Font Awesome Icon Fallback - Replace with SVG icons if FA doesn't load
+        // Font Awesome Icon Check - Removed fallback to only use Font Awesome
         document.addEventListener('DOMContentLoaded', function() {
-            // SVG icon templates
-            const svgIcons = {
+            // Font Awesome should be loaded from CDN
+            console.log('Font Awesome loaded from CDN');
+            
+            // Debug: Check if FA is working
+            const testIcon = document.querySelector('i[class*="fa-"]');
+            if (testIcon) {
+                const computedStyle = window.getComputedStyle(testIcon, '::before');
+                const content = computedStyle.getPropertyValue('content');
+                console.log('FA Icon test - content:', content);
+                
+                if (content === 'none' || content === '""') {
+                    console.warn('Font Awesome may not be loading properly');
+                }
+            }
+        });
+        
+        // REMOVED SVG FALLBACK SCRIPT
+        /*
+        const svgIcons = {
                 'fa-chart-line': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>',
                 'fa-chart-pie': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>',
                 'fa-map-location-dot': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>',
@@ -274,33 +291,7 @@
                 'fa-user': '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>',
                 'fa-circle-question': '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>',
                 'fa-eye': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>',
-                'fa-eye-slash': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>'
-            };
-            
-            // Find all Font Awesome icons
-            const icons = document.querySelectorAll('i[class*="fa-"]');
-            
-            icons.forEach(icon => {
-                // Check if icon has no content (FA didn't load)
-                const hasContent = icon.textContent.trim().length > 0 || icon.querySelector('svg');
-                
-                if (!hasContent) {
-                    // Get all classes
-                    const classes = Array.from(icon.classList);
-                    
-                    // Find matching SVG icon
-                    for (const cls of classes) {
-                        if (svgIcons[cls]) {
-                            icon.innerHTML = svgIcons[cls];
-                            icon.style.display = 'inline-flex';
-                            icon.style.alignItems = 'center';
-                            icon.style.justifyContent = 'center';
-                            break;
-                        }
-                    }
-                }
-            });
-        });
+        */
     </script>
     
     @yield('extra_styles')
