@@ -89,7 +89,7 @@
         }
 
         nav a {
-            text-decoration: none;
+            text-decoration: none !important;
             color: var(--ink-soft);
             font-weight: 500;
             font-size: 0.9rem;
@@ -98,6 +98,7 @@
 
         nav a:hover {
             color: var(--brand);
+            text-decoration: none !important;
         }
 
         .nav-buttons {
@@ -110,7 +111,7 @@
             padding: 0.6rem 1.5rem;
             border-radius: 8px;
             font-weight: 700;
-            text-decoration: none;
+            text-decoration: none !important;
             transition: all 0.3s;
             font-size: 0.85rem;
             border: none;
@@ -130,6 +131,7 @@
             background: var(--brand-deep);
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(7, 155, 109, 0.3);
+            text-decoration: none !important;
         }
 
         /* ═══════════════════════════════════════MAIN LAYOUT════════════════════════════════════════ */
@@ -494,14 +496,14 @@
 
         .footer-text a {
             color: var(--brand);
-            text-decoration: none;
+            text-decoration: none !important;
             font-weight: 600;
             transition: color var(--transition);
         }
 
         .footer-text a:hover {
             color: var(--brand-deep);
-            text-decoration: underline;
+            text-decoration: none !important;
         }
 
         .footer-text a:focus {

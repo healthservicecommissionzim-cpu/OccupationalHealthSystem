@@ -125,10 +125,14 @@ class DatabaseBackupController extends Controller
             'port' => $port
         ]);
         
-        // Build the command - different approach for Windows
+        // Build the command - use proc_open for better control on Windows
+        $descriptorspec = [
+            0 => ["pipe", "r"],
+            1 => ["file", $filepath, "w"],
+            2 => ["pipe", "w"]
+        ];
+        
         if (PHP_OS_FAMILY === 'Windows') {
-            // On Windows, use direct parameters without shell argument escaping issues
-            // Add --no-tablespaces to avoid permission issues and suppress password warning
             $command = sprintf(
                 '"%s" --user=%s --password=%s --host=%s --port=%s --single-transaction --quick --lock-tables=false --no-tablespaces %s',
                 $mysqldumpPath,
@@ -138,24 +142,35 @@ class DatabaseBackupController extends Controller
                 $port,
                 $database
             );
-            
-            // Redirect output to file, suppress stderr warnings about password
-            $command .= ' 2>nul > "' . $filepath . '"';
         } else {
             $command = sprintf(
-                '%s --user=%s --password=%s --host=%s --port=%s --single-transaction --quick --lock-tables=false --no-tablespaces %s > %s 2>&1',
+                '%s --user=%s --password=%s --host=%s --port=%s --single-transaction --quick --lock-tables=false --no-tablespaces %s',
                 escapeshellarg($mysqldumpPath),
                 escapeshellarg($username),
                 escapeshellarg($password),
                 escapeshellarg($host),
                 escapeshellarg($port),
-                escapeshellarg($database),
-                escapeshellarg($filepath)
+                escapeshellarg($database)
             );
         }
         
-        // Execute the backup
-        exec($command, $output, $returnVar);
+        // Execute using proc_open for better output handling
+        $process = proc_open($command, $descriptorspec, $pipes);
+        $returnVar = 0;
+        $stderrOutput = '';
+        
+        if (is_resource($process)) {
+            if (!empty($pipes[2])) {
+                $stderrOutput = stream_get_contents($pipes[2]);
+                fclose($pipes[2]);
+            }
+            $returnVar = proc_close($process);
+        } else {
+            return [
+                'success' => false,
+                'error' => 'Failed to execute mysqldump process'
+            ];
+        }
         
         // Check if backup was successful
         if ($returnVar !== 0 || !file_exists($filepath) || filesize($filepath) === 0) {
