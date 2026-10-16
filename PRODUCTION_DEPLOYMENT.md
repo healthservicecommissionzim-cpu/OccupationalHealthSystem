@@ -8,7 +8,8 @@
 **Solution Applied:**
 - Updated `APP_URL` in `.env` to `https://injury.hsc.org.zw`
 - Enabled secure cookies: `SESSION_SECURE_COOKIE=true`
-- Laravel will now automatically generate HTTPS URLs for all routes
+- **Added URL::forceScheme('https') in AppServiceProvider** - Forces all Laravel-generated URLs to use HTTPS in production
+- Laravel will now automatically generate HTTPS URLs for all routes, forms, and assets
 
 ### 2. Content Security Policy (CSP) Violations
 **Problem:** Font Awesome and form submissions were blocked by CSP headers.

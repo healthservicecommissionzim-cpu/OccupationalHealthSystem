@@ -35,6 +35,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Force HTTPS scheme for all URLs in production
+        if ($this->app->environment('production')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+        
         // Register event listeners
         \Illuminate\Support\Facades\Event::listen(
             IncidentEscalatedToHR::class,
