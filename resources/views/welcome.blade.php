@@ -10,36 +10,24 @@
     <!-- DNS Prefetch for faster external resource loading -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     
     <!-- Preconnect for critical resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- Optimized font loading with font-display swap -->
+    <!-- Optimized font loading -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     
     <!-- Preload critical assets -->
     <link rel="preload" href="{{ asset('images/hsc-logo.png') }}" as="image">
     
     @vite(['resources/css/app.css'])
     <style>
-        /* Icon Replacements with Unicode */
-        .fas, .fa {
-            font-style: normal;
-            font-weight: 900;
-            text-rendering: auto;
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        .fa-shield-alt::before { content: '🛡️'; }
-        .fa-file-medical-alt::before { content: '📋'; }
-        .fa-upload::before { content: '📤'; }
-        .fa-first-aid::before { content: '🏥'; }
-        .fa-comments::before { content: '💬'; }
-        .fa-times::before { content: '✕'; }
-        .fa-headset::before { content: '🎧'; }
-        
         :root {
             --brand: #1D4533;
             --brand-dark: #0f2818;
@@ -1292,21 +1280,27 @@
     <section class="features">
         <a href="{{ route('incidents.create') }}" class="feature-card" data-tooltip="Click to start reporting a new workplace incident or injury">
             <span class="feature-number">01</span>
-            <div class="feature-icon"></div>
+            <div class="feature-icon">
+                <i class="fas fa-file-medical-alt"></i>
+            </div>
             <h3>Report Incident</h3>
             <p>Quickly and securely report workplace incidents, exposures, or injuries through our streamlined digital form.</p>
         </a>
         
         <a href="{{ route('incidents.track') }}" class="feature-card" data-tooltip="Click to find and track your reported incidents, view status, and upload documents">
             <span class="feature-number">02</span>
-            <div class="feature-icon"></div>
+            <div class="feature-icon">
+                <i class="fas fa-upload"></i>
+            </div>
             <h3>Track & Upload</h3>
             <p>Monitor the progress of your submitted incidents and upload supporting documentation when required.</p>
         </a>
         
         <a href="{{ route('first_aid.token_form') }}" class="feature-card" data-tooltip="Click to log minor first aid incidents quickly without full incident reporting">
             <span class="feature-number">03</span>
-            <div class="feature-icon"></div>
+            <div class="feature-icon">
+                <i class="fas fa-first-aid"></i>
+            </div>
             <h3>First Aid Log</h3>
             <p>Record and log minor first aid events without creating full incident reports for minor injuries.</p>
         </a>
@@ -1344,7 +1338,7 @@
 
     <!-- Floating Chat Widget -->
     <button class="floating-chat-btn" id="floatingChatBtn" title="Get Help" aria-label="Get Help - Contact Support">
-        <span>Chat</span>
+        <i class="fas fa-comments"></i>
     </button>
 
     <!-- Support Request Modal -->
