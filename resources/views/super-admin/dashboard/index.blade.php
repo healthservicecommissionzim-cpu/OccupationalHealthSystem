@@ -26,9 +26,7 @@
                     <p class="text-3xl font-bold text-yellow-600 mt-2">{{ $statistics['pending_count'] }}</p>
                 </div>
                 <div class="bg-yellow-100 rounded-full p-3">
-                    <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
+                    <i class="fa-solid fa-clock text-yellow-600 text-2xl"></i>
                 </div>
             </div>
             <a href="{{ route('user-approval.index') }}" class="inline-block mt-4 text-yellow-600 hover:text-yellow-700 text-sm font-medium">
@@ -44,9 +42,7 @@
                     <p class="text-3xl font-bold text-green-600 mt-2">{{ $statistics['approved_count'] }}</p>
                 </div>
                 <div class="bg-green-100 rounded-full p-3">
-                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
+                    <i class="fa-solid fa-circle-check text-green-600 text-2xl"></i>
                 </div>
             </div>
         </div>
@@ -59,9 +55,7 @@
                     <p class="text-3xl font-bold text-red-600 mt-2">{{ $statistics['rejected_count'] }}</p>
                 </div>
                 <div class="bg-red-100 rounded-full p-3">
-                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l-2-2m0 0l-2-2m2 2l2-2m-2 2l-2 2"></path>
-                    </svg>
+                    <i class="fa-solid fa-circle-xmark text-red-600 text-2xl"></i>
                 </div>
             </div>
         </div>
@@ -74,9 +68,7 @@
                     <p class="text-3xl font-bold text-blue-600 mt-2">{{ $statistics['total_count'] }}</p>
                 </div>
                 <div class="bg-blue-100 rounded-full p-3">
-                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.856-1.487M15 10a3 3 0 11-6 0 3 3 0 016 0zM6 20h12a6 6 0 00-6-6 6 6 0 00-6 6z"></path>
-                    </svg>
+                    <i class="fa-solid fa-users text-blue-600 text-2xl"></i>
                 </div>
             </div>
         </div>
@@ -185,15 +177,24 @@
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Links</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <a href="{{ route('user-approval.index') }}" class="p-4 border border-gray-300 rounded-lg hover:border-blue-600 hover:bg-blue-50 transition">
-                <p class="font-semibold text-gray-900">Review Pending Users</p>
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fa-solid fa-user-clock text-blue-600 text-xl"></i>
+                    <p class="font-semibold text-gray-900">Review Pending Users</p>
+                </div>
                 <p class="text-sm text-gray-600 mt-1">Approve or reject pending registrations</p>
             </a>
-            <a href="{{ route('user-approval.index') }}" class="p-4 border border-gray-300 rounded-lg hover:border-blue-600 hover:bg-blue-50 transition">
-                <p class="font-semibold text-gray-900">All Users</p>
-                <p class="text-sm text-gray-600 mt-1">View all system users</p>
+            <a href="{{ route('dashboards.super_admin') }}" class="p-4 border border-gray-300 rounded-lg hover:border-blue-600 hover:bg-blue-50 transition">
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fa-solid fa-chart-line text-blue-600 text-xl"></i>
+                    <p class="font-semibold text-gray-900">Master Dashboard</p>
+                </div>
+                <p class="text-sm text-gray-600 mt-1">View system overview & analytics</p>
             </a>
             <a href="{{ route('user-approval.audit_logs') }}" class="p-4 border border-gray-300 rounded-lg hover:border-blue-600 hover:bg-blue-50 transition">
-                <p class="font-semibold text-gray-900">Audit Logs</p>
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fa-solid fa-shield text-blue-600 text-xl"></i>
+                    <p class="font-semibold text-gray-900">Audit Logs</p>
+                </div>
                 <p class="text-sm text-gray-600 mt-1">View role assignments and rejections</p>
             </a>
         </div>

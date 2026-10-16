@@ -175,7 +175,7 @@
                     <p class="text-xs text-slate-500 mt-0.5">All time</p>
                 </div>
                 <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex items-center justify-center">
-                    <x-lucide-briefcase class="w-4 h-4 text-blue-600" stroke-width="1.5" />
+                    <i class="fa-solid fa-briefcase text-blue-600"></i>
                 </div>
             </div>
         </div>
@@ -190,7 +190,7 @@
                     <p class="text-xs text-slate-500 mt-0.5">{{ $userStatistics['pending_count'] }} pending</p>
                 </div>
                 <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg flex items-center justify-center">
-                    <x-lucide-users class="w-4 h-4 text-purple-600" stroke-width="1.5" />
+                    <i class="fa-solid fa-users text-purple-600"></i>
                 </div>
             </div>
         </div>
@@ -205,7 +205,7 @@
                     <p class="text-xs text-slate-500 mt-0.5">In workflow</p>
                 </div>
                 <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg flex items-center justify-center">
-                    <x-lucide-loader class="w-4 h-4 text-amber-600" stroke-width="1.5" />
+                    <i class="fa-solid fa-spinner text-amber-600"></i>
                 </div>
             </div>
         </div>
@@ -222,7 +222,7 @@
                     </p>
                 </div>
                 <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg flex items-center justify-center">
-                    <x-lucide-check-circle-2 class="w-4 h-4 text-emerald-600" stroke-width="1.5" />
+                    <i class="fa-solid fa-circle-check text-emerald-600"></i>
                 </div>
             </div>
         </div>
@@ -237,7 +237,7 @@
                     <p class="text-xs text-slate-500 mt-0.5">Not approved</p>
                 </div>
                 <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-red-50 to-red-100 rounded-lg flex items-center justify-center">
-                    <x-lucide-x-circle class="w-4 h-4 text-red-600" stroke-width="1.5" />
+                    <i class="fa-solid fa-circle-xmark text-red-600"></i>
                 </div>
             </div>
         </div>
