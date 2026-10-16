@@ -38,13 +38,13 @@ class SecurityHeadersMiddleware
         $csp = [
             "default-src 'self'",
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net",
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
-            "font-src 'self' https://fonts.gstatic.com data:",
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
+            "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:",
             "img-src 'self' data: https:",
             "connect-src 'self'",
             "frame-ancestors 'self'",
             "base-uri 'self'",
-            "form-action 'self'",
+            "form-action 'self' https:",
         ];
         $response->headers->set('Content-Security-Policy', implode('; ', $csp));
 
