@@ -1,4 +1,13 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
+
+@section('page_title', 'Super Admin Dashboard')
+
+@section('header_title', 'Super Administrator')
+@section('header_subtitle', 'System Overview & Analytics')
+
+@section('sidebar_content')
+@include('dashboards.super_admin')
+@endsection
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
