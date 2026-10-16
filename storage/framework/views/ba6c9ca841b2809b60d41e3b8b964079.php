@@ -6,12 +6,40 @@
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <title>HSC-OHS | Occupational Health & Safety Portal - Zimbabwe Healthcare Workers</title>
     <meta name="description" content="Report workplace incidents, exposures, and access occupational health services for Zimbabwe healthcare workers. Secure, fast, and confidential.">
+    
+    <!-- DNS Prefetch for faster external resource loading -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    
+    <!-- Preconnect for critical resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    
+    <!-- Optimized font loading with font-display swap -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+    
+    <!-- Preload critical assets -->
+    <link rel="preload" href="<?php echo e(asset('images/hsc-logo.png')); ?>" as="image">
+    
     <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css']); ?>
     <style>
+        /* Icon Replacements with Unicode */
+        .fas, .fa {
+            font-style: normal;
+            font-weight: 900;
+            text-rendering: auto;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .fa-shield-alt::before { content: '🛡️'; }
+        .fa-file-medical-alt::before { content: '📋'; }
+        .fa-upload::before { content: '📤'; }
+        .fa-first-aid::before { content: '🏥'; }
+        .fa-comments::before { content: '💬'; }
+        .fa-times::before { content: '✕'; }
+        .fa-headset::before { content: '🎧'; }
+        
         :root {
             --brand: #1D4533;
             --brand-dark: #0f2818;
@@ -31,7 +59,7 @@
         }
         
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             color: #0f172a;
             overflow-x: hidden;
             background: linear-gradient(to bottom, #ffffff 0%, #f9fafb 100%);
@@ -124,6 +152,9 @@
         
         .logo img {
             height: 55px;
+            width: auto;
+            max-height: 55px;
+            object-fit: contain;
         }
         
         .logo-text {
@@ -140,7 +171,7 @@
         }
         
         nav a {
-            text-decoration: none;
+            text-decoration: none !important;
             color: var(--slate);
             font-weight: 500;
             font-size: 0.9rem;
@@ -149,6 +180,7 @@
         
         nav a:hover {
             color: var(--brand);
+            text-decoration: none !important;
         }
         
         .nav-buttons {
@@ -161,7 +193,7 @@
             padding: 0.6rem 1.5rem;
             border-radius: 8px;
             font-weight: 700;
-            text-decoration: none;
+            text-decoration: none !important;
             transition: all 0.3s;
             font-size: 0.85rem;
             border: none;
@@ -180,6 +212,7 @@
         .btn-outline:hover {
             background: var(--brand);
             color: white;
+            text-decoration: none !important;
         }
         
         .btn-primary {
@@ -192,6 +225,7 @@
             background: var(--brand-dark);
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(29, 69, 51, 0.3);
+            text-decoration: none !important;
         }
         
         /* Hero Section */
@@ -245,7 +279,7 @@
         }
         
         .hero h1 {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: clamp(1.5rem, 5vw, 3.5rem);
             font-weight: 800;
             color: var(--dark);
@@ -259,7 +293,7 @@
         }
         
         .hero p {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 1.1rem;
             color: var(--slate);
             max-width: 700px;
@@ -329,7 +363,7 @@
             padding: 2rem;
             box-shadow: 0 8px 32px rgba(29, 69, 51, 0.12), 0 2px 8px rgba(29, 69, 51, 0.08);
             transition: all 0.3s;
-            text-decoration: none;
+            text-decoration: none !important;
             color: inherit;
             display: flex;
             flex-direction: column;
@@ -341,6 +375,12 @@
         .feature-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 16px 48px rgba(29, 69, 51, 0.16), 0 4px 12px rgba(29, 69, 51, 0.12);
+            text-decoration: none !important;
+        }
+        
+        .feature-card h3,
+        .feature-card p {
+            text-decoration: none !important;
         }
         
         .feature-number {
@@ -370,7 +410,7 @@
             font-weight: 700;
             margin: 0;
             color: var(--dark);
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
         
         .feature-card p {
@@ -379,7 +419,7 @@
             opacity: 0.8;
             margin: 0;
             color: var(--slate);
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
         
         /* Tooltip Styles */
@@ -1212,7 +1252,7 @@
     <!-- Header -->
     <header>
         <a href="<?php echo e(route('welcome')); ?>" class="logo">
-            <img src="<?php echo e(asset('images/hsc-logo.png')); ?>" alt="HSC Logo">
+            <img src="<?php echo e(asset('images/hsc-logo.png')); ?>" alt="HSC Logo" fetchpriority="high">
             <span class="logo-text">HEALTH SERVICE COMMISSION</span>
         </a>
         
@@ -1252,27 +1292,21 @@
     <section class="features">
         <a href="<?php echo e(route('incidents.create')); ?>" class="feature-card" data-tooltip="Click to start reporting a new workplace incident or injury">
             <span class="feature-number">01</span>
-            <div class="feature-icon">
-                <i class="fas fa-file-medical-alt"></i>
-            </div>
+            <div class="feature-icon"></div>
             <h3>Report Incident</h3>
             <p>Quickly and securely report workplace incidents, exposures, or injuries through our streamlined digital form.</p>
         </a>
         
         <a href="<?php echo e(route('incidents.track')); ?>" class="feature-card" data-tooltip="Click to find and track your reported incidents, view status, and upload documents">
             <span class="feature-number">02</span>
-            <div class="feature-icon">
-                <i class="fas fa-upload"></i>
-            </div>
+            <div class="feature-icon"></div>
             <h3>Track & Upload</h3>
             <p>Monitor the progress of your submitted incidents and upload supporting documentation when required.</p>
         </a>
         
         <a href="<?php echo e(route('first_aid.token_form')); ?>" class="feature-card" data-tooltip="Click to log minor first aid incidents quickly without full incident reporting">
             <span class="feature-number">03</span>
-            <div class="feature-icon">
-                <i class="fas fa-first-aid"></i>
-            </div>
+            <div class="feature-icon"></div>
             <h3>First Aid Log</h3>
             <p>Record and log minor first aid events without creating full incident reports for minor injuries.</p>
         </a>
@@ -1309,8 +1343,7 @@
     </div>
 
     <!-- Floating Chat Widget -->
-    <button class="floating-chat-btn" id="floatingChatBtn">
-        <i class="fas fa-comments"></i>
+    <button class="floating-chat-btn" id="floatingChatBtn" title="Get Help" aria-label="Get Help - Contact Support">
         <span>Chat</span>
     </button>
 
@@ -1541,5 +1574,4 @@
         });
     </script>
 </body>
-</html>
-<?php /**PATH D:\OccupationalHealth System\resources\views/welcome.blade.php ENDPATH**/ ?>
+</html><?php /**PATH D:\OccupationalHealth System\resources\views/welcome.blade.php ENDPATH**/ ?>
