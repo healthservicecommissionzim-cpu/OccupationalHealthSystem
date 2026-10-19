@@ -1428,6 +1428,11 @@ unset($__errorArgs, $__bag); ?>
                 minimumInputLength: 0
             });
 
+            // Trigger facility filtering on page load if values are pre-selected
+            if ($('#district_id').val() || $('#facility_type_id').val()) {
+                updateFacilities();
+            }
+
             // Handle Select2 change events
             $('#department_id').on('select2:select select2:unselect', function() {
                 updateLocationFields();

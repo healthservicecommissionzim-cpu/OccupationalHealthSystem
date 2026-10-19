@@ -1109,10 +1109,18 @@
 
             facilitySelect.value = '';
 
+            // Hide/show options based on criteria
             Array.from(facilitySelect.options).forEach(option => {
-                if (option.value === '') return;
+                if (option.value === '') {
+                    option.style.display = '';
+                    option.disabled = false;
+                    return;
+                }
+                
                 const facilityDistrictId = option.getAttribute('data-district');
                 const facilityTypeId = option.getAttribute('data-facility-type');
+                
+                let shouldShow = false;
                 
                 // For provincial facilities, filter by province (through district)
                 if (isProvincialFacility && selectedProvinceId) {
@@ -1123,30 +1131,37 @@
                     const provinceMatches = districtProvinceId === selectedProvinceId;
                     const typeMatches = !selectedFacilityTypeId || facilityTypeId === selectedFacilityTypeId;
                     
-                    if (provinceMatches && typeMatches) {
-                        option.style.display = '';
-                    } else {
-                        option.style.display = 'none';
-                    }
+                    shouldShow = provinceMatches && typeMatches;
                 } else {
                     // For district-level facilities, filter by district
                     const districtMatches = !selectedDistrictId || facilityDistrictId === selectedDistrictId;
                     const typeMatches = !selectedFacilityTypeId || facilityTypeId === selectedFacilityTypeId;
                     
-                    if (districtMatches && typeMatches) {
-                        option.style.display = '';
-                    } else {
-                        option.style.display = 'none';
-                    }
+                    shouldShow = districtMatches && typeMatches;
+                }
+                
+                // Use disabled attribute instead of display for Select2 compatibility
+                if (shouldShow) {
+                    option.style.display = '';
+                    option.disabled = false;
+                } else {
+                    option.style.display = 'none';
+                    option.disabled = true;
                 }
             });
 
-            // Reinitialize Select2
+            // Reinitialize Select2 with templateResult to hide disabled options
             $('#facility_id').select2({
                 placeholder: '— Select Facility/Hospital —',
                 allowClear: true,
                 width: '100%',
-                minimumResultsForSearch: 0
+                minimumResultsForSearch: 0,
+                templateResult: function(option) {
+                    if (option.disabled) {
+                        return null; // Don't show disabled options
+                    }
+                    return option.text;
+                }
             });
         };
 
