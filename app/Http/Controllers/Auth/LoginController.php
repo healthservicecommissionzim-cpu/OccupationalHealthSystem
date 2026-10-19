@@ -109,8 +109,8 @@ class LoginController extends Controller
                 'classification' => 'IMPORTANT',
             ]);
 
-            // Set session flag to show welcome modal
-            session(['just_logged_in' => true]);
+            // Set session flag to show welcome modal (flash - auto-expires after one request)
+            $request->session()->flash('just_logged_in', true);
 
             return redirect()->route($user->getDashboardRoute());
         }
