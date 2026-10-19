@@ -1833,6 +1833,12 @@
 
     <!-- Hero Section -->
     <section class="hero">
+        <!-- Decorative circles -->
+        <div class="circle-1"></div>
+        <div class="circle-2"></div>
+        <div class="circle-3"></div>
+        <div class="circle-4"></div>
+
         <div class="hero-badge">
             <i class="fas fa-shield-alt"></i>
             SECURE & CONFIDENTIAL PORTAL

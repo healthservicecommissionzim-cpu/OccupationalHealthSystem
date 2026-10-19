@@ -25,131 +25,56 @@ class RegisterController extends Controller
         $departments = Department::all();
         $designations = Designation::all();
         $provinces = Province::all();
-        $districts = District::all();
+        // Load districts with their province relationship
+        $districts = District::with('province')->get();
         $facilityTypes = FacilityType::all();
         $facilities = Facility::all();
         return view('auth.register', compact('organizations', 'departments', 'designations', 'provinces', 'districts', 'facilityTypes', 'facilities'));
     }
 
+    /**
+     * Get facility types and facilities for registration form
+     */
+    public function getFacilityData(Request $request)
+    {
+        // Get all facilities with their facility types
+        $facilities = Facility::with('facilityType')->get();
+        
+        // Extract unique facility types that have facilities
+        $facilityTypeIds = $facilities->pluck('facility_type_id')->unique();
+        $facilityTypes = FacilityType::whereIn('id', $facilityTypeIds)->get();
+
+        return response()->json([
+            'facilityTypes' => $facilityTypes,
+            'facilities' => $facilities->map(function($facility) {
+                return [
+                    'id' => $facility->id,
+                    'name' => $facility->name,
+                    'facility_type_id' => $facility->facility_type_id,
+                    'province_id' => $facility->province_id,
+                    'district_id' => $facility->district_id,
+                ];
+            }),
+        ]);
+    }
+
     public function store(Request $request)
     {
-        $organizationId = $request->input('organization_id');
-        $organization = Organization::find($organizationId);
-        $designationId = $request->input('designation_id');
-        $designation = Designation::find($designationId);
-
-        // Build validation rules based on organization
+        // Build validation rules - all location fields are optional
         $rules = [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email|max:255',
             'phone_number' => 'required|string|max:20',
-            'organization_id' => 'required|exists:organizations,id',
+            'organization_id' => 'nullable|exists:organizations,id',
             'designation_id' => 'required|exists:designations,id',
+            'department_id' => 'nullable|exists:departments,id',
+            'province_id' => 'nullable|exists:provinces,id',
+            'district_id' => 'nullable|exists:districts,id',
+            'facility_type_id' => 'nullable|exists:facility_types,id',
+            'facility_id' => 'nullable|exists:facilities,id',
             'password' => ['required', 'string', 'confirmed', new StrongPassword],
         ];
-
-        // Check designation type
-        $isHRProvincial = $designation && strpos($designation->name, 'Human Resources (Province)') !== false;
-        $isHRDistrict = $designation && strpos($designation->name, 'Human Resources (District)') !== false;
-        $isHRHospital = $designation && strpos($designation->name, 'Human Resources (Hospital)') !== false;
-        $isHROther = $designation && (
-            strpos($designation->name, 'Human Resources Officer') !== false ||
-            strpos($designation->name, 'Human Resources Manager') !== false
-        );
-        $isHR = $isHRProvincial || $isHRDistrict || $isHRHospital || $isHROther;
-        $isDMO = $designation && strpos($designation->name, 'District Medical Officer') !== false;
-        $isPMD = $designation && strpos($designation->name, 'Provincial Medical Director') !== false;
-        $isCMO = $designation && strpos($designation->name, 'Chief Medical Officer') !== false;
-
-        // Check if facility type is Central Hospital
-        $facilityTypeId = $request->input('facility_type_id');
-        $isCentralHospital = false;
-        if ($facilityTypeId) {
-            $facilityType = \App\Models\FacilityType::find($facilityTypeId);
-            $isCentralHospital = $facilityType && strtolower($facilityType->name) === 'central hospital';
-        }
-
-        // Only require location fields for MoHCC
-        if ($organization && $organization->requires_location) {
-            if ($isHRProvincial) {
-                // Provincial HR: Only Province required
-                $rules = array_merge($rules, [
-                    'department_id' => 'nullable|exists:departments,id',
-                    'province_id' => 'required|exists:provinces,id',
-                    'district_id' => 'nullable|exists:districts,id',
-                    'facility_type_id' => 'nullable|exists:facility_types,id',
-                    'facility_id' => 'nullable|exists:facilities,id',
-                ]);
-            } elseif ($isHRDistrict) {
-                // District HR: Province and District required
-                $rules = array_merge($rules, [
-                    'department_id' => 'nullable|exists:departments,id',
-                    'province_id' => 'required|exists:provinces,id',
-                    'district_id' => 'required|exists:districts,id',
-                    'facility_type_id' => 'nullable|exists:facility_types,id',
-                    'facility_id' => 'nullable|exists:facilities,id',
-                ]);
-            } elseif ($isHRHospital) {
-                // Hospital HR: Province, District, Facility Type, and Facility required
-                // UNLESS facility type is Central Hospital - then district is NOT required
-                $districtRule = $isCentralHospital ? 'nullable' : 'nullable';
-                $rules = array_merge($rules, [
-                    'department_id' => 'nullable|exists:departments,id',
-                    'province_id' => 'required|exists:provinces,id',
-                    'district_id' => $districtRule . '|exists:districts,id',
-                    'facility_type_id' => 'required|exists:facility_types,id',
-                    'facility_id' => 'required|exists:facilities,id',
-                ]);
-            } elseif ($isHROther) {
-                // Other HR: all location fields are optional (handled by frontend)
-                $rules = array_merge($rules, [
-                    'department_id' => 'nullable|exists:departments,id',
-                    'province_id' => 'nullable|exists:provinces,id',
-                    'district_id' => 'nullable|exists:districts,id',
-                    'facility_type_id' => 'nullable|exists:facility_types,id',
-                    'facility_id' => 'nullable|exists:facilities,id',
-                ]);
-            } elseif ($isDMO) {
-                // DMO: only province and district required
-                $rules = array_merge($rules, [
-                    'department_id' => 'nullable|exists:departments,id',
-                    'province_id' => 'required|exists:provinces,id',
-                    'district_id' => 'required|exists:districts,id',
-                    'facility_type_id' => 'nullable|exists:facility_types,id',
-                    'facility_id' => 'nullable|exists:facilities,id',
-                ]);
-            } elseif ($isPMD) {
-                // PMD: only province required
-                $rules = array_merge($rules, [
-                    'department_id' => 'nullable|exists:departments,id',
-                    'province_id' => 'required|exists:provinces,id',
-                    'district_id' => 'nullable|exists:districts,id',
-                    'facility_type_id' => 'nullable|exists:facility_types,id',
-                    'facility_id' => 'nullable|exists:facilities,id',
-                ]);
-            } elseif ($isCMO) {
-                // CMO: province, facility type, and facility required (district NOT required)
-                $rules = array_merge($rules, [
-                    'department_id' => 'nullable|exists:departments,id',
-                    'province_id' => 'required|exists:provinces,id',
-                    'district_id' => 'nullable|exists:districts,id',
-                    'facility_type_id' => 'required|exists:facility_types,id',
-                    'facility_id' => 'required|exists:facilities,id',
-                ]);
-            } else {
-                // Everyone else: ALL location fields are required (Department, Province, District, Facility Type, Facility)
-                // UNLESS facility type is Central Hospital - then district is NOT required
-                $districtRule = $isCentralHospital ? 'nullable' : 'required';
-                $rules = array_merge($rules, [
-                    'department_id' => 'required|exists:departments,id',
-                    'province_id' => 'required|exists:provinces,id',
-                    'district_id' => $districtRule . '|exists:districts,id',
-                    'facility_type_id' => 'required|exists:facility_types,id',
-                    'facility_id' => 'required|exists:facilities,id',
-                ]);
-            }
-        }
 
         $validated = $request->validate($rules);
 
@@ -158,20 +83,16 @@ class RegisterController extends Controller
             'name' => $validated['first_name'] . ' ' . $validated['last_name'],
             'email' => $validated['email'],
             'phone_number' => $validated['phone_number'],
-            'organization_id' => $validated['organization_id'],
+            'organization_id' => $validated['organization_id'] ?? null,
             'designation_id' => $validated['designation_id'],
+            'department_id' => $validated['department_id'] ?? null,
+            'province_id' => $validated['province_id'] ?? null,
+            'district_id' => $validated['district_id'] ?? null,
+            'facility_type_id' => $validated['facility_type_id'] ?? null,
+            'facility_id' => $validated['facility_id'] ?? null,
             'password' => Hash::make($validated['password']),
             'status' => 'pending',
         ];
-
-        // Add location fields only if provided
-        if ($organization && $organization->requires_location) {
-            $userData['department_id'] = $validated['department_id'] ?? null;
-            $userData['province_id'] = $validated['province_id'] ?? null;
-            $userData['district_id'] = $validated['district_id'] ?? null;
-            $userData['facility_type_id'] = $validated['facility_type_id'] ?? null;
-            $userData['facility_id'] = $validated['facility_id'] ?? null;
-        }
 
         // Create user
         $user = User::create($userData);

@@ -75,6 +75,7 @@ Route::post('/chat/feedback', [\App\Http\Controllers\ChatController::class, 'log
 Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisterController::class, 'create'])->name('register');
     Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+    Route::get('/register/facility-data', [RegisterController::class, 'getFacilityData'])->name('register.facility-data');
 
     Route::get('/login', function () {
         return view('auth.login');

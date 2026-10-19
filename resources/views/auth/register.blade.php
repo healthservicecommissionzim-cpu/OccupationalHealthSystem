@@ -737,8 +737,8 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="organization_id">Organization <span class="required"></span></label>
-                        <select id="organization_id" name="organization_id" required>
+                        <label for="organization_id">Organization</label>
+                        <select id="organization_id" name="organization_id">
                             <option value="">— Select Organization —</option>
                             @foreach($organizations as $organization)
                                 <option value="{{ $organization->id }}" data-requires-location="{{ $organization->requires_location ? 'true' : 'false' }}" title="requires_location: {{ $organization->requires_location }}">
@@ -753,8 +753,8 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="facility_type_id">Facility Type <span class="required" id="facility_type_required"></span></label>
-                        <select id="facility_type_id" name="facility_type_id" onchange="updateByFacilityType()" disabled>
+                        <label for="facility_type_id">Facility Type</label>
+                        <select id="facility_type_id" name="facility_type_id" onchange="updateByFacilityType()">
                             <option value="">— Select Facility Type —</option>
                             @foreach($facilityTypes as $facilityType)
                                 <option value="{{ $facilityType->id }}" {{ old('facility_type_id') == $facilityType->id ? 'selected' : '' }}>
@@ -769,8 +769,8 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="province_id">Province <span class="required"></span></label>
-                        <select id="province_id" name="province_id" required onchange="updateDistricts()" disabled>
+                        <label for="province_id">Province</label>
+                        <select id="province_id" name="province_id" onchange="updateDistricts()">
                             <option value="">— Select Province —</option>
                             @foreach($provinces as $province)
                                 <option value="{{ $province->id }}" {{ old('province_id') == $province->id ? 'selected' : '' }}>
@@ -785,8 +785,8 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="district_id">District <span class="required" id="district_required"></span></label>
-                        <select id="district_id" name="district_id" required onchange="updateFacilities()" disabled>
+                        <label for="district_id">District</label>
+                        <select id="district_id" name="district_id" onchange="updateFacilities()">
                             <option value="">— Select District —</option>
                             @foreach($districts as $district)
                                 <option value="{{ $district->id }}" data-province="{{ $district->province_id }}" data-facility-type="{{ $district->facility_type_id ?? 'all' }}" {{ old('district_id') == $district->id ? 'selected' : '' }}>
@@ -801,8 +801,8 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="facility_id">Facility/Hospital Name <span class="required" id="facility_required"></span></label>
-                        <select id="facility_id" name="facility_id" disabled>
+                        <label for="facility_id">Facility/Hospital Name</label>
+                        <select id="facility_id" name="facility_id">
                             <option value="">— Select Facility/Hospital —</option>
                             @foreach($facilities as $facility)
                                 <option value="{{ $facility->id }}" data-district="{{ $facility->district_id }}" data-facility-type="{{ $facility->facility_type_id }}" {{ old('facility_id') == $facility->id ? 'selected' : '' }}>
@@ -987,103 +987,31 @@
             });
         });
 
-        // ─── CORE FIX: Update Location Fields based on Organization & Designation ───
+        // ─── SIMPLIFIED: All Organization Details fields enabled and optional ───
         window.updateLocationFields = function() {
-            const organizationSelect = document.getElementById('organization_id');
-            const designationSelect = document.getElementById('designation_id');
             const facilitySelect = document.getElementById('facility_id');
             const facilityTypeSelect = document.getElementById('facility_type_id');
             const provinceSelect = document.getElementById('province_id');
             const districtSelect = document.getElementById('district_id');
 
-            // 1️⃣ Determine if location is needed
-            let requiresLocation = false;
-            if (organizationSelect.value) {
-                const option = organizationSelect.options[organizationSelect.selectedIndex];
-                const attr = option.getAttribute('data-requires-location');
-                requiresLocation = attr === 'true' || attr === '1' || attr === true;
-                // Fallback: check name for 'ministry' (case‑insensitive)
-                if (!requiresLocation && option.text.toLowerCase().includes('ministry')) {
-                    requiresLocation = true;
-                }
-            }
-
-            // 2️⃣ Determine designation type (case‑insensitive, trimmed)
-            let designationType = null;
-            if (designationSelect && designationSelect.value) {
-                const name = designationSelect.options[designationSelect.selectedIndex].textContent.trim().toLowerCase();
-                if (name.includes('provincial medical director')) designationType = 'pmd';
-                else if (name.includes('chief medical officer')) designationType = 'cmo';
-                else if (name.includes('district medical officer')) designationType = 'dmo';
-                else if (name.includes('human resources (province)')) designationType = 'hr_provincial';
-                else if (name.includes('human resources (district)')) designationType = 'hr_district';
-                else if (name.includes('human resources (hospital)')) designationType = 'hr_hospital';
-                else if (name.includes('human resources officer') || name.includes('human resources manager')) designationType = 'hr_other';
-                else designationType = 'default';
-            }
-
-            // 3️⃣ Define which fields are enabled & required per designation
-            //    true = field is enabled and required; false/omitted = disabled and cleared
-            const fieldMap = {
-                'pmd':               { province: true },
-                'cmo':               { province: true, facilityType: true, facility: true, district: false},  // Chief Medical Officer - province level + facility selection
-                'dmo':               { province: true, district: true },
-                'hr_provincial':     { province: true },
-                'hr_district':       { province: true, district: true },
-                'hr_hospital':       { province: true, district: true, facilityType: true, facility: true },
-                'hr_other':          { province: true },  // adjust as needed
-                'default':           { province: true, district: true, facilityType: true, facility: true }
-            };
-
-            // If location not required, no fields are enabled
-            const fields = requiresLocation ? (fieldMap[designationType] || fieldMap['default']) : {};
-
-            // 4️⃣ Apply to each field using a helper
-            const apply = (field, enable) => {
+            // Enable all fields and make them optional
+            const enableField = (field) => {
                 if (!field) return;
-                if (enable) {
-                    field.disabled = false;
-                    field.setAttribute('required', 'required');
-                } else {
-                    field.disabled = true;
-                    field.removeAttribute('required');
-                    field.value = '';
-                }
+                field.disabled = false;
+                field.removeAttribute('required');
             };
 
-            apply(provinceSelect, fields.province);
-            apply(districtSelect, fields.district);
-            apply(facilityTypeSelect, fields.facilityType);
-            apply(facilitySelect, fields.facility);
-
-            // 5️⃣ Update dependent dropdowns if their parent is enabled
-            if (fields.province) updateDistricts();
-            if (fields.district && districtSelect.value) updateFacilities();
+            enableField(provinceSelect);
+            enableField(districtSelect);
+            enableField(facilityTypeSelect);
+            enableField(facilitySelect);
         };
 
-        // ── Update Districts based on Province (show/hide) ──
+        // ── Update Districts - just enable, don't filter ──
         window.updateDistricts = function() {
-            const provinceSelect = document.getElementById('province_id');
             const districtSelect = document.getElementById('district_id');
-            const selectedProvinceId = provinceSelect.value;
-
-            // Reset to placeholder
-            districtSelect.value = '';
-
-            // Show/hide options based on province
-            Array.from(districtSelect.options).forEach(option => {
-                if (option.value === '') return; // placeholder
-                const provinceId = option.getAttribute('data-province');
-                if (selectedProvinceId && provinceId !== selectedProvinceId) {
-                    option.style.display = 'none';
-                } else {
-                    option.style.display = '';
-                }
-            });
-
-            // Clear facility dropdown and re-filter
-            document.getElementById('facility_id').value = '';
-            updateFacilities();
+            // Simply enable the district dropdown without filtering
+            districtSelect.disabled = false;
         };
 
         // ── Update Facilities based on District & Facility Type ──
@@ -1092,6 +1020,7 @@
             const facilityTypeSelect = document.getElementById('facility_type_id');
             const provinceSelect = document.getElementById('province_id');
             const facilitySelect = document.getElementById('facility_id');
+            
             const selectedDistrictId = districtSelect.value;
             const selectedFacilityTypeId = facilityTypeSelect.value;
             const selectedProvinceId = provinceSelect.value;
@@ -1099,58 +1028,41 @@
             console.log('updateFacilities called:', {
                 selectedDistrictId,
                 selectedFacilityTypeId,
-                selectedProvinceId,
-                totalOptions: facilitySelect.options.length
+                selectedProvinceId
             });
 
-            // Check if we're dealing with a provincial facility
-            const facilityTypeName = facilityTypeSelect.options[facilityTypeSelect.selectedIndex]?.text || '';
-            const provincialFacilities = ['General Hospital', 'Provincial Hospital', 'Central Hospital'];
-            const isProvincialFacility = provincialFacilities.some(type => facilityTypeName.includes(type));
-
-            console.log('isProvincialFacility:', isProvincialFacility, 'facilityTypeName:', facilityTypeName);
-
-            // Store all facility options (including placeholder) BEFORE clearing
-            const allOptions = Array.from(facilitySelect.options).map(opt => ({
+            // Store all original facility options (before clearing)
+            const allFacilityOptions = Array.from(facilitySelect.options).map(opt => ({
                 value: opt.value,
                 text: opt.text,
                 district: opt.getAttribute('data-district'),
                 facilityType: opt.getAttribute('data-facility-type')
             }));
 
-            console.log('All options count:', allOptions.length);
-
             // Clear all options except placeholder
-            while (facilitySelect.options.length > 1) {
-                facilitySelect.remove(1);
-            }
+            facilitySelect.innerHTML = '<option value="">— Select Facility/Hospital —</option>';
 
-            // Add back filtered options
-            let filteredCount = 0;
-            allOptions.forEach(optData => {
+            // Filter and add back matching facilities
+            let matchCount = 0;
+            allFacilityOptions.forEach(optData => {
                 if (optData.value === '') return; // Skip placeholder
 
                 let shouldShow = false;
 
-                // For provincial facilities, filter by province (through district)
-                if (isProvincialFacility && selectedProvinceId) {
-                    const districtProvinceId = Array.from(districtSelect.options).find(opt => opt.value === optData.district)?.getAttribute('data-province');
-                    
-                    const provinceMatches = districtProvinceId === selectedProvinceId;
+                // District-level facility: must match selected district
+                if (selectedDistrictId) {
+                    const districtMatches = optData.district === selectedDistrictId;
                     const typeMatches = !selectedFacilityTypeId || optData.facilityType === selectedFacilityTypeId;
-                    
-                    shouldShow = provinceMatches && typeMatches;
-                } else {
-                    // For district-level facilities, filter by district
-                    const districtMatches = !selectedDistrictId || optData.district === selectedDistrictId;
-                    const typeMatches = !selectedFacilityTypeId || optData.facilityType === selectedFacilityTypeId;
-                    
                     shouldShow = districtMatches && typeMatches;
                 }
+                // Provincial facility: match by facility type only (no district filter)
+                else if (selectedFacilityTypeId && !selectedDistrictId) {
+                    const typeMatches = optData.facilityType === selectedFacilityTypeId;
+                    shouldShow = typeMatches;
+                }
 
-                // Add option if it should show
                 if (shouldShow) {
-                    filteredCount++;
+                    matchCount++;
                     const newOption = document.createElement('option');
                     newOption.value = optData.value;
                     newOption.text = optData.text;
@@ -1160,9 +1072,13 @@
                 }
             });
 
-            console.log('Filtered options count:', filteredCount, 'New total:', facilitySelect.options.length);
+            console.log('Facilities added:', matchCount);
 
-            // Update Select2 if it's initialized (using jQuery if available)
+            // Reset facility selection
+            facilitySelect.value = '';
+            facilitySelect.disabled = matchCount === 0;
+
+            // Update Select2 if initialized
             if (typeof $ !== 'undefined' && $.fn.select2) {
                 try {
                     $('#facility_id').select2('destroy');
@@ -1177,17 +1093,10 @@
                                 return data;
                             }
                             return null;
-                        },
-                        templateResult: function(option) {
-                            if (option.disabled && option.id !== '') {
-                                return null;
-                            }
-                            return option.text;
                         }
                     });
-                    $('#facility_id').val(null).trigger('change');
                 } catch(e) {
-                    console.error('Select2 error:', e);
+                    console.error('Select2 error for facility:', e);
                 }
             }
         };
@@ -1506,18 +1415,16 @@
             // Set up change listeners for cascading
             document.getElementById('organization_id').addEventListener('change', function() {
                 updateLocationFields();
-                updateDistricts();
-                if (document.getElementById('district_id').value) {
-                    updateFacilities();
-                }
             });
 
             document.getElementById('province_id').addEventListener('change', function() {
                 updateDistricts();
                 document.getElementById('facility_id').value = '';
+                updateFacilities();
             });
 
             document.getElementById('district_id').addEventListener('change', function() {
+                document.getElementById('facility_id').value = '';
                 updateFacilities();
             });
 
