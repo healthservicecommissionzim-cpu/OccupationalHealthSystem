@@ -1989,13 +1989,26 @@
 
         // Ensure modal is closed on page load unless explicitly shown
         document.addEventListener('DOMContentLoaded', () => {
-            // Only show modal if sessionStorage flag is set (meaning fresh login)
-            const showModal = sessionStorage.getItem('showSupportModal');
-            if (!showModal) {
+            // Check if user just logged in (set by LoginController)
+            const justLoggedIn = {{ session('just_logged_in') ? 'true' : 'false' }};
+            
+            if (justLoggedIn) {
+                // Only show modal on fresh login
+                openSupportModal();
+                
+                // Clear the session flag via AJAX so it doesn't show again
+                fetch('{{ route("welcome") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ clear_login_flag: true })
+                }).catch(err => console.error('Error clearing login flag:', err));
+            } else {
+                // Otherwise keep modal closed
                 closeSupportModal();
             }
-            // Clear the flag after using it
-            sessionStorage.removeItem('showSupportModal');
         });
 
         // Support Modal Event Listeners

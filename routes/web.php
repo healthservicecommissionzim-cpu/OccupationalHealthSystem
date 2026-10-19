@@ -26,6 +26,11 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
+Route::post('/', function () {
+    session()->forget('just_logged_in');
+    return response()->json(['success' => true]);
+})->name('welcome.clear-flag');
+
 // ─── CSRF Token Refresh Route ───────────────────────────────────────────
 Route::get('/refresh-csrf', function () {
     return response()->json(['token' => csrf_token()]);
