@@ -1,29 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, private, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta name="robots" content="noarchive" />
     <title>Register - HSC-OHS</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
+        /* ─── Variables (matching incident form) ─── */
         :root {
             --brand: #1D4533;
             --brand-dark: #0f2818;
+            --brand-light: #f0fdf4;
+            --brand-glow: rgba(29, 69, 51, 0.25);
+            --slate-50: #FBFBFA;
             --slate-100: #f1f5f9;
             --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
             --slate-400: #94a3b8;
             --slate-500: #64748b;
             --slate-600: #475569;
             --slate-700: #334155;
+            --slate-800: #1e293b;
             --slate-900: #0f172a;
             --white: #ffffff;
             --red-500: #ef4444;
             --green-500: #22c55e;
+            --amber-500: #f59e0b;
+            --radius: 12px;
+            --radius-sm: 6px;
+            --shadow-card: 0 8px 30px -8px rgba(0, 0, 0, 0.08), 0 2px 12px -4px rgba(0, 0, 0, 0.02);
+            --shadow-focus: 0 0 0 3px var(--brand-glow);
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -33,31 +50,26 @@
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-            background: #f5f5f5;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f0f2f5;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        main {
-            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 2rem 1.5rem;
+            padding: 1.5rem;
         }
 
         .register-container {
-            max-width: 600px;
+            max-width: 520px;
             width: 100%;
             background: var(--white);
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(29, 69, 51, 0.12);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-card);
             border-top: 5px solid var(--brand);
-            padding: 2rem;
+            padding: 1.5rem 1.75rem 1.25rem;
         }
 
+        /* ─── Header ─── */
         .form-header {
             text-align: center;
             margin-bottom: 1.5rem;
@@ -66,85 +78,406 @@
         .hsc-logo {
             height: 48px;
             margin-bottom: 0.6rem;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .form-header h1 {
             font-size: 1.4rem;
             font-weight: 800;
             color: var(--slate-900);
+            letter-spacing: -0.02em;
         }
 
+        .form-header p {
+            font-size: 0.8rem;
+            color: var(--slate-500);
+            margin-top: 0.1rem;
+        }
+
+        /* ─── Alerts ─── */
         .alert {
             padding: 0.7rem 0.9rem;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             margin-bottom: 1.25rem;
             display: flex;
+            align-items: flex-start;
             gap: 0.5rem;
             border-left: 4px solid var(--red-500);
             background: #fef2f2;
             color: #991b1b;
             font-size: 0.82rem;
+            animation: slideDown 0.3s ease;
         }
 
+        .alert i {
+            flex-shrink: 0;
+            margin-top: 2px;
+            color: var(--red-500);
+            font-size: 0.95rem;
+        }
+
+        .alert.success {
+            border-left-color: var(--green-500);
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .alert.success i {
+            color: var(--green-500);
+        }
+
+        .alert ul {
+            margin: 0;
+            padding-left: 1.25rem;
+            list-style-type: disc;
+        }
+
+        .alert ul li+li {
+            margin-top: 0.1rem;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ─── Form Groups ─── */
         .form-group {
             margin-bottom: 1.1rem;
         }
 
         .form-group label {
             display: block;
-            font-size: 0.9rem;
+            font-size: 0.78rem;
             font-weight: 600;
             color: var(--slate-700);
-            margin-bottom: 0.35rem;
+            margin-bottom: 0.25rem;
         }
 
-        .form-group .required {
+        .form-group label .required {
             color: var(--red-500);
+            font-weight: 700;
+        }
+
+        .form-group label .helper {
+            font-weight: 400;
+            color: var(--slate-400);
+            font-size: 0.65rem;
+            margin-left: 0.3rem;
         }
 
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 0.65rem 0.9rem;
+            padding: 0.5rem 0.75rem;
             border: 1.5px solid var(--slate-200);
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             font-family: inherit;
-            font-size: 0.95rem;
+            font-size: 0.82rem;
             color: var(--slate-900);
             background: var(--white);
-            transition: border-color 0.2s;
+            transition: all var(--transition);
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
             border-color: var(--brand);
-            box-shadow: 0 0 0 3px rgba(29, 69, 51, 0.1);
+            box-shadow: var(--shadow-focus);
+        }
+
+        .form-group input:hover,
+        .form-group select:hover {
+            border-color: var(--slate-300);
+        }
+
+        .form-group input::placeholder {
+            color: var(--slate-400);
         }
 
         .form-group select {
             cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23334155'%3E%3Cpath d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23334155'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 0.7rem center;
             background-size: 1.1rem;
             padding-right: 2.2rem;
         }
 
+        /* ─── Disabled State ─── */
         .form-group input:disabled,
         .form-group select:disabled {
             background-color: var(--slate-100);
+            border-color: var(--slate-200);
+            color: var(--slate-400);
             cursor: not-allowed;
             opacity: 0.6;
         }
 
-        .error-text {
-            color: var(--red-500);
-            font-size: 0.7rem;
-            margin-top: 0.2rem;
+        .form-group select:disabled {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2394a3b8'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
         }
 
+        /* ─── Success Modal ─── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .success-modal {
+            background: white;
+            border-radius: var(--radius);
+            max-width: 450px;
+            width: 90%;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s backwards;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-icon i {
+            font-size: 40px;
+            color: white;
+        }
+
+        .success-modal h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--slate-900);
+            margin-bottom: 0.75rem;
+        }
+
+        .success-modal p {
+            font-size: 0.95rem;
+            color: var(--slate-600);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--brand);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .modal-btn:hover {
+            background: var(--brand-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(29, 69, 51, 0.3);
+        }
+
+        /* ─── Button ─── */
+        .btn-primary {
+            width: 100%;
+            padding: 0.6rem;
+            background: var(--brand);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 8px rgba(29, 69, 51, 0.2);
+            margin-top: 0.25rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--brand-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(29, 69, 51, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-primary .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: var(--white);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        .btn-primary.loading .spinner {
+            display: inline-block;
+        }
+        .btn-primary.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ─── Footer ─── */
+        .form-footer {
+            margin-top: 1.25rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--slate-500);
+        }
+
+        .form-footer a {
+            color: var(--brand);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color var(--transition);
+        }
+
+        .form-footer a:hover {
+            color: var(--brand-dark);
+            text-decoration: underline;
+        }
+
+        /* ─── Password toggle (optional) ─── */
+        .input-wrapper {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 0.7rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--slate-400);
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 0.25rem;
+            transition: color var(--transition);
+        }
+
+        .toggle-password:hover {
+            color: var(--slate-600);
+        }
+
+        .toggle-password:focus {
+            outline: none;
+        }
+
+        /* ─── Validation states ─── */
+        .form-group input.is-valid,
+        .form-group select.is-valid {
+            border-color: var(--green-500);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2322c55e'%3E%3Cpath fill-rule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z' clip-rule='evenodd'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center;
+            background-size: 1rem;
+            padding-right: 2.2rem;
+        }
+
+        .form-group input.is-invalid,
+        .form-group select.is-invalid {
+            border-color: var(--red-500);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23ef4444'%3E%3Cpath fill-rule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z' clip-rule='evenodd'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center;
+            background-size: 1rem;
+            padding-right: 2.2rem;
+        }
+
+        .error-text {
+            color: var(--red-500);
+            font-size: 0.68rem;
+            margin-top: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            animation: slideDown 0.2s ease;
+        }
+
+        .error-text i {
+            font-size: 0.6rem;
+        }
+
+        /* ─── Form Sections ─── */
         .form-section {
             margin-bottom: 1.5rem;
             padding-bottom: 1.5rem;
@@ -153,6 +486,7 @@
 
         .form-section:last-of-type {
             border-bottom: none;
+            margin-bottom: 1rem;
         }
 
         .form-section-title {
@@ -167,153 +501,67 @@
             gap: 0.5rem;
         }
 
+        .form-section-title i {
+            font-size: 0.85rem;
+            color: var(--brand);
+        }
+
         .form-row {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-        }
-
-        .form-row.full {
             grid-template-columns: 1fr;
+            gap: 0.85rem;
         }
 
-        .custom-checkbox {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-            padding: 0.5rem;
-            margin-bottom: 1rem;
+        .form-row .form-group {
+            margin-bottom: 0;
         }
 
-        .custom-checkbox input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            margin-top: 2px;
-        }
-
-        .custom-checkbox label {
-            flex: 1;
-            font-size: 0.75rem;
-            color: var(--brand);
-            cursor: pointer;
-            margin: 0;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 0.7rem;
-            background: var(--brand);
-            color: var(--white);
-            border: none;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary:hover {
-            background: var(--brand-dark);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .btn-primary .spinner {
-            display: none;
-            width: 18px;
-            height: 18px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-        }
-
-        .btn-primary.loading .spinner {
-            display: inline-block;
-        }
-
-        .btn-primary.loading .btn-text {
-            display: none;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .form-footer {
-            margin-top: 1.25rem;
-            text-align: center;
-            font-size: 0.8rem;
-            color: var(--slate-500);
-        }
-
-        .form-footer a {
-            color: var(--brand);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        footer {
-            background: var(--brand);
-            color: rgba(255, 255, 255, 0.9);
-            padding: 2rem 4%;
-            text-align: center;
-        }
-
-        footer p {
-            font-size: 0.8rem;
-            margin: 0.5rem 0;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 0.7rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--slate-400);
-            cursor: pointer;
-            padding: 0.25rem;
-        }
-
-        @media (max-width: 768px) {
+        /* ─── Responsive ─── */
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 1.25rem 1rem;
+            }
+            .form-header h1 {
+                font-size: 1.2rem;
+            }
+            .hsc-logo {
+                height: 40px;
+            }
             .form-row {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Select2 custom styling */
+        /* ─── Select2 Custom Styling ─── */
         .select2-container--default .select2-selection--single {
             height: auto !important;
             padding: 0.5rem 0.75rem !important;
             border: 1.5px solid var(--slate-200) !important;
-            border-radius: 6px !important;
+            border-radius: var(--radius-sm) !important;
             background: var(--white) !important;
+            transition: all var(--transition) !important;
         }
 
-        .select2-container--default.select2-container--focus .select2-selection--single {
+        .select2-container--default .select2-selection--single:hover {
+            border-color: var(--slate-300) !important;
+        }
+
+        .select2-container--default.select2-container--focus .select2-selection--single,
+        .select2-container--default.select2-container--open .select2-selection--single {
             border-color: var(--brand) !important;
-            box-shadow: 0 0 0 3px rgba(29, 69, 51, 0.1) !important;
+            box-shadow: var(--shadow-focus) !important;
+            outline: none !important;
         }
 
         .select2-container--default .select2-selection--single .select2-selection__rendered {
             padding: 0 !important;
             color: var(--slate-900) !important;
-            font-size: 0.95rem !important;
             line-height: 1.5 !important;
+            font-size: 0.82rem !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__placeholder {
+            color: var(--slate-400) !important;
         }
 
         .select2-container--default .select2-selection--single .select2-selection__arrow {
@@ -321,26 +569,58 @@
             right: 0.5rem !important;
         }
 
+        .select2-container--default .select2-selection--single .select2-selection__arrow b {
+            border-color: var(--slate-700) transparent transparent transparent !important;
+            border-width: 6px 5px 0 5px !important;
+        }
+
+        .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+            border-color: transparent transparent var(--slate-700) transparent !important;
+            border-width: 0 5px 6px 5px !important;
+        }
+
+        /* Dropdown styles */
         .select2-dropdown {
             border: 1.5px solid var(--brand) !important;
-            border-radius: 6px !important;
+            border-radius: var(--radius-sm) !important;
+            box-shadow: var(--shadow-card) !important;
         }
 
         .select2-search--dropdown .select2-search__field {
             border: 1.5px solid var(--slate-200) !important;
-            border-radius: 6px !important;
+            border-radius: var(--radius-sm) !important;
             padding: 0.5rem 0.75rem !important;
-            font-size: 0.95rem !important;
+            font-size: 0.82rem !important;
+            transition: all var(--transition) !important;
+        }
+
+        .select2-search--dropdown .select2-search__field:focus {
+            border-color: var(--brand) !important;
+            outline: none !important;
+            box-shadow: var(--shadow-focus) !important;
         }
 
         .select2-results__option {
             padding: 0.5rem 0.75rem !important;
-            font-size: 0.95rem !important;
+            font-size: 0.82rem !important;
+            color: var(--slate-900) !important;
         }
 
         .select2-results__option--highlighted {
-            background-color: rgba(29, 69, 51, 0.1) !important;
+            background-color: var(--brand-light) !important;
             color: var(--brand) !important;
+        }
+
+        .select2-results__option--selected {
+            background-color: var(--brand) !important;
+            color: var(--white) !important;
+        }
+
+        .select2-container--disabled .select2-selection--single {
+            background-color: var(--slate-100) !important;
+            border-color: var(--slate-200) !important;
+            opacity: 0.6 !important;
+            cursor: not-allowed !important;
         }
 
         .select2-container {
@@ -349,413 +629,860 @@
     </style>
 </head>
 <body>
-    <main>
-        <div class="register-container">
-            <div class="form-header">
-                <img src="/images/hsc-logo.png" alt="HSC-OHS Logo" class="hsc-logo">
-                <h1>Create Account</h1>
-                <hr>
-            </div>
 
-            <?php if($errors->any()): ?>
-            <div class="alert">
-                <i class="fa-solid fa-circle-exclamation"></i>
+    <div class="register-container">
+
+        <!-- ─── Header ─── -->
+        <div class="form-header">
+            <img src="/images/hsc-logo.png" alt="HSC-OHS Logo" class="hsc-logo" />
+            <h1>Create Account</h1><br/><hr/>
+        </div>
+
+        <!-- ─── Errors ─── -->
+        <?php if($errors->any()): ?>
+            <div class="alert" role="alert">
+                <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
                 <div>
                     <strong>Please fix the following errors:</strong>
-                    <ul style="margin: 0; padding-left: 1.25rem;">
+                    <ul>
                         <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <li><?php echo e($error); ?></li>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </ul>
                 </div>
             </div>
-            <?php endif; ?>
+        <?php endif; ?>
 
-            <form method="POST" action="<?php echo e(route('register.store')); ?>" id="registerForm">
-                <?php echo csrf_field(); ?>
+        <!-- ─── Form ─── -->
+        <form method="POST" action="<?php echo e(route('register.store')); ?>" novalidate id="registerForm">
+            <?php echo csrf_field(); ?>
 
-                <!-- Personal Details -->
-                <div class="form-section">
-                    <div class="form-section-title">
-                        <i class="fa-regular fa-user"></i> Personal Details
+            <!-- ─── Personal Details Section ─── -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <i class="fa-regular fa-user"></i> Personal Details
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first_name">First Name <span class="required"></span></label>
+                        <input type="text" id="first_name" name="first_name" value="<?php echo e(old('first_name')); ?>" required placeholder="e.g. John" autofocus autocomplete="off" />
+                        <?php $__errorArgs = ['first_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="error-text"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>First Name <span class="required">*</span></label>
-                            <input type="text" name="first_name" value="<?php echo e(old('first_name')); ?>" required placeholder="e.g. John">
-                        </div>
-                        <div class="form-group">
-                            <label>Last Name <span class="required">*</span></label>
-                            <input type="text" name="last_name" value="<?php echo e(old('last_name')); ?>" required placeholder="e.g. Doe">
-                        </div>
-                    </div>
-                    <div class="form-row full">
-                        <div class="form-group">
-                            <label>Email Address <span class="required">*</span></label>
-                            <input type="email" name="email" value="<?php echo e(old('email')); ?>" required placeholder="you@example.com">
-                        </div>
-                    </div>
-                    <div class="form-row full">
-                        <div class="form-group">
-                            <label>Phone Number <span class="required">*</span></label>
-                            <input type="tel" name="phone_number" value="<?php echo e(old('phone_number')); ?>" required placeholder="+263 77 123 4567">
-                        </div>
-                    </div>
-                    <div class="form-row full">
-                        <div class="form-group">
-                            <label>Department <span class="required">*</span></label>
-                            <select name="department_id" id="department_id" required>
-                                <option value="">— Select Department —</option>
-                                <?php $__currentLoopData = $departments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dept): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($dept->id); ?>" <?php echo e(old('department_id') == $dept->id ? 'selected' : ''); ?>><?php echo e($dept->name); ?></option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row full">
-                        <div class="form-group">
-                            <label>Designation <span class="required">*</span></label>
-                            <select name="designation_id" id="designation_id" required>
-                                <option value="">— Select Designation —</option>
-                                <?php $__currentLoopData = $designations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $desig): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($desig->id); ?>" data-name="<?php echo e($desig->name); ?>" <?php echo e(old('designation_id') == $desig->id ? 'selected' : ''); ?>><?php echo e($desig->name); ?></option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
-                        </div>
+                    <div class="form-group">
+                        <label for="last_name">Last Name <span class="required"></span></label>
+                        <input type="text" id="last_name" name="last_name" value="<?php echo e(old('last_name')); ?>" required placeholder="e.g. Doe" autocomplete="off" />
+                        <?php $__errorArgs = ['last_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="error-text"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
                 </div>
-
-                <!-- Organization Details -->
-                <div class="form-section">
-                    <div class="form-section-title">
-                        <i class="fa-regular fa-briefcase"></i> Organization Details
-                    </div>
-                    <div class="form-row full">
-                        <div class="form-group">
-                            <label>Organization <span class="required">*</span></label>
-                            <select name="organization_id" id="organization_id" required>
-                                <option value="">— Select Organization —</option>
-                                <?php $__currentLoopData = $organizations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $org): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($org->id); ?>" data-requires-location="<?php echo e($org->requires_location ? '1' : '0'); ?>" <?php echo e(old('organization_id') == $org->id ? 'selected' : ''); ?>><?php echo e($org->name); ?></option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row full">
-                        <div class="form-group">
-                            <label>Province <span class="required" id="province_req">*</span></label>
-                            <select name="province_id" id="province_id" disabled>
-                                <option value="">— Select Province —</option>
-                                <?php $__currentLoopData = $provinces; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $prov): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($prov->id); ?>" <?php echo e(old('province_id') == $prov->id ? 'selected' : ''); ?>><?php echo e($prov->name); ?></option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row full">
-                        <div class="form-group">
-                            <label>District <span class="required" id="district_req">*</span></label>
-                            <select name="district_id" id="district_id" disabled>
-                                <option value="">— Select District —</option>
-                                <?php $__currentLoopData = $districts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dist): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($dist->id); ?>" data-province="<?php echo e($dist->province_id); ?>" <?php echo e(old('district_id') == $dist->id ? 'selected' : ''); ?>><?php echo e($dist->name); ?></option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row full">
-                        <div class="form-group">
-                            <label>Facility Type <span class="required" id="facility_type_req">*</span></label>
-                            <select name="facility_type_id" id="facility_type_id" disabled>
-                                <option value="">— Select Facility Type —</option>
-                                <?php $__currentLoopData = $facilityTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ft): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($ft->id); ?>" <?php echo e(old('facility_type_id') == $ft->id ? 'selected' : ''); ?>><?php echo e($ft->name); ?></option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row full">
-                        <div class="form-group">
-                            <label>Facility/Hospital <span class="required" id="facility_req">*</span></label>
-                            <select name="facility_id" id="facility_id" disabled>
-                                <option value="">— Select Facility —</option>
-                                <?php $__currentLoopData = $facilities; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $fac): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($fac->id); ?>" data-district="<?php echo e($fac->district_id); ?>" data-type="<?php echo e($fac->facility_type_id); ?>" <?php echo e(old('facility_id') == $fac->id ? 'selected' : ''); ?>><?php echo e($fac->name); ?></option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
-                        </div>
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label for="email">Email Address <span class="required"></span></label>
+                        <input type="email" id="email" name="email" value="<?php echo e(old('email')); ?>" required placeholder="you@example.com" autocomplete="off" />
+                        <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="error-text"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
                 </div>
-
-                <!-- Security -->
-                <div class="form-section">
-                    <div class="form-section-title">
-                        <i class="fa-regular fa-lock"></i> Security
-                    </div>
-                    <div class="form-row full">
-                        <div class="form-group">
-                            <label>Password <span class="required">*</span></label>
-                            <div class="input-wrapper">
-                                <input type="password" name="password" id="password" required minlength="8" placeholder="••••••••">
-                                <button type="button" class="toggle-password" data-target="password" aria-label="Toggle password visibility">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row full">
-                        <div class="form-group">
-                            <label>Confirm Password <span class="required">*</span></label>
-                            <div class="input-wrapper">
-                                <input type="password" name="password_confirmation" id="password_confirmation" required placeholder="••••••••">
-                                <button type="button" class="toggle-password" data-target="password_confirmation" aria-label="Toggle password visibility">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
-                            </div>
-                        </div>
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label for="phone_number">Phone Number <span class="required"></span></label>
+                        <input type="tel" id="phone_number" name="phone_number" value="<?php echo e(old('phone_number')); ?>" required placeholder="+263 77 123 4567" autocomplete="off" />
+                        <?php $__errorArgs = ['phone_number'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="error-text"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
                 </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="department_id">Department <span class="required"></span></label>
+                        <select id="department_id" name="department_id" required>
+                            <option value="">— Select Department —</option>
+                            <?php $__currentLoopData = $departments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $department): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($department->id); ?>" <?php echo e(old('department_id') == $department->id ? 'selected' : ''); ?>>
+                                    <?php echo e($department->name); ?>
 
-                <!-- Consent -->
-                <div class="custom-checkbox">
-                    <input type="checkbox" name="consent" id="consent" value="1" required>
-                    <label for="consent">
-                        I consent to the collection and processing of my personal information. <span class="required">*</span>
-                    </label>
+                                </option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
+                        <?php $__errorArgs = ['department_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="error-text"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                    </div>
                 </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="designation_id">Designation <span class="required"></span></label>
+                        <select id="designation_id" name="designation_id" required>
+                            <option value="">— Select Designation —</option>
+                            <?php $__currentLoopData = $designations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $designation): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($designation->id); ?>" data-name="<?php echo e($designation->name); ?>" <?php echo e(old('designation_id') == $designation->id ? 'selected' : ''); ?>>
+                                    <?php echo e($designation->name); ?>
 
-                <button type="submit" class="btn-primary" id="submitBtn">
-                    <span class="spinner"></span>
-                    <span class="btn-text"><i class="fa-regular fa-user-plus"></i> Create Account</span>
-                </button>
-            </form>
-
-            <div class="form-footer">
-                Already have an account? <a href="<?php echo e(route('login')); ?>">Sign in</a>
-                <a href="<?php echo e(route('welcome')); ?>"> | Home</a>
+                                </option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
+                        <?php $__errorArgs = ['designation_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="error-text"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                    </div>
+                </div>
             </div>
+
+            <!-- ─── Organization Details Section ─── -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <i class="fa-regular fa-briefcase"></i> Organization Details
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="organization_id">Organization <span class="required"></span></label>
+                        <select id="organization_id" name="organization_id" required>
+                            <option value="">— Select Organization —</option>
+                            <?php $__currentLoopData = $organizations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $organization): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($organization->id); ?>" data-requires-location="<?php echo e($organization->requires_location ? 'true' : 'false'); ?>" title="requires_location: <?php echo e($organization->requires_location); ?>">
+                                    <?php echo e($organization->name); ?>
+
+                                </option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
+                        <?php $__errorArgs = ['organization_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="error-text"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="facility_type_id">Facility Type <span class="required" id="facility_type_required"></span></label>
+                        <select id="facility_type_id" name="facility_type_id" onchange="updateByFacilityType()" disabled>
+                            <option value="">— Select Facility Type —</option>
+                            <?php $__currentLoopData = $facilityTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $facilityType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($facilityType->id); ?>" <?php echo e(old('facility_type_id') == $facilityType->id ? 'selected' : ''); ?>>
+                                    <?php echo e($facilityType->name); ?>
+
+                                </option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
+                        <?php $__errorArgs = ['facility_type_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="error-text"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="province_id">Province <span class="required"></span></label>
+                        <select id="province_id" name="province_id" required onchange="updateDistricts()" disabled>
+                            <option value="">— Select Province —</option>
+                            <?php $__currentLoopData = $provinces; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $province): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($province->id); ?>" <?php echo e(old('province_id') == $province->id ? 'selected' : ''); ?>>
+                                    <?php echo e($province->name); ?>
+
+                                </option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
+                        <?php $__errorArgs = ['province_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="error-text"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="district_id">District <span class="required" id="district_required"></span></label>
+                        <select id="district_id" name="district_id" required onchange="updateFacilities()" disabled>
+                            <option value="">— Select District —</option>
+                            <?php $__currentLoopData = $districts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $district): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($district->id); ?>" data-province="<?php echo e($district->province_id); ?>" data-facility-type="<?php echo e($district->facility_type_id ?? 'all'); ?>" <?php echo e(old('district_id') == $district->id ? 'selected' : ''); ?>>
+                                    <?php echo e($district->name); ?>
+
+                                </option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
+                        <?php $__errorArgs = ['district_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="error-text"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="facility_id">Facility/Hospital Name <span class="required" id="facility_required"></span></label>
+                        <select id="facility_id" name="facility_id" disabled>
+                            <option value="">— Select Facility/Hospital —</option>
+                            <?php $__currentLoopData = $facilities; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $facility): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($facility->id); ?>" data-district="<?php echo e($facility->district_id); ?>" data-facility-type="<?php echo e($facility->facility_type_id); ?>" <?php echo e(old('facility_id') == $facility->id ? 'selected' : ''); ?>>
+                                    <?php echo e($facility->name); ?>
+
+                                </option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
+                        <?php $__errorArgs = ['facility_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="error-text"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Security Section ─── -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <i class="fa-regular fa-lock"></i> Security
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password">Password <span class="required"></span> <span class="helper">min. 8 characters</span></label>
+                        <div class="input-wrapper">
+                            <input type="password" id="password" name="password" required placeholder="••••••••" minlength="8" autocomplete="off" />
+                            <button type="button" class="toggle-password" aria-label="Toggle password visibility" data-target="password">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                        <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="error-text"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password_confirmation">Confirm Password <span class="required"></span></label>
+                        <div class="input-wrapper">
+                            <input type="password" id="password_confirmation" name="password_confirmation" required placeholder="••••••••" autocomplete="off" />
+                            <button type="button" class="toggle-password" aria-label="Toggle password visibility" data-target="password_confirmation">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                        <?php $__errorArgs = ['password_confirmation'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <div class="error-text"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> <?php echo e($message); ?></div>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary" id="submitBtn">
+                <span class="spinner" aria-hidden="true"></span>
+                <span class="btn-text"><i class="fa-regular fa-user-plus" aria-hidden="true"></i> Create Account</span>
+            </button>
+        </form>
+
+        <!-- ─── Footer ─── -->
+        <div class="form-footer">
+            Already have an account? <a href="<?php echo e(route('login')); ?>">Sign in</a>
+            <a href="<?php echo e(route('welcome')); ?>"> | Home</a>
         </div>
-    </main>
+          
+    </div>
 
-    <footer>
-        <p>&copy; 2026 Health Service Commission. All rights reserved.</p>
-    </footer>
+    <!-- ─── Success Modal ─── -->
+    <?php if(session('success')): ?>
+    <div class="modal-overlay active" id="successModal">
+        <div class="success-modal">
+            <div class="success-icon">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h2>Registration Successful!</h2>
+            <p><?php echo e(session('success')); ?></p>
+            <button type="button" class="modal-btn" onclick="closeSuccessModal()">
+                <i class="fa-solid fa-arrow-right"></i> Go to Login
+            </button>
+        </div>
+    </div>
+    <?php endif; ?>
 
+    <!-- Select2 JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- ─── CORRECTED JAVASCRIPT ─── -->
     <script>
-        // Auto-refresh CSRF token every 5 minutes to prevent expiration
-        (function() {
-            function refreshCsrfToken() {
-                fetch('/refresh-csrf', {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.token) {
-                        const csrfInput = document.querySelector('input[name="_token"]');
-                        if (csrfInput) {
-                            csrfInput.value = data.token;
-                        }
-                        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
-                        if (csrfMeta) {
-                            csrfMeta.setAttribute('content', data.token);
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.log('CSRF token refresh skipped');
-                });
-            }
-
-            // Refresh CSRF token every 5 minutes
-            setInterval(refreshCsrfToken, 300000);
-
-            // Refresh token when page becomes visible again
-            document.addEventListener('visibilitychange', function() {
-                if (!document.hidden) {
-                    refreshCsrfToken();
-                }
-            });
-        })();
-
-        // SVG icon fallback for Font Awesome
-        (function() {
-            const svgIcons = {
-                'fa-eye': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 1.25rem; height: 1.25rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>',
-                'fa-eye-slash': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 1.25rem; height: 1.25rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>'
-            };
-
-            function replaceFAIcons() {
-                const icons = document.querySelectorAll('i[class*="fa-"]');
-                icons.forEach(icon => {
-                    const hasContent = icon.textContent.trim().length > 0 || icon.querySelector('svg');
-                    if (!hasContent) {
-                        const classes = Array.from(icon.classList);
-                        for (const cls of classes) {
-                            if (svgIcons[cls]) {
-                                icon.innerHTML = svgIcons[cls];
-                                icon.style.display = 'inline-flex';
-                                icon.style.alignItems = 'center';
-                                icon.style.justifyContent = 'center';
-                                break;
-                            }
-                        }
-                    }
-                });
-            }
-
-            window.addEventListener('DOMContentLoaded', replaceFAIcons);
-        })();
-
-        // Initialize Select2 on searchable dropdowns ONLY (Department, Designation, District, Facility)
-        $(document).ready(function() {
-            $('#department_id, #designation_id, #district_id, #facility_id').select2({
-                placeholder: function() {
-                    return $(this).find('option:first').text();
-                },
-                allowClear: true,
-                width: '100%'
-            });
-            
-            // Trigger organization change on page load to apply logic if organization was pre-selected
-            $('#organization_id').trigger('change');
-        });
-
-        // Toggle password visibility
-        document.querySelectorAll('.toggle-password').forEach(btn => {
-            btn.onclick = function(e) {
-                e.preventDefault();
-                const input = document.getElementById(this.dataset.target);
-                const icon = this.querySelector('i');
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
-                } else {
-                    input.type = 'password';
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
-                }
-            };
-        });
-
-        // Cascading dropdowns - organization enables province
-        $('#organization_id').on('change', function() {
-            const selected = $(this).find(':selected');
-            const dataValue = selected.attr('data-requires-location');
-            const requiresLocation = dataValue === '1';
-            const province = $('#province_id');
-            
-            if (requiresLocation) {
-                province.removeAttr('disabled').prop('required', true);
-            } else {
-                province.attr('disabled', 'disabled').prop('required', false).val('');
-            }
-            
-            // Reset downstream
-            $('#district_id').val('').attr('disabled', 'disabled');
-            $('#facility_type_id').val('').attr('disabled', 'disabled');
-            $('#facility_id').val('').trigger('change').attr('disabled', 'disabled');
-        });
-
-        // Province enables district
-        $('#province_id').on('change', function() {
-            const provinceId = $(this).val();
-            const districtSelect = $('#district_id');
-            
-            if (provinceId) {
-                // Filter districts by province
-                districtSelect.find('option').each(function() {
-                    const opt = $(this);
-                    if (opt.val() === '' || opt.data('province') == provinceId) {
-                        opt.prop('disabled', false).show();
-                    } else {
-                        opt.prop('disabled', true).hide();
-                    }
-                });
-                
-                // Enable district and refresh Select2
-                districtSelect.prop('disabled', false).prop('required', true).val('').trigger('change');
-            } else {
-                districtSelect.prop('disabled', true).val('').trigger('change');
-            }
-            
-            $('#facility_type_id').prop('disabled', false);
-            $('#facility_id').val('').trigger('change').prop('disabled', true);
-        });
-
-        // District + Facility Type enable Facility
-        function updateFacilities() {
-            const districtId = $('#district_id').val();
-            const facilityTypeId = $('#facility_type_id').val();
-            const facilitySelect = $('#facility_id');
-            
-            if (districtId && facilityTypeId) {
-                facilitySelect.prop('disabled', false).prop('required', true);
-                
-                facilitySelect.find('option').each(function() {
-                    const opt = $(this);
-                    if (opt.val() === '' || (opt.data('district') == districtId && opt.data('type') == facilityTypeId)) {
-                        opt.show();
-                    } else {
-                        opt.hide();
-                    }
-                });
-                
-                facilitySelect.trigger('change');
-            } else {
-                facilitySelect.prop('disabled', true).val('').trigger('change');
+        // ─── Success Modal Close Function ───
+        function closeSuccessModal() {
+            const modal = document.getElementById('successModal');
+            if (modal) {
+                modal.classList.remove('active');
+                // Redirect to login page after closing
+                setTimeout(() => {
+                    window.location.href = '<?php echo e(route("login")); ?>';
+                }, 300);
             }
         }
 
-        $('#district_id, #facility_type_id').on('change', updateFacilities);
+        // Close modal when clicking outside
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('successModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeSuccessModal();
+                    }
+                });
+            }
+        });
 
-        // Form submission with loading state
-        document.getElementById('registerForm').onsubmit = function() {
-            const btn = document.getElementById('submitBtn');
-            btn.classList.add('loading');
-            btn.disabled = true;
+        // Aggressive cache prevention - run before anything else
+        (function() {
+            'use strict';
+
+            // Replace the URL in history to prevent back button from returning to this form
+            if (window.history.replaceState) {
+                window.history.replaceState({noBackButton: true}, null, window.location.href);
+            }
+
+            // Prevent browser cache from restoring form data
+            window.addEventListener('pageshow', function(event) {
+                // Force reload if page was loaded from bfcache (back/forward cache)
+                if (event.persisted) {
+                    window.location.reload();
+                }
+                
+                // Always reset form to ensure no data is shown
+                const form = document.querySelector('#registerForm');
+                if (form) {
+                    form.reset();
+                }
+            });
+
+            // Clear data when leaving the page
+            window.addEventListener('pagehide', function() {
+                const form = document.querySelector('#registerForm');
+                if (form) {
+                    form.reset();
+                    // Clear visible input values only, NOT hidden CSRF tokens
+                    const visibleInputs = form.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="password"], textarea, select');
+                    visibleInputs.forEach(input => {
+                        input.value = '';
+                    });
+                }
+                // Clear all storage
+                sessionStorage.clear();
+                localStorage.removeItem('registerFormData');
+            });
+
+            // Prevent form autofill from browser cache
+            window.addEventListener('load', function() {
+                const form = document.querySelector('#registerForm');
+                if (form) {
+                    // Disable browser autocomplete on the entire form
+                    form.setAttribute('autocomplete', 'off');
+                    
+                    // Reset all fields explicitly
+                    form.reset();
+                    
+                    // Clear visible input values only, NOT hidden CSRF tokens
+                    const visibleInputs = form.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="password"], textarea, select');
+                    visibleInputs.forEach(input => {
+                        input.value = '';
+                        input.setAttribute('autocomplete', 'off');
+                    });
+                }
+            });
+        })();
+
+        // ── Toggle Password Visibility ──
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                if (!input) return;
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                const icon = this.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-eye');
+                    icon.classList.toggle('fa-eye-slash');
+                }
+            });
+        });
+
+        // ─── CORE FIX: Update Location Fields based on Organization & Designation ───
+        window.updateLocationFields = function() {
+            const organizationSelect = document.getElementById('organization_id');
+            const designationSelect = document.getElementById('designation_id');
+            const facilitySelect = document.getElementById('facility_id');
+            const facilityTypeSelect = document.getElementById('facility_type_id');
+            const provinceSelect = document.getElementById('province_id');
+            const districtSelect = document.getElementById('district_id');
+
+            // 1️⃣ Determine if location is needed
+            let requiresLocation = false;
+            if (organizationSelect.value) {
+                const option = organizationSelect.options[organizationSelect.selectedIndex];
+                const attr = option.getAttribute('data-requires-location');
+                requiresLocation = attr === 'true' || attr === '1' || attr === true;
+                // Fallback: check name for 'ministry' (case‑insensitive)
+                if (!requiresLocation && option.text.toLowerCase().includes('ministry')) {
+                    requiresLocation = true;
+                }
+            }
+
+            // 2️⃣ Determine designation type (case‑insensitive, trimmed)
+            let designationType = null;
+            if (designationSelect && designationSelect.value) {
+                const name = designationSelect.options[designationSelect.selectedIndex].textContent.trim().toLowerCase();
+                if (name.includes('provincial medical director')) designationType = 'pmd';
+                else if (name.includes('chief medical officer')) designationType = 'cmo';
+                else if (name.includes('district medical officer')) designationType = 'dmo';
+                else if (name.includes('human resources (province)')) designationType = 'hr_provincial';
+                else if (name.includes('human resources (district)')) designationType = 'hr_district';
+                else if (name.includes('human resources (hospital)')) designationType = 'hr_hospital';
+                else if (name.includes('human resources officer') || name.includes('human resources manager')) designationType = 'hr_other';
+                else designationType = 'default';
+            }
+
+            // 3️⃣ Define which fields are enabled & required per designation
+            //    true = field is enabled and required; false/omitted = disabled and cleared
+            const fieldMap = {
+                'pmd':               { province: true },
+                'cmo':               { province: true, facilityType: true, facility: true, district: false},  // Chief Medical Officer - province level + facility selection
+                'dmo':               { province: true, district: true },
+                'hr_provincial':     { province: true },
+                'hr_district':       { province: true, district: true },
+                'hr_hospital':       { province: true, district: true, facilityType: true, facility: true },
+                'hr_other':          { province: true },  // adjust as needed
+                'default':           { province: true, district: true, facilityType: true, facility: true }
+            };
+
+            // If location not required, no fields are enabled
+            const fields = requiresLocation ? (fieldMap[designationType] || fieldMap['default']) : {};
+
+            // 4️⃣ Apply to each field using a helper
+            const apply = (field, enable) => {
+                if (!field) return;
+                if (enable) {
+                    field.disabled = false;
+                    field.setAttribute('required', 'required');
+                } else {
+                    field.disabled = true;
+                    field.removeAttribute('required');
+                    field.value = '';
+                }
+            };
+
+            apply(provinceSelect, fields.province);
+            apply(districtSelect, fields.district);
+            apply(facilityTypeSelect, fields.facilityType);
+            apply(facilitySelect, fields.facility);
+
+            // 5️⃣ Update dependent dropdowns if their parent is enabled
+            if (fields.province) updateDistricts();
+            if (fields.district && districtSelect.value) updateFacilities();
         };
 
-        // Success modal
-        <?php if(session('success')): ?>
-        (function() {
-            const modal = document.createElement('div');
-            modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999;';
-            modal.innerHTML = `
-                <div style="background:white;border-radius:12px;padding:40px;max-width:450px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
-                    <div style="width:80px;height:80px;margin:0 auto 20px;background:linear-gradient(135deg,#22c55e,#16a34a);border-radius:50%;display:flex;align-items:center;justify-content:center;">
-                        <i class="fa-solid fa-check" style="font-size:40px;color:white;"></i>
-                    </div>
-                    <h2 style="font-size:24px;font-weight:700;color:#0f172a;margin:0 0 12px 0;">Success!</h2>
-                    <p style="color:#475569;margin:0 0 24px 0;font-size:14px;"><?php echo e(session('success')); ?></p>
-                    <div style="background:#f0fdf4;border-radius:10px;padding:20px;margin-bottom:24px;">
-                        <p style="color:#4b7c59;font-size:12px;margin:0 0 8px 0;">Redirecting in</p>
-                        <p style="font-size:32px;font-weight:700;color:#1D4533;margin:0;" id="countdown">5</p>
-                    </div>
-                    <button onclick="location.href='<?php echo e(route('login')); ?>'" style="width:100%;padding:12px;background:#1D4533;color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">
-                        <i class="fa-solid fa-sign-in"></i> Go to Login
-                    </button>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            
-            let count = 5;
-            const interval = setInterval(() => {
-                count--;
-                document.getElementById('countdown').textContent = count;
-                if (count <= 0) {
-                    clearInterval(interval);
-                    location.href = '<?php echo e(route('login')); ?>';
+        // ── Update Districts based on Province (show/hide) ──
+        window.updateDistricts = function() {
+            const provinceSelect = document.getElementById('province_id');
+            const districtSelect = document.getElementById('district_id');
+            const selectedProvinceId = provinceSelect.value;
+
+            // Reset to placeholder
+            districtSelect.value = '';
+
+            // Show/hide options based on province
+            Array.from(districtSelect.options).forEach(option => {
+                if (option.value === '') return; // placeholder
+                const provinceId = option.getAttribute('data-province');
+                if (selectedProvinceId && provinceId !== selectedProvinceId) {
+                    option.style.display = 'none';
+                } else {
+                    option.style.display = '';
                 }
-            }, 1000);
-        })();
-        <?php endif; ?>
+            });
+
+            // Clear facility dropdown
+            document.getElementById('facility_id').value = '';
+            // Re-run facility filter (will show nothing until district selected)
+            updateFacilities();
+        };
+
+        // ── Update Facilities based on District & Facility Type (show/hide) ──
+        window.updateFacilities = function() {
+            const districtSelect = document.getElementById('district_id');
+            const facilityTypeSelect = document.getElementById('facility_type_id');
+            const provinceSelect = document.getElementById('province_id');
+            const facilitySelect = document.getElementById('facility_id');
+            const selectedDistrictId = districtSelect.value;
+            const selectedFacilityTypeId = facilityTypeSelect.value;
+            const selectedProvinceId = provinceSelect.value;
+
+            // Check if we're dealing with a provincial facility (Central Hospital, Provincial Hospital, etc.)
+            const facilityTypeName = facilityTypeSelect.options[facilityTypeSelect.selectedIndex]?.text || '';
+            const provincialFacilities = ['General Hospital', 'Provincial Hospital', 'Central Hospital'];
+            const isProvincialFacility = provincialFacilities.some(type => facilityTypeName.includes(type));
+
+            // Destroy Select2 before manipulating options
+            if ($(facilitySelect).hasClass("select2-hidden-accessible")) {
+                $(facilitySelect).select2('destroy');
+            }
+
+            facilitySelect.value = '';
+
+            Array.from(facilitySelect.options).forEach(option => {
+                if (option.value === '') return;
+                const facilityDistrictId = option.getAttribute('data-district');
+                const facilityTypeId = option.getAttribute('data-facility-type');
+                
+                // For provincial facilities, filter by province (through district)
+                if (isProvincialFacility && selectedProvinceId) {
+                    // Find the district's province from the district dropdown
+                    const districtOption = Array.from(districtSelect.options).find(opt => opt.value === facilityDistrictId);
+                    const districtProvinceId = districtOption?.getAttribute('data-province');
+                    
+                    const provinceMatches = districtProvinceId === selectedProvinceId;
+                    const typeMatches = !selectedFacilityTypeId || facilityTypeId === selectedFacilityTypeId;
+                    
+                    if (provinceMatches && typeMatches) {
+                        option.style.display = '';
+                    } else {
+                        option.style.display = 'none';
+                    }
+                } else {
+                    // For district-level facilities, filter by district
+                    const districtMatches = !selectedDistrictId || facilityDistrictId === selectedDistrictId;
+                    const typeMatches = !selectedFacilityTypeId || facilityTypeId === selectedFacilityTypeId;
+                    
+                    if (districtMatches && typeMatches) {
+                        option.style.display = '';
+                    } else {
+                        option.style.display = 'none';
+                    }
+                }
+            });
+
+            // Reinitialize Select2
+            $('#facility_id').select2({
+                placeholder: '— Select Facility/Hospital —',
+                allowClear: true,
+                width: '100%',
+                minimumResultsForSearch: 0
+            });
+        };
+
+        // ── Facility Type change (re‑filter facilities) ──
+        window.updateByFacilityType = function() {
+            const facilityTypeSelect = document.getElementById('facility_type_id');
+            const provinceSelect = document.getElementById('province_id');
+            const districtSelect = document.getElementById('district_id');
+            const facilitySelect = document.getElementById('facility_id');
+            
+            const selectedFacilityTypeOption = facilityTypeSelect.options[facilityTypeSelect.selectedIndex];
+            const facilityTypeName = selectedFacilityTypeOption.text || '';
+            
+            // District-level facilities: lock Province & District, allow Facility selection
+            const districtFacilities = ['Primary Clinic', 'Poly-Clinic', 'Rural Health Centre', 'District Hospital'];
+            const isDistrictFacility = districtFacilities.some(type => facilityTypeName.includes(type));
+            
+            // Provincial/General facilities: allow Province selection, lock District, allow Facility selection
+            const provincialFacilities = ['General Hospital', 'Provincial Hospital', 'Central Hospital'];
+            const isProvincialFacility = provincialFacilities.some(type => facilityTypeName.includes(type));
+            
+            // Update Province field
+            if (isDistrictFacility) {
+                provinceSelect.disabled = true;
+                provinceSelect.removeAttribute('required');
+                provinceSelect.value = '';
+            } else if (isProvincialFacility) {
+                provinceSelect.disabled = false;
+                provinceSelect.setAttribute('required', 'required');
+            } else {
+                provinceSelect.disabled = false;
+                provinceSelect.setAttribute('required', 'required');
+            }
+            
+            // Update District field - ALWAYS disabled for provincial facilities (including Central Hospital)
+            if (isDistrictFacility || isProvincialFacility) {
+                districtSelect.disabled = true;
+                districtSelect.removeAttribute('required');
+                districtSelect.value = '';
+            } else {
+                districtSelect.disabled = false;
+                districtSelect.setAttribute('required', 'required');
+            }
+            
+            // Always allow Facility selection
+            facilitySelect.disabled = false;
+            
+            // Update visual indicators
+            updateLockIndicators();
+            updateFacilities();
+        };
+
+        // ── Update lock indicators on labels ──
+        window.updateLockIndicators = function() {
+            const provinceLabel = document.querySelector('label[for="province_id"]');
+            const districtLabel = document.querySelector('label[for="district_id"]');
+            const facilityLabel = document.querySelector('label[for="facility_id"]');
+            
+            const provinceSelect = document.getElementById('province_id');
+            const districtSelect = document.getElementById('district_id');
+            const facilitySelect = document.getElementById('facility_id');
+            
+            // Remove existing lock indicators
+            document.querySelectorAll('.lock-indicator').forEach(el => el.remove());
+            
+            // Add lock icons for disabled fields
+            if (provinceSelect.disabled && provinceLabel) {
+                const lockIcon = document.createElement('span');
+                lockIcon.className = 'lock-indicator';
+                lockIcon.innerHTML = ' <i class="fa-solid fa-lock" style="color: var(--slate-400); font-size: 0.7rem; margin-left: 0.3rem;"></i>';
+                provinceLabel.appendChild(lockIcon);
+            }
+            
+            if (districtSelect.disabled && districtLabel) {
+                const lockIcon = document.createElement('span');
+                lockIcon.className = 'lock-indicator';
+                lockIcon.innerHTML = ' <i class="fa-solid fa-lock" style="color: var(--slate-400); font-size: 0.7rem; margin-left: 0.3rem;"></i>';
+                districtLabel.appendChild(lockIcon);
+            }
+        };
+
+        // ── Designation dependencies (PMD / DMO / HR) ──
+        window.updateDesignationDependencies = function() {
+            const designationSelect = document.getElementById('designation_id');
+            const facilityTypeSelect = document.getElementById('facility_type_id');
+            
+            // Get the selected designation name
+            const designationName = designationSelect.options[designationSelect.selectedIndex].textContent.trim().toLowerCase();
+            
+            // If Chief Medical Officer, auto-select Central Hospital facility type
+            if (designationName.includes('chief medical officer')) {
+                // Find the "Central Hospital" option
+                let centralHospitalFound = false;
+                Array.from(facilityTypeSelect.options).forEach(option => {
+                    if (option.text.includes('Central Hospital')) {
+                        facilityTypeSelect.value = option.value;
+                        centralHospitalFound = true;
+                    }
+                });
+                
+                if (centralHospitalFound) {
+                    // Trigger the facility type change to update facilities
+                    updateByFacilityType();
+                }
+            }
+            
+            // Call updateLocationFields which handles all designation types
+            updateLocationFields();
+        };
+        
+        // ── Inline validation ──
+        const form = document.getElementById('registerForm');
+        const inputs = form.querySelectorAll('input[required], select[required]');
+
+        inputs.forEach(field => {
+            field.addEventListener('blur', function() { validateField(this); });
+            field.addEventListener('input', function() {
+                if (this.classList.contains('is-invalid') || this.classList.contains('is-valid')) {
+                    validateField(this);
+                }
+            });
+            field.addEventListener('change', function() {
+                if (this.tagName === 'SELECT') validateField(this);
+            });
+        });
+
+        function validateField(field) {
+            const isValid = field.checkValidity();
+            field.classList.remove('is-valid', 'is-invalid');
+            if (field.value.trim() !== '') {
+                field.classList.add(isValid ? 'is-valid' : 'is-invalid');
+            }
+        }
+
+        // ── Submit loading ──
+        const submitBtn = document.getElementById('submitBtn');
+        form.addEventListener('submit', function(e) {
+            // Clear all storage immediately
+            sessionStorage.clear();
+            localStorage.removeItem('registerFormData');
+            
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            
+            // Clear visible form data only, NOT hidden CSRF token
+            setTimeout(() => {
+                const visibleInputs = form.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="password"], textarea, select');
+                visibleInputs.forEach(input => {
+                    input.value = '';
+                });
+            }, 100);
+        });
+
+        // ── DOM Ready ──
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Add event listeners for dropdowns
+            document.getElementById('organization_id').addEventListener('change', updateLocationFields);
+            document.getElementById('designation_id').addEventListener('change', updateDesignationDependencies);
+
+            // Initialize Select2 on facility dropdown
+            $('#facility_id').select2({
+                placeholder: '— Select Facility/Hospital —',
+                allowClear: true,
+                width: '100%',
+                minimumResultsForSearch: 0
+            });
+
+            // Initialize Select2 for Department and Designation dropdowns
+            $('#department_id').select2({
+                placeholder: '— Select Department —',
+                allowClear: true,
+                width: '100%',
+                minimumInputLength: 0
+            });
+
+            $('#designation_id').select2({
+                placeholder: '— Select Designation —',
+                allowClear: true,
+                width: '100%',
+                minimumInputLength: 0
+            });
+
+            // Handle Select2 change events
+            $('#department_id').on('select2:select select2:unselect', function() {
+                updateLocationFields();
+            });
+
+            $('#designation_id').on('select2:select select2:unselect', function() {
+                updateDesignationDependencies();
+            });
+
+            // If there's a success message, clear the form
+            const successAlert = document.querySelector('.alert.success');
+            if (successAlert) {
+                form.reset();
+                // Re-disable location fields
+                updateLocationFields();
+            }
+
+            // Initial validation classes
+            inputs.forEach(field => {
+                if (field.value && field.value.trim() !== '') {
+                    validateField(field);
+                }
+            });
+
+            // Initialise location fields based on current organization selection
+            updateLocationFields();
+
+            // Set up change listeners for cascading
+            document.getElementById('organization_id').addEventListener('change', function() {
+                updateLocationFields();
+                updateDistricts();
+                if (document.getElementById('district_id').value) {
+                    updateFacilities();
+                }
+            });
+
+            document.getElementById('province_id').addEventListener('change', function() {
+                updateDistricts();
+                document.getElementById('facility_id').value = '';
+            });
+
+            document.getElementById('district_id').addEventListener('change', function() {
+                updateFacilities();
+            });
+
+            document.getElementById('facility_type_id').addEventListener('change', function() {
+                updateFacilities();
+            });
+
+            // Also trigger on page load in case old values are present
+            updateDistricts();
+            if (document.getElementById('district_id').value) {
+                updateFacilities();
+            }
+        });
     </script>
 </body>
-</html>
-<?php /**PATH D:\OccupationalHealth System\resources\views/auth/register.blade.php ENDPATH**/ ?>
+</html><?php /**PATH D:\OccupationalHealth System\resources\views/auth/register.blade.php ENDPATH**/ ?>
