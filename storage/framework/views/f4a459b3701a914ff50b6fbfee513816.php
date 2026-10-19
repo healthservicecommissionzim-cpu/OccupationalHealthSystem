@@ -981,7 +981,7 @@ unset($__errorArgs, $__bag); ?>
     <?php endif; ?>
 
     <!-- Select2 JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <!-- ─── CORRECTED JAVASCRIPT ─── -->
@@ -1179,13 +1179,12 @@ unset($__errorArgs, $__bag); ?>
                 }
             });
 
-            // Clear facility dropdown
+            // Clear facility dropdown and re-filter
             document.getElementById('facility_id').value = '';
-            // Re-run facility filter (will show nothing until district selected)
             updateFacilities();
         };
 
-        // ── Update Facilities based on District & Facility Type (show/hide) ──
+        // ── Update Facilities based on District & Facility Type ──
         window.updateFacilities = function() {
             const districtSelect = document.getElementById('district_id');
             const facilityTypeSelect = document.getElementById('facility_type_id');
@@ -1195,57 +1194,100 @@ unset($__errorArgs, $__bag); ?>
             const selectedFacilityTypeId = facilityTypeSelect.value;
             const selectedProvinceId = provinceSelect.value;
 
-            // Check if we're dealing with a provincial facility (Central Hospital, Provincial Hospital, etc.)
+            console.log('updateFacilities called:', {
+                selectedDistrictId,
+                selectedFacilityTypeId,
+                selectedProvinceId,
+                totalOptions: facilitySelect.options.length
+            });
+
+            // Check if we're dealing with a provincial facility
             const facilityTypeName = facilityTypeSelect.options[facilityTypeSelect.selectedIndex]?.text || '';
             const provincialFacilities = ['General Hospital', 'Provincial Hospital', 'Central Hospital'];
             const isProvincialFacility = provincialFacilities.some(type => facilityTypeName.includes(type));
 
-            // Destroy Select2 before manipulating options
-            if ($(facilitySelect).hasClass("select2-hidden-accessible")) {
-                $(facilitySelect).select2('destroy');
+            console.log('isProvincialFacility:', isProvincialFacility, 'facilityTypeName:', facilityTypeName);
+
+            // Store all facility options (including placeholder) BEFORE clearing
+            const allOptions = Array.from(facilitySelect.options).map(opt => ({
+                value: opt.value,
+                text: opt.text,
+                district: opt.getAttribute('data-district'),
+                facilityType: opt.getAttribute('data-facility-type')
+            }));
+
+            console.log('All options count:', allOptions.length);
+
+            // Clear all options except placeholder
+            while (facilitySelect.options.length > 1) {
+                facilitySelect.remove(1);
             }
 
-            facilitySelect.value = '';
+            // Add back filtered options
+            let filteredCount = 0;
+            allOptions.forEach(optData => {
+                if (optData.value === '') return; // Skip placeholder
 
-            Array.from(facilitySelect.options).forEach(option => {
-                if (option.value === '') return;
-                const facilityDistrictId = option.getAttribute('data-district');
-                const facilityTypeId = option.getAttribute('data-facility-type');
-                
+                let shouldShow = false;
+
                 // For provincial facilities, filter by province (through district)
                 if (isProvincialFacility && selectedProvinceId) {
-                    // Find the district's province from the district dropdown
-                    const districtOption = Array.from(districtSelect.options).find(opt => opt.value === facilityDistrictId);
-                    const districtProvinceId = districtOption?.getAttribute('data-province');
+                    const districtProvinceId = Array.from(districtSelect.options).find(opt => opt.value === optData.district)?.getAttribute('data-province');
                     
                     const provinceMatches = districtProvinceId === selectedProvinceId;
-                    const typeMatches = !selectedFacilityTypeId || facilityTypeId === selectedFacilityTypeId;
+                    const typeMatches = !selectedFacilityTypeId || optData.facilityType === selectedFacilityTypeId;
                     
-                    if (provinceMatches && typeMatches) {
-                        option.style.display = '';
-                    } else {
-                        option.style.display = 'none';
-                    }
+                    shouldShow = provinceMatches && typeMatches;
                 } else {
                     // For district-level facilities, filter by district
-                    const districtMatches = !selectedDistrictId || facilityDistrictId === selectedDistrictId;
-                    const typeMatches = !selectedFacilityTypeId || facilityTypeId === selectedFacilityTypeId;
+                    const districtMatches = !selectedDistrictId || optData.district === selectedDistrictId;
+                    const typeMatches = !selectedFacilityTypeId || optData.facilityType === selectedFacilityTypeId;
                     
-                    if (districtMatches && typeMatches) {
-                        option.style.display = '';
-                    } else {
-                        option.style.display = 'none';
-                    }
+                    shouldShow = districtMatches && typeMatches;
+                }
+
+                // Add option if it should show
+                if (shouldShow) {
+                    filteredCount++;
+                    const newOption = document.createElement('option');
+                    newOption.value = optData.value;
+                    newOption.text = optData.text;
+                    newOption.setAttribute('data-district', optData.district);
+                    newOption.setAttribute('data-facility-type', optData.facilityType);
+                    facilitySelect.appendChild(newOption);
                 }
             });
 
-            // Reinitialize Select2
-            $('#facility_id').select2({
-                placeholder: '— Select Facility/Hospital —',
-                allowClear: true,
-                width: '100%',
-                minimumResultsForSearch: 0
-            });
+            console.log('Filtered options count:', filteredCount, 'New total:', facilitySelect.options.length);
+
+            // Update Select2 if it's initialized (using jQuery if available)
+            if (typeof $ !== 'undefined' && $.fn.select2) {
+                try {
+                    $('#facility_id').select2('destroy');
+                    $('#facility_id').select2({
+                        placeholder: '— Select Facility/Hospital —',
+                        allowClear: true,
+                        width: '100%',
+                        minimumInputLength: 0,
+                        matcher: function(params, data) {
+                            if ($.trim(params.term) === '') return data;
+                            if ((data.text || '').toLowerCase().indexOf((params.term || '').toLowerCase()) > -1) {
+                                return data;
+                            }
+                            return null;
+                        },
+                        templateResult: function(option) {
+                            if (option.disabled && option.id !== '') {
+                                return null;
+                            }
+                            return option.text;
+                        }
+                    });
+                    $('#facility_id').val(null).trigger('change');
+                } catch(e) {
+                    console.error('Select2 error:', e);
+                }
+            }
         };
 
         // ── Facility Type change (re‑filter facilities) ──
@@ -1405,27 +1447,126 @@ unset($__errorArgs, $__bag); ?>
             document.getElementById('organization_id').addEventListener('change', updateLocationFields);
             document.getElementById('designation_id').addEventListener('change', updateDesignationDependencies);
 
-            // Initialize Select2 on facility dropdown
+            // Initialize Select2 on facility dropdown with search and filtering
             $('#facility_id').select2({
                 placeholder: '— Select Facility/Hospital —',
                 allowClear: true,
                 width: '100%',
-                minimumResultsForSearch: 0
+                minimumInputLength: 0,
+                matcher: function(params, data) {
+                    // If there are no search terms, return the original option
+                    if ($.trim(params.term) === '') {
+                        return data;
+                    }
+
+                    // Disable options that don't match the district/facility type filters
+                    if (data.element && data.element.disabled) {
+                        return null;
+                    }
+
+                    // Do a case-insensitive search of the term in the option text
+                    if ((data.text || '').toLowerCase().indexOf((params.term || '').toLowerCase()) > -1) {
+                        return data;
+                    }
+
+                    return null;
+                },
+                templateResult: function(option) {
+                    // Hide disabled options from the dropdown
+                    if (option.disabled && option.id !== '') {
+                        return null;
+                    }
+                    return option.text;
+                }
             });
 
-            // Initialize Select2 for Department and Designation dropdowns
+            // Initialize Select2 for Department and Designation dropdowns with search
             $('#department_id').select2({
                 placeholder: '— Select Department —',
                 allowClear: true,
                 width: '100%',
-                minimumInputLength: 0
+                minimumInputLength: 0,
+                matcher: function(params, data) {
+                    if ($.trim(params.term) === '') return data;
+                    if ((data.text || '').toLowerCase().indexOf((params.term || '').toLowerCase()) > -1) {
+                        return data;
+                    }
+                    return null;
+                }
             });
 
             $('#designation_id').select2({
                 placeholder: '— Select Designation —',
                 allowClear: true,
                 width: '100%',
-                minimumInputLength: 0
+                minimumInputLength: 0,
+                matcher: function(params, data) {
+                    if ($.trim(params.term) === '') return data;
+                    if ((data.text || '').toLowerCase().indexOf((params.term || '').toLowerCase()) > -1) {
+                        return data;
+                    }
+                    return null;
+                }
+            });
+
+            // Initialize Select2 for District dropdown (searchable)
+            $('#district_id').select2({
+                placeholder: '— Select District —',
+                allowClear: true,
+                width: '100%',
+                minimumInputLength: 0,
+                matcher: function(params, data) {
+                    if ($.trim(params.term) === '') return data;
+                    if ((data.text || '').toLowerCase().indexOf((params.term || '').toLowerCase()) > -1) {
+                        return data;
+                    }
+                    return null;
+                }
+            });
+
+            // Initialize Select2 for Province dropdown (searchable)
+            $('#province_id').select2({
+                placeholder: '— Select Province —',
+                allowClear: true,
+                width: '100%',
+                minimumInputLength: 0,
+                matcher: function(params, data) {
+                    if ($.trim(params.term) === '') return data;
+                    if ((data.text || '').toLowerCase().indexOf((params.term || '').toLowerCase()) > -1) {
+                        return data;
+                    }
+                    return null;
+                }
+            });
+
+            // Initialize Select2 for Organization dropdown (searchable)
+            $('#organization_id').select2({
+                placeholder: '— Select Organization —',
+                allowClear: true,
+                width: '100%',
+                minimumInputLength: 0,
+                matcher: function(params, data) {
+                    if ($.trim(params.term) === '') return data;
+                    if ((data.text || '').toLowerCase().indexOf((params.term || '').toLowerCase()) > -1) {
+                        return data;
+                    }
+                    return null;
+                }
+            });
+
+            // Initialize Select2 for Facility Type dropdown (searchable)
+            $('#facility_type_id').select2({
+                placeholder: '— Select Facility Type —',
+                allowClear: true,
+                width: '100%',
+                minimumInputLength: 0,
+                matcher: function(params, data) {
+                    if ($.trim(params.term) === '') return data;
+                    if ((data.text || '').toLowerCase().indexOf((params.term || '').toLowerCase()) > -1) {
+                        return data;
+                    }
+                    return null;
+                }
             });
 
             // Trigger facility filtering on page load if values are pre-selected

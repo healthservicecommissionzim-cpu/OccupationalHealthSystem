@@ -237,6 +237,8 @@
             position: relative;
             overflow: hidden;
         }
+
+        .hero::before {
             content: '';
             position: absolute;
             top: 0;
@@ -253,15 +255,77 @@
             z-index: 0;
             animation: slideInBg 15s ease-in-out infinite;
         }
+
+        /* Decorative white circles */
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+            border-radius: 50%;
+            z-index: 0;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .hero .circle-1 {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.3) 60%, transparent 100%);
+            border-radius: 50%;
+            bottom: -30px;
+            left: 5%;
+            z-index: 0;
+            animation: float 10s ease-in-out infinite reverse;
+        }
+
+        .hero .circle-2 {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 60%, transparent 100%);
+            border-radius: 50%;
+            top: 10%;
+            left: 15%;
+            z-index: 0;
+            animation: float 12s ease-in-out infinite;
+        }
+
+        .hero .circle-3 {
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.25) 60%, transparent 100%);
+            border-radius: 50%;
+            top: 5%;
+            right: 10%;
+            z-index: 0;
+            animation: float 14s ease-in-out infinite reverse;
+        }
+
+        .hero .circle-4 {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.15) 60%, transparent 100%);
+            border-radius: 50%;
+            bottom: 15%;
+            right: 8%;
+            z-index: 0;
+            animation: float 9s ease-in-out infinite;
+        }
         
         @keyframes slideInBg {
             0%, 100% { background-position: 0 0, 0 0, 0 0; }
             50% { background-position: -30px 0, 0 0, 0 0; }
         }
-        
-        .hero > * {
-            position: relative;
-            z-index: 1;
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
         }
         
         .hero-badge {
@@ -1769,6 +1833,12 @@
 
     <!-- Hero Section -->
     <section class="hero">
+        <!-- Decorative circles -->
+        <div class="circle-1"></div>
+        <div class="circle-2"></div>
+        <div class="circle-3"></div>
+        <div class="circle-4"></div>
+
         <div class="hero-badge">
             <i class="fas fa-shield-alt"></i>
             SECURE & CONFIDENTIAL PORTAL
