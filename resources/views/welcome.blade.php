@@ -1178,6 +1178,246 @@
             color: var(--slate);
             line-height: 1.6;
         }
+
+        /* Interactive Chat Modal */
+        .chat-modal {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 0;
+            max-width: 420px;
+            max-height: 600px;
+            background: white;
+            border-radius: 16px 16px 0 0;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 2050;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-modal.active {
+            height: 600px;
+            border-radius: 16px;
+            bottom: auto;
+            top: 50%;
+            left: 50%;
+            right: auto;
+            transform: translate(-50%, -50%);
+            margin: 0;
+            width: calc(100% - 2rem);
+            max-width: 420px;
+        }
+
+        @media (max-width: 480px) {
+            .chat-modal.active {
+                width: calc(100% - 1rem);
+                height: 500px;
+                max-height: 80vh;
+            }
+        }
+
+        .chat-modal-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--brand) 0%, #2d5a47 100%);
+            color: white;
+            padding: 1.25rem;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .chat-title i {
+            font-size: 1.5rem;
+        }
+
+        .chat-title h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .chat-title p {
+            font-size: 0.75rem;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .chat-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .chat-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            background: #f9fafb;
+        }
+
+        .chat-message {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-message.user-message {
+            align-items: flex-end;
+        }
+
+        .chat-message.bot-message {
+            align-items: flex-start;
+        }
+
+        .message-content {
+            background: white;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            max-width: 85%;
+            word-wrap: break-word;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-message .message-content {
+            background: var(--brand);
+            color: white;
+            border-radius: 12px 4px 12px 12px;
+        }
+
+        .bot-message .message-content {
+            background: #e5e7eb;
+            color: var(--dark);
+            border-radius: 4px 12px 12px 12px;
+        }
+
+        .message-content p {
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: var(--slate-400);
+            padding: 0 1rem;
+        }
+
+        .chat-input-area {
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
+            background: white;
+        }
+
+        .chat-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.65rem 1rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--brand);
+            box-shadow: 0 0 0 3px rgba(29, 69, 51, 0.1);
+        }
+
+        .chat-send-btn {
+            background: var(--brand);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.65rem 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-send-btn:hover {
+            background: var(--brand-dark);
+            transform: translateY(-2px);
+        }
+
+        .chat-send-btn:active {
+            transform: translateY(0);
+        }
+
+        .chat-hint {
+            font-size: 0.7rem;
+            color: var(--slate-500);
+            margin: 0;
+            text-align: center;
+        }
+
+        .chat-loading {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--brand);
+            border-radius: 50%;
+            animation: blink 1.4s infinite;
+        }
+
+        .chat-loading:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .chat-loading:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes blink {
+            0%, 60%, 100% { opacity: 0.3; }
+            30% { opacity: 1; }
+        }
         
         /* Mobile Responsive */
         @media (max-width: 768px) {
@@ -1397,68 +1637,51 @@
     </div>
 
     <!-- Floating Chat Widget -->
-    <button class="floating-chat-btn" id="floatingChatBtn" title="Get Help" aria-label="Get Help - Contact Support">
+    <button class="floating-chat-btn" id="floatingChatBtn" title="Chat with us" aria-label="Open chat - Contact Support">
         <i class="fas fa-comments"></i>
     </button>
 
-    <!-- Support Request Modal -->
-    <div class="support-modal" id="supportModal">
-        <div class="support-modal-content">
-            <button class="close-support-modal" id="closeSupportModal">
-                <i class="fas fa-times"></i>
-            </button>
-            
-            <div class="support-modal-header">
-                <i class="fas fa-headset"></i>
-                <h2>Contact Support</h2>
-                <p>We're here to help. Tell us how we can assist you.</p>
+    <!-- Interactive Chatbot Modal -->
+    <div class="chat-modal" id="chatModal">
+        <div class="chat-modal-content">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <i class="fas fa-robot"></i>
+                    <div>
+                        <h3>HSC-OHS Assistant</h3>
+                        <p>Online</p>
+                    </div>
+                </div>
+                <button class="chat-close" id="closeChatBtn">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             
-            <form id="supportForm" class="support-form">
-                <div class="form-group">
-                    <label for="name">Full Name *</label>
-                    <input type="text" id="name" name="name" required placeholder="Your full name">
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message bot-message">
+                    <div class="message-content">
+                        <p>👋 Hello! I'm your HSC-OHS assistant. I'm here to help you with questions about incident reporting, account access, system features, and more. What can I help you with today?</p>
+                    </div>
+                    <span class="message-time">now</span>
                 </div>
-                
-                <div class="form-group">
-                    <label for="email">Email Address *</label>
-                    <input type="email" id="email" name="email" required placeholder="your@email.com">
-                </div>
-                
-                <div class="form-group">
-                    <label for="phone">Phone Number *</label>
-                    <input type="tel" id="phone" name="phone" required placeholder="+263...">
-                </div>
-                
-                <div class="form-group">
-                    <label for="category">Issue Category *</label>
-                    <select id="category" name="category" required>
-                        <option value="">Select a category</option>
-                        <option value="technical">Technical Issue</option>
-                        <option value="account">Account Help</option>
-                        <option value="incident">Incident Report Question</option>
-                        <option value="general">General Inquiry</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="description">Message *</label>
-                    <textarea id="description" name="description" required placeholder="Please describe your issue..." rows="4"></textarea>
-                </div>
-                
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Request</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Response Modal -->
-    <div class="response-modal" id="responseModal">
-        <div class="response-modal-content">
-            <div class="response-icon" id="responseIcon"></div>
-            <h2 id="responseTitle"></h2>
-            <p id="responseMessage"></p>
-            <button class="btn btn-primary" id="closeResponseModal" style="width: 100%; margin-top: 1.5rem;">Close</button>
+            </div>
+            
+            <div class="chat-input-area">
+                <form id="chatForm" class="chat-form">
+                    <input 
+                        type="text" 
+                        id="chatInput" 
+                        class="chat-input" 
+                        placeholder="Type your message..." 
+                        autocomplete="off"
+                        required
+                    >
+                    <button type="submit" class="chat-send-btn" title="Send message">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+                <p class="chat-hint">💡 Try asking: "How do I report an incident?" or "I forgot my password"</p>
+            </div>
         </div>
     </div>
 
@@ -1486,100 +1709,125 @@
             document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
         }
 
-        // Floating Chat Widget Script
-        const floatingChatBtn = document.getElementById('floatingChatBtn');
-        const supportModal = document.getElementById('supportModal');
-        const closeSupportModal = document.getElementById('closeSupportModal');
-        const header = document.querySelector('header');
-        const supportForm = document.getElementById('supportForm');
-        const responseModal = document.getElementById('responseModal');
-        const closeResponseModal = document.getElementById('closeResponseModal');
+        // Chatbot responses - knowledge base
+        const chatResponses = {
+            greetings: ['hello', 'hi', 'hey', 'greetings', 'good morning', 'good afternoon', 'good evening'],
+            reportIncident: ['report', 'incident', 'report incident', 'file report', 'new incident', 'submit incident'],
+            trackIncident: ['track', 'status', 'my incident', 'where is my', 'progress', 'track incident'],
+            firstAid: ['first aid', 'first-aid', 'minor injury', 'small injury', 'band-aid'],
+            password: ['password', 'forgot password', 'reset password', 'can\'t login', 'login issue'],
+            faq: ['faq', 'frequently asked', 'help', 'how do i', 'how to'],
+            contact: ['contact', 'support', 'help desk', 'phone', 'email', 'reach out'],
+        };
 
-        // Open support modal
-        floatingChatBtn.addEventListener('click', () => {
-            supportModal.classList.add('active');
-            if (header) header.style.display = 'none';
-        });
-
-        // Close support modal
-        closeSupportModal.addEventListener('click', () => {
-            supportModal.classList.remove('active');
-            if (header) header.style.display = '';
-        });
-
-        // Close support modal when clicking outside
-        supportModal.addEventListener('click', (e) => {
-            if (e.target === supportModal) {
-                supportModal.classList.remove('active');
-                if (header) header.style.display = '';
-            }
-        });
-
-        // Handle form submission
-        supportForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const formData = new FormData(supportForm);
-            const data = {
-                name: formData.get('name'),
-                email: formData.get('email'),
-                phone: formData.get('phone'),
-                category: formData.get('category'),
-                description: formData.get('description'),
-            };
-
-            try {
-                // Submit to public support endpoint
-                const response = await fetch('{{ route("support.public_request") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
-
-                // Close support modal
-                supportModal.classList.remove('active');
-
-                // Show response modal
-                responseModal.classList.add('active');
-
-                if (response.ok) {
-                    const result = await response.json();
-                    document.getElementById('responseIcon').className = 'response-icon success';
-                    document.getElementById('responseTitle').textContent = 'Request Submitted Successfully!';
-                    document.getElementById('responseMessage').textContent = 'Thank you for contacting us. Our support team will get back to you shortly at ' + data.email + '.';
-                } else {
-                    const result = await response.json();
-                    document.getElementById('responseIcon').className = 'response-icon error';
-                    document.getElementById('responseTitle').textContent = 'Submission Failed';
-                    document.getElementById('responseMessage').textContent = result.message || 'An error occurred while submitting your request. Please try again.';
+        function detectIntent(userMessage) {
+            const message = userMessage.toLowerCase().trim();
+            
+            for (const [intent, keywords] of Object.entries(chatResponses)) {
+                if (keywords.some(keyword => message.includes(keyword))) {
+                    return intent;
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                supportModal.classList.remove('active');
-                responseModal.classList.add('active');
-                document.getElementById('responseIcon').className = 'response-icon error';
-                document.getElementById('responseTitle').textContent = 'Error';
-                document.getElementById('responseMessage').textContent = 'An error occurred. Please try again later.';
+            }
+            return 'default';
+        }
+
+        function getBotResponse(intent) {
+            const responses = {
+                greetings: "👋 Hello! I'm the HSC-OHS Assistant. How can I help you today? I can assist with:\n• Reporting incidents\n• Tracking your incidents\n• First aid logging\n• Password resets\n• General questions",
+                reportIncident: "📋 To report an incident:\n1. Click 'Report Incident' on the main page\n2. Fill in the incident details\n3. Provide any relevant attachments\n4. Submit for review\n\nWould you like the direct link?",
+                trackIncident: "🔍 To track your incident:\n1. Go to 'Track & Upload' page\n2. Enter your incident reference number\n3. View the current status\n4. Upload any required documents\n\nDo you have your reference number?",
+                firstAid: "🏥 First Aid Logging:\nFor minor injuries that don't require a full incident report, use our First Aid Log feature. It's quick and confidential.\n\nWould you like help with that?",
+                password: "🔐 Password Help:\nIf you forgot your password:\n1. Click 'Log In' on the main page\n2. Select 'Forgot Password'\n3. Enter your email\n4. Follow the reset link\n\nStill having issues?",
+                faq: "❓ Common Questions:\n• How do I report an incident?\n• What happens after I report?\n• How long does review take?\n• Can I upload documents later?\n• Is my information private?\n\nWhich would you like to know about?",
+                contact: "📞 Contact Support:\n• Email: support@hsc.org.zw\n• Phone: +263 (8AM-5PM CAT)\n• Response time: 24-48 hours\n\nOr submit a formal support request using this chat.",
+                default: "I'm here to help! Could you clarify your question? For example, you can ask about:\n• Reporting incidents\n• Tracking incidents\n• First aid logging\n• Passwords and login\n• General questions"
+            };
+            
+            return responses[intent] || responses.default;
+        }
+
+        // Chat Modal Handler
+        const floatingChatBtn = document.getElementById('floatingChatBtn');
+        const chatModal = document.getElementById('chatModal');
+        const closeChatBtn = document.getElementById('closeChatBtn');
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+        const chatMessages = document.getElementById('chatMessages');
+
+        // Open chat
+        floatingChatBtn.addEventListener('click', () => {
+            chatModal.classList.add('active');
+        });
+
+        // Close chat
+        closeChatBtn.addEventListener('click', () => {
+            chatModal.classList.remove('active');
+        });
+
+        // Send message
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const userMessage = chatInput.value.trim();
+            if (!userMessage) return;
+
+            // Add user message
+            const userMessageEl = document.createElement('div');
+            userMessageEl.className = 'chat-message user-message';
+            userMessageEl.innerHTML = `
+                <div class="message-content">
+                    <p>${escapeHtml(userMessage)}</p>
+                </div>
+                <span class="message-time">now</span>
+            `;
+            chatMessages.appendChild(userMessageEl);
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Simulate bot thinking
+            setTimeout(() => {
+                const intent = detectIntent(userMessage);
+                const botResponse = getBotResponse(intent);
+
+                const botMessageEl = document.createElement('div');
+                botMessageEl.className = 'chat-message bot-message';
+                botMessageEl.innerHTML = `
+                    <div class="message-content">
+                        <p>${escapeHtml(botResponse)}</p>
+                    </div>
+                    <span class="message-time">now</span>
+                `;
+                chatMessages.appendChild(botMessageEl);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 500);
+        });
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Allow Enter to send, Shift+Enter for new line
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                chatForm.dispatchEvent(new Event('submit'));
             }
         });
 
-        // Close response modal
-        closeResponseModal.addEventListener('click', () => {
-            responseModal.classList.remove('active');
-            if (header) header.style.display = '';
-            // Reset form
-            supportForm.reset();
+        // Close chat when clicking outside
+        chatModal.addEventListener('click', (e) => {
+            if (e.target === chatModal) {
+                chatModal.classList.remove('active');
+            }
         });
 
-        // Close response modal when clicking outside
-        responseModal.addEventListener('click', (e) => {
-            if (e.target === responseModal) {
-                responseModal.classList.remove('active');
-                supportForm.reset();
+        // Accessibility: Close with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && chatModal.classList.contains('active')) {
+                chatModal.classList.remove('active');
             }
         });
     </script>
