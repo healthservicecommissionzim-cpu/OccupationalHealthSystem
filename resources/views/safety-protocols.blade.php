@@ -187,67 +187,124 @@
             transform: rotate(-45deg) translate(6px, -6px);
         }
 
+        /* Mobile Menu Backdrop */
+        .mobile-menu-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 2000;
+            pointer-events: none;
+        }
+
+        .mobile-menu-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
         /* Mobile Menu Overlay */
         .mobile-menu {
             position: fixed;
             top: 0;
-            right: -100%;
-            width: 80%;
-            max-width: 300px;
-            height: 100vh;
+            left: 0;
+            width: 100%;
+            height: 100dvh;
             background: white;
-            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
-            transition: right 0.3s ease;
-            z-index: 2000;
+            opacity: 0;
+            transform: translateY(-100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+            z-index: 2001;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            pointer-events: none;
         }
 
         .mobile-menu.active {
-            right: 0;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
         }
 
         .mobile-menu-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem;
+            padding: 1.5rem;
             border-bottom: 1px solid #e2e8f0;
+            background: var(--brand-light);
         }
 
         .mobile-menu-close {
             background: none;
             border: none;
-            font-size: 1.5rem;
-            color: var(--slate);
+            font-size: 1.8rem;
+            color: var(--brand);
             cursor: pointer;
             padding: 0.5rem;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .mobile-menu-close:hover {
+            background: rgba(29, 69, 51, 0.1);
         }
 
         .mobile-menu-nav {
-            display: flex;
+            display: flex !important;
             flex-direction: column;
-            padding: 1rem 0;
+            padding: 2rem 0;
+            gap: 0.5rem;
+            flex: 1;
+            justify-content: center;
         }
 
         .mobile-menu-nav a {
-            text-decoration: none;
-            color: var(--slate);
-            font-weight: 500;
-            font-size: 1rem;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #f1f5f9;
+            text-decoration: none !important;
+            color: var(--dark) !important;
+            font-weight: 600;
+            font-size: 1.5rem;
+            padding: 1.25rem 2rem;
+            border-left: 4px solid transparent;
             transition: all 0.3s;
+            text-align: left;
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
         }
 
         .mobile-menu-nav a:hover {
             background: var(--brand-light);
             color: var(--brand);
+            border-left-color: var(--brand);
+            padding-left: 2.5rem;
         }
 
         .mobile-menu-buttons {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 1rem;
+            padding: 2rem;
+            margin-top: auto;
+        }
+
+        .mobile-menu-buttons .btn {
+            justify-content: center;
+            width: 100%;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
             padding: 1rem 1.5rem;
         }
 
@@ -633,7 +690,7 @@
     <div class="mobile-menu-backdrop" onclick="toggleMobileMenu()"></div>
     <div class="mobile-menu">
         <div class="mobile-menu-header">
-            <span style="font-weight: 700; color: var(--brand);">Menu</span>
+            <span style="font-weight: 700; color: var(--brand); font-size: 1.2rem;">Menu</span>
             <button class="mobile-menu-close" onclick="toggleMobileMenu()">
                 <i class="fas fa-times"></i>
             </button>
