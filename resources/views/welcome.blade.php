@@ -1981,6 +1981,17 @@
             supportBackdrop.classList.remove('active');
         }
 
+        // Ensure modal is closed on page load unless explicitly shown
+        document.addEventListener('DOMContentLoaded', () => {
+            // Only show modal if sessionStorage flag is set (meaning fresh login)
+            const showModal = sessionStorage.getItem('showSupportModal');
+            if (!showModal) {
+                closeSupportModal();
+            }
+            // Clear the flag after using it
+            sessionStorage.removeItem('showSupportModal');
+        });
+
         // Support Modal Event Listeners
         document.getElementById('closeSupportBtn')?.addEventListener('click', closeSupportModal);
         document.getElementById('supportModalBackdrop')?.addEventListener('click', closeSupportModal);
