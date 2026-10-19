@@ -620,6 +620,9 @@
                 allowClear: true,
                 width: '100%'
             });
+            
+            // Trigger organization change on page load to apply logic if organization was pre-selected
+            $('#organization_id').trigger('change');
         });
 
         // Toggle password visibility
@@ -643,19 +646,20 @@
         // Cascading dropdowns - organization enables province
         $('#organization_id').on('change', function() {
             const selected = $(this).find(':selected');
-            const requiresLocation = selected.data('requiresLocation') === 1;
+            const dataValue = selected.attr('data-requires-location');
+            const requiresLocation = dataValue === '1';
             const province = $('#province_id');
             
             if (requiresLocation) {
-                province.prop('disabled', false).prop('required', true);
+                province.removeAttr('disabled').prop('required', true);
             } else {
-                province.prop('disabled', true).prop('required', false).val('');
+                province.attr('disabled', 'disabled').prop('required', false).val('');
             }
             
             // Reset downstream
-            $('#district_id').val('').prop('disabled', true);
-            $('#facility_type_id').val('').prop('disabled', true);
-            $('#facility_id').val('').trigger('change').prop('disabled', true);
+            $('#district_id').val('').attr('disabled', 'disabled');
+            $('#facility_type_id').val('').attr('disabled', 'disabled');
+            $('#facility_id').val('').trigger('change').attr('disabled', 'disabled');
         });
 
         // Province enables district

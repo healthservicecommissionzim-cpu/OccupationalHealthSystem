@@ -1105,8 +1105,14 @@
             border-radius: 8px;
             font-family: inherit;
             font-size: 0.9rem;
-            color: var(--dark);
+            color: #000000 !important;
+            background-color: #ffffff !important;
             transition: all 0.3s;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #9ca3af !important;
         }
         
         .form-group input:focus,
@@ -1115,11 +1121,25 @@
             outline: none;
             border-color: var(--brand);
             box-shadow: 0 0 0 3px rgba(29, 69, 51, 0.1);
+            background-color: #ffffff !important;
+            color: #000000 !important;
         }
         
         .form-group textarea {
             resize: vertical;
             min-height: 100px;
+            color: #000000 !important;
+            background-color: #ffffff !important;
+        }
+
+        .form-group select {
+            color: #000000 !important;
+            background-color: #ffffff !important;
+        }
+
+        .form-group select option {
+            color: #000000 !important;
+            background-color: #ffffff !important;
         }
         
         /* Response Modal */
@@ -1249,6 +1269,9 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
         }
 
         .chat-modal.active {
@@ -1263,6 +1286,9 @@
             width: calc(100% - 2rem);
             max-width: 420px;
             z-index: 2051;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
         }
 
         @media (max-width: 480px) {
@@ -1960,6 +1986,30 @@
             supportModal.classList.remove('active');
             supportBackdrop.classList.remove('active');
         }
+
+        // Ensure modal is closed on page load unless explicitly shown
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if user just logged in (set by LoginController)
+            const justLoggedIn = <?php echo e(session('just_logged_in') ? 'true' : 'false'); ?>;
+            
+            if (justLoggedIn) {
+                // Only show modal on fresh login
+                openSupportModal();
+                
+                // Clear the session flag via AJAX so it doesn't show again
+                fetch('<?php echo e(route("welcome")); ?>', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ clear_login_flag: true })
+                }).catch(err => console.error('Error clearing login flag:', err));
+            } else {
+                // Otherwise keep modal closed
+                closeSupportModal();
+            }
+        });
 
         // Support Modal Event Listeners
         document.getElementById('closeSupportBtn')?.addEventListener('click', closeSupportModal);
