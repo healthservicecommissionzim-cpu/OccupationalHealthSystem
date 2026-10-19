@@ -497,8 +497,8 @@
                             <label>Password <span class="required">*</span></label>
                             <div class="input-wrapper">
                                 <input type="password" name="password" id="password" required minlength="8" placeholder="••••••••">
-                                <button type="button" class="toggle-password" data-target="password">
-                                    <i class="fa-regular fa-eye"></i>
+                                <button type="button" class="toggle-password" data-target="password" aria-label="Toggle password visibility">
+                                    <i class="fa-solid fa-eye"></i>
                                 </button>
                             </div>
                         </div>
@@ -508,8 +508,8 @@
                             <label>Confirm Password <span class="required">*</span></label>
                             <div class="input-wrapper">
                                 <input type="password" name="password_confirmation" id="password_confirmation" required placeholder="••••••••">
-                                <button type="button" class="toggle-password" data-target="password_confirmation">
-                                    <i class="fa-regular fa-eye"></i>
+                                <button type="button" class="toggle-password" data-target="password_confirmation" aria-label="Toggle password visibility">
+                                    <i class="fa-solid fa-eye"></i>
                                 </button>
                             </div>
                         </div>
@@ -624,15 +624,18 @@
 
         // Toggle password visibility
         document.querySelectorAll('.toggle-password').forEach(btn => {
-            btn.onclick = function() {
+            btn.onclick = function(e) {
+                e.preventDefault();
                 const input = document.getElementById(this.dataset.target);
                 const icon = this.querySelector('i');
                 if (input.type === 'password') {
                     input.type = 'text';
-                    icon.classList.replace('fa-eye', 'fa-eye-slash');
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
                 } else {
                     input.type = 'password';
-                    icon.classList.replace('fa-eye-slash', 'fa-eye');
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
                 }
             };
         });

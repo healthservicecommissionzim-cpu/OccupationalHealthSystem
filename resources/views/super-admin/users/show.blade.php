@@ -204,10 +204,24 @@
                 @elseif ($user->status === 'approved')
                     <span class="status approved">Approved</span>
                     @if ($user)
-                        <form method="POST" action="{{ route('user-approval.reset-password', $user) }}" id="passwordResetForm" style="margin-top: 12px;">
-                            @csrf
-                            <button type="submit" class="btn btn-primary" style="width: auto; font-size: .75rem; padding: 6px 12px;"><i class="fa-solid fa-key" aria-hidden="true"></i>Reset password</button>
-                        </form>
+                        <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+                            <form method="POST" action="{{ route('user-approval.reset-password', $user) }}" id="passwordResetForm" style="margin: 0;">
+                                @csrf
+                                <button type="submit" class="btn btn-primary" style="width: auto; font-size: .75rem; padding: 6px 12px;"><i class="fa-solid fa-key" aria-hidden="true"></i>Reset password</button>
+                            </form>
+                            
+                            <button type="button" class="btn btn-success" onclick="updateUserStatus('{{ $user->id }}', 'active')" style="width: auto; font-size: .75rem; padding: 6px 12px; background-color: #10b981; border: none; cursor: pointer;">
+                                <i class="fa-solid fa-check-circle"></i> Activate
+                            </button>
+                            
+                            <button type="button" class="btn btn-warning" onclick="updateUserStatus('{{ $user->id }}', 'inactive')" style="width: auto; font-size: .75rem; padding: 6px 12px; background-color: #f59e0b; border: none; cursor: pointer; color: white;">
+                                <i class="fa-solid fa-ban"></i> Inactivate
+                            </button>
+                            
+                            <button type="button" class="btn btn-danger" onclick="updateUserStatus('{{ $user->id }}', 'suspended')" style="width: auto; font-size: .75rem; padding: 6px 12px; background-color: #ef4444; border: none; cursor: pointer; color: white;">
+                                <i class="fa-solid fa-lock"></i> Suspend
+                            </button>
+                        </div>
                     @endif
                 @elseif ($user->status === 'rejected')
                     <span class="status rejected">Rejected</span>
@@ -485,6 +499,47 @@
                                     @endforeach
                                 </div>
                             @endif
+                        </div>
+                    </section>
+
+                    <!-- Security Information Card -->
+                    <section class="card" aria-labelledby="security-heading">
+                        <div class="card-header">
+                            <div class="card-heading">
+                                <span class="section-icon" style="background: #fef3c7; color: #d97706;"><i class="fa-solid fa-shield" aria-hidden="true"></i></span>
+                                <div>
+                                    <h2 id="security-heading">Security info</h2>
+                                    <p>Login and authentication tracking.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <dl class="details-grid">
+                                <div class="detail">
+                                    <dt class="detail-label">Last login IP</dt>
+                                    <dd class="detail-value {{ $user->last_login_ip ? '' : 'empty' }}">{{ $user->last_login_ip ?? 'Never logged in' }}</dd>
+                                </div>
+                                <div class="detail">
+                                    <dt class="detail-label">Last login at</dt>
+                                    <dd class="detail-value {{ $user->last_login_at ? '' : 'empty' }}">{{ $user->last_login_at?->format('M d, Y · h:i A') ?? 'Never' }}</dd>
+                                </div>
+                                <div class="detail">
+                                    <dt class="detail-label">Failed login attempts</dt>
+                                    <dd class="detail-value"><span style="display: inline-block; padding: 2px 6px; background: {{ $user->failed_login_attempts > 0 ? '#fee2e2' : '#ecfdf5' }}; color: {{ $user->failed_login_attempts > 0 ? '#b33a42' : '#17663f' }}; border-radius: 4px; font-size: .75rem; font-weight: 700;">{{ $user->failed_login_attempts }}</span></dd>
+                                </div>
+                                <div class="detail">
+                                    <dt class="detail-label">Last failed attempt</dt>
+                                    <dd class="detail-value {{ $user->last_failed_login_at ? '' : 'empty' }}">{{ $user->last_failed_login_at?->format('M d, Y · h:i A') ?? 'None' }}</dd>
+                                </div>
+                                <div class="detail">
+                                    <dt class="detail-label">MFA enabled</dt>
+                                    <dd class="detail-value"><span style="display: inline-block; padding: 2px 6px; background: {{ $user->mfa_enabled ? '#ecfdf5' : '#f3f4f6' }}; color: {{ $user->mfa_enabled ? '#17663f' : '#6b7280' }}; border-radius: 4px; font-size: .75rem; font-weight: 700;">{{ $user->mfa_enabled ? 'Yes' : 'No' }}</span></dd>
+                                </div>
+                                <div class="detail">
+                                    <dt class="detail-label">MFA verified at</dt>
+                                    <dd class="detail-value {{ $user->mfa_verified_at ? '' : 'empty' }}">{{ $user->mfa_verified_at?->format('M d, Y · h:i A') ?? 'Not verified' }}</dd>
+                                </div>
+                            </dl>
                         </div>
                     </section>
                 @elseif ($user->status === 'rejected')
@@ -1038,6 +1093,40 @@
                 });
             }
         });
+
+        // Update user status function
+        function updateUserStatus(userId, newStatus) {
+            if (!confirm(`Are you sure you want to ${newStatus === 'active' ? 'activate' : newStatus === 'inactive' ? 'inactivate' : 'suspend'} this account?`)) {
+                return;
+            }
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            fetch(`/super-admin/user-approval/${userId}/update-status`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    status: newStatus
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`Account ${newStatus} successfully!`);
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to update status'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        }
     </script>
 </body>
 </html>

@@ -32,11 +32,18 @@ class User extends Authenticatable
         'facility_id',
         'password',
         'status',
+        'account_status',
         'approved_by',
         'approved_at',
         'rejection_reason',
         'rejected_at',
         'can_reapply_at',
+        'last_login_ip',
+        'last_login_at',
+        'failed_login_attempts',
+        'last_failed_login_at',
+        'mfa_enabled',
+        'mfa_verified_at',
     ];
 
     /**
@@ -61,6 +68,9 @@ class User extends Authenticatable
             'approved_at' => 'datetime',
             'rejected_at' => 'datetime',
             'can_reapply_at' => 'datetime',
+            'last_login_at' => 'datetime',
+            'last_failed_login_at' => 'datetime',
+            'mfa_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }

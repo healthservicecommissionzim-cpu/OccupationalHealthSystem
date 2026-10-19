@@ -28,7 +28,13 @@ class DatabaseBackupController extends Controller
             $connection = config('database.default');
             $driver = config("database.connections.{$connection}.driver");
             
-            // Create directory if it doesn't exist
+            // Ensure directory exists with full path
+            $fullBackupPath = storage_path('app/' . $this->backupPath);
+            if (!file_exists($fullBackupPath)) {
+                mkdir($fullBackupPath, 0755, true);
+            }
+            
+            // Also ensure using Storage facade
             if (!Storage::exists($this->backupPath)) {
                 Storage::makeDirectory($this->backupPath);
             }
@@ -62,7 +68,7 @@ class DatabaseBackupController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
             
-            return back()->with('error', 'Database backup failed: ' . $e->getMessage());
+            return back()->with('error', 'Backup operation failed: ' . $e->getMessage());
         }
     }
     
@@ -175,14 +181,14 @@ class DatabaseBackupController extends Controller
         // Check if backup was successful
         if ($returnVar !== 0 || !file_exists($filepath) || filesize($filepath) === 0) {
             $errorMsg = 'mysqldump failed (exit code: ' . $returnVar . '). ';
-            if (!empty($output)) {
-                $errorMsg .= 'Output: ' . implode(' | ', $output);
+            if (!empty($stderrOutput)) {
+                $errorMsg .= 'Error: ' . $stderrOutput;
             }
             
             Log::error('MySQL backup failed', [
                 'command' => preg_replace('/--password=[^\s]+/', '--password=***', $command),
                 'return_code' => $returnVar,
-                'output' => $output,
+                'stderr' => $stderrOutput,
                 'file_exists' => file_exists($filepath),
                 'file_size' => file_exists($filepath) ? filesize($filepath) : 0
             ]);
@@ -309,17 +315,20 @@ class DatabaseBackupController extends Controller
     {
         $backups = [];
         
-        if (!Storage::exists($this->backupPath)) {
+        // Check using full path
+        $fullBackupPath = storage_path('app/' . $this->backupPath);
+        
+        if (!file_exists($fullBackupPath)) {
             return $backups;
         }
         
-        $files = Storage::files($this->backupPath);
+        // Use glob to get all files
+        $files = glob($fullBackupPath . '/*.*');
         
-        foreach ($files as $file) {
-            $filename = basename($file);
-            $filepath = storage_path('app/' . $file);
-            
-            if (file_exists($filepath)) {
+        foreach ($files as $filepath) {
+            if (file_exists($filepath) && is_file($filepath)) {
+                $filename = basename($filepath);
+                
                 $backups[] = [
                     'filename' => $filename,
                     'size' => $this->formatBytes(filesize($filepath)),

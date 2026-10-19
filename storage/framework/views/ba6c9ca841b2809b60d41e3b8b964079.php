@@ -10,36 +10,24 @@
     <!-- DNS Prefetch for faster external resource loading -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     
     <!-- Preconnect for critical resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- Optimized font loading with font-display swap -->
+    <!-- Optimized font loading -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     
     <!-- Preload critical assets -->
     <link rel="preload" href="<?php echo e(asset('images/hsc-logo.png')); ?>" as="image">
     
     <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css']); ?>
     <style>
-        /* Icon Replacements with Unicode */
-        .fas, .fa {
-            font-style: normal;
-            font-weight: 900;
-            text-rendering: auto;
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        .fa-shield-alt::before { content: '🛡️'; }
-        .fa-file-medical-alt::before { content: '📋'; }
-        .fa-upload::before { content: '📤'; }
-        .fa-first-aid::before { content: '🏥'; }
-        .fa-comments::before { content: '💬'; }
-        .fa-times::before { content: '✕'; }
-        .fa-headset::before { content: '🎧'; }
-        
         :root {
             --brand: #1D4533;
             --brand-dark: #0f2818;
@@ -127,7 +115,7 @@
         header {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
-            padding: 1rem 4%;
+            padding: 1rem 2%;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -136,11 +124,11 @@
             top: 0;
             z-index: 1000;
         }
-        
-        /* When mobile menu is active, increase header z-index */
-        .mobile-menu.active ~ header,
-        body:has(.mobile-menu.active) header {
-            z-index: 1004;
+
+        @media (min-width: 768px) {
+            header {
+                padding: 1rem 4%;
+            }
         }
         
         .logo {
@@ -148,6 +136,8 @@
             align-items: center;
             gap: 0.75rem;
             text-decoration: none;
+            flex-shrink: 0;
+            max-width: 70%;
         }
         
         .logo img {
@@ -155,6 +145,17 @@
             width: auto;
             max-height: 55px;
             object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        @media (min-width: 768px) {
+            .logo img {
+                height: 55px;
+            }
+            
+            .logo {
+                max-width: none;
+            }
         }
         
         .logo-text {
@@ -761,8 +762,22 @@
             padding: 0;
             border-radius: 8px;
             transition: background-color 0.3s;
-            z-index: 1003;
+            z-index: 1002;
             position: relative;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                display: none;
+            }
+
+            .nav-buttons {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
         }
         
         .menu-toggle:hover {
@@ -791,15 +806,7 @@
             border-radius: 2px;
         }
         
-        /* When menu is open, keep button visible and transform to X */
-        .menu-toggle.open {
-            background-color: white;
-        }
-        
-        .menu-toggle.open .hamburger-line {
-            background-color: var(--brand);
-        }
-        
+        /* When menu is open, transform to X */
         .menu-toggle.open .hamburger-line:nth-child(1) {
             transform: rotate(45deg) translate(6px, 6px);
         }
@@ -813,96 +820,134 @@
             transform: rotate(-45deg) translate(6px, -6px);
         }
         
-        .mobile-menu {
-            display: none;
+        /* Mobile Menu Backdrop */
+        .mobile-menu-backdrop {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 2000;
+            pointer-events: none;
+        }
+
+        .mobile-menu-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100dvh;
             background: white;
-            z-index: 1001;
+            opacity: 0;
+            transform: translateY(-100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+            z-index: 2001;
             overflow-y: auto;
-            padding-top: 5rem;
+            display: flex;
+            flex-direction: column;
+            pointer-events: none;
         }
         
         .mobile-menu.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .mobile-menu-header {
             display: flex;
-            flex-direction: column;
-            animation: fadeIn 0.3s ease;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            background: var(--brand-light);
         }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-        
-        .mobile-menu-content {
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            flex: 1;
-        }
-        
-        .close-menu {
-            position: fixed;
-            top: 1rem;
-            right: 2%;
+
+        .mobile-menu-close {
             background: none;
             border: none;
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: var(--brand);
             cursor: pointer;
             padding: 0.5rem;
-            z-index: 1002;
-            display: none;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: background 0.3s;
         }
         
-        .mobile-menu.active .close-menu {
-            display: block;
+        .mobile-menu-close:hover {
+            background: rgba(29, 69, 51, 0.1);
+        }
+        
+        .mobile-menu-content {
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .close-menu {
+            display: none;
         }
         
         .mobile-menu-nav {
             display: flex !important;
             flex-direction: column;
-            gap: 1.5rem;
-            padding-bottom: 2rem;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #e2e8f0;
-            width: 100%;
+            padding: 2rem 0;
+            gap: 0.5rem;
+            flex: 1;
+            justify-content: center;
         }
         
         .mobile-menu-nav a {
-            text-decoration: none;
-            color: var(--dark);
+            text-decoration: none !important;
+            color: var(--dark) !important;
             font-weight: 600;
-            font-size: 1.3rem;
-            transition: color 0.3s;
-            padding: 0.75rem 0;
+            font-size: 1.5rem;
+            padding: 1.25rem 2rem;
+            border-left: 4px solid transparent;
+            transition: all 0.3s;
+            text-align: left;
             display: block !important;
+            opacity: 1 !important;
             visibility: visible !important;
         }
         
         .mobile-menu-nav a:hover {
+            background: var(--brand-light);
             color: var(--brand);
+            border-left-color: var(--brand);
+            padding-left: 2.5rem;
         }
         
         .mobile-menu-buttons {
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            padding: 2rem;
+            margin-top: auto;
         }
         
         .mobile-menu-buttons .btn {
             width: 100%;
             justify-content: center;
             padding: 1rem 2rem;
-            font-size: 1rem;
+            font-size: 1.1rem;
         }
         
         /* Floating Chat Widget */
@@ -1133,6 +1178,403 @@
             color: var(--slate);
             line-height: 1.6;
         }
+
+        /* Chat Modal Backdrop */
+        .chat-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #fef3c7 100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 2040;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .chat-modal-backdrop::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(29, 69, 51, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .chat-modal-backdrop::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            left: -5%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        .chat-modal-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            25% { transform: translateY(-20px) translateX(10px); }
+            50% { transform: translateY(-40px) translateX(0px); }
+            75% { transform: translateY(-20px) translateX(-10px); }
+        }
+
+        /* Interactive Chat Modal */
+        .chat-modal {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 0;
+            max-width: 420px;
+            max-height: 600px;
+            background: white;
+            border-radius: 16px 16px 0 0;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 2050;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-modal.active {
+            height: 600px;
+            border-radius: 16px;
+            bottom: auto;
+            top: 50%;
+            left: 50%;
+            right: auto;
+            transform: translate(-50%, -50%);
+            margin: 0;
+            width: calc(100% - 2rem);
+            max-width: 420px;
+            z-index: 2051;
+        }
+
+        @media (max-width: 480px) {
+            .chat-modal.active {
+                width: calc(100% - 1rem);
+                height: 500px;
+                max-height: 80vh;
+            }
+        }
+
+        .chat-modal-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--brand) 0%, #2d5a47 100%);
+            color: white;
+            padding: 1.25rem;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .chat-title i {
+            font-size: 1.5rem;
+        }
+
+        .chat-title h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .chat-title p {
+            font-size: 0.75rem;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .chat-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .chat-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            background: #f9fafb;
+        }
+
+        .chat-message {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-message.user-message {
+            align-items: flex-end;
+        }
+
+        .chat-message.bot-message {
+            align-items: flex-start;
+        }
+
+        .message-content {
+            background: white;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            max-width: 85%;
+            word-wrap: break-word;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-message .message-content {
+            background: var(--brand);
+            color: white;
+            border-radius: 12px 4px 12px 12px;
+        }
+
+        .bot-message .message-content {
+            background: #e5e7eb;
+            color: var(--dark);
+            border-radius: 4px 12px 12px 12px;
+        }
+
+        .message-content p {
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: var(--slate-400);
+            padding: 0 1rem;
+        }
+
+        .chat-input-area {
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
+            background: white;
+        }
+
+        .chat-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.65rem 1rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--brand);
+            box-shadow: 0 0 0 3px rgba(29, 69, 51, 0.1);
+        }
+
+        .chat-send-btn {
+            background: var(--brand);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.65rem 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-send-btn:hover {
+            background: var(--brand-dark);
+            transform: translateY(-2px);
+        }
+
+        .chat-send-btn:active {
+            transform: translateY(0);
+        }
+
+        .chat-hint {
+            font-size: 0.7rem;
+            color: var(--slate-500);
+            margin: 0;
+            text-align: center;
+        }
+
+        /* Loading State Styles */
+        .chat-send-btn.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .chat-send-btn.loading i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Result Modal Styles */
+        .result-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #fef3c7 100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 2040;
+            pointer-events: none;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-modal-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .result-modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            animation: slideUp 0.3s ease;
+            position: relative;
+            z-index: 2051;
+        }
+
+        .result-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result-icon.success {
+            color: #10b981;
+        }
+
+        .result-icon.error {
+            color: #ef4444;
+        }
+
+        .result-modal-content h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .result-modal-content p {
+            font-size: 0.95rem;
+            color: var(--slate);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-button {
+            background: var(--brand);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .result-button:hover {
+            background: var(--brand-dark);
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .chat-loading {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--brand);
+            border-radius: 50%;
+            animation: blink 1.4s infinite;
+        }
+
+        .chat-loading:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .chat-loading:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes blink {
+            0%, 60%, 100% { opacity: 0.3; }
+            30% { opacity: 1; }
+        }
         
         /* Mobile Responsive */
         @media (max-width: 768px) {
@@ -1259,7 +1701,7 @@
         <nav>
             <a href="<?php echo e(route('resources')); ?>">Resources</a>
             <a href="<?php echo e(route('safety_protocols')); ?>">Safety Protocols</a>
-            <a href="javascript:void(0);" onclick="document.getElementById('floatingChatBtn').click()">Help Desk</a>
+            <a href="javascript:void(0);" onclick="openSupportModal()">Help Desk</a>
         </nav>
         
         <div class="nav-buttons">
@@ -1267,7 +1709,7 @@
             <a href="<?php echo e(route('register')); ?>" class="btn btn-primary">Register</a>
         </div>
         
-        <button class="menu-toggle">
+        <button class="menu-toggle" onclick="toggleMobileMenu()">
             <div class="hamburger-icon">
                 <div class="hamburger-line"></div>
                 <div class="hamburger-line"></div>
@@ -1275,6 +1717,29 @@
             </div>
         </button>
     </header>
+
+    <!-- Mobile Menu Backdrop -->
+    <div class="mobile-menu-backdrop" onclick="toggleMobileMenu()"></div>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <div class="mobile-menu-header">
+            <span style="font-weight: 700; color: var(--brand); font-size: 1.2rem;">Menu</span>
+            <button class="mobile-menu-close" onclick="toggleMobileMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="mobile-menu-nav">
+            <a href="<?php echo e(route('welcome')); ?>">Home</a>
+            <a href="<?php echo e(route('resources')); ?>">Resources</a>
+            <a href="<?php echo e(route('safety_protocols')); ?>">Safety Protocols</a>
+            <a href="javascript:void(0);" onclick="openSupportModal(); toggleMobileMenu();">Help Desk</a>
+        </nav>
+        <div class="mobile-menu-buttons">
+            <a href="<?php echo e(route('login')); ?>" class="btn btn-primary">Log In</a>
+            <a href="<?php echo e(route('register')); ?>" class="btn btn-primary">Register</a>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -1292,21 +1757,27 @@
     <section class="features">
         <a href="<?php echo e(route('incidents.create')); ?>" class="feature-card" data-tooltip="Click to start reporting a new workplace incident or injury">
             <span class="feature-number">01</span>
-            <div class="feature-icon"></div>
+            <div class="feature-icon">
+                <i class="fas fa-file-medical-alt"></i>
+            </div>
             <h3>Report Incident</h3>
             <p>Quickly and securely report workplace incidents, exposures, or injuries through our streamlined digital form.</p>
         </a>
         
         <a href="<?php echo e(route('incidents.track')); ?>" class="feature-card" data-tooltip="Click to find and track your reported incidents, view status, and upload documents">
             <span class="feature-number">02</span>
-            <div class="feature-icon"></div>
+            <div class="feature-icon">
+                <i class="fas fa-upload"></i>
+            </div>
             <h3>Track & Upload</h3>
             <p>Monitor the progress of your submitted incidents and upload supporting documentation when required.</p>
         </a>
         
         <a href="<?php echo e(route('first_aid.token_form')); ?>" class="feature-card" data-tooltip="Click to log minor first aid incidents quickly without full incident reporting">
             <span class="feature-number">03</span>
-            <div class="feature-icon"></div>
+            <div class="feature-icon">
+                <i class="fas fa-first-aid"></i>
+            </div>
             <h3>First Aid Log</h3>
             <p>Record and log minor first aid events without creating full incident reports for minor injuries.</p>
         </a>
@@ -1322,89 +1793,132 @@
         </div>
     </div>
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu">
-        <div class="mobile-menu-content">
-            <button class="close-menu">
-                <i class="fas fa-times"></i>
-            </button>
-            
-            <nav class="mobile-menu-nav">
-                <a href="<?php echo e(route('resources')); ?>">Resources</a>
-                <a href="<?php echo e(route('safety_protocols')); ?>">Safety Protocols</a>
-                <a href="javascript:void(0);" onclick="document.getElementById('floatingChatBtn').click()">Help Desk</a>
-            </nav>
-            
-            <div class="mobile-menu-buttons">
-                <a href="<?php echo e(route('login')); ?>" class="btn btn-outline">Log In</a>
-                <a href="<?php echo e(route('register')); ?>" class="btn btn-primary">Register</a>
-            </div>
-        </div>
-    </div>
-
     <!-- Floating Chat Widget -->
-    <button class="floating-chat-btn" id="floatingChatBtn" title="Get Help" aria-label="Get Help - Contact Support">
-        <span>Chat</span>
+    <button class="floating-chat-btn" id="floatingChatBtn" title="Chat with us" aria-label="Open chat - Contact Support">
+        <i class="fas fa-comments"></i>
     </button>
 
-    <!-- Support Request Modal -->
-    <div class="support-modal" id="supportModal">
-        <div class="support-modal-content">
-            <button class="close-support-modal" id="closeSupportModal">
-                <i class="fas fa-times"></i>
-            </button>
-            
-            <div class="support-modal-header">
-                <i class="fas fa-headset"></i>
-                <h2>Contact Support</h2>
-                <p>We're here to help. Tell us how we can assist you.</p>
+    <!-- Support Modal Backdrop -->
+    <div class="chat-modal-backdrop" id="supportModalBackdrop"></div>
+
+    <!-- Support Ticket Form Modal -->
+    <div class="chat-modal" id="supportModal">
+        <div class="chat-modal-content">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <i class="fas fa-headset"></i>
+                    <div>
+                        <h3>IT Help Desk</h3>
+                        <p>Submit your support request</p>
+                    </div>
+                </div>
+                <button class="chat-close" id="closeSupportBtn">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             
-            <form id="supportForm" class="support-form">
-                <div class="form-group">
-                    <label for="name">Full Name *</label>
-                    <input type="text" id="name" name="name" required placeholder="Your full name">
-                </div>
-                
-                <div class="form-group">
-                    <label for="email">Email Address *</label>
-                    <input type="email" id="email" name="email" required placeholder="your@email.com">
-                </div>
-                
-                <div class="form-group">
-                    <label for="phone">Phone Number *</label>
-                    <input type="tel" id="phone" name="phone" required placeholder="+263...">
-                </div>
-                
-                <div class="form-group">
-                    <label for="category">Issue Category *</label>
-                    <select id="category" name="category" required>
-                        <option value="">Select a category</option>
-                        <option value="technical">Technical Issue</option>
-                        <option value="account">Account Help</option>
-                        <option value="incident">Incident Report Question</option>
-                        <option value="general">General Inquiry</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="description">Message *</label>
-                    <textarea id="description" name="description" required placeholder="Please describe your issue..." rows="4"></textarea>
-                </div>
-                
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Request</button>
-            </form>
+            <div class="chat-messages" style="background: white; padding: 1.5rem; overflow-y: auto;">
+                <form id="supportForm" class="support-form">
+                    <div class="form-group">
+                        <label for="support_name">Full Name *</label>
+                        <input type="text" id="support_name" name="name" placeholder="Your name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="support_email">Email Address *</label>
+                        <input type="email" id="support_email" name="email" placeholder="your.email@example.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="support_phone">Phone Number (Optional)</label>
+                        <input type="tel" id="support_phone" name="phone" placeholder="+263 (optional)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="support_category">Category *</label>
+                        <select id="support_category" name="category" required>
+                            <option value="">Select a category</option>
+                            <option value="technical">Technical Problem</option>
+                            <option value="account">Account Issue</option>
+                            <option value="incident">Report Incident</option>
+                            <option value="general">General Inquiry</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="support_message">Issue Description *</label>
+                        <textarea id="support_message" name="description" placeholder="Please describe your issue in detail..." required minlength="10"></textarea>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="chat-input-area">
+                <button type="submit" form="supportForm" class="chat-send-btn" style="width: 100%; justify-content: center; font-size: 1rem;">
+                    <i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i> Submit Request
+                </button>
+                <p class="chat-hint">Your request will be forwarded to the IT Department</p>
+            </div>
         </div>
     </div>
 
-    <!-- Response Modal -->
-    <div class="response-modal" id="responseModal">
-        <div class="response-modal-content">
-            <div class="response-icon" id="responseIcon"></div>
-            <h2 id="responseTitle"></h2>
-            <p id="responseMessage"></p>
-            <button class="btn btn-primary" id="closeResponseModal" style="width: 100%; margin-top: 1.5rem;">Close</button>
+    <!-- Chat Modal Backdrop -->
+    <div class="chat-modal-backdrop" id="chatModalBackdrop"></div>
+
+    <!-- Interactive Chatbot Modal -->
+    <div class="chat-modal" id="chatModal">
+        <div class="chat-modal-content">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <i class="fas fa-robot"></i>
+                    <div>
+                        <h3>HSC-OHS Assistant</h3>
+                        <p>Online</p>
+                    </div>
+                </div>
+                <button class="chat-close" id="closeChatBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message bot-message">
+                    <div class="message-content">
+                        <p>👋 Hello! I'm your HSC-OHS assistant. I'm here to help you with questions about incident reporting, account access, system features, and more. What can I help you with today?</p>
+                    </div>
+                    <span class="message-time">now</span>
+                </div>
+            </div>
+            
+            <div class="chat-input-area">
+                <form id="chatForm" class="chat-form">
+                    <input 
+                        type="text" 
+                        id="chatInput" 
+                        class="chat-input" 
+                        placeholder="Type your message..." 
+                        autocomplete="off"
+                        required
+                    >
+                    <button type="submit" class="chat-send-btn" title="Send message">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+                <p class="chat-hint">💡 Try asking: "How do I report an incident?" or "I forgot my password"</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Modal Backdrop -->
+    <div class="result-modal-backdrop" id="resultModalBackdrop"></div>
+
+    <!-- Result Modal -->
+    <div id="resultModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2051; display: none;">
+        <div class="result-modal-content">
+            <div class="result-icon" id="resultIcon"></div>
+            <h2 id="resultTitle"></h2>
+            <p id="resultMessage"></p>
+            <button class="result-button" id="resultButton">Close</button>
         </div>
     </div>
 
@@ -1419,157 +1933,280 @@
 
     <!-- Mobile Menu Toggle Script -->
     <script>
-        const menuToggle = document.querySelector('.menu-toggle');
-        const mobileMenu = document.querySelector('.mobile-menu');
-        const closeMenu = document.querySelector('.close-menu');
-        const mobileMenuNav = document.querySelector('.mobile-menu-nav');
-        const mobileMenuButtons = document.querySelector('.mobile-menu-buttons');
-
-        // Toggle menu open/close with hamburger button
-        menuToggle.addEventListener('click', () => {
-            const isOpen = mobileMenu.classList.contains('active');
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.querySelector('.mobile-menu');
+            const backdrop = document.querySelector('.mobile-menu-backdrop');
+            const toggle = document.querySelector('.menu-toggle');
             
-            if (isOpen) {
-                // Close menu
-                mobileMenu.classList.remove('active');
-                menuToggle.classList.remove('open');
-            } else {
-                // Open menu
-                mobileMenu.classList.add('active');
-                menuToggle.classList.add('open');
-            }
-        });
-
-        // Close menu when X button is clicked (if exists)
-        if (closeMenu) {
-            closeMenu.addEventListener('click', () => {
-                mobileMenu.classList.remove('active');
-                menuToggle.classList.remove('open');
-            });
+            menu.classList.toggle('active');
+            backdrop.classList.toggle('active');
+            toggle.classList.toggle('open');
+            
+            document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
         }
 
-        // Close menu when clicking outside (on the menu background)
-        mobileMenu.addEventListener('click', (e) => {
-            if (e.target === mobileMenu) {
-                mobileMenu.classList.remove('active');
-                menuToggle.classList.remove('open');
-            }
-        });
-
-        // Close menu when clicking on a link
-        if (mobileMenuNav) {
-            mobileMenuNav.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileMenu.classList.remove('active');
-                    menuToggle.classList.remove('open');
-                });
-            });
-        }
-
-        // Close menu when clicking on a button
-        if (mobileMenuButtons) {
-            mobileMenuButtons.querySelectorAll('a').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    mobileMenu.classList.remove('active');
-                    menuToggle.classList.remove('open');
-                });
-            });
-        }
-
-        // Floating Chat Widget Script
-        const floatingChatBtn = document.getElementById('floatingChatBtn');
-        const supportModal = document.getElementById('supportModal');
-        const closeSupportModal = document.getElementById('closeSupportModal');
-        const header = document.querySelector('header');
-        const supportForm = document.getElementById('supportForm');
-        const responseModal = document.getElementById('responseModal');
-        const closeResponseModal = document.getElementById('closeResponseModal');
-
-        // Open support modal
-        floatingChatBtn.addEventListener('click', () => {
+        // Support Modal Functions
+        function openSupportModal() {
+            const supportModal = document.getElementById('supportModal');
+            const supportBackdrop = document.getElementById('supportModalBackdrop');
             supportModal.classList.add('active');
-            if (header) header.style.display = 'none';
-        });
+            supportBackdrop.classList.add('active');
+        }
 
-        // Close support modal
-        closeSupportModal.addEventListener('click', () => {
+        function closeSupportModal() {
+            const supportModal = document.getElementById('supportModal');
+            const supportBackdrop = document.getElementById('supportModalBackdrop');
             supportModal.classList.remove('active');
-            if (header) header.style.display = '';
-        });
+            supportBackdrop.classList.remove('active');
+        }
 
-        // Close support modal when clicking outside
-        supportModal.addEventListener('click', (e) => {
-            if (e.target === supportModal) {
-                supportModal.classList.remove('active');
-                if (header) header.style.display = '';
-            }
-        });
+        // Support Modal Event Listeners
+        document.getElementById('closeSupportBtn')?.addEventListener('click', closeSupportModal);
+        document.getElementById('supportModalBackdrop')?.addEventListener('click', closeSupportModal);
+        
+        // Handle support form submission
+        const setupFormSubmission = () => {
+            const form = document.getElementById('supportForm');
+            if (!form) return;
+            
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const submitBtn = document.querySelector('button[form="supportForm"]');
+                const formData = new FormData(form);
+                const data = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    category: formData.get('category'),
+                    description: formData.get('description'),
+                };
 
-        // Handle form submission
-        supportForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+                // Show loading state
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
 
-            const formData = new FormData(supportForm);
-            const data = {
-                name: formData.get('name'),
-                email: formData.get('email'),
-                phone: formData.get('phone'),
-                category: formData.get('category'),
-                description: formData.get('description'),
+                try {
+                    const response = await fetch('<?php echo e(route("support.public_request")); ?>', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
+
+                    // Hide loading state
+                    submitBtn.classList.remove('loading');
+                    submitBtn.disabled = false;
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        showResultModal('success', 'Request Submitted!', 'Your support request has been submitted successfully.\n\nReference: ' + (result.ticket_number || 'Pending') + '\n\nOur IT team will respond within 24-48 hours.');
+                        form.reset();
+                        
+                        // Close support modal after 1.5 seconds
+                        setTimeout(() => {
+                            closeSupportModal();
+                        }, 1500);
+                    } else {
+                        const result = await response.json();
+                        showResultModal('error', 'Submission Failed', result.message || 'An error occurred while submitting your request. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    submitBtn.classList.remove('loading');
+                    submitBtn.disabled = false;
+                    showResultModal('error', 'Error', 'An error occurred while submitting your request. Please check your connection and try again.');
+                }
+            });
+        };
+
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupFormSubmission);
+        } else {
+            setupFormSubmission();
+        }
+
+        // Show result modal
+        function showResultModal(type, title, message) {
+            const backdrop = document.getElementById('resultModalBackdrop');
+            const modal = document.getElementById('resultModal');
+            const icon = document.getElementById('resultIcon');
+            const titleEl = document.getElementById('resultTitle');
+            const msgEl = document.getElementById('resultMessage');
+            const btn = document.getElementById('resultButton');
+
+            icon.className = 'result-icon ' + type;
+            icon.innerHTML = type === 'success' ? '✓' : '✕';
+            titleEl.textContent = title;
+            msgEl.textContent = message;
+            
+            modal.style.display = 'block';
+            backdrop.classList.add('active');
+
+            btn.onclick = () => {
+                modal.style.display = 'none';
+                backdrop.classList.remove('active');
             };
 
-            try {
-                // Submit to public support endpoint
-                const response = await fetch('<?php echo e(route("support.public_request")); ?>', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
+            // Close on backdrop click
+            backdrop.onclick = () => {
+                modal.style.display = 'none';
+                backdrop.classList.remove('active');
+            };
 
-                // Close support modal
-                supportModal.classList.remove('active');
-
-                // Show response modal
-                responseModal.classList.add('active');
-
-                if (response.ok) {
-                    const result = await response.json();
-                    document.getElementById('responseIcon').className = 'response-icon success';
-                    document.getElementById('responseTitle').textContent = 'Request Submitted Successfully!';
-                    document.getElementById('responseMessage').textContent = 'Thank you for contacting us. Our support team will get back to you shortly at ' + data.email + '.';
-                } else {
-                    const result = await response.json();
-                    document.getElementById('responseIcon').className = 'response-icon error';
-                    document.getElementById('responseTitle').textContent = 'Submission Failed';
-                    document.getElementById('responseMessage').textContent = result.message || 'An error occurred while submitting your request. Please try again.';
+            // Close on Escape key
+            const escapeHandler = (e) => {
+                if (e.key === 'Escape') {
+                    modal.style.display = 'none';
+                    backdrop.classList.remove('active');
+                    document.removeEventListener('keydown', escapeHandler);
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                supportModal.classList.remove('active');
-                responseModal.classList.add('active');
-                document.getElementById('responseIcon').className = 'response-icon error';
-                document.getElementById('responseTitle').textContent = 'Error';
-                document.getElementById('responseMessage').textContent = 'An error occurred. Please try again later.';
+            };
+            document.addEventListener('keydown', escapeHandler);
+        }
+
+        // Escape key closes modals
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeSupportModal();
             }
         });
 
-        // Close response modal
-        closeResponseModal.addEventListener('click', () => {
-            responseModal.classList.remove('active');
-            if (header) header.style.display = '';
-            // Reset form
-            supportForm.reset();
+        // Chatbot responses - knowledge base
+        const chatResponses = {
+            greetings: ['hello', 'hi', 'hey', 'greetings', 'good morning', 'good afternoon', 'good evening'],
+            reportIncident: ['report', 'incident', 'report incident', 'file report', 'new incident', 'submit incident'],
+            trackIncident: ['track', 'status', 'my incident', 'where is my', 'progress', 'track incident'],
+            firstAid: ['first aid', 'first-aid', 'minor injury', 'small injury', 'band-aid'],
+            password: ['password', 'forgot password', 'reset password', 'can\'t login', 'login issue'],
+            faq: ['faq', 'frequently asked', 'help', 'how do i', 'how to'],
+            contact: ['contact', 'support', 'help desk', 'phone', 'email', 'reach out'],
+        };
+
+        function detectIntent(userMessage) {
+            const message = userMessage.toLowerCase().trim();
+            
+            for (const [intent, keywords] of Object.entries(chatResponses)) {
+                if (keywords.some(keyword => message.includes(keyword))) {
+                    return intent;
+                }
+            }
+            return 'default';
+        }
+
+        function getBotResponse(intent) {
+            const responses = {
+                greetings: "👋 Hello! I'm the HSC-OHS Assistant. How can I help you today? I can assist with:\n• Reporting incidents\n• Tracking your incidents\n• First aid logging\n• Password resets\n• General questions",
+                reportIncident: "📋 To report an incident:\n1. Click 'Report Incident' on the main page\n2. Fill in the incident details\n3. Provide any relevant attachments\n4. Submit for review\n\nWould you like the direct link?",
+                trackIncident: "🔍 To track your incident:\n1. Go to 'Track & Upload' page\n2. Enter your incident reference number\n3. View the current status\n4. Upload any required documents\n\nDo you have your reference number?",
+                firstAid: "🏥 First Aid Logging:\nFor minor injuries that don't require a full incident report, use our First Aid Log feature. It's quick and confidential.\n\nWould you like help with that?",
+                password: "🔐 Password Help:\nIf you forgot your password:\n1. Click 'Log In' on the main page\n2. Select 'Forgot Password'\n3. Enter your email\n4. Follow the reset link\n\nStill having issues?",
+                faq: "❓ Common Questions:\n• How do I report an incident?\n• What happens after I report?\n• How long does review take?\n• Can I upload documents later?\n• Is my information private?\n\nWhich would you like to know about?",
+                contact: "📞 Contact Support:\n• Email: support@hsc.org.zw\n• Phone: +263 (8AM-5PM CAT)\n• Response time: 24-48 hours\n\nOr submit a formal support request using this chat.",
+                default: "I'm here to help! Could you clarify your question? For example, you can ask about:\n• Reporting incidents\n• Tracking incidents\n• First aid logging\n• Passwords and login\n• General questions"
+            };
+            
+            return responses[intent] || responses.default;
+        }
+
+        // Chat Modal Handler
+        const floatingChatBtn = document.getElementById('floatingChatBtn');
+        const chatModal = document.getElementById('chatModal');
+        const chatModalBackdrop = document.getElementById('chatModalBackdrop');
+        const closeChatBtn = document.getElementById('closeChatBtn');
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+        const chatMessages = document.getElementById('chatMessages');
+
+        // Open chat
+        floatingChatBtn.addEventListener('click', () => {
+            chatModal.classList.add('active');
+            chatModalBackdrop.classList.add('active');
         });
 
-        // Close response modal when clicking outside
-        responseModal.addEventListener('click', (e) => {
-            if (e.target === responseModal) {
-                responseModal.classList.remove('active');
-                supportForm.reset();
+        // Close chat
+        closeChatBtn.addEventListener('click', () => {
+            chatModal.classList.remove('active');
+            chatModalBackdrop.classList.remove('active');
+        });
+
+        // Close chat when clicking backdrop
+        chatModalBackdrop.addEventListener('click', () => {
+            chatModal.classList.remove('active');
+            chatModalBackdrop.classList.remove('active');
+        });
+
+        // Send message
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const userMessage = chatInput.value.trim();
+            if (!userMessage) return;
+
+            // Add user message
+            const userMessageEl = document.createElement('div');
+            userMessageEl.className = 'chat-message user-message';
+            userMessageEl.innerHTML = `
+                <div class="message-content">
+                    <p>${escapeHtml(userMessage)}</p>
+                </div>
+                <span class="message-time">now</span>
+            `;
+            chatMessages.appendChild(userMessageEl);
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Simulate bot thinking
+            setTimeout(() => {
+                const intent = detectIntent(userMessage);
+                const botResponse = getBotResponse(intent);
+
+                const botMessageEl = document.createElement('div');
+                botMessageEl.className = 'chat-message bot-message';
+                botMessageEl.innerHTML = `
+                    <div class="message-content">
+                        <p>${escapeHtml(botResponse)}</p>
+                    </div>
+                    <span class="message-time">now</span>
+                `;
+                chatMessages.appendChild(botMessageEl);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 500);
+        });
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Allow Enter to send, Shift+Enter for new line
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                chatForm.dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // Close chat when clicking outside
+        chatModal.addEventListener('click', (e) => {
+            if (e.target === chatModal) {
+                chatModal.classList.remove('active');
+                chatModalBackdrop.classList.remove('active');
+            }
+        });
+
+        // Accessibility: Close with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && chatModal.classList.contains('active')) {
+                chatModal.classList.remove('active');
+                chatModalBackdrop.classList.remove('active');
             }
         });
     </script>

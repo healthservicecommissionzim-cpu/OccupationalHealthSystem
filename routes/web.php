@@ -61,6 +61,11 @@ Route::get('/first-aid/{record}/download-pdf', [FirstAidController::class, 'down
 // ─── Public Support Request Route ──────────────────────────────────────
 Route::post('/support/public-request', [\App\Http\Controllers\SupportController::class, 'storePublicRequest'])->name('support.public_request');
 
+// ─── Chatbot Routes ────────────────────────────────────────────────────────
+Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
+Route::get('/chat/history', [\App\Http\Controllers\ChatController::class, 'getHistory'])->name('chat.history');
+Route::post('/chat/feedback', [\App\Http\Controllers\ChatController::class, 'logFeedback'])->name('chat.feedback');
+
 // ─── Guest Routes (unauthenticated) ─────────────────────────────────────
 Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisterController::class, 'create'])->name('register');
@@ -106,6 +111,7 @@ Route::middleware(['auth', 'role:super_admin', 'prevent_back'])->group(function 
     Route::post('/user-approval/{user}/reset-password', [UserApprovalController::class, 'resetPassword'])->name('user-approval.reset-password');
     Route::post('/user-approval/{user}/update-personal', [UserApprovalController::class, 'updatePersonal'])->name('user-approval.update-personal');
     Route::post('/user-approval/{user}/update-org', [UserApprovalController::class, 'updateOrg'])->name('user-approval.update-org');
+    Route::post('/user-approval/{user}/update-status', [UserApprovalController::class, 'updateStatus'])->name('user-approval.update-status');
     Route::get('/user-approval/get-org-options', [UserApprovalController::class, 'getOrgOptions'])->name('user-approval.get-org-options');
     Route::get('/api/audit-detail', [UserApprovalController::class, 'getAuditDetail'])->name('api.audit_detail');
 });

@@ -1105,8 +1105,14 @@
             border-radius: 8px;
             font-family: inherit;
             font-size: 0.9rem;
-            color: var(--dark);
+            color: #000000 !important;
+            background-color: #ffffff !important;
             transition: all 0.3s;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #9ca3af !important;
         }
         
         .form-group input:focus,
@@ -1115,11 +1121,25 @@
             outline: none;
             border-color: var(--brand);
             box-shadow: 0 0 0 3px rgba(29, 69, 51, 0.1);
+            background-color: #ffffff !important;
+            color: #000000 !important;
         }
         
         .form-group textarea {
             resize: vertical;
             min-height: 100px;
+            color: #000000 !important;
+            background-color: #ffffff !important;
+        }
+
+        .form-group select {
+            color: #000000 !important;
+            background-color: #ffffff !important;
+        }
+
+        .form-group select option {
+            color: #000000 !important;
+            background-color: #ffffff !important;
         }
         
         /* Response Modal */
@@ -1179,6 +1199,59 @@
             line-height: 1.6;
         }
 
+        /* Chat Modal Backdrop */
+        .chat-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #fef3c7 100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 2040;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .chat-modal-backdrop::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(29, 69, 51, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .chat-modal-backdrop::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            left: -5%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        .chat-modal-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            25% { transform: translateY(-20px) translateX(10px); }
+            50% { transform: translateY(-40px) translateX(0px); }
+            75% { transform: translateY(-20px) translateX(-10px); }
+        }
+
         /* Interactive Chat Modal */
         .chat-modal {
             position: fixed;
@@ -1209,6 +1282,7 @@
             margin: 0;
             width: calc(100% - 2rem);
             max-width: 420px;
+            z-index: 2051;
         }
 
         @media (max-width: 480px) {
@@ -1397,6 +1471,109 @@
             text-align: center;
         }
 
+        /* Loading State Styles */
+        .chat-send-btn.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .chat-send-btn.loading i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Result Modal Styles */
+        .result-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #fef3c7 100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 2040;
+            pointer-events: none;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-modal-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .result-modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            animation: slideUp 0.3s ease;
+            position: relative;
+            z-index: 2051;
+        }
+
+        .result-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result-icon.success {
+            color: #10b981;
+        }
+
+        .result-icon.error {
+            color: #ef4444;
+        }
+
+        .result-modal-content h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .result-modal-content p {
+            font-size: 0.95rem;
+            color: var(--slate);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-button {
+            background: var(--brand);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .result-button:hover {
+            background: var(--brand-dark);
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
         .chat-loading {
             display: inline-block;
             width: 8px;
@@ -1544,7 +1721,7 @@
         <nav>
             <a href="{{ route('resources') }}">Resources</a>
             <a href="{{ route('safety_protocols') }}">Safety Protocols</a>
-            <a href="javascript:void(0);" onclick="document.getElementById('floatingChatBtn').click()">Help Desk</a>
+            <a href="javascript:void(0);" onclick="openSupportModal()">Help Desk</a>
         </nav>
         
         <div class="nav-buttons">
@@ -1576,7 +1753,7 @@
             <a href="{{ route('welcome') }}">Home</a>
             <a href="{{ route('resources') }}">Resources</a>
             <a href="{{ route('safety_protocols') }}">Safety Protocols</a>
-            <a href="javascript:void(0);" onclick="document.getElementById('floatingChatBtn').click(); toggleMobileMenu();">Help Desk</a>
+            <a href="javascript:void(0);" onclick="openSupportModal(); toggleMobileMenu();">Help Desk</a>
         </nav>
         <div class="mobile-menu-buttons">
             <a href="{{ route('login') }}" class="btn btn-primary">Log In</a>
@@ -1641,6 +1818,73 @@
         <i class="fas fa-comments"></i>
     </button>
 
+    <!-- Support Modal Backdrop -->
+    <div class="chat-modal-backdrop" id="supportModalBackdrop"></div>
+
+    <!-- Support Ticket Form Modal -->
+    <div class="chat-modal" id="supportModal">
+        <div class="chat-modal-content">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <i class="fas fa-headset"></i>
+                    <div>
+                        <h3>IT Help Desk</h3>
+                        <p>Submit your support request</p>
+                    </div>
+                </div>
+                <button class="chat-close" id="closeSupportBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="chat-messages" style="background: white; padding: 1.5rem; overflow-y: auto;">
+                <form id="supportForm" class="support-form">
+                    <div class="form-group">
+                        <label for="support_name">Full Name *</label>
+                        <input type="text" id="support_name" name="name" placeholder="Your name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="support_email">Email Address *</label>
+                        <input type="email" id="support_email" name="email" placeholder="your.email@example.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="support_phone">Phone Number (Optional)</label>
+                        <input type="tel" id="support_phone" name="phone" placeholder="+263 (optional)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="support_category">Category *</label>
+                        <select id="support_category" name="category" required>
+                            <option value="">Select a category</option>
+                            <option value="technical">Technical Problem</option>
+                            <option value="account">Account Issue</option>
+                            <option value="incident">Report Incident</option>
+                            <option value="general">General Inquiry</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="support_message">Issue Description *</label>
+                        <textarea id="support_message" name="description" placeholder="Please describe your issue in detail..." required minlength="10"></textarea>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="chat-input-area">
+                <button type="submit" form="supportForm" class="chat-send-btn" style="width: 100%; justify-content: center; font-size: 1rem;">
+                    <i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i> Submit Request
+                </button>
+                <p class="chat-hint">Your request will be forwarded to the IT Department</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Modal Backdrop -->
+    <div class="chat-modal-backdrop" id="chatModalBackdrop"></div>
+
     <!-- Interactive Chatbot Modal -->
     <div class="chat-modal" id="chatModal">
         <div class="chat-modal-content">
@@ -1685,6 +1929,19 @@
         </div>
     </div>
 
+    <!-- Result Modal Backdrop -->
+    <div class="result-modal-backdrop" id="resultModalBackdrop"></div>
+
+    <!-- Result Modal -->
+    <div id="resultModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2051; display: none;">
+        <div class="result-modal-content">
+            <div class="result-icon" id="resultIcon"></div>
+            <h2 id="resultTitle"></h2>
+            <p id="resultMessage"></p>
+            <button class="result-button" id="resultButton">Close</button>
+        </div>
+    </div>
+
 <!-- Footer -->
     <footer>
         <h3>Health Service Commission</h3>
@@ -1708,6 +1965,137 @@
             
             document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
         }
+
+        // Support Modal Functions
+        function openSupportModal() {
+            const supportModal = document.getElementById('supportModal');
+            const supportBackdrop = document.getElementById('supportModalBackdrop');
+            supportModal.classList.add('active');
+            supportBackdrop.classList.add('active');
+        }
+
+        function closeSupportModal() {
+            const supportModal = document.getElementById('supportModal');
+            const supportBackdrop = document.getElementById('supportModalBackdrop');
+            supportModal.classList.remove('active');
+            supportBackdrop.classList.remove('active');
+        }
+
+        // Support Modal Event Listeners
+        document.getElementById('closeSupportBtn')?.addEventListener('click', closeSupportModal);
+        document.getElementById('supportModalBackdrop')?.addEventListener('click', closeSupportModal);
+        
+        // Handle support form submission
+        const setupFormSubmission = () => {
+            const form = document.getElementById('supportForm');
+            if (!form) return;
+            
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const submitBtn = document.querySelector('button[form="supportForm"]');
+                const formData = new FormData(form);
+                const data = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    category: formData.get('category'),
+                    description: formData.get('description'),
+                };
+
+                // Show loading state
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+
+                try {
+                    const response = await fetch('{{ route("support.public_request") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
+
+                    // Hide loading state
+                    submitBtn.classList.remove('loading');
+                    submitBtn.disabled = false;
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        showResultModal('success', 'Request Submitted!', 'Your support request has been submitted successfully.\n\nReference: ' + (result.ticket_number || 'Pending') + '\n\nOur IT team will respond within 24-48 hours.');
+                        form.reset();
+                        
+                        // Close support modal after 1.5 seconds
+                        setTimeout(() => {
+                            closeSupportModal();
+                        }, 1500);
+                    } else {
+                        const result = await response.json();
+                        showResultModal('error', 'Submission Failed', result.message || 'An error occurred while submitting your request. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    submitBtn.classList.remove('loading');
+                    submitBtn.disabled = false;
+                    showResultModal('error', 'Error', 'An error occurred while submitting your request. Please check your connection and try again.');
+                }
+            });
+        };
+
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupFormSubmission);
+        } else {
+            setupFormSubmission();
+        }
+
+        // Show result modal
+        function showResultModal(type, title, message) {
+            const backdrop = document.getElementById('resultModalBackdrop');
+            const modal = document.getElementById('resultModal');
+            const icon = document.getElementById('resultIcon');
+            const titleEl = document.getElementById('resultTitle');
+            const msgEl = document.getElementById('resultMessage');
+            const btn = document.getElementById('resultButton');
+
+            icon.className = 'result-icon ' + type;
+            icon.innerHTML = type === 'success' ? '✓' : '✕';
+            titleEl.textContent = title;
+            msgEl.textContent = message;
+            
+            modal.style.display = 'block';
+            backdrop.classList.add('active');
+
+            btn.onclick = () => {
+                modal.style.display = 'none';
+                backdrop.classList.remove('active');
+            };
+
+            // Close on backdrop click
+            backdrop.onclick = () => {
+                modal.style.display = 'none';
+                backdrop.classList.remove('active');
+            };
+
+            // Close on Escape key
+            const escapeHandler = (e) => {
+                if (e.key === 'Escape') {
+                    modal.style.display = 'none';
+                    backdrop.classList.remove('active');
+                    document.removeEventListener('keydown', escapeHandler);
+                }
+            };
+            document.addEventListener('keydown', escapeHandler);
+        }
+
+        // Escape key closes modals
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeSupportModal();
+            }
+        });
 
         // Chatbot responses - knowledge base
         const chatResponses = {
@@ -1749,6 +2137,7 @@
         // Chat Modal Handler
         const floatingChatBtn = document.getElementById('floatingChatBtn');
         const chatModal = document.getElementById('chatModal');
+        const chatModalBackdrop = document.getElementById('chatModalBackdrop');
         const closeChatBtn = document.getElementById('closeChatBtn');
         const chatForm = document.getElementById('chatForm');
         const chatInput = document.getElementById('chatInput');
@@ -1757,11 +2146,19 @@
         // Open chat
         floatingChatBtn.addEventListener('click', () => {
             chatModal.classList.add('active');
+            chatModalBackdrop.classList.add('active');
         });
 
         // Close chat
         closeChatBtn.addEventListener('click', () => {
             chatModal.classList.remove('active');
+            chatModalBackdrop.classList.remove('active');
+        });
+
+        // Close chat when clicking backdrop
+        chatModalBackdrop.addEventListener('click', () => {
+            chatModal.classList.remove('active');
+            chatModalBackdrop.classList.remove('active');
         });
 
         // Send message
@@ -1821,6 +2218,7 @@
         chatModal.addEventListener('click', (e) => {
             if (e.target === chatModal) {
                 chatModal.classList.remove('active');
+                chatModalBackdrop.classList.remove('active');
             }
         });
 
@@ -1828,6 +2226,7 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && chatModal.classList.contains('active')) {
                 chatModal.classList.remove('active');
+                chatModalBackdrop.classList.remove('active');
             }
         });
     </script>

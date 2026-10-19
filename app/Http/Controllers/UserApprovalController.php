@@ -512,6 +512,76 @@ class UserApprovalController extends Controller
     }
 
     /**
+     * Update user account status (activate, inactivate, suspend)
+     */
+    public function updateStatus(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:active,inactive,suspended',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $oldStatus = $user->account_status ?? 'unknown';
+            $newStatus = $validated['status'];
+
+            // Update user account status
+            $user->update([
+                'account_status' => $newStatus,
+            ]);
+
+            // Log audit trail
+            \App\Services\ForensicAuditService::log([
+                'action' => 'USER_ACCOUNT_STATUS_CHANGED',
+                'resource_type' => 'User',
+                'resource_path' => "/users/{$user->id}",
+                'auditable_type' => 'App\\Models\\User',
+                'auditable_id' => $user->id,
+                'affected_entity' => $user->name . " ({$user->email})",
+                'component' => 'UserApprovalController@updateStatus',
+                'http_code' => 200,
+                'status' => 'SUCCESS',
+                'classification' => 'SECURITY_SENSITIVE',
+                'old_values' => ['account_status' => $oldStatus],
+                'new_values' => ['account_status' => $newStatus],
+                'data_after' => [
+                    'account_status' => $newStatus,
+                    'updated_by' => auth()->user()->name,
+                    'updated_at' => now()->toIso8601String(),
+                ],
+            ]);
+
+            DB::commit();
+
+            Log::info('User account status updated', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'old_status' => $oldStatus,
+                'new_status' => $newStatus,
+                'updated_by' => auth()->user()->name,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Account status updated successfully.',
+                'new_status' => $newStatus,
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to update user account status', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update account status. Please try again.',
+            ], 400);
+        }
+    }
+
+    /**
      * Get organization options for edit form.
      */
     public function getOrgOptions()

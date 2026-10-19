@@ -493,5 +493,8 @@
 <!-- Profile Modal Component -->
 @include('components.profile-modal')
 
+<!-- Welcome Modal Component (shows once after login) -->
+@include('components.welcome-modal')
+
 </body>
 </html>
