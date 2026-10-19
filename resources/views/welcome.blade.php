@@ -1269,6 +1269,9 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
         }
 
         .chat-modal.active {
@@ -1283,6 +1286,9 @@
             width: calc(100% - 2rem);
             max-width: 420px;
             z-index: 2051;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
         }
 
         @media (max-width: 480px) {
