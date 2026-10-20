@@ -780,7 +780,7 @@
                         const option = document.createElement('option');
                         option.value = org.id;
                         option.textContent = org.name;
-                        if (org.id === {{ $user->organization_id ?? 'null' }}) option.selected = true;
+                        if (String(org.id) === String({{ $user->organization_id ?? 'null' }})) option.selected = true;
                         orgSelect.appendChild(option);
                     });
 
@@ -791,7 +791,7 @@
                         const option = document.createElement('option');
                         option.value = dept.id;
                         option.textContent = dept.name;
-                        if (dept.id === {{ $user->department_id ?? 'null' }}) option.selected = true;
+                        if (String(dept.id) === String({{ $user->department_id ?? 'null' }})) option.selected = true;
                         deptSelect.appendChild(option);
                     });
 
@@ -802,7 +802,7 @@
                         const option = document.createElement('option');
                         option.value = desig.id;
                         option.textContent = desig.name;
-                        if (desig.id === {{ $user->designation_id ?? 'null' }}) option.selected = true;
+                        if (String(desig.id) === String({{ $user->designation_id ?? 'null' }})) option.selected = true;
                         desigSelect.appendChild(option);
                     });
 
@@ -813,7 +813,7 @@
                         const option = document.createElement('option');
                         option.value = prov.id;
                         option.textContent = prov.name;
-                        if (prov.id === {{ $user->province_id ?? 'null' }}) option.selected = true;
+                        if (String(prov.id) === String({{ $user->province_id ?? 'null' }})) option.selected = true;
                         provSelect.appendChild(option);
                     });
 
@@ -824,7 +824,8 @@
                         const option = document.createElement('option');
                         option.value = dist.id;
                         option.textContent = dist.name;
-                        if (dist.id === {{ $user->district_id ?? 'null' }}) option.selected = true;
+                        option.setAttribute('data-province', dist.province_id || '');
+                        if (String(dist.id) === String({{ $user->district_id ?? 'null' }})) option.selected = true;
                         distSelect.appendChild(option);
                     });
 
@@ -835,7 +836,7 @@
                         const option = document.createElement('option');
                         option.value = ft.id;
                         option.textContent = ft.name;
-                        if (ft.id === {{ $user->facility_type_id ?? 'null' }}) option.selected = true;
+                        if (String(ft.id) === String({{ $user->facility_type_id ?? 'null' }})) option.selected = true;
                         ftSelect.appendChild(option);
                     });
 
@@ -846,7 +847,7 @@
                         const option = document.createElement('option');
                         option.value = fac.id;
                         option.textContent = fac.name;
-                        if (fac.id === {{ $user->facility_id ?? 'null' }}) option.selected = true;
+                        if (String(fac.id) === String({{ $user->facility_id ?? 'null' }})) option.selected = true;
                         facSelect.appendChild(option);
                     });
                 });

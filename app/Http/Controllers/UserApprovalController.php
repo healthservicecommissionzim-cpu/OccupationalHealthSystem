@@ -591,7 +591,7 @@ class UserApprovalController extends Controller
             'departments' => Department::orderBy('name')->get(),
             'designations' => Designation::orderBy('name')->get(),
             'provinces' => Province::orderBy('name')->get(),
-            'districts' => District::orderBy('name')->get(),
+            'districts' => District::with('province')->orderBy('name')->get(['id', 'name', 'province_id']),
             'facility_types' => FacilityType::orderBy('name')->get(),
             'facilities' => Facility::orderBy('name')->get(),
         ]);
