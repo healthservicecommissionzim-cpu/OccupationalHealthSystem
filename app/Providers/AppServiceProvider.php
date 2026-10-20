@@ -19,6 +19,9 @@ use App\Events\IncidentWithWitnessesSubmitted;
 use App\Listeners\SendWitnessNotifications;
 use App\Events\WitnessStatementSubmitted;
 use App\Listeners\HandleWitnessStatementSubmitted;
+use App\Events\IncidentCreated;
+use App\Listeners\SendIncidentConfirmationEmail;
+use App\Listeners\SendSupervisorIncidentAlert;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -90,6 +93,17 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Support\Facades\Event::listen(
             WitnessStatementSubmitted::class,
             HandleWitnessStatementSubmitted::class
+        );
+
+        // Register incident creation listeners
+        \Illuminate\Support\Facades\Event::listen(
+            IncidentCreated::class,
+            SendIncidentConfirmationEmail::class
+        );
+
+        \Illuminate\Support\Facades\Event::listen(
+            IncidentCreated::class,
+            SendSupervisorIncidentAlert::class
         );
 
         // Register Gate callbacks for permission checks
