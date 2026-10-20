@@ -1271,6 +1271,7 @@
         
         // Supervisors mapping
         const supervisorsByDept = {!! $supervisorsByDeptJson !!};
+        const supervisorsByDeptAndFacility = {!! $supervisorsByDeptAndFacilityJson !!};
         const supervisorsByDesignation = {!! json_encode($supervisorsByDesignation) !!};
         const departmentsData = {!! json_encode($departments->pluck('name', 'id')) !!};
         const designations = {!! json_encode($designations->pluck('name', 'id')) !!};
@@ -1386,25 +1387,36 @@
 
         function updateSupervisorDesignations() {
             const departmentSelect = document.getElementById('department');
+            const facilitySelect = document.getElementById('facility');
             const supervisorSelect = document.getElementById('supervisor_designation');
             const supervisorNameSelect = document.getElementById('supervisor_name');
             const selectedDeptId = departmentSelect.value;
+            const selectedFacilityId = facilitySelect.value;
 
             supervisorSelect.innerHTML = '<option value="">— Select Supervisor Designation —</option>';
             supervisorNameSelect.innerHTML = '<option value="">— Select Supervisor —</option>';
 
             // Debug: Log the data
-            console.log('Selected Dept ID:', selectedDeptId, 'Type:', typeof selectedDeptId);
-            console.log('Available supervisors by dept:', supervisorsByDept);
+            console.log('Selected Dept ID:', selectedDeptId, 'Facility ID:', selectedFacilityId);
+            console.log('Available supervisors by dept+facility:', supervisorsByDeptAndFacility);
+            console.log('Available supervisors by dept only:', supervisorsByDept);
             console.log('Designations lookup:', designations);
 
-            // Try both string and numeric keys since JSON keys are always strings
             if (selectedDeptId) {
-                let designationIds = supervisorsByDept[selectedDeptId] || supervisorsByDept[String(selectedDeptId)];
+                let designationIds = [];
                 
-                console.log('Found designations:', designationIds);
+                // If facility is selected, use combined dept+facility lookup
+                if (selectedFacilityId) {
+                    const compositeKey = selectedDeptId + '_' + selectedFacilityId;
+                    designationIds = supervisorsByDeptAndFacility[compositeKey] || [];
+                    console.log('Using dept+facility filter. Key:', compositeKey, 'Found:', designationIds);
+                } else {
+                    // If no facility selected yet, use department-only lookup as fallback
+                    designationIds = supervisorsByDept[selectedDeptId] || supervisorsByDept[String(selectedDeptId)] || [];
+                    console.log('Using dept-only filter. Found:', designationIds);
+                }
                 
-                if (designationIds && Array.isArray(designationIds)) {
+                if (designationIds && Array.isArray(designationIds) && designationIds.length > 0) {
                     console.log('Adding', designationIds.length, 'designation(s)');
                     designationIds.forEach(designationId => {
                         if (designationId) { // Skip null IDs
@@ -1417,20 +1429,38 @@
                         }
                     });
                 } else {
-                    console.warn(`No supervisors found for department ID: ${selectedDeptId}`);
+                    console.warn(`No supervisors found for department ID: ${selectedDeptId}, facility ID: ${selectedFacilityId}`);
                 }
             }
         }
 
         function updateSupervisorNames() {
+            const departmentSelect = document.getElementById('department');
+            const facilitySelect = document.getElementById('facility');
             const supervisorDesignationSelect = document.getElementById('supervisor_designation');
             const supervisorNameSelect = document.getElementById('supervisor_name');
             const selectedDesignationId = supervisorDesignationSelect.value;
+            const selectedDeptId = departmentSelect.value;
+            const selectedFacilityId = facilitySelect.value;
 
             supervisorNameSelect.innerHTML = '<option value="">— Select Supervisor —</option>';
 
+            console.log('updateSupervisorNames - Designation:', selectedDesignationId, 'Dept:', selectedDeptId, 'Facility:', selectedFacilityId);
+
             if (selectedDesignationId && supervisorsByDesignation[selectedDesignationId]) {
-                supervisorsByDesignation[selectedDesignationId].forEach(supervisor => {
+                const allSupervisors = supervisorsByDesignation[selectedDesignationId];
+                console.log('All supervisors for designation:', allSupervisors);
+                
+                // Filter supervisors by department AND facility (if facility is selected)
+                const filteredSupervisors = allSupervisors.filter(supervisor => {
+                    const deptMatch = !selectedDeptId || String(supervisor.department_id) === String(selectedDeptId);
+                    const facilityMatch = !selectedFacilityId || String(supervisor.facility_id) === String(selectedFacilityId);
+                    return deptMatch && facilityMatch;
+                });
+
+                console.log('Filtered supervisors:', filteredSupervisors);
+
+                filteredSupervisors.forEach(supervisor => {
                     const opt = document.createElement('option');
                     opt.value = supervisor.id;
                     opt.textContent = supervisor.name;
@@ -1468,6 +1498,7 @@
             facilityTypeSelect.addEventListener('change', handleFacilityTypeChange);
             document.getElementById('province').addEventListener('change', updateDistricts);
             document.getElementById('district').addEventListener('change', updateFacilities);
+            document.getElementById('facility').addEventListener('change', updateSupervisorDesignations);
             // Note: Department change listener is now handled by Select2 in the $(document).ready block below
 
             // Add change listener to supervisor designation

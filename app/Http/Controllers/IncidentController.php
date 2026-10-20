@@ -103,13 +103,14 @@ class IncidentController extends Controller
             return Designation::whereIn('name', $supervisorDesignations)->pluck('id')->toArray();
         });
 
-        // CRITICAL OPTIMIZATION: Simplified supervisor query - removed complex OR conditions
-        $supervisors = cache()->remember('form_supervisors_v2', $cacheMinutes * 60, function() use ($supervisorDesignationIds) {
+        // CRITICAL OPTIMIZATION: Simplified supervisor query - include facility_id for filtering
+        $supervisors = cache()->remember('form_supervisors_v3', $cacheMinutes * 60, function() use ($supervisorDesignationIds) {
             return User::whereHas('roles', fn($q) => $q->where('name', 'supervisor'))
-                ->select('id', 'name', 'designation_id', 'department_id')
+                ->select('id', 'name', 'designation_id', 'department_id', 'facility_id')
                 ->with([
                     'designation:id,name',
-                    'department:id,name'
+                    'department:id,name',
+                    'facility:id,name'
                 ])
                 ->orderBy('name')
                 ->get();
@@ -118,6 +119,7 @@ class IncidentController extends Controller
         // Build supervisor mappings in memory (fast operation)
         $supervisorsByDesignation = [];
         $supervisorsByDeptIds = [];
+        $supervisorsByDeptAndFacility = [];
         
         foreach ($supervisors as $supervisor) {
             // Map by designation
@@ -128,6 +130,8 @@ class IncidentController extends Controller
                 $supervisorsByDesignation[$supervisor->designation_id][] = [
                     'id' => $supervisor->id,
                     'name' => $supervisor->name,
+                    'department_id' => $supervisor->department_id,
+                    'facility_id' => $supervisor->facility_id,
                 ];
             }
             
@@ -140,9 +144,21 @@ class IncidentController extends Controller
                     $supervisorsByDeptIds[$supervisor->department_id][] = $supervisor->designation_id;
                 }
             }
+
+            // Map by department AND facility
+            if ($supervisor->department_id && $supervisor->facility_id && $supervisor->designation_id) {
+                $key = $supervisor->department_id . '_' . $supervisor->facility_id;
+                if (!isset($supervisorsByDeptAndFacility[$key])) {
+                    $supervisorsByDeptAndFacility[$key] = [];
+                }
+                if (!in_array($supervisor->designation_id, $supervisorsByDeptAndFacility[$key])) {
+                    $supervisorsByDeptAndFacility[$key][] = $supervisor->designation_id;
+                }
+            }
         }
 
         $supervisorsByDeptJson = json_encode($supervisorsByDeptIds);
+        $supervisorsByDeptAndFacilityJson = json_encode($supervisorsByDeptAndFacility);
 
         return view('incidents.create', compact(
             'facilityTypes',
@@ -153,7 +169,8 @@ class IncidentController extends Controller
             'designations',
             'incidentTypes',
             'supervisorsByDeptJson',
-            'supervisorsByDesignation'
+            'supervisorsByDesignation',
+            'supervisorsByDeptAndFacilityJson'
         ));
     }
 
