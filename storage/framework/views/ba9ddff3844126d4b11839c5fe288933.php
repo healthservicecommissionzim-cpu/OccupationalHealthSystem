@@ -118,17 +118,17 @@
         <i class="fa-solid fa-chevron-down text-xs transition-transform" :class="{ 'rotate-180': open }"></i>
     </button>
     <div x-show="open" class="space-y-1 pl-2">
-        <a href="#" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-bullhorn w-4 text-center text-slate-700"></i>
-            <span>Broadcast Notifications</span>
-        </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-sms w-4 text-center text-slate-700"></i>
-            <span>SMS Settings</span>
-        </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
+        <a href="<?php echo e(route('system.communication_logs.index')); ?>" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
             <i class="fa-solid fa-envelope w-4 text-center text-slate-700"></i>
-            <span>Email Templates</span>
+            <span>Communication Logs</span>
+        </a>
+        <a href="<?php echo e(route('system.communication_logs.index', ['channel' => 'email'])); ?>" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
+            <i class="fa-solid fa-envelope-open w-4 text-center text-slate-700"></i>
+            <span>Email Logs</span>
+        </a>
+        <a href="<?php echo e(route('system.communication_logs.index', ['channel' => 'sms'])); ?>" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
+            <i class="fa-solid fa-sms w-4 text-center text-slate-700"></i>
+            <span>SMS Logs</span>
         </a>
     </div>
 </div>

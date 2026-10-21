@@ -238,6 +238,22 @@
             overflow: hidden;
         }
 
+        /* Mobile hero - show background image */
+        @media (max-width: 500px) {
+            .hero {
+                background: linear-gradient(135deg, rgba(240, 253, 244, 0.85) 0%, rgba(255, 255, 255, 0.85) 100%), url('<?php echo e(asset("images/hero image.jpg")); ?>');
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                padding: 3rem 2% 2.5rem;
+                min-height: 500px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+
         .hero::before {
             content: '';
             position: absolute;
@@ -254,6 +270,13 @@
             background-repeat: repeat, no-repeat, no-repeat;
             z-index: 0;
             animation: slideInBg 15s ease-in-out infinite;
+        }
+
+        /* Hide SVG background on mobile */
+        @media (max-width: 500px) {
+            .hero::before {
+                display: none;
+            }
         }
 
         /* Decorative white circles */
@@ -316,6 +339,17 @@
             right: 8%;
             z-index: 0;
             animation: float 9s ease-in-out infinite;
+        }
+
+        /* Hide decorative circles on mobile */
+        @media (max-width: 500px) {
+            .hero::after,
+            .hero .circle-1,
+            .hero .circle-2,
+            .hero .circle-3,
+            .hero .circle-4 {
+                display: none;
+            }
         }
         
         @keyframes slideInBg {
@@ -400,6 +434,25 @@
             .features {
                 grid-template-columns: repeat(3, 1fr);
                 gap: 2rem;
+            }
+        }
+
+        /* Mobile: Enhanced background styling */
+        @media (max-width: 500px) {
+            .features {
+                background: #ffffff;
+                padding: 2.5rem 2%;
+                gap: 1.5rem;
+                position: relative;
+            }
+            
+            .features::before {
+                display: block;
+                background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 60"><defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:%231D4533;stop-opacity:0.05"/><stop offset="50%" style="stop-color:%231D4533;stop-opacity:0.08"/><stop offset="100%" style="stop-color:%231D4533;stop-opacity:0.03"/></linearGradient></defs><path d="M0,30 Q125,10 250,30 T500,30 L500,60 L0,60" fill="url(%23grad)"/></svg>');
+                background-size: 500px 60px;
+                background-repeat: repeat-x;
+                top: -30px;
+                height: 60px;
             }
         }
         
@@ -1691,15 +1744,30 @@
             
             .hero h1 {
                 font-size: 1.5rem;
+                color: var(--brand);
+                text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                position: relative;
+                z-index: 2;
+            }
+            
+            .hero h1 span {
+                color: var(--brand);
+                text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             }
             
             .hero p {
                 font-size: 0.95rem;
+                color: var(--dark);
+                text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+                position: relative;
+                z-index: 2;
             }
             
             .hero-badge {
                 font-size: 0.7rem;
                 padding: 0.3rem 0.8rem;
+                position: relative;
+                z-index: 2;
             }
         }
         

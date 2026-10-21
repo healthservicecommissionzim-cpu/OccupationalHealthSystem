@@ -4,7 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Account Pending Approval</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
+        :root {
+            --brand: #1D4533;
+            --brand-dark: #0f2818;
+            --brand-light: #f0fdf4;
+            --slate: #475569;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,257 +21,118 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #ffffff;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            color: #0f172a;
         }
 
         .container {
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(29, 69, 51, 0.12), 0 2px 8px rgba(29, 69, 51, 0.08);
             max-width: 500px;
             width: 100%;
-            padding: 40px;
+            padding: 60px 40px;
             text-align: center;
         }
 
-        .status-icon {
+        @media (max-width: 500px) {
+            .container {
+                padding: 40px 25px;
+            }
+        }
+
+        .icon {
             width: 80px;
             height: 80px;
-            margin: 0 auto 20px;
+            margin: 0 auto 30px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 40px;
-        }
-
-        .status-icon.pending {
-            background: #fef3c7;
-            color: #d97706;
-        }
-
-        .status-icon.rejected {
-            background: #fee2e2;
-            color: #dc2626;
+            background: var(--brand-light);
+            color: var(--brand);
+            box-shadow: 0 4px 16px rgba(29, 69, 51, 0.15);
         }
 
         h1 {
             font-size: 28px;
-            margin-bottom: 10px;
-            color: #333;
+            margin-bottom: 16px;
+            color: #0f172a;
+            font-weight: 800;
+            letter-spacing: -0.02em;
         }
 
-        .status-text {
+        p {
             font-size: 16px;
-            color: #666;
-            margin-bottom: 20px;
+            color: var(--slate);
             line-height: 1.6;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 25px;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .alert.warning {
-            background: #fef3c7;
-            border-left: 4px solid #d97706;
-            color: #92400e;
-        }
-
-        .alert.error {
-            background: #fee2e2;
-            border-left: 4px solid #dc2626;
-            color: #7f1d1d;
-        }
-
-        .timeline {
-            background: #f9fafb;
-            border-radius: 6px;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: left;
-        }
-
-        .timeline-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 15px;
-        }
-
-        .timeline-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .timeline-marker {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            flex-shrink: 0;
-            font-size: 12px;
-            font-weight: 600;
-            color: #6b7280;
-        }
-
-        .timeline-marker.complete {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .timeline-content h3 {
-            font-size: 14px;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 5px;
-        }
-
-        .timeline-content p {
-            font-size: 13px;
-            color: #6b7280;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 25px;
+            margin-bottom: 20px;
         }
 
         .btn {
-            flex: 1;
-            padding: 10px 20px;
+            padding: 12px 32px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             transition: all 0.3s ease;
+            margin-top: 20px;
         }
 
         .btn-primary {
-            background: #667eea;
+            background: var(--brand);
             color: white;
+            box-shadow: 0 4px 12px rgba(29, 69, 51, 0.2);
         }
 
         .btn-primary:hover {
-            background: #5568d3;
+            background: var(--brand-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(29, 69, 51, 0.3);
+            text-decoration: none;
         }
 
         .btn-secondary {
             background: #e5e7eb;
             color: #374151;
+            border: 1px solid #d1d5db;
         }
 
         .btn-secondary:hover {
             background: #d1d5db;
-        }
-
-        .contact-info {
-            font-size: 12px;
-            color: #9ca3af;
-            margin-top: 20px;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        @if (session('error') || (auth()->check() && auth()->user()->isRejected()))
-            <div class="status-icon rejected">⛔</div>
-            <h1>Application Rejected</h1>
-            <div class="alert error">{{ session('error', 'Your application has been reviewed and rejected.') }}</div>
-            <p class="status-text">Your application has been reviewed and rejected.</p>
-            @if (auth()->check())
-                @php
-                    $daysRemaining = auth()->user()->getDaysUntilRetry();
-                    $canReapply = auth()->user()->canRetryApplication();
-                @endphp
-                @if ($canReapply)
-                    <p class="status-text" style="color: #059669; font-weight: 500;">You can now reapply for an account.</p>
-                @else
-                    @if ($daysRemaining !== null)
-                        <p class="status-text">You can reapply in <strong>{{ $daysRemaining }} day(s)</strong>.</p>
-                    @endif
-                @endif
-            @endif
-        @else
-            <div class="status-icon pending">⏳</div>
-            <h1>Account Pending Approval</h1>
-            <div class="alert warning">{{ session('warning', 'Your account is pending approval.') }}</div>
-        @endif
-
-        <p class="status-text">
-            Thank you for registering! Your account is under review by our Super Admin team.
-        </p>
-
-        <div class="timeline">
-            <div class="timeline-item">
-                <div class="timeline-marker complete">✓</div>
-                <div class="timeline-content">
-                    <h3>Account Created</h3>
-                    <p>Your account has been successfully registered.</p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-marker">2</div>
-                <div class="timeline-content">
-                    <h3>Under Review</h3>
-                    <p>Our team is reviewing your application and details.</p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-marker">3</div>
-                <div class="timeline-content">
-                    <h3>Role Assignment</h3>
-                    <p>You will be assigned an appropriate role and permissions.</p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-marker">4</div>
-                <div class="timeline-content">
-                    <h3>Approval Complete</h3>
-                    <p>You can log in and access the system.</p>
-                </div>
-            </div>
+        <div class="icon">
+            <i class="fa-solid fa-hourglass-end"></i>
         </div>
-
-        <p class="status-text">
-            <strong>Expected Timeline:</strong> Typically within 24-48 business hours.
-        </p>
-
-        <div class="button-group">
-            @if (auth()->check() && auth()->user()->isRejected() && auth()->user()->canRetryApplication())
-                <form method="POST" action="{{ route('retry-application') }}" style="flex: 1;">
-                    @csrf
-                    <button type="submit" class="btn btn-primary" style="width: 100%; margin: 0;">
-                        Reapply Now
-                    </button>
-                </form>
-            @endif
-            <form method="POST" action="{{ route('logout') }}" style="flex: 1;">
+        
+        <h1>Account Pending Approval</h1>
+        
+        <p>Your account is pending approval. Please contact IT for help.</p>
+        
+        <div>
+            <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                 @csrf
-                <button type="submit" class="btn btn-secondary" style="width: 100%; margin: 0;">
-                    Logout
+                <button type="submit" class="btn btn-secondary">
+                    <i class="fa-solid fa-sign-out-alt"></i> Logout
                 </button>
             </form>
-        </div>
-
-        <div class="contact-info">
-            If you have questions, please contact support at support@example.com
         </div>
     </div>
 </body>
