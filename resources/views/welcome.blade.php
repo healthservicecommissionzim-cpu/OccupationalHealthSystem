@@ -26,6 +26,10 @@
     <!-- Preload critical assets -->
     <link rel="preload" href="{{ asset('images/hsc-logo.png') }}" as="image">
     
+    <!-- Botpress Chatbot Script -->
+    <script src="https://cdn.botpress.cloud/webchat/v5.0/inject.js"></script>
+    <script src="https://files.bpcontent.cloud/2026/10/21/16/20261021161004-5GQMAHNX.js" defer></script>
+    
     @vite(['resources/css/app.css'])
     <style>
         :root {
@@ -1957,11 +1961,6 @@
         </div>
     </div>
 
-    <!-- Floating Chat Widget -->
-    <button class="floating-chat-btn" id="floatingChatBtn" title="Chat with us" aria-label="Open chat - Contact Support">
-        <i class="fas fa-comments"></i>
-    </button>
-
     <!-- Support Modal Backdrop -->
     <div class="chat-modal-backdrop" id="supportModalBackdrop"></div>
 
@@ -2264,139 +2263,62 @@
                 closeSupportModal();
             }
         });
-
-        // Chatbot responses - knowledge base
-        const chatResponses = {
-            greetings: ['hello', 'hi', 'hey', 'greetings', 'good morning', 'good afternoon', 'good evening'],
-            reportIncident: ['report', 'incident', 'report incident', 'file report', 'new incident', 'submit incident'],
-            trackIncident: ['track', 'status', 'my incident', 'where is my', 'progress', 'track incident'],
-            firstAid: ['first aid', 'first-aid', 'minor injury', 'small injury', 'band-aid'],
-            password: ['password', 'forgot password', 'reset password', 'can\'t login', 'login issue'],
-            faq: ['faq', 'frequently asked', 'help', 'how do i', 'how to'],
-            contact: ['contact', 'support', 'help desk', 'phone', 'email', 'reach out'],
-        };
-
-        function detectIntent(userMessage) {
-            const message = userMessage.toLowerCase().trim();
-            
-            for (const [intent, keywords] of Object.entries(chatResponses)) {
-                if (keywords.some(keyword => message.includes(keyword))) {
-                    return intent;
-                }
-            }
-            return 'default';
-        }
-
-        function getBotResponse(intent) {
-            const responses = {
-                greetings: "👋 Hello! I'm the HSC-OHS Assistant. How can I help you today? I can assist with:\n• Reporting incidents\n• Tracking your incidents\n• First aid logging\n• Password resets\n• General questions",
-                reportIncident: "📋 To report an incident:\n1. Click 'Report Incident' on the main page\n2. Fill in the incident details\n3. Provide any relevant attachments\n4. Submit for review\n\nWould you like the direct link?",
-                trackIncident: "🔍 To track your incident:\n1. Go to 'Track & Upload' page\n2. Enter your incident reference number\n3. View the current status\n4. Upload any required documents\n\nDo you have your reference number?",
-                firstAid: "🏥 First Aid Logging:\nFor minor injuries that don't require a full incident report, use our First Aid Log feature. It's quick and confidential.\n\nWould you like help with that?",
-                password: "🔐 Password Help:\nIf you forgot your password:\n1. Click 'Log In' on the main page\n2. Select 'Forgot Password'\n3. Enter your email\n4. Follow the reset link\n\nStill having issues?",
-                faq: "❓ Common Questions:\n• How do I report an incident?\n• What happens after I report?\n• How long does review take?\n• Can I upload documents later?\n• Is my information private?\n\nWhich would you like to know about?",
-                contact: "📞 Contact Support:\n• Email: support@hsc.org.zw\n• Phone: +263 (8AM-5PM CAT)\n• Response time: 24-48 hours\n\nOr submit a formal support request using this chat.",
-                default: "I'm here to help! Could you clarify your question? For example, you can ask about:\n• Reporting incidents\n• Tracking incidents\n• First aid logging\n• Passwords and login\n• General questions"
-            };
-            
-            return responses[intent] || responses.default;
-        }
-
-        // Chat Modal Handler
-        const floatingChatBtn = document.getElementById('floatingChatBtn');
-        const chatModal = document.getElementById('chatModal');
-        const chatModalBackdrop = document.getElementById('chatModalBackdrop');
-        const closeChatBtn = document.getElementById('closeChatBtn');
-        const chatForm = document.getElementById('chatForm');
-        const chatInput = document.getElementById('chatInput');
-        const chatMessages = document.getElementById('chatMessages');
-
-        // Open chat
-        floatingChatBtn.addEventListener('click', () => {
-            chatModal.classList.add('active');
-            chatModalBackdrop.classList.add('active');
-        });
-
-        // Close chat
-        closeChatBtn.addEventListener('click', () => {
-            chatModal.classList.remove('active');
-            chatModalBackdrop.classList.remove('active');
-        });
-
-        // Close chat when clicking backdrop
-        chatModalBackdrop.addEventListener('click', () => {
-            chatModal.classList.remove('active');
-            chatModalBackdrop.classList.remove('active');
-        });
-
-        // Send message
-        chatForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const userMessage = chatInput.value.trim();
-            if (!userMessage) return;
-
-            // Add user message
-            const userMessageEl = document.createElement('div');
-            userMessageEl.className = 'chat-message user-message';
-            userMessageEl.innerHTML = `
-                <div class="message-content">
-                    <p>${escapeHtml(userMessage)}</p>
-                </div>
-                <span class="message-time">now</span>
-            `;
-            chatMessages.appendChild(userMessageEl);
-            chatInput.value = '';
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            // Simulate bot thinking
-            setTimeout(() => {
-                const intent = detectIntent(userMessage);
-                const botResponse = getBotResponse(intent);
-
-                const botMessageEl = document.createElement('div');
-                botMessageEl.className = 'chat-message bot-message';
-                botMessageEl.innerHTML = `
-                    <div class="message-content">
-                        <p>${escapeHtml(botResponse)}</p>
-                    </div>
-                    <span class="message-time">now</span>
-                `;
-                chatMessages.appendChild(botMessageEl);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 500);
-        });
-
-        // Escape HTML to prevent XSS
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Allow Enter to send, Shift+Enter for new line
-        chatInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                chatForm.dispatchEvent(new Event('submit'));
-            }
-        });
-
-        // Close chat when clicking outside
-        chatModal.addEventListener('click', (e) => {
-            if (e.target === chatModal) {
-                chatModal.classList.remove('active');
-                chatModalBackdrop.classList.remove('active');
-            }
-        });
-
-        // Accessibility: Close with Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && chatModal.classList.contains('active')) {
-                chatModal.classList.remove('active');
-                chatModalBackdrop.classList.remove('active');
-            }
-        });
     </script>
+    
+    <!-- Botpress Chatbot Widget -->
+    <script src="https://cdn.botpress.cloud/webchat/v5.0/inject.js"></script>
+    <script src="https://files.bpcontent.cloud/2026/10/21/16/20261021161004-5GQMAHNX.js" defer></script>
+    
+    <!-- Customize Botpress Widget Colors -->
+    <style>
+        /* Customize Botpress chat button to match brand colors */
+        #bp-web-widget-container button[aria-label*="button" i],
+        #bp-web-widget-container .bpHeader,
+        #bp-web-widget-container .bpButton {
+            background-color: #1D4533 !important;
+        }
+        
+        #bp-web-widget-container button[aria-label*="button" i]:hover {
+            background-color: #0f2818 !important;
+        }
+        
+        /* Custom styling for the widget */
+        #bp-web-widget-container {
+            --primary-color: #1D4533;
+            --primary-hover: #0f2818;
+        }
+        
+        /* Style the floating chat button */
+        div[id^="bp-"] > button {
+            background-color: #1D4533 !important;
+            box-shadow: 0 4px 12px rgba(29, 69, 51, 0.3) !important;
+        }
+        
+        div[id^="bp-"] > button:hover {
+            background-color: #0f2818 !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px rgba(29, 69, 51, 0.4) !important;
+        }
+        
+        /* Hide "⚡ by Botpress" branding */
+        #bp-web-widget-container a[href*="botpress"],
+        #bp-web-widget-container [class*="powered"],
+        #bp-web-widget-container [class*="branding"],
+        div[id^="bp-"] a[href*="botpress"],
+        div[id^="bp-"] [class*="powered"],
+        div[id^="bp-"] [class*="branding"] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            height: 0 !important;
+            overflow: hidden !important;
+        }
+        
+        /* Also hide any footer with Botpress link */
+        #bp-web-widget-container footer,
+        div[id^="bp-"] footer {
+            display: none !important;
+        }
+    </style>
 </body>
 </html>

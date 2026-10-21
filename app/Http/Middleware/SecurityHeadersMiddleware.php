@@ -37,11 +37,12 @@ class SecurityHeadersMiddleware
         // Content Security Policy
         $csp = [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdn.botpress.cloud https://files.bpcontent.cloud",
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
             "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:",
             "img-src 'self' data: https:",
-            "connect-src 'self'",
+            "connect-src 'self' https://*.botpress.cloud https://cdn.botpress.cloud",
+            "frame-src 'self' https://cdn.botpress.cloud",
             "frame-ancestors 'self'",
             "base-uri 'self'",
             "form-action 'self' https:",
