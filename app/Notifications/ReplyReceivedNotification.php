@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\SupportTicket;
+use App\Services\CommunicationLogger;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -34,7 +35,7 @@ class ReplyReceivedNotification extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        $mailMessage = (new MailMessage)
             ->subject("New Reply on Support Ticket - {$this->ticket->ticket_number}")
             ->greeting("Hello {$notifiable->name},")
             ->line("There is a new reply on your support ticket #{$this->ticket->ticket_number}.")
@@ -44,6 +45,22 @@ class ReplyReceivedNotification extends Notification implements ShouldQueue
             ->line($this->replyMessage)
             ->action('View Full Conversation', route('support.ticket.show', $this->ticket->id))
             ->line('Thank you for using our system.');
+
+        // Log the email communication
+        CommunicationLogger::logEmail(
+            'TICKET_REPLY',
+            $notifiable->email,
+            "New Reply on Support Ticket - {$this->ticket->ticket_number}",
+            "New reply on your support ticket: " . substr($this->replyMessage, 0, 100),
+            $mailMessage->render(),
+            'SENT',
+            null,
+            'SupportTicket',
+            $this->ticket->id,
+            $notifiable->id
+        );
+
+        return $mailMessage;
     }
 
     /**

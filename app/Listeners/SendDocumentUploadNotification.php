@@ -6,6 +6,7 @@ use App\Events\IncidentDocumentUploaded;
 use App\Models\IncidentNotification;
 use App\Notifications\DocumentUploadedNotification;
 use App\Services\SMSService;
+use App\Services\CommunicationLogger;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
@@ -78,12 +79,36 @@ class SendDocumentUploadNotification
                         'hr_user_id' => $hrUser->id,
                         'phone' => substr($hrUser->phone_number, -4),
                     ]);
+
+                    // Log SMS communication
+                    CommunicationLogger::logSms(
+                        'DOCUMENT_UPLOAD',
+                        $hrUser->phone_number,
+                        $smsMessage,
+                        'SENT',
+                        null,
+                        'Incident',
+                        $incident->id,
+                        $hrUser->id
+                    );
                 } else {
                     Log::warning('Failed to send SMS notification to assigned HR', [
                         'incident_id' => $incident->id,
                         'hr_user_id' => $hrUser->id,
                         'phone' => substr($hrUser->phone_number, -4),
                     ]);
+
+                    // Log failed SMS communication
+                    CommunicationLogger::logSms(
+                        'DOCUMENT_UPLOAD',
+                        $hrUser->phone_number,
+                        $smsMessage,
+                        'FAILED',
+                        'SMS service returned false',
+                        'Incident',
+                        $incident->id,
+                        $hrUser->id
+                    );
                 }
             }
 

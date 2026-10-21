@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Models\User;
 use App\Models\Role;
+use App\Services\CommunicationLogger;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -41,7 +42,7 @@ class UserApprovedNotification extends Notification
     {
         $loginUrl = route('login');
 
-        return (new MailMessage)
+        $mailMessage = (new MailMessage)
             ->subject('Your Account Has Been Approved')
             ->greeting("Hello {$this->user->name},")
             ->line('Your account registration has been approved!')
@@ -50,6 +51,22 @@ class UserApprovedNotification extends Notification
             ->action('Log In', $loginUrl)
             ->line('If you did not request this approval, please contact support immediately.')
             ->salutation('Best regards,');
+
+        // Log the email
+        CommunicationLogger::logEmail(
+            'APPROVAL',
+            $this->user->email,
+            'Your Account Has Been Approved',
+            'Your account registration has been approved and you can now log in.',
+            $mailMessage->render(),
+            'SENT',
+            null,
+            'User',
+            $this->user->id,
+            $this->user->id
+        );
+
+        return $mailMessage;
     }
 
     /**

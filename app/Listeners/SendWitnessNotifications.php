@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\IncidentWithWitnessesSubmitted;
 use App\Services\WitnessSMSService;
+use App\Services\CommunicationLogger;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 

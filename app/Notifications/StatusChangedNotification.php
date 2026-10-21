@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\SupportTicket;
+use App\Services\CommunicationLogger;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -44,7 +45,7 @@ class StatusChangedNotification extends Notification implements ShouldQueue
         $oldStatusLabel = $statusLabel[$this->oldStatus] ?? $this->oldStatus;
         $newStatusLabel = $statusLabel[$this->newStatus] ?? $this->newStatus;
 
-        return (new MailMessage)
+        $mailMessage = (new MailMessage)
             ->subject("Support Ticket Status Updated - {$this->ticket->ticket_number}")
             ->greeting("Hello {$notifiable->name},")
             ->line("The status of your support ticket has been updated.")
@@ -54,6 +55,22 @@ class StatusChangedNotification extends Notification implements ShouldQueue
             ->line("**New Status:** {$newStatusLabel}")
             ->action('View Ticket Details', route('support.ticket.show', $this->ticket->id))
             ->line('Thank you for your patience.');
+
+        // Log the email communication
+        CommunicationLogger::logEmail(
+            'TICKET_STATUS_CHANGE',
+            $notifiable->email,
+            "Support Ticket Status Updated - {$this->ticket->ticket_number}",
+            "Ticket status changed from {$oldStatusLabel} to {$newStatusLabel}",
+            $mailMessage->render(),
+            'SENT',
+            null,
+            'SupportTicket',
+            $this->ticket->id,
+            $notifiable->id
+        );
+
+        return $mailMessage;
     }
 
     /**

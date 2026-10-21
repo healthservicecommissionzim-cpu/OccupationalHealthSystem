@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\User;
+use App\Services\CommunicationLogger;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -40,7 +41,7 @@ class UserRejectedNotification extends Notification
     {
         $reapplyDate = $notifiable->can_reapply_at?->format('M d, Y') ?? 'N/A';
 
-        return (new MailMessage)
+        $mailMessage = (new MailMessage)
             ->subject('Your Account Registration Was Not Approved')
             ->greeting("Hello {$this->user->name},")
             ->line('Unfortunately, your account registration was not approved.')
@@ -49,6 +50,22 @@ class UserRejectedNotification extends Notification
             ->line("You can reapply for an account on **{$reapplyDate}** or later.")
             ->line('If you believe this is an error or would like to appeal this decision, please contact support.')
             ->salutation('Best regards,');
+
+        // Log the email
+        CommunicationLogger::logEmail(
+            'REJECTION',
+            $this->user->email,
+            'Your Account Registration Was Not Approved',
+            'Your account registration was not approved. Reason: ' . $this->rejectionReason,
+            $mailMessage->render(),
+            'SENT',
+            null,
+            'User',
+            $this->user->id,
+            $this->user->id
+        );
+
+        return $mailMessage;
     }
 
     /**

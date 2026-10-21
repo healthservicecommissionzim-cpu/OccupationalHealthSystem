@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Events\IncidentCreated;
 use App\Models\IncidentNotification;
 use App\Notifications\IncidentSupervisorAlertNotification;
+use App\Services\CommunicationLogger;
 
 class SendSupervisorIncidentAlert
 {
@@ -38,6 +39,20 @@ class SendSupervisorIncidentAlert
             // Send notification
             $supervisor->notify(new IncidentSupervisorAlertNotification($incident));
 
+            // Log the notification in communication logs
+            CommunicationLogger::logEmail(
+                'INCIDENT_CONFIRMATION',
+                $supervisor->email,
+                "Incident Alert - HSC Reference: {$incident->reference_number}",
+                "New incident report submitted by {$incident->first_name} {$incident->surname}",
+                null,
+                'SENT',
+                null,
+                'Incident',
+                $incident->id,
+                $supervisor->id
+            );
+
             // Log the notification
             IncidentNotification::create([
                 'incident_id' => $incident->id,
@@ -48,6 +63,20 @@ class SendSupervisorIncidentAlert
                 'sent_at' => now(),
             ]);
         } catch (\Exception $e) {
+            // Log failure to communication logs
+            CommunicationLogger::logEmail(
+                'INCIDENT_CONFIRMATION',
+                $supervisor->email,
+                "Incident Alert - HSC Reference: {$incident->reference_number}",
+                "New incident report submitted by {$incident->first_name} {$incident->surname}",
+                null,
+                'FAILED',
+                $e->getMessage(),
+                'Incident',
+                $incident->id,
+                $supervisor->id
+            );
+
             // Log failure
             IncidentNotification::create([
                 'incident_id' => $incident->id,

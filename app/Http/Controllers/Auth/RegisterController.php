@@ -13,9 +13,13 @@ use App\Models\FacilityType;
 use App\Models\Facility;
 use App\Models\Role;
 use App\Rules\StrongPassword;
+use App\Notifications\RegistrationConfirmationNotification;
+use App\Services\SMSService;
+use App\Services\CommunicationLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class RegisterController extends Controller
 {
@@ -97,9 +101,32 @@ class RegisterController extends Controller
         // Create user
         $user = User::create($userData);
 
+        // Send registration confirmation email
+        Notification::send($user, new RegistrationConfirmationNotification($user));
+
+        // Send SMS registration confirmation
+        $smsService = new SMSService();
+        $smsSent = $smsService->sendRegistrationConfirmation(
+            $user->phone_number,
+            $validated['first_name'],
+            $validated['last_name']
+        );
+
+        // Log SMS communication
+        CommunicationLogger::logSms(
+            'REGISTRATION',
+            $user->phone_number,
+            "Dear {$validated['first_name']}, Welcome to HSC-OHS. Your account has been successfully created. You are now awaiting admin approval for full access. You will be notified via SMS once your account is approved.",
+            $smsSent ? 'SENT' : 'FAILED',
+            $smsSent ? null : 'SMS service unavailable or invalid phone number',
+            'User',
+            $user->id,
+            $user->id
+        );
+
         // Log successful registration
         Log::info('User registration successful', ['user_id' => $user->id, 'email' => $user->email]);
 
-        return back()->with('success', 'Account Awaiting Verification - Contact Admin');
+        return back()->with('success', 'Account Awaiting Verification - Check your email for confirmation');
     }
 }

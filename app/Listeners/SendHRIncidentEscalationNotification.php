@@ -6,6 +6,7 @@ use App\Events\IncidentEscalatedToHR;
 use App\Models\IncidentNotification;
 use App\Notifications\IncidentHRReviewNotification;
 use App\Models\User;
+use App\Services\CommunicationLogger;
 use Illuminate\Support\Facades\Log;
 
 class SendHRIncidentEscalationNotification
@@ -48,6 +49,20 @@ class SendHRIncidentEscalationNotification
         try {
             // Send notification to the specifically assigned HR user only
             $assignedHRUser->notify(new IncidentHRReviewNotification($incident, $reviewPool));
+
+            // Log the email communication
+            CommunicationLogger::logEmail(
+                'HR_ESCALATION',
+                $assignedHRUser->email,
+                "Incident Escalated to HR Review - HSC Reference: {$incident->reference_number}",
+                "Incident {$incident->reference_number} has been escalated to HR for review",
+                null,
+                'SENT',
+                null,
+                'Incident',
+                $incident->id,
+                $assignedHRUser->id
+            );
 
             // Log the notification in database
             IncidentNotification::create([

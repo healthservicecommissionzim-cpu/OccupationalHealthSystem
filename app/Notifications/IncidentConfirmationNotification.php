@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Incident;
+use App\Services\CommunicationLogger;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -79,7 +80,7 @@ class IncidentConfirmationNotification extends Notification
             $mail->line("");
         }
 
-        return $mail
+        $finalMail = $mail
             ->line("**Important Notes:**")
             ->line("- Keep this email for your records")
             ->line("- Your reference number is needed for all future inquiries")
@@ -87,5 +88,21 @@ class IncidentConfirmationNotification extends Notification
             ->line("")
             ->salutation('Regards,')
             ->salutation('Health Service Commission - Occupational Health & Safety System');
+
+        // Log the email communication
+        CommunicationLogger::logEmail(
+            'INCIDENT_CONFIRMATION',
+            $this->incident->email,
+            "Incident Report Submitted - Reference: {$this->incident->reference_number}",
+            "Your incident report {$this->incident->reference_number} has been successfully submitted",
+            $finalMail->render(),
+            'SENT',
+            null,
+            'Incident',
+            $this->incident->id,
+            null
+        );
+
+        return $finalMail;
     }
 }

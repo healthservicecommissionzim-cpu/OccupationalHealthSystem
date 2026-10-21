@@ -6,6 +6,7 @@ use App\Events\TicketStatusChanged;
 use App\Notifications\StatusChangedNotification;
 use App\Models\TicketNotification;
 use App\Services\SMSService;
+use App\Services\CommunicationLogger;
 use Illuminate\Support\Facades\Log;
 
 class NotifyOriginatorOfStatusChange
@@ -29,6 +30,20 @@ class NotifyOriginatorOfStatusChange
             // Send email notification to originator
             $event->originatorUser->notify(new StatusChangedNotification($event->ticket, $event->oldStatus, $event->newStatus));
 
+            // Log the email communication
+            CommunicationLogger::logEmail(
+                'TICKET_STATUS_CHANGE',
+                $event->originatorUser->email,
+                "Support Ticket {$event->ticket->ticket_number} Status Updated",
+                "Your support ticket status has been changed from {$event->oldStatus} to {$event->newStatus}",
+                null,
+                'SENT',
+                null,
+                'SupportTicket',
+                $event->ticket->id,
+                $event->originatorUser->id
+            );
+
             // Send SMS notification if enabled and phone number exists
             if (config('services.sms.enabled', false) && $event->originatorUser->phone_number) {
                 try {
@@ -44,17 +59,53 @@ class NotifyOriginatorOfStatusChange
                             'originator_phone' => $event->originatorUser->phone_number,
                             'new_status' => $event->newStatus,
                         ]);
+
+                        // Log SMS communication
+                        CommunicationLogger::logSms(
+                            'TICKET_STATUS_CHANGE',
+                            $event->originatorUser->phone_number,
+                            $smsMessage,
+                            'SENT',
+                            null,
+                            'SupportTicket',
+                            $event->ticket->id,
+                            $event->originatorUser->id
+                        );
                     } else {
                         Log::warning('Failed to send SMS for status change', [
                             'ticket_id' => $event->ticket->id,
                             'originator_id' => $event->originatorUser->id,
                         ]);
+
+                        // Log failed SMS
+                        CommunicationLogger::logSms(
+                            'TICKET_STATUS_CHANGE',
+                            $event->originatorUser->phone_number,
+                            $smsMessage,
+                            'FAILED',
+                            'SMS service returned false',
+                            'SupportTicket',
+                            $event->ticket->id,
+                            $event->originatorUser->id
+                        );
                     }
                 } catch (\Exception $e) {
                     Log::error('SMS service error for status change notification', [
                         'ticket_id' => $event->ticket->id,
                         'error' => $e->getMessage(),
                     ]);
+
+                    // Log failed SMS
+                    CommunicationLogger::logSms(
+                        'TICKET_STATUS_CHANGE',
+                        $event->originatorUser->phone_number,
+                        $smsMessage ?? '',
+                        'FAILED',
+                        $e->getMessage(),
+                        'SupportTicket',
+                        $event->ticket->id,
+                        $event->originatorUser->id
+                    );
                 }
             }
 

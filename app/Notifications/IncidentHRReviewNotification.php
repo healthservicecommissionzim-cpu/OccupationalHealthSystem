@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Incident;
+use App\Services\CommunicationLogger;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -46,7 +47,7 @@ class IncidentHRReviewNotification extends Notification
         $incidentDate = $this->incident->incident_date->format('M d, Y');
         $poolLabel = str_replace('_', ' ', $this->reviewPool);
 
-        return (new MailMessage)
+        $mailMessage = (new MailMessage)
             ->subject("Incident HR Review Required - HSC Reference: {$this->incident->reference_number}")
             ->greeting("Hello {$notifiable->name},")
             ->line("An incident report requires your HR review as part of the {$poolLabel} process.")
@@ -66,6 +67,22 @@ class IncidentHRReviewNotification extends Notification
             ->action('Review Incident', $this->dashboardUrl)
             ->line("If you did not expect this notification, please contact the HSC Occupational Health & Safety team.")
             ->salutation('Regards, HSC Occupational Health & Safety System');
+
+        // Log the email communication
+        CommunicationLogger::logEmail(
+            'HR_ESCALATION',
+            $notifiable->email,
+            "Incident HR Review Required - HSC Reference: {$this->incident->reference_number}",
+            "Incident {$this->incident->reference_number} requires HR review",
+            $mailMessage->render(),
+            'SENT',
+            null,
+            'Incident',
+            $this->incident->id,
+            $notifiable->id
+        );
+
+        return $mailMessage;
     }
 
     /**

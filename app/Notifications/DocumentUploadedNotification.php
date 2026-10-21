@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Incident;
+use App\Services\CommunicationLogger;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -47,7 +48,7 @@ class DocumentUploadedNotification extends Notification
             ? "{$this->uploadCount} new document(s) have been uploaded" 
             : "A new document has been uploaded";
 
-        return (new MailMessage)
+        $mailMessage = (new MailMessage)
             ->subject("Documents Uploaded - HSC Reference: {$this->incident->reference_number}")
             ->greeting("Hello {$notifiable->name},")
             ->line("New documents have been submitted for incident verification.")
@@ -65,6 +66,22 @@ class DocumentUploadedNotification extends Notification
             ->action('Review Documents', $this->dashboardUrl)
             ->line("All documents must be verified before proceeding with case processing.")
             ->salutation('Regards, HSC Occupational Health & Safety System');
+
+        // Log the email
+        CommunicationLogger::logEmail(
+            'DOCUMENT_UPLOAD',
+            $notifiable->email,
+            "Documents Uploaded - HSC Reference: {$this->incident->reference_number}",
+            "{$uploadMessage} for incident {$this->incident->reference_number}",
+            $mailMessage->render(),
+            'SENT',
+            null,
+            'Incident',
+            $this->incident->id,
+            $notifiable->id
+        );
+
+        return $mailMessage;
     }
 
     /**

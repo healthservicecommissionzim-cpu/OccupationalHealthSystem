@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Incident;
+use App\Services\CommunicationLogger;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -41,7 +42,7 @@ class IncidentSupervisorAlertNotification extends Notification
         $incidentDate = $this->incident->incident_date->format('M d, Y');
         $incidentTime = $this->incident->incident_time;
 
-        return (new MailMessage)
+        $mailMessage = (new MailMessage)
             ->subject("Incident Verification Required - HSC Reference: {$this->incident->reference_number}")
             ->greeting("Hello {$notifiable->name},")
             ->line("An incident report has been submitted requiring your verification as the Immediate Supervisor.")
@@ -57,6 +58,22 @@ class IncidentSupervisorAlertNotification extends Notification
             ->action('Review Incident', $this->dashboardUrl)
             ->line("If you did not expect this notification, please contact the HSC Occupational Health & Safety team immediately.")
             ->salutation('Regards, HSC Occupational Health & Safety System');
+
+        // Log the email communication
+        CommunicationLogger::logEmail(
+            'INCIDENT_CONFIRMATION',
+            $notifiable->email,
+            "Incident Verification Required - HSC Reference: {$this->incident->reference_number}",
+            "Incident {$this->incident->reference_number} requires your verification as Immediate Supervisor",
+            $mailMessage->render(),
+            'SENT',
+            null,
+            'Incident',
+            $this->incident->id,
+            $notifiable->id
+        );
+
+        return $mailMessage;
     }
 
     /**

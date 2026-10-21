@@ -7,6 +7,7 @@ use App\Events\Case180DayMilestoneReached;
 use App\Models\AuditLog;
 use App\Models\IncidentLeaveMilestone;
 use App\Models\User;
+use App\Services\CommunicationLogger;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 
@@ -41,6 +42,20 @@ class SendMilestoneNotifications
                 Mail::to($incident->assignedHRUser)
                     ->send(new \App\Mail\LeaveMilestoneNotification($incident, $medicalOfficer, $event::class));
                 
+                // Log the email communication
+                CommunicationLogger::logEmail(
+                    'MILESTONE_NOTIFICATION',
+                    $incident->assignedHRUser->email,
+                    "Leave Milestone Notification - HSC Reference: {$incident->reference_number}",
+                    "A leave milestone has been reached for incident {$incident->reference_number}",
+                    null,
+                    'SENT',
+                    null,
+                    'Incident',
+                    $incident->id,
+                    $incident->assignedHRUser->id
+                );
+                
                 Log::info('Milestone notification sent to HR user', [
                     'incident_id' => $incident->id,
                     'reference_number' => $incident->reference_number,
@@ -52,6 +67,20 @@ class SendMilestoneNotifications
             // Send email to appropriate medical officer (PMD or CMO)
             Mail::to($medicalOfficer)
                 ->send(new \App\Mail\LeaveMilestoneNotification($incident, $medicalOfficer, $event::class));
+            
+            // Log the email communication
+            CommunicationLogger::logEmail(
+                'MILESTONE_NOTIFICATION',
+                $medicalOfficer->email,
+                "Leave Milestone Notification - HSC Reference: {$incident->reference_number}",
+                "A leave milestone has been reached for incident {$incident->reference_number}",
+                null,
+                'SENT',
+                null,
+                'Incident',
+                $incident->id,
+                $medicalOfficer->id
+            );
             
             Log::info('Milestone notification sent to medical officer', [
                 'incident_id' => $incident->id,

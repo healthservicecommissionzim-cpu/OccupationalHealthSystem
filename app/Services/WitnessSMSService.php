@@ -301,6 +301,18 @@ class WitnessSMSService
                 'sent_at' => now(),
                 'error_message' => $errorMessage
             ]);
+
+            // Also log to CommunicationLogger
+            \App\Services\CommunicationLogger::logSms(
+                $type,
+                $phone,
+                $message,
+                $status,
+                $errorMessage,
+                'Incident',
+                $incidentId,
+                null
+            );
         } catch (\Exception $e) {
             Log::error('Failed to log SMS history', [
                 'incident_id' => $incidentId,

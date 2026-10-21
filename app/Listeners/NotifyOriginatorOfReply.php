@@ -6,6 +6,7 @@ use App\Events\TicketReplyAdded;
 use App\Notifications\ReplyReceivedNotification;
 use App\Models\TicketNotification;
 use App\Services\SMSService;
+use App\Services\CommunicationLogger;
 use Illuminate\Support\Facades\Log;
 
 class NotifyOriginatorOfReply
@@ -29,6 +30,20 @@ class NotifyOriginatorOfReply
             // Send email notification to originator
             $event->originatorUser->notify(new ReplyReceivedNotification($event->ticket, $event->reply->message));
 
+            // Log the email communication
+            CommunicationLogger::logEmail(
+                'TICKET_REPLY',
+                $event->originatorUser->email,
+                "New Reply on Support Ticket {$event->ticket->ticket_number}",
+                "A new reply has been added to your support ticket {$event->ticket->ticket_number}",
+                null,
+                'SENT',
+                null,
+                'SupportTicket',
+                $event->ticket->id,
+                $event->originatorUser->id
+            );
+
             // Send SMS notification if enabled and phone number exists
             if (config('services.sms.enabled', false) && $event->originatorUser->phone_number) {
                 try {
@@ -44,17 +59,53 @@ class NotifyOriginatorOfReply
                             'originator_id' => $event->originatorUser->id,
                             'originator_phone' => $event->originatorUser->phone_number,
                         ]);
+
+                        // Log SMS communication
+                        CommunicationLogger::logSms(
+                            'TICKET_REPLY',
+                            $event->originatorUser->phone_number,
+                            $smsMessage,
+                            'SENT',
+                            null,
+                            'SupportTicket',
+                            $event->ticket->id,
+                            $event->originatorUser->id
+                        );
                     } else {
                         Log::warning('Failed to send SMS to originator', [
                             'ticket_id' => $event->ticket->id,
                             'originator_id' => $event->originatorUser->id,
                         ]);
+
+                        // Log failed SMS
+                        CommunicationLogger::logSms(
+                            'TICKET_REPLY',
+                            $event->originatorUser->phone_number,
+                            $smsMessage,
+                            'FAILED',
+                            'SMS service returned false',
+                            'SupportTicket',
+                            $event->ticket->id,
+                            $event->originatorUser->id
+                        );
                     }
                 } catch (\Exception $e) {
                     Log::error('SMS service error for ticket reply notification', [
                         'ticket_id' => $event->ticket->id,
                         'error' => $e->getMessage(),
                     ]);
+
+                    // Log failed SMS
+                    CommunicationLogger::logSms(
+                        'TICKET_REPLY',
+                        $event->originatorUser->phone_number,
+                        $smsMessage ?? '',
+                        'FAILED',
+                        $e->getMessage(),
+                        'SupportTicket',
+                        $event->ticket->id,
+                        $event->originatorUser->id
+                    );
                 }
             }
 

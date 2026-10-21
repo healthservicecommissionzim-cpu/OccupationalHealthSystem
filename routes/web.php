@@ -281,6 +281,12 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
         // System Documentation Routes
         Route::get('/documentation', [\App\Http\Controllers\SuperAdmin\DocumentationController::class, 'index'])->name('documentation');
         Route::get('/documentation/{slug}', [\App\Http\Controllers\SuperAdmin\DocumentationController::class, 'show'])->name('documentation.show');
+        
+        // Communication Logs Routes
+        Route::get('/communication-logs', [\App\Http\Controllers\SuperAdmin\CommunicationLogsController::class, 'index'])->name('communication_logs.index');
+        Route::get('/communication-logs/export/csv', [\App\Http\Controllers\SuperAdmin\CommunicationLogsController::class, 'export'])->name('communication_logs.export');
+        Route::get('/communication-logs/{log}', [\App\Http\Controllers\SuperAdmin\CommunicationLogsController::class, 'show'])->name('communication_logs.show');
+        Route::get('/communication-logs/{log}/details', [\App\Http\Controllers\SuperAdmin\CommunicationLogsController::class, 'getDetails'])->name('communication_logs.details');
     });
 
     // Security & Audit Routes (Super Admin)
