@@ -3,9 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\IncidentCreated;
-use App\Notifications\IncidentConfirmationNotification;
+use App\Mail\IncidentConfirmationMail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Notification;
 
 class SendIncidentConfirmationEmail
 {
@@ -24,13 +24,16 @@ class SendIncidentConfirmationEmail
     {
         $incident = $event->incident;
 
+        // Reload incident with relationships to ensure all data is loaded
+        $incident = $incident->load(['department', 'facility', 'designation', 'province', 'incidentType', 'witnessTokens']);
+
         // Get witness tokens for this incident
-        $witnessTokens = $incident->witnessTokens()->get();
+        $witnessTokens = $incident->witnessTokens;
 
         try {
-            // Send confirmation notification to the reporter's email
-            Notification::route('mail', $incident->email)
-                ->notify(new IncidentConfirmationNotification($incident, $witnessTokens));
+            // Send confirmation email using Mailable
+            Mail::to($incident->email)
+                ->send(new IncidentConfirmationMail($incident, $witnessTokens));
 
             Log::info('Incident confirmation email sent successfully', [
                 'incident_id' => $incident->id,
@@ -45,6 +48,7 @@ class SendIncidentConfirmationEmail
                 'reference_number' => $incident->reference_number,
                 'reporter_email' => $incident->email,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
         }
     }
