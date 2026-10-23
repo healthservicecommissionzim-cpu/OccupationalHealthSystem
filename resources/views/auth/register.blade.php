@@ -811,8 +811,7 @@
                             <img src="{{ asset('images/hsc-logo.png') }}" alt="HSC" />
                         </div>
                         <div class="org-selection-text">
-                            <div class="org-selection-name">HSC</div>
-                            <div class="org-selection-desc">Conditions Officer</div>
+                            <div class="org-selection-name">Health Service Commission</div>
                         </div>
                         <div class="org-selection-arrow">
                             <i class="fa-solid fa-chevron-right"></i>
@@ -825,8 +824,7 @@
                             <img src="{{ asset('images/mohcc-logo.png') }}" alt="MOH" />
                         </div>
                         <div class="org-selection-text">
-                            <div class="org-selection-name">Ministry</div>
-                            <div class="org-selection-desc">Healthcare Worker</div>
+                            <div class="org-selection-name">Ministry of Health and Child Care</div>
                         </div>
                         <div class="org-selection-arrow">
                             <i class="fa-solid fa-chevron-right"></i>
