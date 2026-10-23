@@ -532,6 +532,149 @@
             }
         }
 
+        /* ─── Organization Selection Modal ─── */
+        .org-selection-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .org-selection-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .org-selection-modal {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 1.25rem 1rem;
+            max-width: 280px;
+            width: 85%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: center;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .org-selection-header h2 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--slate-900);
+            margin-bottom: 0.3rem;
+            letter-spacing: -0.02em;
+        }
+
+        .org-selection-header p {
+            font-size: 0.7rem;
+            color: var(--slate-500);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .org-selection-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .org-selection-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0.85rem;
+            border: 2px solid var(--slate-200);
+            border-radius: 6px;
+            background: var(--white);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            font-family: inherit;
+            text-align: left;
+        }
+
+        .org-selection-btn:hover {
+            border-color: var(--brand);
+            box-shadow: 0 0 0 2px rgba(29, 69, 51, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .org-selection-btn:active {
+            transform: translateY(0);
+        }
+
+        .org-selection-logo {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            margin-right: 0.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .org-selection-logo img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .org-selection-text {
+            flex: 1;
+        }
+
+        .org-selection-name {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--slate-900);
+            line-height: 1.2;
+        }
+
+        .org-selection-desc {
+            font-size: 0.65rem;
+            color: var(--slate-500);
+            line-height: 1.2;
+        }
+
+        .org-selection-arrow {
+            font-size: 0.8rem;
+            color: var(--slate-400);
+            flex-shrink: 0;
+            margin-left: 0.4rem;
+            transition: all 0.3s ease;
+        }
+
+        .org-selection-btn:hover .org-selection-arrow {
+            color: var(--brand);
+            transform: translateX(2px);
+        }
+
+        /* ─── Hide organization section for HSC ─── */
+        #organization-section.hidden {
+            display: none;
+        }
+
         /* ─── Select2 Custom Styling ─── */
         .select2-container--default .select2-selection--single {
             height: auto !important;
@@ -653,9 +796,52 @@
             </div>
         @endif
 
+        <!-- ─── Organization Selection Modal ─── -->
+        <div class="org-selection-overlay active" id="orgSelectionOverlay">
+            <div class="org-selection-modal">
+                <div class="org-selection-header">
+                    <h2>Select Organization</h2>
+                    <p>Choose your organization to continue</p>
+                </div>
+
+                <div class="org-selection-options">
+                    <!-- Health Service Commission -->
+                    <button type="button" class="org-selection-btn hsc" onclick="selectOrganization('hsc')">
+                        <div class="org-selection-logo">
+                            <img src="{{ asset('images/hsc-logo.png') }}" alt="HSC" />
+                        </div>
+                        <div class="org-selection-text">
+                            <div class="org-selection-name">HSC</div>
+                            <div class="org-selection-desc">Conditions Officer</div>
+                        </div>
+                        <div class="org-selection-arrow">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </div>
+                    </button>
+
+                    <!-- Ministry of Health -->
+                    <button type="button" class="org-selection-btn moh" onclick="selectOrganization('moh')">
+                        <div class="org-selection-logo">
+                            <img src="{{ asset('images/mohcc-logo.png') }}" alt="MOH" />
+                        </div>
+                        <div class="org-selection-text">
+                            <div class="org-selection-name">Ministry</div>
+                            <div class="org-selection-desc">Healthcare Worker</div>
+                        </div>
+                        <div class="org-selection-arrow">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- ─── Form ─── -->
         <form method="POST" action="{{ route('register.store') }}" novalidate id="registerForm">
             @csrf
+            
+            <!-- Hidden field for organization type -->
+            <input type="hidden" name="organization_type" value="moh" id="organization-type">
 
             <!-- ─── Personal Details Section ─── -->
             <div class="form-section">
@@ -730,8 +916,8 @@
                 </div>
             </div>
 
-            <!-- ─── Organization Details Section ─── -->
-            <div class="form-section">
+            <!-- ─── Organization Details Section (Hidden for HSC) ─── -->
+            <div class="form-section" id="organization-section">
                 <div class="form-section-title">
                     <i class="fa-regular fa-briefcase"></i> Organization Details
                 </div>
@@ -1436,6 +1622,39 @@
             updateDistricts();
             if (document.getElementById('district_id').value) {
                 updateFacilities();
+            }
+        });
+
+        // ─── Organization Selection Handler ───
+        window.selectOrganization = function(org) {
+            const overlay = document.getElementById('orgSelectionOverlay');
+            const orgTypeInput = document.getElementById('organization-type');
+            const orgSection = document.getElementById('organization-section');
+            
+            // Set the organization type
+            orgTypeInput.value = org;
+            
+            // Hide the selection overlay
+            overlay.classList.remove('active');
+            
+            // Show/hide organization section based on selection
+            if (org === 'hsc') {
+                orgSection.classList.add('hidden');
+            } else {
+                orgSection.classList.remove('hidden');
+            }
+            
+            // Focus on first form field
+            document.getElementById('first_name').focus();
+        };
+
+        // Prevent form submission without organization selection
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            const orgType = document.getElementById('organization-type').value;
+            if (!orgType || (orgType !== 'hsc' && orgType !== 'moh')) {
+                e.preventDefault();
+                alert('Please select your organization first');
+                return false;
             }
         });
     </script>

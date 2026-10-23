@@ -23,18 +23,30 @@ use Illuminate\Support\Facades\Notification;
 
 class RegisterController extends Controller
 {
-    public function create()
+    /**
+     * Show registration form with organization selection modal
+     */
+    public function create(Request $request)
     {
         $organizations = Organization::all();
         $departments = Department::all();
         $designations = Designation::all();
         $provinces = Province::all();
-        // Load districts with their province relationship
         $districts = District::with('province')->get();
         $facilityTypes = FacilityType::all();
         $facilities = Facility::all();
-        return view('auth.register', compact('organizations', 'departments', 'designations', 'provinces', 'districts', 'facilityTypes', 'facilities'));
+
+        return view('auth.register', compact(
+            'organizations', 
+            'departments', 
+            'designations', 
+            'provinces', 
+            'districts', 
+            'facilityTypes', 
+            'facilities'
+        ));
     }
+
 
     /**
      * Get facility types and facilities for registration form
@@ -64,39 +76,68 @@ class RegisterController extends Controller
 
     public function store(Request $request)
     {
-        // Build validation rules - all location fields are optional
-        $rules = [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email|max:255',
-            'phone_number' => 'required|string|max:20',
-            'organization_id' => 'nullable|exists:organizations,id',
-            'designation_id' => 'required|exists:designations,id',
-            'department_id' => 'nullable|exists:departments,id',
-            'province_id' => 'nullable|exists:provinces,id',
-            'district_id' => 'nullable|exists:districts,id',
-            'facility_type_id' => 'nullable|exists:facility_types,id',
-            'facility_id' => 'nullable|exists:facilities,id',
-            'password' => ['required', 'string', 'confirmed', new StrongPassword],
-        ];
+        $organization = $request->input('organization_type', 'moh');
+        $isHscRegistration = $organization === 'hsc';
+
+        // Build validation rules - location fields optional for HSC, flexible for MOH
+        if ($isHscRegistration) {
+            // HSC: Only basic info + designation, no organization/location details
+            $rules = [
+                'first_name' => 'required|string|max:255',
+                'last_name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email|max:255',
+                'phone_number' => 'required|string|max:20',
+                'designation_id' => 'required|exists:designations,id',
+                'password' => ['required', 'string', 'confirmed', new StrongPassword],
+            ];
+        } else {
+            // MOH: All fields as before
+            $rules = [
+                'first_name' => 'required|string|max:255',
+                'last_name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email|max:255',
+                'phone_number' => 'required|string|max:20',
+                'organization_id' => 'nullable|exists:organizations,id',
+                'designation_id' => 'required|exists:designations,id',
+                'department_id' => 'nullable|exists:departments,id',
+                'province_id' => 'nullable|exists:provinces,id',
+                'district_id' => 'nullable|exists:districts,id',
+                'facility_type_id' => 'nullable|exists:facility_types,id',
+                'facility_id' => 'nullable|exists:facilities,id',
+                'password' => ['required', 'string', 'confirmed', new StrongPassword],
+            ];
+        }
 
         $validated = $request->validate($rules);
 
         // Prepare user data
-        $userData = [
-            'name' => $validated['first_name'] . ' ' . $validated['last_name'],
-            'email' => $validated['email'],
-            'phone_number' => $validated['phone_number'],
-            'organization_id' => $validated['organization_id'] ?? null,
-            'designation_id' => $validated['designation_id'],
-            'department_id' => $validated['department_id'] ?? null,
-            'province_id' => $validated['province_id'] ?? null,
-            'district_id' => $validated['district_id'] ?? null,
-            'facility_type_id' => $validated['facility_type_id'] ?? null,
-            'facility_id' => $validated['facility_id'] ?? null,
-            'password' => Hash::make($validated['password']),
-            'status' => 'pending',
-        ];
+        if ($isHscRegistration) {
+            $userData = [
+                'name' => $validated['first_name'] . ' ' . $validated['last_name'],
+                'email' => $validated['email'],
+                'phone_number' => $validated['phone_number'],
+                'designation_id' => $validated['designation_id'],
+                'password' => Hash::make($validated['password']),
+                'status' => 'pending',
+                'registration_type' => 'hsc',
+            ];
+        } else {
+            $userData = [
+                'name' => $validated['first_name'] . ' ' . $validated['last_name'],
+                'email' => $validated['email'],
+                'phone_number' => $validated['phone_number'],
+                'organization_id' => $validated['organization_id'] ?? null,
+                'designation_id' => $validated['designation_id'],
+                'department_id' => $validated['department_id'] ?? null,
+                'province_id' => $validated['province_id'] ?? null,
+                'district_id' => $validated['district_id'] ?? null,
+                'facility_type_id' => $validated['facility_type_id'] ?? null,
+                'facility_id' => $validated['facility_id'] ?? null,
+                'password' => Hash::make($validated['password']),
+                'status' => 'pending',
+                'registration_type' => 'moh',
+            ];
+        }
 
         // Create user
         $user = User::create($userData);
@@ -125,7 +166,11 @@ class RegisterController extends Controller
         );
 
         // Log successful registration
-        Log::info('User registration successful', ['user_id' => $user->id, 'email' => $user->email]);
+        Log::info('User registration successful', [
+            'user_id' => $user->id, 
+            'email' => $user->email,
+            'registration_type' => $isHscRegistration ? 'HSC' : 'MOH'
+        ]);
 
         return back()->with('success', 'Account Awaiting Verification - Check your email for confirmation');
     }

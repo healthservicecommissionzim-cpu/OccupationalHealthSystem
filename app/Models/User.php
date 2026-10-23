@@ -32,6 +32,7 @@ class User extends Authenticatable
         'facility_id',
         'password',
         'status',
+        'registration_type',
         'account_status',
         'approved_by',
         'approved_at',

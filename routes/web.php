@@ -215,6 +215,42 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
     Route::get('/medical-board/dashboard-redirect', [\App\Http\Controllers\MedicalBoardController::class, 'dashboard'])->name('medical_board.dashboard_redirect')->middleware('role:medical_board,pmd,cmo', 'permission:manage_incidents');
 
     Route::get('/dashboards/hsc-conditions', [DashboardController::class, 'hscConditions'])->name('dashboards.hsc_conditions')->middleware('role:hsc_conditions', 'permission:view_dashboard');
+    Route::get('/hsc/incidents/{incident}', [IncidentController::class, 'hscView'])->name('incidents.hsc_view')->middleware('role:hsc_conditions', 'permission:view_incidents');
+
+    // HSC Conditions Officer Routes
+    Route::middleware(['role:hsc_conditions', 'permission:view_incidents'])->prefix('hsc')->name('hsc.')->group(function () {
+        // Case Management
+        Route::get('/cases/all', [\App\Http\Controllers\HSCController::class, 'allCases'])->name('cases.all');
+        Route::get('/cases/by-status', [\App\Http\Controllers\HSCController::class, 'casesByStatus'])->name('cases.by-status');
+        Route::get('/cases/by-facility', [\App\Http\Controllers\HSCController::class, 'casesByFacility'])->name('cases.by-facility');
+        Route::get('/cases/by-date', [\App\Http\Controllers\HSCController::class, 'casesByDate'])->name('cases.by-date');
+        Route::get('/cases/search', [\App\Http\Controllers\HSCController::class, 'searchCases'])->name('cases.search');
+
+        // Monitoring & Analytics
+        Route::get('/compliance/dashboard', [\App\Http\Controllers\HSCController::class, 'complianceDashboard'])->name('compliance.dashboard');
+        Route::get('/facility/performance', [\App\Http\Controllers\HSCController::class, 'facilityPerformance'])->name('facility.performance');
+        Route::get('/incident/trends', [\App\Http\Controllers\HSCController::class, 'incidentTrends'])->name('incident.trends');
+        Route::get('/risk/assessment', [\App\Http\Controllers\HSCController::class, 'riskAssessment'])->name('risk.assessment');
+        Route::get('/workflow/health', [\App\Http\Controllers\HSCController::class, 'workflowHealth'])->name('workflow.health');
+
+        // Quality Assurance
+        Route::get('/audit/cases', [\App\Http\Controllers\HSCController::class, 'auditCases'])->name('audit.cases');
+        Route::get('/audit/documents', [\App\Http\Controllers\HSCController::class, 'auditDocuments'])->name('audit.documents');
+        Route::get('/audit/timeline', [\App\Http\Controllers\HSCController::class, 'auditTimeline'])->name('audit.timeline');
+        Route::get('/audit/procedures', [\App\Http\Controllers\HSCController::class, 'auditProcedures'])->name('audit.procedures');
+
+        // Reports & Evidence
+        Route::get('/reports/generate', [\App\Http\Controllers\HSCController::class, 'generateReports'])->name('reports.generate');
+        Route::get('/reports/export', [\App\Http\Controllers\HSCController::class, 'exportData'])->name('reports.export');
+        Route::get('/reports/statistics', [\App\Http\Controllers\HSCController::class, 'statisticalSummary'])->name('reports.statistics');
+        Route::get('/reports/comparative', [\App\Http\Controllers\HSCController::class, 'comparativeAnalysis'])->name('reports.comparative');
+
+        // System Oversight
+        Route::get('/system/user-activity', [\App\Http\Controllers\HSCController::class, 'userActivityLog'])->name('system.user-activity');
+        Route::get('/system/escalations', [\App\Http\Controllers\HSCController::class, 'escalationTracking'])->name('system.escalations');
+        Route::get('/system/notifications', [\App\Http\Controllers\HSCController::class, 'notificationHistory'])->name('system.notifications');
+        Route::get('/system/performance', [\App\Http\Controllers\HSCController::class, 'performanceMetrics'])->name('system.performance');
+    });
 
     Route::get('/dashboards/super-admin', [DashboardController::class, 'superAdmin'])->name('dashboards.super_admin')->middleware('role:super_admin', 'permission:view_dashboard');
     
