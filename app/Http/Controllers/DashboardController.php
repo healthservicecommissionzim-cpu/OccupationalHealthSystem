@@ -1547,7 +1547,97 @@ class DashboardController extends Controller
      */
     public function hscConditions()
     {
-        return view('dashboards.hsc_conditions');
+        // Get all incident statistics in single optimized query
+        $incidentStats = \DB::table('incidents')
+            ->selectRaw("
+                COUNT(*) as total_count,
+                SUM(CASE WHEN status = 'PENDING_SUPERVISOR_VERIFICATION' THEN 1 ELSE 0 END) as pending_incidents,
+                SUM(CASE WHEN status IN ('ESCALATED_TO_HR', 'PENDING_HR_REVIEW', 'ESCALATED_TO_DMO', 'PENDING_PMD_REVIEW') THEN 1 ELSE 0 END) as active_workflows,
+                SUM(CASE WHEN status IN ('RESOLVED', 'APPROVED_BY_PMD', 'CLOSED') THEN 1 ELSE 0 END) as resolved_incidents,
+                SUM(CASE WHEN status IN ('REJECTED_BY_HR', 'REJECTED', 'REJECTED_SUPERVISOR') THEN 1 ELSE 0 END) as rejected_incidents
+            ")
+            ->first();
+
+        $incidentStatistics = [
+            'total_cases' => $incidentStats->total_count ?? 0,
+            'pending_incidents' => $incidentStats->pending_incidents ?? 0,
+            'active_workflows' => $incidentStats->active_workflows ?? 0,
+            'resolved_incidents' => $incidentStats->resolved_incidents ?? 0,
+            'rejected_incidents' => $incidentStats->rejected_incidents ?? 0,
+            'total_incidents' => $incidentStats->total_count ?? 0,
+        ];
+
+        // Workflow Pipeline Distribution in single query
+        $statusCounts = \DB::table('incidents')
+            ->selectRaw('status, COUNT(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status');
+
+        $workflowDistribution = [
+            'PENDING_SUPERVISOR_VERIFICATION' => $statusCounts['PENDING_SUPERVISOR_VERIFICATION'] ?? 0,
+            'VERIFIED_SUPERVISOR' => $statusCounts['VERIFIED_SUPERVISOR'] ?? 0,
+            'HR_REVIEW' => ($statusCounts['ESCALATED_TO_HR'] ?? 0) + ($statusCounts['PENDING_HR_REVIEW'] ?? 0),
+            'CLINICAL_EXECUTIVE_REVIEW' => ($statusCounts['ESCALATED_TO_DMO'] ?? 0) + ($statusCounts['ESCALATED_TO_MEDICAL_SUPERINTENDENT'] ?? 0) + ($statusCounts['ESCALATED_TO_CMO'] ?? 0),
+            'PENDING_PROVINCIAL_APPROVAL' => ($statusCounts['ESCALATED_TO_PMD'] ?? 0) + ($statusCounts['PENDING_PMD_REVIEW'] ?? 0),
+            'PENDING_MEDICAL_BOARD' => $statusCounts['REFERRED_TO_MEDICAL_BOARD'] ?? 0,
+            'MINISTRY_LEVEL' => $statusCounts['REFERRED_TO_MINISTRY_HQ'] ?? 0,
+        ];
+
+        // Get incident types data - using province/district grouping (removed facility type)
+        $injuryTypesByProvince = \DB::table('incidents')
+            ->join('provinces', 'incidents.province_id', '=', 'provinces.id')
+            ->whereNotNull('incidents.province_id')
+            ->selectRaw('provinces.name as province, COUNT(*) as count')
+            ->groupBy('provinces.id', 'provinces.name')
+            ->orderByDesc('count')
+            ->limit(10)
+            ->get();
+
+        // Injury types by district (optimized with limit)
+        $injuryTypesByDistrict = \DB::table('incidents')
+            ->join('districts', 'incidents.district_id', '=', 'districts.id')
+            ->whereNotNull('incidents.district_id')
+            ->selectRaw('districts.name as district, COUNT(*) as count')
+            ->groupBy('districts.id', 'districts.name')
+            ->orderByDesc('count')
+            ->limit(20)
+            ->get();
+
+        // Recent incidents monthly trend
+        $currentYear = now()->year;
+        $recentIncidents = \DB::table('incidents')
+            ->selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->whereYear('created_at', $currentYear)
+            ->where('created_at', '>=', now()->startOfYear())
+            ->groupBy('month')
+            ->orderBy('month', 'asc')
+            ->get()
+            ->map(function($incident) {
+                return [
+                    'date' => now()->startOfYear()->addMonths($incident->month - 1)->format('Y-m-01'),
+                    'count' => $incident->count
+                ];
+            });
+
+        // Get recent incidents for the table (last 30 days, excluding resolved/rejected)
+        $recentIncidentsTable = \App\Models\Incident::with(['facility', 'incidentType'])
+            ->select('id', 'reference_number', 'first_name', 'surname', 'status', 'created_at', 'facility_id')
+            ->where('created_at', '>=', now()->subDays(30))
+            ->whereNotIn('status', ['RESOLVED', 'CLOSED', 'APPROVED_BY_PMD', 'REJECTED_BY_HR', 'REJECTED', 'REJECTED_SUPERVISOR'])
+            ->orderBy('created_at', 'desc')
+            ->limit(50)
+            ->get();
+
+        $viewData = compact(
+            'incidentStatistics',
+            'workflowDistribution',
+            'recentIncidents',
+            'injuryTypesByProvince',
+            'injuryTypesByDistrict',
+            'recentIncidentsTable'
+        );
+
+        return view('dashboards.hsc_conditions', $viewData);
     }
 
     /**

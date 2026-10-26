@@ -2041,6 +2041,36 @@ class IncidentController extends Controller
     }
 
     /**
+     * Show incident for HSC (read-only) review.
+     * HSC officers are oversight/watchdog - can view but not modify.
+     */
+    public function hscView(Incident $incident)
+    {
+        $user = auth()->user();
+
+        // Verify HSC role
+        if (!$user->hasRole('hsc_conditions')) {
+            abort(403, 'Access denied. You must have HSC Conditions Officer role to view this incident.');
+        }
+
+        // Load all relationships needed for display
+        $incident->load([
+            'designation',
+            'department',
+            'facility',
+            'facilityType',
+            'district',
+            'province',
+            'supervisorDesignation',
+            'incidentType',
+            'attachments',
+            'firstAidRecords'
+        ]);
+
+        return view('incidents.hsc_view', compact('incident'));
+    }
+
+    /**
      * Phase 1: Show case dossier with all prior workflow details.
      */
     public function hrCaseDossier(Incident $incident)
