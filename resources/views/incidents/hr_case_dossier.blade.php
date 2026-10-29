@@ -175,6 +175,9 @@
         </div>
         @endif
 
+        <!-- Roster Context (if rotational staff) -->
+        @include('incidents.partials.roster-context', ['incident' => $incident])
+
         <!-- Worker & Incident Details -->
         <div class="card">
             <div class="chead">

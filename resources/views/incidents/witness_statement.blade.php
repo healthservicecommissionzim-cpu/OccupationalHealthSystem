@@ -383,11 +383,55 @@
                     </div>
                 </div>
 
+                <!-- Declaration Section -->
+                <div class="form-section" style="border-bottom: none; padding-bottom: 0;">
+                    <div class="section-title">
+                        <i class="fa-solid fa-shield-check"></i>
+                        Declaration
+                    </div>
+
+                    <div style="background: #fef3c7; border: 1.5px solid #f59e0b; border-radius: 8px; padding: 1.25rem; margin-bottom: 1.25rem;">
+                        <div style="display: flex; gap: 0.75rem; align-items: start;">
+                            <i class="fa-solid fa-exclamation-triangle" style="color: #d97706; font-size: 1.1rem; margin-top: 2px;"></i>
+                            <div style="flex: 1;">
+                                <p style="font-size: 0.85rem; color: #92400e; font-weight: 600; margin-bottom: 0.5rem;">
+                                    Important: Declaration Required
+                                </p>
+                                <p style="font-size: 0.8rem; color: #78350f; line-height: 1.6;">
+                                    You must confirm that your statement is true and accurate before submission. False statements may have legal consequences.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #f8fafb; border: 1.5px solid #e4e9ee; border-radius: 8px; padding: 1.25rem;">
+                        <label style="display: flex; align-items: start; gap: 0.75rem; cursor: pointer; font-size: 0.85rem; line-height: 1.6; color: #334155; font-weight: 500;">
+                            <input 
+                                type="checkbox" 
+                                id="declarationCheckbox" 
+                                name="declaration" 
+                                style="margin-top: 3px; width: 18px; height: 18px; cursor: pointer; accent-color: #1D4533;"
+                                required
+                            />
+                            <span>
+                                I declare that the information provided in this witness statement is <strong>true and accurate</strong> to the best of my knowledge. I understand that this statement relates to the incident that occurred on <strong>{{ $incident->incident_date->format('d M Y') }}</strong> and that providing false information may result in disciplinary or legal action.
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
                 <!-- Form Actions -->
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
                         <i class="fa-solid fa-check"></i> Submit Statement
                     </button>
+                </div>
+
+                <div id="declarationError" style="display: none; background: #fef2f2; border: 1.5px solid #ef4444; border-radius: 8px; padding: 1rem; margin-top: 1rem; text-align: center;">
+                    <i class="fa-solid fa-exclamation-circle" style="color: #dc2626; margin-right: 0.5rem;"></i>
+                    <span style="color: #991b1b; font-size: 0.85rem; font-weight: 600;">
+                        Please check the declaration box to confirm your statement is true and accurate.
+                    </span>
                 </div>
 
                 @if ($errors->any())
@@ -420,18 +464,72 @@
             charCount.textContent = statement.value.length;
         }
 
+        // Enable/disable submit button based on declaration checkbox
+        function updateSubmitButton() {
+            const declarationCheckbox = document.getElementById('declarationCheckbox');
+            const submitBtn = document.getElementById('submitBtn');
+            const declarationError = document.getElementById('declarationError');
+            
+            if (declarationCheckbox.checked) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                declarationError.style.display = 'none';
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.6';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             updateCharCount();
+            updateSubmitButton();
+            
+            // Listen for checkbox changes
+            const declarationCheckbox = document.getElementById('declarationCheckbox');
+            declarationCheckbox.addEventListener('change', updateSubmitButton);
         });
 
         document.getElementById('witnessForm').addEventListener('submit', function(e) {
             const statement = document.getElementById('statement').value.trim();
+            const declarationCheckbox = document.getElementById('declarationCheckbox');
+            const declarationError = document.getElementById('declarationError');
+            
+            // Validate statement
             if (!statement) {
                 e.preventDefault();
                 alert('Please provide a witness statement.');
                 return false;
             }
+            
+            // Validate declaration checkbox
+            if (!declarationCheckbox.checked) {
+                e.preventDefault();
+                declarationError.style.display = 'block';
+                declarationError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Add shake animation to checkbox container
+                const checkboxContainer = declarationCheckbox.closest('div[style*="background: #f8fafb"]');
+                checkboxContainer.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    checkboxContainer.style.animation = '';
+                }, 500);
+                
+                return false;
+            }
+            
+            // Disable submit button to prevent double submission
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner" style="animation: spin 1s linear infinite;"></i> Submitting...';
         });
     </script>
+    
+    <style>
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+    </style>
 </body>
 </html>

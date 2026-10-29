@@ -286,146 +286,10 @@
             document.body.insertAdjacentHTML('beforeend', modal);
         }
         
-        function showEmailInputModal(tokenId, witnessName, currentEmail) {
-            // Close main contact modal
-            const mainModal = document.getElementById('contactModal');
-            if (mainModal) mainModal.remove();
-            
-            // Show email input modal
-            const modal = `
-                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000;" id="emailInputModal">
-                    <div style="background: white; border-radius: 12px; padding: 28px; max-width: 450px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
-                        <div style="text-align: center; margin-bottom: 20px;">
-                            <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #0B5ED7 0%, #0A58CA 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-                                <i class="fa-solid fa-envelope" style="font-size: 24px; color: white;"></i>
-                            </div>
-                            <h3 style="margin: 0 0 8px; font-size: 18px; color: #101a31; font-weight: 700;">Send Email Reminder</h3>
-                            <p style="margin: 0; font-size: 13px; color: #718096; line-height: 1.6;">Enter email address for <strong>${witnessName}</strong></p>
-                        </div>
-                        
-                        <div style="margin-bottom: 20px;">
-                            <label style="display: block; font-size: 12px; font-weight: 600; color: #263149; margin-bottom: 8px;">Email Address</label>
-                            <input type="email" id="witnessEmailInput" placeholder="witness@example.com" value="${currentEmail || ''}" style="width: 100%; padding: 12px; border: 1px solid #e4e9ee; border-radius: 8px; font-size: 14px; box-sizing: border-box;" />
-                            <div id="emailInputError" style="display: none; color: #ef4444; font-size: 11px; margin-top: 6px;">
-                                <i class="fa-solid fa-exclamation-circle"></i> <span id="emailInputErrorText">Please enter a valid email address</span>
-                            </div>
-                        </div>
-                        
-                        <div style="display: flex; gap: 10px;">
-                            <button onclick="closeEmailInputModal()" style="flex: 1; padding: 12px; background: #f8fafb; color: #263149; border: 1px solid #e4e9ee; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                                Cancel
-                            </button>
-                            <button onclick="sendEmailWithInput(${tokenId}, '${witnessName.replace(/'/g, "\\'")}');" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #0B5ED7 0%, #0A58CA 100%); color: white; border: 1px solid #0A58CA; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(11, 94, 215, 0.3);">
-                                <i class="fa-solid fa-paper-plane" style="margin-right: 6px;"></i> Send Email
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', modal);
-            // Focus on email input
-            setTimeout(() => document.getElementById('witnessEmailInput').focus(), 100);
-        }
-        
-        function closeEmailInputModal() {
-            const modal = document.getElementById('emailInputModal');
-            if (modal) modal.remove();
-        }
-        
-        async function sendEmailWithInput(tokenId, witnessName) {
-            const emailInput = document.getElementById('witnessEmailInput');
-            const emailError = document.getElementById('emailInputError');
-            const emailErrorText = document.getElementById('emailInputErrorText');
-            const email = emailInput.value.trim();
-            
-            // Validate email
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!email || !emailRegex.test(email)) {
-                emailError.style.display = 'block';
-                emailErrorText.textContent = 'Please enter a valid email address';
-                emailInput.style.borderColor = '#ef4444';
-                return;
-            }
-            
-            // First, save the email address
-            try {
-                const saveResponse = await fetch(`/supervisor/incidents/${incidentId}/witness/${tokenId}/add-email`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email: email })
-                });
-
-                const saveData = await saveResponse.json();
-                
-                if (!saveData.success) {
-                    emailError.style.display = 'block';
-                    emailErrorText.textContent = saveData.message || 'Failed to save email';
-                    emailInput.style.borderColor = '#ef4444';
-                    return;
-                }
-                
-                // Email saved successfully, now send the reminder
-                closeEmailInputModal();
-                
-                // Show sending indicator
-                showToast('Sending email...', 'success');
-                
-                const sendResponse = await fetch(`/supervisor/incidents/${incidentId}/witness/${tokenId}/email-reminder`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                const sendData = await sendResponse.json();
-                
-                if (sendData.success) {
-                    showToast(`Email sent successfully to ${witnessName}`, 'success');
-                    setTimeout(() => location.reload(), 1500);
-                } else {
-                    showToast(sendData.message || 'Failed to send email', 'error');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('An error occurred while processing your request', 'error');
-            }
-        }
-        
         function confirmSendEmail(tokenId, witnessName, witnessEmail) {
-            // Close main modal
-            const mainModal = document.getElementById('contactModal');
-            if (mainModal) mainModal.remove();
-            
-            // Show confirmation modal
-            const confirmModal = `
-                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000;" id="confirmModal">
-                    <div style="background: white; border-radius: 12px; padding: 28px; max-width: 420px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
-                        <div style="text-align: center; margin-bottom: 20px;">
-                            <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #0B5ED7 0%, #0A58CA 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-                                <i class="fa-solid fa-envelope" style="font-size: 24px; color: white;"></i>
-                            </div>
-                            <h3 style="margin: 0 0 8px; font-size: 18px; color: #101a31; font-weight: 700;">Send Email Reminder?</h3>
-                            <p style="margin: 0; font-size: 13px; color: #718096; line-height: 1.6;">An email will be sent to <strong>${witnessName}</strong> at <strong>${witnessEmail}</strong> with the witness statement link.</p>
-                        </div>
-                        
-                        <div style="display: flex; gap: 10px;">
-                            <button onclick="closeConfirmModal()" style="flex: 1; padding: 12px; background: #f8fafb; color: #263149; border: 1px solid #e4e9ee; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                                Cancel
-                            </button>
-                            <button onclick="sendViaEmail(${tokenId}, '${witnessName.replace(/'/g, "\\'")}'); closeConfirmModal();" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #0B5ED7 0%, #0A58CA 100%); color: white; border: 1px solid #0A58CA; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(11, 94, 215, 0.3);">
-                                <i class="fa-solid fa-paper-plane" style="margin-right: 6px;"></i> Send Email
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', confirmModal);
+            // This function is no longer needed, we go straight to email input modal
+            // But keeping for backwards compatibility
+            showEmailInputModal(tokenId, witnessName, witnessEmail);
         }
         
         function confirmSendSMS(tokenId, witnessName, witnessPhone) {
@@ -460,30 +324,6 @@
             document.body.insertAdjacentHTML('beforeend', confirmModal);
         }
         
-        async function sendViaEmail(tokenId, witnessName) {
-            try {
-                const response = await fetch(`/supervisor/incidents/${incidentId}/witness/${tokenId}/email-reminder`, {
-                    method: 'POST',
-                    headers: { 
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                const data = await response.json();
-                
-                if (data.success) {
-                    showToast(`Email sent successfully to ${witnessName}`, 'success');
-                    setTimeout(() => location.reload(), 1500);
-                } else {
-                    showToast(data.message || 'Failed to send email', 'error');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('An error occurred while sending email', 'error');
-            }
-        }
-        
         async function sendViaSMS(tokenId, witnessName) {
             try {
                 const response = await fetch(`/supervisor/incidents/${incidentId}/witness/${tokenId}/reminder`, {
@@ -516,6 +356,148 @@
         function closeContactModal() {
             const modal = document.getElementById('contactModal');
             if (modal) modal.remove();
+        }
+        
+        // Success Modal - Green centered modal that auto-closes after 2 seconds
+        function showSuccessModal(message) {
+            const modal = `
+                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 99999;" id="successModal">
+                    <div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); border-radius: 16px; padding: 32px 40px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(16, 185, 129, 0.4); text-align: center; animation: scaleIn 0.3s ease;">
+                        <div style="width: 64px; height: 64px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; backdrop-filter: blur(10px);">
+                            <i class="fa-solid fa-check" style="font-size: 32px; color: white;"></i>
+                        </div>
+                        <h3 style="margin: 0 0 8px; font-size: 20px; color: white; font-weight: 700;">Success!</h3>
+                        <p style="margin: 0; font-size: 14px; color: rgba(255,255,255,0.95); line-height: 1.5;">${message}</p>
+                    </div>
+                </div>
+                <style>
+                    @keyframes scaleIn {
+                        from { transform: scale(0.9); opacity: 0; }
+                        to { transform: scale(1); opacity: 1; }
+                    }
+                </style>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modal);
+            
+            // Auto-close after 2 seconds
+            setTimeout(() => {
+                const modalEl = document.getElementById('successModal');
+                if (modalEl) {
+                    modalEl.style.opacity = '0';
+                    modalEl.style.transition = 'opacity 0.3s ease';
+                    setTimeout(() => {
+                        modalEl.remove();
+                        location.reload();
+                    }, 300);
+                }
+            }, 2000);
+        }
+        
+        // Email Input Modal - Collects email and sends reminder
+        function showEmailInputModal(tokenId, witnessName, currentEmail) {
+            // Close contact modal first
+            const contactModal = document.getElementById('contactModal');
+            if (contactModal) contactModal.remove();
+            
+            const modal = `
+                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000;" id="emailInputModal">
+                    <div style="background: white; border-radius: 12px; padding: 28px; max-width: 450px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #0B5ED7 0%, #0A58CA 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                                <i class="fa-solid fa-envelope" style="font-size: 24px; color: white;"></i>
+                            </div>
+                            <h3 style="margin: 0 0 8px; font-size: 18px; color: #101a31; font-weight: 700;">Send Email Reminder</h3>
+                            <p style="margin: 0 0 20px; font-size: 13px; color: #718096;">Enter email address for <strong>${witnessName}</strong></p>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <input type="email" id="witnessEmailInput" value="${currentEmail || ''}" placeholder="witness@example.com" style="width: 100%; padding: 12px; border: 1px solid #e4e9ee; border-radius: 8px; font-size: 14px;" />
+                            <div id="emailInputError" style="display: none; color: #ef4444; font-size: 11px; margin-top: 6px;">
+                                <i class="fa-solid fa-exclamation-circle"></i> Please enter a valid email address
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="closeEmailInputModal()" style="flex: 1; padding: 12px; background: #f8fafb; color: #263149; border: 1px solid #e4e9ee; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                Cancel
+                            </button>
+                            <button onclick="sendEmailWithInput(${tokenId}, '${witnessName.replace(/'/g, "\\'")}');" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #0B5ED7 0%, #0A58CA 100%); color: white; border: 1px solid #0A58CA; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(11, 94, 215, 0.3);">
+                                <i class="fa-solid fa-paper-plane" style="margin-right: 6px;"></i> Send Email
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modal);
+            // Focus on email input
+            setTimeout(() => document.getElementById('witnessEmailInput').focus(), 100);
+        }
+        
+        function closeEmailInputModal() {
+            const modal = document.getElementById('emailInputModal');
+            if (modal) modal.remove();
+        }
+        
+        // Send email with input validation
+        async function sendEmailWithInput(tokenId, witnessName) {
+            const emailInput = document.getElementById('witnessEmailInput');
+            const emailError = document.getElementById('emailInputError');
+            const email = emailInput.value.trim();
+            
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                emailError.style.display = 'block';
+                emailInput.style.borderColor = '#ef4444';
+                return;
+            }
+            
+            try {
+                // First save the email if needed
+                const saveResponse = await fetch(`/supervisor/incidents/${incidentId}/witness/${tokenId}/add-email`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+
+                const saveData = await saveResponse.json();
+                
+                if (!saveData.success) {
+                    emailError.textContent = saveData.message || 'Failed to save email';
+                    emailError.style.display = 'block';
+                    return;
+                }
+                
+                // Now send the email reminder
+                const sendResponse = await fetch(`/supervisor/incidents/${incidentId}/witness/${tokenId}/email-reminder`, {
+                    method: 'POST',
+                    headers: { 
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const sendData = await sendResponse.json();
+                
+                // Close the email input modal
+                closeEmailInputModal();
+                
+                if (sendData.success) {
+                    // Show success modal
+                    showSuccessModal(`Email sent successfully to ${witnessName}`);
+                } else {
+                    showToast(sendData.message || 'Failed to send email', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                closeEmailInputModal();
+                showToast('An error occurred while sending email', 'error');
+            }
         }
         
         function showAddEmailModal(tokenId, witnessName) {

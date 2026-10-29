@@ -1853,10 +1853,13 @@ class IncidentController extends Controller
         // Validate statement
         $validated = $request->validate([
             'statement' => 'required|string|min:50|max:5000',
+            'declaration' => 'required|accepted',
         ], [
             'statement.required' => 'Please provide a witness statement.',
             'statement.min' => 'Statement must be at least 50 characters.',
             'statement.max' => 'Statement cannot exceed 5000 characters.',
+            'declaration.required' => 'You must accept the declaration to submit your statement.',
+            'declaration.accepted' => 'You must confirm that your statement is true and accurate.',
         ]);
 
         try {

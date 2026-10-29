@@ -25,6 +25,13 @@ class Kernel extends ConsoleKernel
             ->hourly()
             ->name('dashboard-optimization')
             ->withoutOverlapping();
+
+        // Warm roster cache daily at 1:00 AM for optimal incident attribution performance
+        $schedule->command('roster:warm-cache --days=7')
+            ->dailyAt('01:00')
+            ->name('roster-cache-warming')
+            ->withoutOverlapping()
+            ->onOneServer();
     }
 
     /**

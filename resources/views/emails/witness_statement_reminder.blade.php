@@ -26,8 +26,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📋 Witness Statement Required</h1>
-            <p>Health Services Commission - Occupational Health & Safety</p>
+            <img src="{{ asset('images/hsc-logo.png') }}" alt="HSC Logo" style="max-height: 40px; margin-bottom: 10px;">
+            <h1>Witness Statement Required</h1>
         </div>
         
         <div class="content">
@@ -46,9 +46,9 @@
             
             <div class="info-box">
                 <strong>Incident Details:</strong>
-                <p><strong>Reference:</strong> {{ $incident->reference_number }}</p>
+                <p><strong>Employee:</strong> {{ $incident->employee_name ?? 'N/A' }}</p>
+                <p><strong>Location:</strong> {{ $incident->facility->name ?? 'N/A' }}</p>
                 <p><strong>Date:</strong> {{ $incident->incident_date->format('d M Y') }}</p>
-                <p><strong>Facility:</strong> {{ $incident->facility->name ?? 'N/A' }}</p>
             </div>
             
             <div style="text-align: center;">
@@ -61,15 +61,17 @@
             </div>
             
             <p class="message" style="margin-top: 25px; font-size: 13px; color: #718096;">
-                <strong>Important:</strong> This link is unique to you and should not be shared with others. 
-                If you have any questions, please contact your supervisor or the HSC OHS team.
+                <strong>Important:</strong> This link is unique to you and should not be shared with others.
             </p>
         </div>
         
         <div class="footer">
             <p><strong>Health Services Commission of Zimbabwe</strong></p>
             <p>Occupational Health & Safety Division</p>
-            <p>This is an automated message. Please do not reply to this email.</p>
+            <p style="margin-top: 15px; font-size: 11px; color: #666; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                <strong>Important Notice:</strong> All witness statements must be truthful and accurate. Providing false or misleading information may result in disciplinary action by the HSC Disciplinary Committee and/or prosecution by the Zimbabwe Courts of Justice.
+            </p>
+            <p style="margin-top: 10px; font-size: 11px;">This is an automated message. Please do not reply to this email.</p>
         </div>
     </div>
 </body>

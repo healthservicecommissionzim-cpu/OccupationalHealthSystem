@@ -233,7 +233,7 @@
             <!-- Sidebar -->
             <aside>
                 <!-- Witness Statements Card -->
-                <div class="card">
+                <div class="card" style="display: flex; flex-direction: column; height: 100%;">
                     <div class="chead" style="background: #f8fafb;">
                         <div class="ctitle" style="color: #079b6d;"><i class="fa-solid fa-users"></i> &nbsp; Witness Statements</div>
                     </div>

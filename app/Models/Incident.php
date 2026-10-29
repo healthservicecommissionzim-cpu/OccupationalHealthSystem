@@ -82,6 +82,10 @@ class Incident extends Model
         'leave_status',
         'leave_information_saved_at',
         'saved_by_user_id',
+        'worker_primary_facility_id',
+        'cost_center_facility_id',
+        'roster_assignment_id',
+        'is_rotational_staff',
     ];
 
     /**
@@ -123,6 +127,7 @@ class Incident extends Model
         'expected_recovery_date' => 'date',
         'leave_information_saved_at' => 'datetime',
         'medical_certificate_provided' => 'boolean',
+        'is_rotational_staff' => 'boolean',
     ];
 
     public function designation()
@@ -187,6 +192,30 @@ class Incident extends Model
     public function assignedHRUser()
     {
         return $this->belongsTo(User::class, 'routed_to_hr_user_id');
+    }
+
+    /**
+     * Get the worker's primary facility for roster tracking.
+     */
+    public function workerPrimaryFacility()
+    {
+        return $this->belongsTo(Facility::class, 'worker_primary_facility_id');
+    }
+
+    /**
+     * Get the cost center facility responsible for this incident.
+     */
+    public function costCenterFacility()
+    {
+        return $this->belongsTo(Facility::class, 'cost_center_facility_id');
+    }
+
+    /**
+     * Get the roster assignment linked to this incident.
+     */
+    public function rosterAssignment()
+    {
+        return $this->belongsTo(RosterAssignment::class, 'roster_assignment_id');
     }
 
     /**
@@ -825,5 +854,25 @@ class Incident extends Model
     public function scopeActive($query)
     {
         return $query->where('status', 'active');
+    }
+
+    /**
+     * Scope to filter incidents involving rotational staff.
+     */
+    public function scopeRotationalStaff($query)
+    {
+        return $query->where('is_rotational_staff', true);
+    }
+
+    /**
+     * Scope to filter incidents by cost center facility.
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $facilityId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeByCostCenter($query, int $facilityId)
+    {
+        return $query->where('cost_center_facility_id', $facilityId);
     }
 }

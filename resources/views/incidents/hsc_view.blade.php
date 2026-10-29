@@ -96,6 +96,9 @@
             <span>Read-Only Access — You can view this case but cannot make modifications</span>
         </div>
 
+        <!-- Roster Context (if rotational staff) -->
+        @include('incidents.partials.roster-context', ['incident' => $incident])
+
         <!-- Incident Details Card -->
         <div class="card">
             <div class="card-header">
