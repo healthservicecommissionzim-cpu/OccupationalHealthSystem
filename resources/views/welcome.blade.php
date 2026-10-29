@@ -1851,6 +1851,9 @@
             }
         }
     </style>
+
+    <!-- Language Provider Script -->
+    @include('components.language-provider')
 </head>
 <body>
     <!-- Header -->
@@ -2093,6 +2096,9 @@
             © 2026 Health Service Commission. All rights reserved.
         </p>
     </footer>
+
+    <!-- Accessibility Features -->
+    @include('components.accessibility-toolbar')
 
     <!-- Mobile Menu Toggle Script -->
     <script>
