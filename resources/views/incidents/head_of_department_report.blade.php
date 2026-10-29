@@ -476,32 +476,40 @@
             }, 4000);
         }
 
-        // Auto-save draft as user types (with debounce)
-        let saveTimeout;
-        let autoSaveModalTimeout;
+        // Auto-save draft every 5 minutes
+        let autoSaveInterval;
+        let draftSaveCount = 0;
         
         d.addEventListener('input', () => {
             c.textContent = d.value.length;
             updateSubmitButton();
+        });
+
+        // Start auto-save interval - save every 5 minutes
+        function startAutoSaveInterval() {
+            if (autoSaveInterval) clearInterval(autoSaveInterval);
             
-            // Clear existing timeouts
-            clearTimeout(saveTimeout);
-            clearTimeout(autoSaveModalTimeout);
-            
-            // Only save if there's meaningful content
-            if (d.value.trim().length >= 50) {
-                // Save after 2 seconds of inactivity
-                saveTimeout = setTimeout(() => {
+            autoSaveInterval = setInterval(() => {
+                if (d.value.trim().length >= 50) {
                     localStorage.setItem(draftKey, d.value);
                     localStorage.setItem(draftTimeKey, new Date().toISOString());
+                    draftSaveCount++;
                     
-                    // Show modal after 5 seconds of inactivity (3 more seconds after save)
-                    if (!draftSaveModalShown) {
-                        autoSaveModalTimeout = setTimeout(() => {
-                            showDraftSaveModal();
-                        }, 3000);
+                    // Show save notification on first save and then every 2 saves (approximately 10 minutes)
+                    if (draftSaveCount === 1 && !draftSaveModalShown) {
+                        showDraftSaveModal();
                     }
-                }, 2000);
+                }
+            }, 5 * 60 * 1000); // 5 minutes in milliseconds
+        }
+
+        // Start the interval when page loads
+        startAutoSaveInterval();
+
+        // Restart interval on user input to ensure it's active
+        d.addEventListener('input', () => {
+            if (!autoSaveInterval) {
+                startAutoSaveInterval();
             }
         });
 

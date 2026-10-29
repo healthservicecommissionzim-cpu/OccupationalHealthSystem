@@ -839,7 +839,7 @@
             @csrf
             
             <!-- Hidden field for organization type -->
-            <input type="hidden" name="organization_type" value="moh" id="organization-type">
+            <input type="hidden" name="organization_type" value="" id="organization-type">
 
             <!-- ─── Personal Details Section ─── -->
             <div class="form-section">
@@ -1642,9 +1642,31 @@
                 orgSection.classList.remove('hidden');
             }
             
+            // Clear any validation errors for hidden organization section when HSC is selected
+            if (org === 'hsc') {
+                // Clear values in organization-specific fields to avoid validation errors
+                document.getElementById('organization_id').value = '';
+                document.getElementById('facility_type_id').value = '';
+                document.getElementById('province_id').value = '';
+                document.getElementById('district_id').value = '';
+                document.getElementById('facility_id').value = '';
+            }
+            
             // Focus on first form field
             document.getElementById('first_name').focus();
         };
+
+        // Show organization selection modal on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const orgTypeValue = document.getElementById('organization-type').value;
+            // If organization type is default or not properly selected, show modal
+            if (!orgTypeValue || orgTypeValue === '') {
+                const overlay = document.getElementById('orgSelectionOverlay');
+                if (overlay) {
+                    overlay.classList.add('active');
+                }
+            }
+        });
 
         // Prevent form submission without organization selection
         document.getElementById('registerForm').addEventListener('submit', function(e) {
