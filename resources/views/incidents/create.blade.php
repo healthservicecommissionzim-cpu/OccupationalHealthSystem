@@ -1793,6 +1793,48 @@
                 }
             });
 
+            $('#facility_type').select2({
+                placeholder: '— Select Facility Type —',
+                allowClear: true,
+                width: '100%',
+                minimumInputLength: 0
+            });
+
+            $('#province').select2({
+                placeholder: '— Select Province —',
+                allowClear: true,
+                width: '100%',
+                minimumInputLength: 0
+            });
+
+            $('#district').select2({
+                placeholder: '— Select District —',
+                allowClear: true,
+                width: '100%',
+                minimumInputLength: 0
+            });
+
+            $('#facility').select2({
+                placeholder: '— Select Facility —',
+                allowClear: true,
+                width: '100%',
+                minimumInputLength: 0
+            });
+
+            $('#supervisor_designation').select2({
+                placeholder: '— Select Supervisor Designation —',
+                allowClear: true,
+                width: '100%',
+                minimumInputLength: 0
+            });
+
+            $('#supervisor_name').select2({
+                placeholder: '— Select Supervisor —',
+                allowClear: true,
+                width: '100%',
+                minimumInputLength: 0
+            });
+
             // Trigger updateSupervisorDesignations when department Select2 changes
             $('#department').on('select2:select select2:unselect', function() {
                 console.log('Select2 change detected on department');
@@ -1802,6 +1844,23 @@
             // Also handle the native change event as fallback
             $('#department').on('change', function() {
                 console.log('Native change detected on department');
+                updateSupervisorDesignations();
+            });
+
+            // Handle Select2 changes for facility type, province, and district
+            $('#facility_type').on('select2:select select2:unselect', function() {
+                handleFacilityTypeChange();
+            });
+
+            $('#province').on('select2:select select2:unselect', function() {
+                updateDistricts();
+            });
+
+            $('#district').on('select2:select select2:unselect', function() {
+                updateFacilities();
+            });
+
+            $('#facility').on('select2:select select2:unselect', function() {
                 updateSupervisorDesignations();
             });
         });
