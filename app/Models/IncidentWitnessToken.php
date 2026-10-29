@@ -12,6 +12,7 @@ class IncidentWitnessToken extends Model
         'incident_id',
         'witness_name',
         'phone_number',
+        'email',
         'token',
         'statement',
         'token_sent_at',

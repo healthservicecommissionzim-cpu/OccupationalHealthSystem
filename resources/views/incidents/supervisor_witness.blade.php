@@ -179,8 +179,8 @@
                             </td>
                             <td data-label="Actions">
                                 @if(!$token->statement_submitted_at)
-                                    <button class="btn-resend" onclick="sendReminder({{ $token->id }}, '{{ $token->witness_name }}')">
-                                        <i class="fa-solid fa-paper-plane"></i> Resend SMS
+                                    <button class="btn-resend" onclick="contactWitness({{ $token->id }}, '{{ $token->witness_name }}', '{{ $token->email ?? '' }}', '{{ $token->phone_number }}')">
+                                        <i class="fa-solid fa-envelope"></i> Contact by Email
                                     </button>
                                 @else
                                     <button class="btn-resend" disabled>
@@ -236,15 +236,21 @@
             }, 3000);
         }
 
-        async function sendReminder(tokenId, witnessName) {
-            if (!confirm(`Send reminder SMS to ${witnessName}?`)) return;
+        async function contactWitness(tokenId, witnessName, witnessEmail, witnessPhone) {
+            // If no email, show manual contact options
+            if (!witnessEmail || witnessEmail === '') {
+                showManualContactModal(tokenId, witnessName, witnessPhone);
+                return;
+            }
+            
+            if (!confirm(`Send email notification to ${witnessName} at ${witnessEmail}?`)) return;
             
             const button = event.target.closest('.btn-resend');
             button.disabled = true;
             button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
 
             try {
-                const response = await fetch(`/supervisor/incidents/${incidentId}/witness/${tokenId}/reminder`, {
+                const response = await fetch(`/supervisor/incidents/${incidentId}/witness/${tokenId}/email-reminder`, {
                     method: 'POST',
                     headers: { 
                         'X-CSRF-TOKEN': csrfToken,
@@ -255,19 +261,69 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    showToast(`Reminder SMS sent to ${witnessName}`, 'success');
+                    showToast(`Email sent to ${witnessName}`, 'success');
                     setTimeout(() => location.reload(), 1500);
                 } else {
-                    showToast(data.message || 'Failed to send SMS', 'error');
+                    showToast(data.message || 'Failed to send email', 'error');
                     button.disabled = false;
-                    button.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Resend SMS';
+                    button.innerHTML = '<i class="fa-solid fa-envelope"></i> Contact by Email';
                 }
             } catch (error) {
                 console.error('Error:', error);
                 showToast('An error occurred', 'error');
                 button.disabled = false;
-                button.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Resend SMS';
+                button.innerHTML = '<i class="fa-solid fa-envelope"></i> Contact by Email';
             }
+        }
+        
+        function showManualContactModal(tokenId, witnessName, witnessPhone) {
+            const statementLink = `{{ url('/') }}/incidents/${incidentId}/witness/${tokenId}`;
+            const whatsappLink = `https://wa.me/${witnessPhone.replace(/[^0-9]/g, '').replace(/^0/, '263')}?text=${encodeURIComponent(`Hello ${witnessName}, please submit your witness statement here: ${statementLink}`)}`;
+            
+            const modal = `
+                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;" id="contactModal">
+                    <div style="background: white; border-radius: 12px; padding: 24px; max-width: 500px; width: 90%;">
+                        <h3 style="margin: 0 0 12px; font-size: 16px; color: #101a31;">Contact ${witnessName}</h3>
+                        <p style="margin: 0 0 18px; font-size: 12px; color: #718096;">No email address on file. Choose a manual contact method:</p>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <a href="${whatsappLink}" target="_blank" style="display: flex; align-items: center; gap: 10px; padding: 12px; background: #25D366; color: white; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600;">
+                                <i class="fab fa-whatsapp" style="font-size: 20px;"></i>
+                                Send via WhatsApp
+                            </a>
+                            
+                            <button onclick="copyStatementLink('${statementLink}')" style="display: flex; align-items: center; gap: 10px; padding: 12px; background: #079b6d; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                <i class="fa-solid fa-copy"></i>
+                                Copy Statement Link
+                            </button>
+                            
+                            <div style="margin-top: 8px; padding: 12px; background: #f8fafb; border-radius: 8px;">
+                                <p style="margin: 0 0 8px; font-size: 10px; color: #8a95a5; font-weight: 700; text-transform: uppercase;">Statement Link:</p>
+                                <p style="margin: 0; font-size: 11px; color: #263149; word-break: break-all; font-family: monospace;">${statementLink}</p>
+                            </div>
+                            
+                            <button onclick="closeContactModal()" style="margin-top: 8px; padding: 10px; background: #e4e9ee; color: #263149; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modal);
+        }
+        
+        function copyStatementLink(link) {
+            navigator.clipboard.writeText(link).then(() => {
+                showToast('Link copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Failed to copy link', 'error');
+            });
+        }
+        
+        function closeContactModal() {
+            const modal = document.getElementById('contactModal');
+            if (modal) modal.remove();
         }
     </script>
 </body>

@@ -239,7 +239,35 @@ class IncidentController extends Controller
                 STR_PAD_LEFT
             );
 
-            // Create incident record
+            // ─── COST ATTRIBUTION ENGINE ───
+            // Determine cost center attribution for rotational staff tracking
+            try {
+                $costAttributionEngine = app(\App\Services\Roster\CostAttributionEngine::class);
+                $rosterAttribution = $costAttributionEngine->attributeIncident(
+                    $validated['supervisor_user_id'], // User ID of worker (using supervisor as proxy for now)
+                    $validated['facility'], // Incident facility ID
+                    $incidentDate
+                );
+            } catch (\Exception $e) {
+                // If attribution fails (timeout, error), use default attribution (non-rotational)
+                Log::error('Cost attribution engine failed, using default attribution', [
+                    'incident_reference' => $referenceNumber ?? 'unknown',
+                    'user_id' => $validated['supervisor_user_id'],
+                    'facility_id' => $validated['facility'],
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                
+                // Default attribution: all fields point to incident facility, non-rotational
+                $rosterAttribution = [
+                    'worker_primary_facility_id' => $validated['facility'],
+                    'cost_center_facility_id' => $validated['facility'],
+                    'roster_assignment_id' => null,
+                    'is_rotational_staff' => false,
+                ];
+            }
+
+            // Create incident record with roster attribution
             $incident = Incident::create([
                 'reference_number' => $referenceNumber,
                 'first_name' => $validated['first_name'],
@@ -264,6 +292,11 @@ class IncidentController extends Controller
                 'supervisor_name' => $supervisorName,
                 'status' => 'PENDING_SUPERVISOR_VERIFICATION',
                 'compliance_status' => 'NONCOMPLIANT',
+                // Roster attribution fields
+                'worker_primary_facility_id' => $rosterAttribution['worker_primary_facility_id'],
+                'cost_center_facility_id' => $rosterAttribution['cost_center_facility_id'],
+                'roster_assignment_id' => $rosterAttribution['roster_assignment_id'],
+                'is_rotational_staff' => $rosterAttribution['is_rotational_staff'],
             ]);
 
             // Generate first aid token
@@ -979,6 +1012,127 @@ class IncidentController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while sending the reminder.',
+            ], 500);
+        }
+    }
+
+    /**
+     * Send email reminder to a pending witness (Email fallback when SMS fails)
+     */
+    public function sendWitnessEmailReminder(Request $request, Incident $incident, $tokenId)
+    {
+        $user = auth()->user();
+
+        // Verify supervisor role
+        if (!$user->hasRole('supervisor')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Access denied. You must have supervisor role to send reminders.',
+            ], 403);
+        }
+
+        // Verify supervisor authorization
+        if ($incident->assigned_supervisor_id !== $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Access denied. You are not the assigned supervisor for this incident.',
+            ], 403);
+        }
+
+        try {
+            $witnessToken = $incident->witnessTokens()->findOrFail($tokenId);
+
+            // Check witness has not submitted
+            if (!$witnessToken->isPending()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot send reminder to a witness who has already submitted their statement.',
+                ], 422);
+            }
+
+            // Check if witness has email
+            if (empty($witnessToken->email)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No email address on file for this witness. Please contact them manually.',
+                ], 422);
+            }
+
+            try {
+                // Send email reminder
+                \Mail::to($witnessToken->email)->send(
+                    new \App\Mail\WitnessStatementReminderMail($witnessToken, $incident)
+                );
+                
+                // Update last reminder timestamp
+                $witnessToken->update([
+                    'witness_last_reminder_sent_at' => now(),
+                ]);
+
+                // Log email send in incident_notifications table
+                \App\Models\IncidentNotification::create([
+                    'incident_id' => $incident->id,
+                    'witness_token_id' => $witnessToken->id,
+                    'notification_type' => 'WITNESS_REMINDER_EMAIL',
+                    'notification_channel' => 'email',
+                    'recipient_email' => $witnessToken->email,
+                    'status' => 'SENT',
+                    'message_content' => "Witness statement reminder for incident {$incident->reference_number}",
+                    'initiated_by_user_id' => $user->id,
+                    'sent_at' => now(),
+                ]);
+
+                Log::info('Witness reminder email sent', [
+                    'incident_id' => $incident->id,
+                    'witness_token_id' => $witnessToken->id,
+                    'supervisor_id' => $user->id,
+                    'email' => $witnessToken->email,
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Email reminder sent successfully to ' . $witnessToken->witness_name,
+                    'last_reminder_sent' => $witnessToken->witness_last_reminder_sent_at->format('d M Y, H:i'),
+                ]);
+
+            } catch (\Exception $emailError) {
+                // Handle email failure
+                Log::error('Witness reminder email failed', [
+                    'incident_id' => $incident->id,
+                    'witness_token_id' => $witnessToken->id,
+                    'error' => $emailError->getMessage(),
+                ]);
+
+                // Log failed attempt
+                \App\Models\IncidentNotification::create([
+                    'incident_id' => $incident->id,
+                    'witness_token_id' => $witnessToken->id,
+                    'notification_type' => 'WITNESS_REMINDER_EMAIL',
+                    'notification_channel' => 'email',
+                    'recipient_email' => $witnessToken->email,
+                    'status' => 'FAILED',
+                    'message_content' => "Witness statement reminder for incident {$incident->reference_number}",
+                    'error_message' => $emailError->getMessage(),
+                    'initiated_by_user_id' => $user->id,
+                    'sent_at' => now(),
+                ]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to send email reminder. Please try again or contact support.',
+                ], 500);
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Witness email reminder operation failed', [
+                'incident_id' => $incident->id,
+                'token_id' => $tokenId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while sending the email reminder.',
             ], 500);
         }
     }

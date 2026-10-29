@@ -323,6 +323,56 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
         Route::get('/communication-logs/export/csv', [\App\Http\Controllers\SuperAdmin\CommunicationLogsController::class, 'export'])->name('communication_logs.export');
         Route::get('/communication-logs/{log}', [\App\Http\Controllers\SuperAdmin\CommunicationLogsController::class, 'show'])->name('communication_logs.show');
         Route::get('/communication-logs/{log}/details', [\App\Http\Controllers\SuperAdmin\CommunicationLogsController::class, 'getDetails'])->name('communication_logs.details');
+        
+        // Staff Roster Management Routes
+        Route::prefix('staff-roster')->name('roster.')->group(function () {
+            // Roster CRUD - nested under manage-rosters
+            Route::prefix('manage-rosters')->name('manage-rosters.')->group(function () {
+                Route::get('/', [\App\Http\Controllers\System\RosterController::class, 'index'])->name('index');
+                Route::get('/create', [\App\Http\Controllers\System\RosterController::class, 'create'])->name('create');
+                Route::post('/', [\App\Http\Controllers\System\RosterController::class, 'store'])->name('store');
+                Route::get('/{roster}/edit', [\App\Http\Controllers\System\RosterController::class, 'edit'])->name('edit');
+                Route::put('/{roster}', [\App\Http\Controllers\System\RosterController::class, 'update'])->name('update');
+                Route::delete('/{roster}', [\App\Http\Controllers\System\RosterController::class, 'destroy'])->name('destroy');
+            });
+            
+            // Bulk Import
+            Route::get('/import', [\App\Http\Controllers\System\RosterController::class, 'importForm'])->name('import.form');
+            Route::post('/import', [\App\Http\Controllers\System\RosterController::class, 'processImport'])->name('import.process');
+            Route::get('/import/template', [\App\Http\Controllers\System\RosterController::class, 'downloadTemplate'])->name('import.template');
+            
+            // Assignment Management - nested under facility-assignments
+            Route::prefix('facility-assignments')->name('facility-assignments.')->group(function () {
+                Route::get('/', [\App\Http\Controllers\System\AssignmentController::class, 'index'])->name('index');
+                Route::post('/', [\App\Http\Controllers\System\AssignmentController::class, 'store'])->name('store');
+                Route::get('/{assignment}/edit', [\App\Http\Controllers\System\AssignmentController::class, 'edit'])->name('edit');
+                Route::put('/{assignment}', [\App\Http\Controllers\System\AssignmentController::class, 'update'])->name('update');
+                Route::post('/{assignment}/cancel', [\App\Http\Controllers\System\AssignmentController::class, 'cancel'])->name('cancel');
+                Route::get('/create', [\App\Http\Controllers\System\AssignmentController::class, 'create'])->name('create');
+            });
+            
+            // Cost Center Management
+            Route::get('/cost-centers', [\App\Http\Controllers\System\CostCenterController::class, 'index'])->name('cost-centers.index');
+            Route::post('/cost-centers', [\App\Http\Controllers\System\CostCenterController::class, 'store'])->name('cost-centers.store');
+            Route::put('/cost-centers/{costCenter}', [\App\Http\Controllers\System\CostCenterController::class, 'update'])->name('cost-centers.update');
+            Route::delete('/cost-centers/{costCenter}', [\App\Http\Controllers\System\CostCenterController::class, 'destroy'])->name('cost-centers.destroy');
+            
+            // Report Routes
+            Route::prefix('reports')->name('reports.')->group(function () {
+                // Cost Center Report
+                Route::get('/cost-center', [\App\Http\Controllers\System\ReportController::class, 'costCenterReport'])->name('cost-center');
+                
+                // Workforce Distribution Report
+                Route::get('/workforce-distribution', [\App\Http\Controllers\System\ReportController::class, 'workforceDistribution'])->name('workforce-distribution');
+                
+                // Rotation Movements Report
+                Route::get('/rotation-movements', [\App\Http\Controllers\System\ReportController::class, 'rotationMovements'])->name('rotation-movements');
+                
+                // CSV Export Routes
+                Route::get('/export/cost-center', [\App\Http\Controllers\System\ReportController::class, 'exportCostCenterReport'])->name('export.cost-center');
+                Route::get('/export/roster-data', [\App\Http\Controllers\System\ReportController::class, 'exportRosterData'])->name('export.roster-data');
+            });
+        });
     });
 
     // Security & Audit Routes (Super Admin)
@@ -355,6 +405,11 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
     Route::post('/hr/incidents/{incident}/leave-information', [\App\Http\Controllers\LeaveInformationController::class, 'store'])->name('incidents.leave_information_store')->middleware('permission:view_incidents');
     Route::post('/hr/incidents/send-sms', [IncidentController::class, 'sendSmsToReporter'])->name('incidents.send_sms')->middleware('permission:view_incidents');
     Route::post('/api/incidents/attachments/verify', [IncidentController::class, 'verifyAttachmentApi'])->name('incidents.verify_attachment');
+
+    // Read-only Roster View for HR roles
+    Route::get('/roster/view', [\App\Http\Controllers\System\RosterController::class, 'viewRosters'])
+        ->name('roster.view')
+        ->middleware(['role:central_hr,mohhc_hr,district_hr,hospital_hr,hsc_conditions']);
     Route::post('/api/incidents/attachments/reject', [IncidentController::class, 'rejectAttachmentApi'])->name('incidents.reject_attachment');
     Route::post('/incidents/{incident}/attachments/{attachment}/verify', [IncidentController::class, 'verifyAttachment'])->name('incidents.verify_attachment_legacy');
     Route::post('/incidents/{incident}/attachments/{attachment}/reject', [IncidentController::class, 'rejectAttachment'])->name('incidents.reject_attachment_legacy');
@@ -386,6 +441,7 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
         Route::get('/witness/sms-preview', [IncidentController::class, 'getWitnessSmsPreview'])->name('witness_sms_preview');
         Route::post('/witness/token/{tokenId}/send', [IncidentController::class, 'sendWitnessToken'])->name('send_witness_token');
         Route::post('/witness/{tokenId}/reminder', [IncidentController::class, 'sendWitnessReminder'])->name('send_witness_reminder');
+        Route::post('/witness/{tokenId}/email-reminder', [IncidentController::class, 'sendWitnessEmailReminder'])->name('send_witness_email_reminder');
         Route::get('/witness/{tokenId}/download', [IncidentController::class, 'downloadWitnessStatement'])->name('download_witness_statement');
         Route::get('/witness-status', [IncidentController::class, 'getWitnessStatus'])->name('witness_status');
         Route::post('/witness/submit', [IncidentController::class, 'submitWitnessVerification'])->name('submit_witness_verification');
