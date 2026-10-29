@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdn.botpress.cloud https://files.bpcontent.cloud https://code.jquery.com https://cdnjs.cloudflare.com;" />
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, private, max-age=0" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
@@ -15,8 +16,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <!-- Mobile-First Responsive Stylesheet -->
-    <link rel="stylesheet" href="{{ asset('css/responsive-mobile-first.css') }}" />
     <style>
         /* ─── Design Variables ─── */
         :root {
