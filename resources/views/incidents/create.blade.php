@@ -1767,18 +1767,29 @@
     <script>
         // Initialize Select2 for Department and Designation dropdowns
         $(document).ready(function() {
+            // Custom matcher function for case-insensitive search
+            var customMatcher = function(params, data) {
+                if ($.trim(params.term) === '') return data;
+                if ((data.text || '').toLowerCase().indexOf((params.term || '').toLowerCase()) > -1) {
+                    return data;
+                }
+                return null;
+            };
+
             $('#department').select2({
                 placeholder: '— Select Department —',
                 allowClear: true,
                 width: '100%',
-                minimumInputLength: 0
+                minimumInputLength: 0,
+                matcher: customMatcher
             });
 
             $('#designation').select2({
                 placeholder: '— Select Designation —',
                 allowClear: true,
                 width: '100%',
-                minimumInputLength: 0
+                minimumInputLength: 0,
+                matcher: customMatcher
             });
 
             $('#incident_type').select2({
@@ -1786,6 +1797,7 @@
                 allowClear: true,
                 width: '100%',
                 minimumInputLength: 0,
+                matcher: customMatcher,
                 language: {
                     noResults: function() {
                         return 'No incident types found';
@@ -1797,42 +1809,48 @@
                 placeholder: '— Select Facility Type —',
                 allowClear: true,
                 width: '100%',
-                minimumInputLength: 0
+                minimumInputLength: 0,
+                matcher: customMatcher
             });
 
             $('#province').select2({
                 placeholder: '— Select Province —',
                 allowClear: true,
                 width: '100%',
-                minimumInputLength: 0
+                minimumInputLength: 0,
+                matcher: customMatcher
             });
 
             $('#district').select2({
                 placeholder: '— Select District —',
                 allowClear: true,
                 width: '100%',
-                minimumInputLength: 0
+                minimumInputLength: 0,
+                matcher: customMatcher
             });
 
             $('#facility').select2({
                 placeholder: '— Select Facility —',
                 allowClear: true,
                 width: '100%',
-                minimumInputLength: 0
+                minimumInputLength: 0,
+                matcher: customMatcher
             });
 
             $('#supervisor_designation').select2({
                 placeholder: '— Select Supervisor Designation —',
                 allowClear: true,
                 width: '100%',
-                minimumInputLength: 0
+                minimumInputLength: 0,
+                matcher: customMatcher
             });
 
             $('#supervisor_name').select2({
                 placeholder: '— Select Supervisor —',
                 allowClear: true,
                 width: '100%',
-                minimumInputLength: 0
+                minimumInputLength: 0,
+                matcher: customMatcher
             });
 
             // Trigger updateSupervisorDesignations when department Select2 changes
