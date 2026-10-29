@@ -680,7 +680,7 @@
 
                 <input type="hidden" name="token" value="{{ $token }}">
 
-                <!-- Email -->
+                <!-- Email (read-only, pre-filled from reset link) -->
                 <div class="form-group">
                     <label for="email">Email address</label>
                     <div class="input-wrapper @error('email') error @enderror">
@@ -688,11 +688,11 @@
                             id="email"
                             type="email"
                             name="email"
-                            value="{{ old('email') }}"
+                            value="{{ old('email', request()->email) }}"
                             required
-                            autofocus
+                            readonly
                             autocomplete="email"
-                            placeholder="you@example.com"
+                            style="background-color: #f8fafc; cursor: not-allowed;"
                             aria-describedby="email-error"
                         />
                         <span class="input-icon"><i class="fa-regular fa-envelope"></i></span>
@@ -713,6 +713,7 @@
                             type="password"
                             name="password"
                             required
+                            autofocus
                             autocomplete="new-password"
                             placeholder="••••••••••••"
                             aria-describedby="password-error"
@@ -826,11 +827,11 @@
                 });
             }
 
-            // Focus email on load
+            // Focus password on load (email is read-only)
             document.addEventListener('DOMContentLoaded', () => {
-                const emailInput = document.getElementById('email');
-                if (emailInput) {
-                    setTimeout(() => emailInput.focus(), 100);
+                const passwordInput = document.getElementById('password');
+                if (passwordInput) {
+                    setTimeout(() => passwordInput.focus(), 100);
                 }
             });
 
