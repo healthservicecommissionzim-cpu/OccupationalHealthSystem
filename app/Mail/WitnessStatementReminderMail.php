@@ -25,7 +25,7 @@ class WitnessStatementReminderMail extends Mailable
     {
         $this->witnessToken = $witnessToken;
         $this->incident = $incident;
-        $this->statementLink = url("/incidents/{$incident->id}/witness/{$witnessToken->token}");
+        $this->statementLink = url("/incidents/witness/{$witnessToken->token}");
     }
 
     /**
