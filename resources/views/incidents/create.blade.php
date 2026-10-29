@@ -1343,6 +1343,39 @@
                     }
                 }
             }
+
+            // Reinitialize Select2 after updating
+            if (typeof $ !== 'undefined' && $.fn.select2) {
+                $('#district').select2('destroy');
+                $('#district').select2({
+                    placeholder: '— Select District —',
+                    allowClear: true,
+                    width: '100%',
+                    minimumInputLength: 0,
+                    matcher: function(params, data) {
+                        if ($.trim(params.term) === '') return data;
+                        if ((data.text || '').toLowerCase().indexOf((params.term || '').toLowerCase()) > -1) {
+                            return data;
+                        }
+                        return null;
+                    }
+                });
+
+                $('#facility').select2('destroy');
+                $('#facility').select2({
+                    placeholder: '— Select Facility —',
+                    allowClear: true,
+                    width: '100%',
+                    minimumInputLength: 0,
+                    matcher: function(params, data) {
+                        if ($.trim(params.term) === '') return data;
+                        if ((data.text || '').toLowerCase().indexOf((params.term || '').toLowerCase()) > -1) {
+                            return data;
+                        }
+                        return null;
+                    }
+                });
+            }
         }
 
         function updateFacilities() {
@@ -1383,6 +1416,24 @@
                 opt.textContent = fac.name;
                 facilitySelect.appendChild(opt);
             });
+
+            // Reinitialize Select2 after updating
+            if (typeof $ !== 'undefined' && $.fn.select2) {
+                $('#facility').select2('destroy');
+                $('#facility').select2({
+                    placeholder: '— Select Facility —',
+                    allowClear: true,
+                    width: '100%',
+                    minimumInputLength: 0,
+                    matcher: function(params, data) {
+                        if ($.trim(params.term) === '') return data;
+                        if ((data.text || '').toLowerCase().indexOf((params.term || '').toLowerCase()) > -1) {
+                            return data;
+                        }
+                        return null;
+                    }
+                });
+            }
         }
 
         function updateSupervisorDesignations() {
@@ -1432,6 +1483,39 @@
                     console.warn(`No supervisors found for department ID: ${selectedDeptId}, facility ID: ${selectedFacilityId}`);
                 }
             }
+
+            // Reinitialize Select2 after updating
+            if (typeof $ !== 'undefined' && $.fn.select2) {
+                $('#supervisor_designation').select2('destroy');
+                $('#supervisor_designation').select2({
+                    placeholder: '— Select Supervisor Designation —',
+                    allowClear: true,
+                    width: '100%',
+                    minimumInputLength: 0,
+                    matcher: function(params, data) {
+                        if ($.trim(params.term) === '') return data;
+                        if ((data.text || '').toLowerCase().indexOf((params.term || '').toLowerCase()) > -1) {
+                            return data;
+                        }
+                        return null;
+                    }
+                });
+
+                $('#supervisor_name').select2('destroy');
+                $('#supervisor_name').select2({
+                    placeholder: '— Select Supervisor —',
+                    allowClear: true,
+                    width: '100%',
+                    minimumInputLength: 0,
+                    matcher: function(params, data) {
+                        if ($.trim(params.term) === '') return data;
+                        if ((data.text || '').toLowerCase().indexOf((params.term || '').toLowerCase()) > -1) {
+                            return data;
+                        }
+                        return null;
+                    }
+                });
+            }
         }
 
         function updateSupervisorNames() {
@@ -1465,6 +1549,24 @@
                     opt.value = supervisor.id;
                     opt.textContent = supervisor.name;
                     supervisorNameSelect.appendChild(opt);
+                });
+            }
+
+            // Reinitialize Select2 after updating
+            if (typeof $ !== 'undefined' && $.fn.select2) {
+                $('#supervisor_name').select2('destroy');
+                $('#supervisor_name').select2({
+                    placeholder: '— Select Supervisor —',
+                    allowClear: true,
+                    width: '100%',
+                    minimumInputLength: 0,
+                    matcher: function(params, data) {
+                        if ($.trim(params.term) === '') return data;
+                        if ((data.text || '').toLowerCase().indexOf((params.term || '').toLowerCase()) > -1) {
+                            return data;
+                        }
+                        return null;
+                    }
                 });
             }
         }
