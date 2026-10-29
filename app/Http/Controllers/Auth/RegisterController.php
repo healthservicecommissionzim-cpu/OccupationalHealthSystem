@@ -29,7 +29,24 @@ class RegisterController extends Controller
     public function create(Request $request)
     {
         $organizations = Organization::all();
-        $departments = Department::all();
+        
+        // Filter departments to only HSC departments
+        $hscDepartments = [
+            "Secretary & Commissioner Office",
+            "Conditions Of Service & Industrial Relations",
+            "Human Resources",
+            "Performance Improvement & Development",
+            "Finance & Administration",
+            "Monitoring & Evaluation",
+            "Public Relations",
+            "Procurement Management Unit",
+            "Discipline Unit",
+            "Audit Unit",
+            "Legal Unit",
+            "Information Communication Technology Unit"
+        ];
+        
+        $departments = Department::whereIn('name', $hscDepartments)->get();
         $designations = Designation::all();
         $provinces = Province::all();
         $districts = District::with('province')->get();
