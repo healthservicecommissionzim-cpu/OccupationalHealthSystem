@@ -233,55 +233,84 @@
             margin-bottom: 1.25rem;
         }
 
-        .consent-label {
+        /* ─── Custom Checkbox with Visible Checkmark ─── */
+        .custom-checkbox-wrapper {
             display: flex;
             align-items: flex-start;
             gap: 0.75rem;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .consent-label input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            min-width: 20px;
-            margin-top: 0.05rem;
-            cursor: pointer;
-            accent-color: var(--brand);
-            border: 2px solid var(--slate-300);
-            border-radius: 4px;
+            padding: 1rem;
+            background: var(--brand-light);
+            border: 2px solid var(--brand);
+            border-radius: var(--radius-sm);
             transition: all var(--transition);
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
+        }
+
+        /* Hide default checkbox */
+        .custom-checkbox-wrapper input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* Create custom checkbox - only this is clickable */
+        .custom-checkbox-wrapper .checkmark {
+            width: 24px;
+            height: 24px;
             background-color: var(--white);
+            border: 2px solid var(--brand);
+            border-radius: 4px;
+            flex-shrink: 0;
             position: relative;
+            transition: all var(--transition);
+            cursor: pointer;
+            display: block;
         }
 
-        .consent-label input[type="checkbox"]:hover {
-            border-color: var(--brand);
-            box-shadow: 0 0 0 3px var(--brand-glow);
+        /* On hover - only checkbox */
+        .custom-checkbox-wrapper .checkmark:hover {
+            background-color: rgba(29, 69, 51, 0.05);
+            border-color: var(--brand-dark);
         }
 
-        .consent-label input[type="checkbox"]:checked {
+        /* When checked, change background */
+        .custom-checkbox-wrapper input[type="checkbox"]:checked + .checkmark {
             background-color: var(--brand);
             border-color: var(--brand);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 11-1.06-1.06L12.72 4.22a.75.75 0 011.06 0z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: 14px;
         }
 
-        .consent-label input[type="checkbox"]:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px var(--brand-glow);
+        /* Create the checkmark/tick (hidden when not checked) */
+        .custom-checkbox-wrapper .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
         }
 
-        .consent-text {
-            font-size: 0.8rem;
-            color: var(--slate-600);
-            line-height: 1.5;
+        /* Show the checkmark when checked */
+        .custom-checkbox-wrapper input[type="checkbox"]:checked + .checkmark:after {
+            display: block;
+        }
+
+        /* Style the checkmark/tick */
+        .custom-checkbox-wrapper .checkmark:after {
+            left: 7px;
+            top: 3px;
+            width: 6px;
+            height: 11px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+
+        .custom-checkbox-wrapper .checkbox-label {
             flex: 1;
+            margin: 0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--brand);
+            line-height: 1.5;
+            cursor: default;
+            user-select: none;
         }
 
         /* ─── Success Modal ─── */
@@ -1167,12 +1196,13 @@
             <!-- ─── Consent Section ─── -->
             <div class="form-section">
                 <div class="form-group consent-group">
-                    <label class="consent-label">
+                    <div class="custom-checkbox-wrapper">
                         <input type="checkbox" id="consent_checkbox" name="consent" required />
-                        <span class="consent-text">
+                        <label for="consent_checkbox" class="checkmark"></label>
+                        <span class="checkbox-label">
                             I agree to supply my personal and professional information for the purpose of accessing the Health Service Commission System and confirm that the information provided is accurate and complete.
                         </span>
-                    </label>
+                    </div>
                     @error('consent')
                         <div class="error-text"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> {{ $message }}</div>
                     @enderror
