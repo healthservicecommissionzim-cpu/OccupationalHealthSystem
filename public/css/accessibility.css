@@ -1,7 +1,7 @@
 /* Accessibility Toolbar Styles */
 .accessibility-toolbar {
     position: fixed;
-    bottom: 30px;
+    bottom: 100px;
     right: 30px;
     z-index: 9998;
 }
@@ -35,7 +35,7 @@
 .accessibility-panel {
     display: none;
     position: fixed;
-    bottom: 100px;
+    bottom: 170px;
     right: 30px;
     width: 320px;
     background: white;
@@ -245,7 +245,7 @@ body.text-size-200 {
 
 @media (max-width: 640px) {
     .accessibility-toolbar {
-        bottom: 20px;
+        bottom: 90px;
         right: 20px;
     }
 
@@ -256,7 +256,7 @@ body.text-size-200 {
     }
 
     .accessibility-panel {
-        bottom: 80px;
+        bottom: 150px;
         right: 20px;
         width: 280px;
     }
