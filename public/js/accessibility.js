@@ -1,8 +1,22 @@
 // Accessibility Toolbar JavaScript
+console.log('Accessibility script loaded');
+
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing accessibility toolbar');
+    
     const panel = document.getElementById('accessibilityPanel');
     const toggleBtn = document.getElementById('toggleAccessibilityPanel');
     const closeBtn = document.getElementById('closeAccessibilityPanel');
+    
+    console.log('Panel found:', !!panel);
+    console.log('Toggle button found:', !!toggleBtn);
+    console.log('Close button found:', !!closeBtn);
+
+    if (!panel || !toggleBtn) {
+        console.error('Accessibility components not found in DOM');
+        return;
+    }
+
     const languageSelect = document.getElementById('languageSelect');
     const increaseBtn = document.getElementById('increaseText');
     const decreaseBtn = document.getElementById('decreaseText');
@@ -13,32 +27,51 @@ document.addEventListener('DOMContentLoaded', function() {
     const dyslexiaFontToggle = document.getElementById('dyslexiaFontToggle');
     const textSizeDisplay = document.getElementById('textSizeDisplay');
 
-    if (!panel || !toggleBtn) {
-        console.error('Accessibility components not found');
-        return;
-    }
-
     let currentTextSize = 100;
 
     // Load saved settings
     loadAccessibilitySettings();
 
     // Toggle Panel
-    toggleBtn.addEventListener('click', () => {
+    toggleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation(); // Prevent potential bubbling issues
+        console.log('Toggle button clicked');
         panel.classList.toggle('active');
+        const isActive = panel.classList.contains('active');
+        console.log('Panel active:', isActive);
+        // Accessibility improvement: Update aria-expanded
+        toggleBtn.setAttribute('aria-expanded', isActive);
     });
 
-    closeBtn.addEventListener('click', () => {
+    closeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Close button clicked');
         panel.classList.remove('active');
+        toggleBtn.setAttribute('aria-expanded', 'false');
     });
 
     // Keyboard shortcut (Alt + A)
     document.addEventListener('keydown', (e) => {
         if (e.altKey && e.key === 'a') {
             e.preventDefault();
+            e.stopPropagation();
             panel.classList.toggle('active');
-            if (panel.classList.contains('active')) {
+            const isActive = panel.classList.contains('active');
+            toggleBtn.setAttribute('aria-expanded', isActive);
+            if (isActive) {
                 toggleBtn.focus();
+            }
+        }
+    });
+
+    // Close panel when clicking outside
+    document.addEventListener('click', (e) => {
+        if (panel.classList.contains('active')) {
+            if (!panel.contains(e.target) && !toggleBtn.contains(e.target)) {
+                panel.classList.remove('active');
+                toggleBtn.setAttribute('aria-expanded', 'false');
             }
         }
     });

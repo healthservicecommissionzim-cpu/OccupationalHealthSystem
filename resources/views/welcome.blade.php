@@ -23,9 +23,6 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     
-    <!-- Accessibility Stylesheet -->
-    <link rel="stylesheet" href="{{ asset('css/accessibility.css') }}">
-    
     <!-- Preload critical assets -->
     <link rel="preload" href="{{ asset('images/hsc-logo.png') }}" as="image">
     
@@ -1854,9 +1851,6 @@
             }
         }
     </style>
-
-    <!-- Language Provider Script -->
-    @include('components.language-provider')
 </head>
 <body>
     <!-- Header -->
@@ -2100,9 +2094,6 @@
         </p>
     </footer>
 
-    <!-- Accessibility Features -->
-    @include('components.accessibility-toolbar')
-
     <!-- Mobile Menu Toggle Script -->
     <script>
         // Mobile menu toggle
@@ -2329,8 +2320,5 @@
             display: none !important;
         }
     </style>
-
-    <!-- Accessibility Toolbar Script -->
-    <script src="{{ asset('js/accessibility.js') }}"></script>
 </body>
 </html>
