@@ -179,8 +179,8 @@
                             </td>
                             <td data-label="Actions">
                                 @if(!$token->statement_submitted_at)
-                                    <button class="btn-resend" onclick="contactWitness({{ $token->id }}, '{{ $token->witness_name }}', '{{ $token->email ?? '' }}', '{{ $token->phone_number }}')">
-                                        <i class="fa-solid fa-envelope"></i> Contact by Email
+                                    <button class="btn-resend" onclick="showContactModal({{ $token->id }}, '{{ $token->witness_name }}', '{{ $token->email ?? '' }}', '{{ $token->phone_number }}', '{{ $token->token }}')">
+                                        <i class="fa-solid fa-phone"></i> Contact
                                     </button>
                                 @else
                                     <button class="btn-resend" disabled>
@@ -237,18 +237,80 @@
         }
 
         async function contactWitness(tokenId, witnessName, witnessEmail, witnessPhone) {
-            // If no email, show manual contact options
-            if (!witnessEmail || witnessEmail === '') {
-                showManualContactModal(tokenId, witnessName, witnessPhone);
-                return;
-            }
+        function showContactModal(tokenId, witnessName, witnessEmail, witnessPhone, witnessToken) {
+            const statementLink = `{{ url('/') }}/incidents/witness/${witnessToken}`;
+            const formattedPhone = witnessPhone.replace(/[^0-9]/g, '').replace(/^0/, '263');
+            const whatsappLink = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(`Hello ${witnessName}, you are listed as a witness for incident ${incidentId}. Please submit your statement here: ${statementLink}`)}`;
             
-            if (!confirm(`Send email notification to ${witnessName} at ${witnessEmail}?`)) return;
+            const modal = `
+                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;" id="contactModal">
+                    <div style="background: white; border-radius: 12px; padding: 24px; max-width: 550px; width: 95%;">
+                        <h3 style="margin: 0 0 8px; font-size: 18px; color: #101a31; font-weight: 700;">Contact Witness</h3>
+                        <p style="margin: 0 0 20px; font-size: 12px; color: #718096;">${witnessName} • ${witnessPhone}</p>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <!-- WhatsApp Option -->
+                            <a href="${whatsappLink}" target="_blank" style="display: flex; align-items: center; gap: 12px; padding: 14px; background: linear-gradient(135deg, #25D366 0%, #20BA5A 100%); color: white; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; border: 1px solid #1ea853; transition: all 0.2s;">
+                                <i class="fab fa-whatsapp" style="font-size: 24px;"></i>
+                                <span>
+                                    <div style="font-weight: 700;">Send via WhatsApp</div>
+                                    <div style="font-size: 11px; opacity: 0.9;">Opens WhatsApp with statement link</div>
+                                </span>
+                            </a>
+                            
+                            ${witnessEmail ? `
+                            <!-- Email Option -->
+                            <button onclick="sendViaEmail(${tokenId}, '${witnessName.replace(/'/g, "\\'")}')" style="display: flex; align-items: center; gap: 12px; padding: 14px; background: linear-gradient(135deg, #0B5ED7 0%, #0A58CA 100%); color: white; border: 1px solid #0A58CA; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                <i class="fa-solid fa-envelope" style="font-size: 24px;"></i>
+                                <span>
+                                    <div style="font-weight: 700;">Send via Email</div>
+                                    <div style="font-size: 11px; opacity: 0.9;">${witnessEmail}</div>
+                                </span>
+                            </button>
+                            ` : ''}
+                            
+                            <!-- SMS Option -->
+                            <button onclick="sendViaSMS(${tokenId}, '${witnessName.replace(/'/g, "\\'")}')" style="display: flex; align-items: center; gap: 12px; padding: 14px; background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%); color: white; border: 1px solid #4F46E5; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                <i class="fa-solid fa-message" style="font-size: 24px;"></i>
+                                <span>
+                                    <div style="font-weight: 700;">Send via SMS</div>
+                                    <div style="font-size: 11px; opacity: 0.9;">Text message reminder</div>
+                                </span>
+                            </button>
+                            
+                            <!-- Copy Link Option -->
+                            <button onclick="copyStatementLink('${statementLink.replace(/'/g, "\\'")}')" style="display: flex; align-items: center; gap: 12px; padding: 14px; background: linear-gradient(135deg, #079b6d 0%, #067c58 100%); color: white; border: 1px solid #067c58; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                <i class="fa-solid fa-copy" style="font-size: 24px;"></i>
+                                <span>
+                                    <div style="font-weight: 700;">Copy Link</div>
+                                    <div style="font-size: 11px; opacity: 0.9;">Copy to clipboard for manual sharing</div>
+                                </span>
+                            </button>
+                            
+                            <!-- Link Display -->
+                            <div style="margin-top: 12px; padding: 12px; background: #f8fafb; border: 1px solid #e4e9ee; border-radius: 8px;">
+                                <p style="margin: 0 0 8px; font-size: 10px; color: #8a95a5; font-weight: 700; text-transform: uppercase;">Statement Link:</p>
+                                <p style="margin: 0; font-size: 11px; color: #263149; word-break: break-all; font-family: monospace; background: white; padding: 8px; border-radius: 4px;">${statementLink}</p>
+                            </div>
+                            
+                            <!-- Close Button -->
+                            <button onclick="closeContactModal()" style="margin-top: 8px; padding: 10px; background: #e4e9ee; color: #263149; border: 1px solid #ccd6df; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
             
-            const button = event.target.closest('.btn-resend');
-            button.disabled = true;
-            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
-
+            document.body.insertAdjacentHTML('beforeend', modal);
+        }
+        
+        async function sendViaEmail(tokenId, witnessName) {
+            if (!confirm(`Send email reminder to ${witnessName}?`)) return;
+            
+            const modal = document.getElementById('contactModal');
+            if (modal) modal.remove();
+            
             try {
                 const response = await fetch(`/supervisor/incidents/${incidentId}/witness/${tokenId}/email-reminder`, {
                     method: 'POST',
@@ -265,57 +327,46 @@
                     setTimeout(() => location.reload(), 1500);
                 } else {
                     showToast(data.message || 'Failed to send email', 'error');
-                    button.disabled = false;
-                    button.innerHTML = '<i class="fa-solid fa-envelope"></i> Contact by Email';
                 }
             } catch (error) {
                 console.error('Error:', error);
                 showToast('An error occurred', 'error');
-                button.disabled = false;
-                button.innerHTML = '<i class="fa-solid fa-envelope"></i> Contact by Email';
             }
         }
         
-        function showManualContactModal(tokenId, witnessName, witnessPhone) {
-            const statementLink = `{{ url('/') }}/incidents/${incidentId}/witness/${tokenId}`;
-            const whatsappLink = `https://wa.me/${witnessPhone.replace(/[^0-9]/g, '').replace(/^0/, '263')}?text=${encodeURIComponent(`Hello ${witnessName}, please submit your witness statement here: ${statementLink}`)}`;
+        async function sendViaSMS(tokenId, witnessName) {
+            if (!confirm(`Send SMS reminder to ${witnessName}?`)) return;
             
-            const modal = `
-                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;" id="contactModal">
-                    <div style="background: white; border-radius: 12px; padding: 24px; max-width: 500px; width: 90%;">
-                        <h3 style="margin: 0 0 12px; font-size: 16px; color: #101a31;">Contact ${witnessName}</h3>
-                        <p style="margin: 0 0 18px; font-size: 12px; color: #718096;">No email address on file. Choose a manual contact method:</p>
-                        
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <a href="${whatsappLink}" target="_blank" style="display: flex; align-items: center; gap: 10px; padding: 12px; background: #25D366; color: white; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600;">
-                                <i class="fab fa-whatsapp" style="font-size: 20px;"></i>
-                                Send via WhatsApp
-                            </a>
-                            
-                            <button onclick="copyStatementLink('${statementLink}')" style="display: flex; align-items: center; gap: 10px; padding: 12px; background: #079b6d; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                                <i class="fa-solid fa-copy"></i>
-                                Copy Statement Link
-                            </button>
-                            
-                            <div style="margin-top: 8px; padding: 12px; background: #f8fafb; border-radius: 8px;">
-                                <p style="margin: 0 0 8px; font-size: 10px; color: #8a95a5; font-weight: 700; text-transform: uppercase;">Statement Link:</p>
-                                <p style="margin: 0; font-size: 11px; color: #263149; word-break: break-all; font-family: monospace;">${statementLink}</p>
-                            </div>
-                            
-                            <button onclick="closeContactModal()" style="margin-top: 8px; padding: 10px; background: #e4e9ee; color: #263149; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;">
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', modal);
+            const modal = document.getElementById('contactModal');
+            if (modal) modal.remove();
+
+            try {
+                const response = await fetch(`/supervisor/incidents/${incidentId}/witness/${tokenId}/reminder`, {
+                    method: 'POST',
+                    headers: { 
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(`SMS sent to ${witnessName}`, 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast(data.message || 'Failed to send SMS', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('An error occurred', 'error');
+            }
         }
         
         function copyStatementLink(link) {
             navigator.clipboard.writeText(link).then(() => {
                 showToast('Link copied to clipboard!', 'success');
+                closeContactModal();
             }).catch(() => {
                 showToast('Failed to copy link', 'error');
             });
