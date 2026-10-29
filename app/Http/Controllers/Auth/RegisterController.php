@@ -106,6 +106,7 @@ class RegisterController extends Controller
                 'phone_number' => 'required|string|max:20',
                 'designation_id' => 'required|exists:designations,id',
                 'password' => ['required', 'string', 'confirmed', new StrongPassword],
+                'consent' => 'required|accepted',
             ];
         } else {
             // MOH: All fields as before
@@ -122,6 +123,7 @@ class RegisterController extends Controller
                 'facility_type_id' => 'nullable|exists:facility_types,id',
                 'facility_id' => 'nullable|exists:facilities,id',
                 'password' => ['required', 'string', 'confirmed', new StrongPassword],
+                'consent' => 'required|accepted',
             ];
         }
 

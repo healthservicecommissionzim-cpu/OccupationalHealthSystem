@@ -228,6 +228,62 @@
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2394a3b8'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
         }
 
+        /* ─── Consent Checkbox ─── */
+        .consent-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .consent-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .consent-label input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            margin-top: 0.05rem;
+            cursor: pointer;
+            accent-color: var(--brand);
+            border: 2px solid var(--slate-300);
+            border-radius: 4px;
+            transition: all var(--transition);
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-color: var(--white);
+            position: relative;
+        }
+
+        .consent-label input[type="checkbox"]:hover {
+            border-color: var(--brand);
+            box-shadow: 0 0 0 3px var(--brand-glow);
+        }
+
+        .consent-label input[type="checkbox"]:checked {
+            background-color: var(--brand);
+            border-color: var(--brand);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 11-1.06-1.06L12.72 4.22a.75.75 0 011.06 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 14px;
+        }
+
+        .consent-label input[type="checkbox"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px var(--brand-glow);
+        }
+
+        .consent-text {
+            font-size: 0.8rem;
+            color: var(--slate-600);
+            line-height: 1.5;
+            flex: 1;
+        }
+
         /* ─── Success Modal ─── */
         .modal-overlay {
             display: none;
@@ -353,15 +409,46 @@
             gap: 0.5rem;
             box-shadow: 0 2px 8px rgba(29, 69, 51, 0.2);
             margin-top: 0.25rem;
+            position: relative;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled)::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--red-500);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            z-index: 1000;
+            pointer-events: none;
+            animation: tooltipFade 0.2s ease;
+        }
+
+        .btn-primary:hover:not(:disabled)::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--red-500);
+            z-index: 1000;
+            pointer-events: none;
+            animation: tooltipFade 0.2s ease;
+        }
+
+        .btn-primary:hover:not(:disabled) {
             background: var(--brand-dark);
             transform: translateY(-1px);
             box-shadow: 0 4px 16px rgba(29, 69, 51, 0.3);
         }
 
-        .btn-primary:active {
+        .btn-primary:active:not(:disabled) {
             transform: scale(0.98);
         }
 
@@ -370,6 +457,47 @@
             cursor: not-allowed;
             transform: none !important;
             box-shadow: none !important;
+        }
+
+        .btn-primary:disabled:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--red-500);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            z-index: 1000;
+            pointer-events: none;
+            animation: tooltipFade 0.2s ease;
+        }
+
+        .btn-primary:disabled:hover::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--red-500);
+            z-index: 1000;
+            pointer-events: none;
+            animation: tooltipFade 0.2s ease;
+        }
+
+        @keyframes tooltipFade {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
         }
 
         .btn-primary .spinner {
@@ -1036,7 +1164,22 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn-primary" id="submitBtn">
+            <!-- ─── Consent Section ─── -->
+            <div class="form-section">
+                <div class="form-group consent-group">
+                    <label class="consent-label">
+                        <input type="checkbox" id="consent_checkbox" name="consent" required />
+                        <span class="consent-text">
+                            I agree to supply my personal and professional information for the purpose of accessing the Health Service Commission System and confirm that the information provided is accurate and complete.
+                        </span>
+                    </label>
+                    @error('consent')
+                        <div class="error-text"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> {{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary" id="submitBtn" disabled>
                 <span class="spinner" aria-hidden="true"></span>
                 <span class="btn-text"><i class="fa-regular fa-user-plus" aria-hidden="true"></i> Create Account</span>
             </button>
@@ -1416,8 +1559,40 @@
             }
         }
 
-        // ── Submit loading ──
+        // ── Consent Checkbox Handler ──
+        const consentCheckbox = document.getElementById('consent_checkbox');
         const submitBtn = document.getElementById('submitBtn');
+
+        function updateSubmitButtonState() {
+            if (consentCheckbox.checked) {
+                submitBtn.disabled = false;
+                submitBtn.removeAttribute('data-tooltip');
+                submitBtn.style.position = 'relative';
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.setAttribute('data-tooltip', 'Please agree to the consent before creating an account');
+                submitBtn.style.position = 'relative';
+            }
+        }
+
+        if (consentCheckbox) {
+            consentCheckbox.addEventListener('change', updateSubmitButtonState);
+            // Set initial state
+            updateSubmitButtonState();
+        }
+
+        // Prevent form submission if consent not checked
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                if (!consentCheckbox.checked) {
+                    e.preventDefault();
+                    alert('Please agree to the consent to create an account');
+                    return false;
+                }
+            });
+        }
+
+        // ── Submit loading ──
         form.addEventListener('submit', function(e) {
             // Clear all storage immediately
             sessionStorage.clear();
