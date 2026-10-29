@@ -236,7 +236,6 @@
             }, 3000);
         }
 
-        async function contactWitness(tokenId, witnessName, witnessEmail, witnessPhone) {
         function showContactModal(tokenId, witnessName, witnessEmail, witnessPhone, witnessToken) {
             const statementLink = `{{ url('/') }}/incidents/witness/${witnessToken}`;
             const formattedPhone = witnessPhone.replace(/[^0-9]/g, '').replace(/^0/, '263');
