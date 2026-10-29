@@ -23,6 +23,9 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     
+    <!-- Accessibility Stylesheet -->
+    <link rel="stylesheet" href="{{ asset('css/accessibility.css') }}">
+    
     <!-- Preload critical assets -->
     <link rel="preload" href="{{ asset('images/hsc-logo.png') }}" as="image">
     
@@ -2098,9 +2101,6 @@
     </footer>
 
     <!-- Accessibility Features -->
-    <div style="position: fixed; bottom: 20px; right: 20px; background: red; color: white; padding: 10px; z-index: 99999;">
-        TEST - If you see this, HTML is rendering
-    </div>
     @include('components.accessibility-toolbar')
 
     <!-- Mobile Menu Toggle Script -->
@@ -2329,5 +2329,8 @@
             display: none !important;
         }
     </style>
+
+    <!-- Accessibility Toolbar Script -->
+    <script src="{{ asset('js/accessibility.js') }}"></script>
 </body>
 </html>

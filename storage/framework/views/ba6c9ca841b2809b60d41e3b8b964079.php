@@ -23,6 +23,9 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     
+    <!-- Accessibility Stylesheet -->
+    <link rel="stylesheet" href="<?php echo e(asset('css/accessibility.css')); ?>">
+    
     <!-- Preload critical assets -->
     <link rel="preload" href="<?php echo e(asset('images/hsc-logo.png')); ?>" as="image">
     
@@ -1851,6 +1854,9 @@
             }
         }
     </style>
+
+    <!-- Language Provider Script -->
+    <?php echo $__env->make('components.language-provider', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 </head>
 <body>
     <!-- Header -->
@@ -2094,6 +2100,9 @@
         </p>
     </footer>
 
+    <!-- Accessibility Features -->
+    <?php echo $__env->make('components.accessibility-toolbar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+
     <!-- Mobile Menu Toggle Script -->
     <script>
         // Mobile menu toggle
@@ -2320,5 +2329,8 @@
             display: none !important;
         }
     </style>
+
+    <!-- Accessibility Toolbar Script -->
+    <script src="<?php echo e(asset('js/accessibility.js')); ?>"></script>
 </body>
 </html><?php /**PATH D:\OccupationalHealth System\resources\views/welcome.blade.php ENDPATH**/ ?>
