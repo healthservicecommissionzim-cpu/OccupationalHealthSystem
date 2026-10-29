@@ -1137,6 +1137,69 @@ class IncidentController extends Controller
         }
     }
 
+    /**
+     * Add or update email address for a witness
+     */
+    public function addWitnessEmail(Request $request, Incident $incident, $tokenId)
+    {
+        $user = auth()->user();
+
+        // Verify supervisor role
+        if (!$user->hasRole('supervisor')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Access denied. You must have supervisor role.',
+            ], 403);
+        }
+
+        // Verify supervisor authorization
+        if ($incident->assigned_supervisor_id !== $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Access denied. You are not the assigned supervisor for this incident.',
+            ], 403);
+        }
+
+        // Validate email
+        $validated = $request->validate([
+            'email' => 'required|email|max:255',
+        ]);
+
+        try {
+            $witnessToken = $incident->witnessTokens()->findOrFail($tokenId);
+
+            // Update email
+            $witnessToken->update([
+                'email' => $validated['email'],
+            ]);
+
+            Log::info('Witness email address added/updated', [
+                'incident_id' => $incident->id,
+                'witness_token_id' => $witnessToken->id,
+                'supervisor_id' => $user->id,
+                'email' => $validated['email'],
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Email address saved successfully',
+                'email' => $validated['email'],
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to add witness email', [
+                'incident_id' => $incident->id,
+                'token_id' => $tokenId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while saving the email address.',
+            ], 500);
+        }
+    }
+
 
     public function generateWitnessToken(Incident $incident)
     {

@@ -442,6 +442,7 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
         Route::post('/witness/token/{tokenId}/send', [IncidentController::class, 'sendWitnessToken'])->name('send_witness_token');
         Route::post('/witness/{tokenId}/reminder', [IncidentController::class, 'sendWitnessReminder'])->name('send_witness_reminder');
         Route::post('/witness/{tokenId}/email-reminder', [IncidentController::class, 'sendWitnessEmailReminder'])->name('send_witness_email_reminder');
+        Route::post('/witness/{tokenId}/add-email', [IncidentController::class, 'addWitnessEmail'])->name('add_witness_email');
         Route::get('/witness/{tokenId}/download', [IncidentController::class, 'downloadWitnessStatement'])->name('download_witness_statement');
         Route::get('/witness-status', [IncidentController::class, 'getWitnessStatus'])->name('witness_status');
         Route::post('/witness/submit', [IncidentController::class, 'submitWitnessVerification'])->name('submit_witness_verification');
