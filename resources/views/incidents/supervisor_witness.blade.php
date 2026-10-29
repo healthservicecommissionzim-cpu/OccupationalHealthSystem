@@ -237,64 +237,38 @@
         }
 
         function showContactModal(tokenId, witnessName, witnessEmail, witnessPhone, witnessToken) {
-            const statementLink = `{{ url('/') }}/incidents/witness/${witnessToken}`;
-            const formattedPhone = witnessPhone.replace(/[^0-9]/g, '').replace(/^0/, '263');
-            const whatsappLink = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(`Hello ${witnessName}, you are listed as a witness for incident ${incidentId}. Please submit your statement here: ${statementLink}`)}`;
-            
             const modal = `
                 <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;" id="contactModal">
-                    <div style="background: white; border-radius: 12px; padding: 24px; max-width: 550px; width: 95%;">
+                    <div style="background: white; border-radius: 12px; padding: 24px; max-width: 450px; width: 95%;">
                         <h3 style="margin: 0 0 8px; font-size: 18px; color: #101a31; font-weight: 700;">Contact Witness</h3>
                         <p style="margin: 0 0 20px; font-size: 12px; color: #718096;">${witnessName} • ${witnessPhone}</p>
                         
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <!-- WhatsApp Option -->
-                            <a href="${whatsappLink}" target="_blank" style="display: flex; align-items: center; gap: 12px; padding: 14px; background: linear-gradient(135deg, #25D366 0%, #20BA5A 100%); color: white; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; border: 1px solid #1ea853; transition: all 0.2s;">
-                                <i class="fab fa-whatsapp" style="font-size: 24px;"></i>
-                                <span>
-                                    <div style="font-weight: 700;">Send via WhatsApp</div>
-                                    <div style="font-size: 11px; opacity: 0.9;">Opens WhatsApp with statement link</div>
-                                </span>
-                            </a>
-                            
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
                             ${witnessEmail ? `
                             <!-- Email Option -->
-                            <button onclick="sendViaEmail(${tokenId}, '${witnessName.replace(/'/g, "\\'")}')" style="display: flex; align-items: center; gap: 12px; padding: 14px; background: linear-gradient(135deg, #0B5ED7 0%, #0A58CA 100%); color: white; border: 1px solid #0A58CA; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
-                                <i class="fa-solid fa-envelope" style="font-size: 24px;"></i>
-                                <span>
-                                    <div style="font-weight: 700;">Send via Email</div>
+                            <button onclick="confirmSendEmail(${tokenId}, '${witnessName.replace(/'/g, "\\'")}', '${witnessEmail}')" style="display: flex; align-items: center; gap: 12px; padding: 16px; background: linear-gradient(135deg, #0B5ED7 0%, #0A58CA 100%); color: white; border: 1px solid #0A58CA; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(11, 94, 215, 0.3);">
+                                <i class="fa-solid fa-envelope" style="font-size: 28px;"></i>
+                                <div style="text-align: left; flex: 1;">
+                                    <div style="font-weight: 700; margin-bottom: 2px;">Send via Email</div>
                                     <div style="font-size: 11px; opacity: 0.9;">${witnessEmail}</div>
-                                </span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right" style="font-size: 16px; opacity: 0.7;"></i>
                             </button>
                             ` : ''}
                             
                             <!-- SMS Option -->
-                            <button onclick="sendViaSMS(${tokenId}, '${witnessName.replace(/'/g, "\\'")}')" style="display: flex; align-items: center; gap: 12px; padding: 14px; background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%); color: white; border: 1px solid #4F46E5; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
-                                <i class="fa-solid fa-message" style="font-size: 24px;"></i>
-                                <span>
-                                    <div style="font-weight: 700;">Send via SMS</div>
+                            <button onclick="confirmSendSMS(${tokenId}, '${witnessName.replace(/'/g, "\\'")}', '${witnessPhone}')" style="display: flex; align-items: center; gap: 12px; padding: 16px; background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%); color: white; border: 1px solid #4F46E5; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);">
+                                <i class="fa-solid fa-message" style="font-size: 28px;"></i>
+                                <div style="text-align: left; flex: 1;">
+                                    <div style="font-weight: 700; margin-bottom: 2px;">Send via SMS</div>
                                     <div style="font-size: 11px; opacity: 0.9;">Text message reminder</div>
-                                </span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right" style="font-size: 16px; opacity: 0.7;"></i>
                             </button>
-                            
-                            <!-- Copy Link Option -->
-                            <button onclick="copyStatementLink('${statementLink.replace(/'/g, "\\'")}')" style="display: flex; align-items: center; gap: 12px; padding: 14px; background: linear-gradient(135deg, #079b6d 0%, #067c58 100%); color: white; border: 1px solid #067c58; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
-                                <i class="fa-solid fa-copy" style="font-size: 24px;"></i>
-                                <span>
-                                    <div style="font-weight: 700;">Copy Link</div>
-                                    <div style="font-size: 11px; opacity: 0.9;">Copy to clipboard for manual sharing</div>
-                                </span>
-                            </button>
-                            
-                            <!-- Link Display -->
-                            <div style="margin-top: 12px; padding: 12px; background: #f8fafb; border: 1px solid #e4e9ee; border-radius: 8px;">
-                                <p style="margin: 0 0 8px; font-size: 10px; color: #8a95a5; font-weight: 700; text-transform: uppercase;">Statement Link:</p>
-                                <p style="margin: 0; font-size: 11px; color: #263149; word-break: break-all; font-family: monospace; background: white; padding: 8px; border-radius: 4px;">${statementLink}</p>
-                            </div>
                             
                             <!-- Close Button -->
-                            <button onclick="closeContactModal()" style="margin-top: 8px; padding: 10px; background: #e4e9ee; color: #263149; border: 1px solid #ccd6df; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;">
-                                Close
+                            <button onclick="closeContactModal()" style="margin-top: 8px; padding: 12px; background: #f8fafb; color: #263149; border: 1px solid #e4e9ee; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                <i class="fa-solid fa-times" style="margin-right: 6px;"></i> Cancel
                             </button>
                         </div>
                     </div>
@@ -304,12 +278,71 @@
             document.body.insertAdjacentHTML('beforeend', modal);
         }
         
+        function confirmSendEmail(tokenId, witnessName, witnessEmail) {
+            // Close main modal
+            const mainModal = document.getElementById('contactModal');
+            if (mainModal) mainModal.remove();
+            
+            // Show confirmation modal
+            const confirmModal = `
+                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000;" id="confirmModal">
+                    <div style="background: white; border-radius: 12px; padding: 28px; max-width: 420px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #0B5ED7 0%, #0A58CA 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                                <i class="fa-solid fa-envelope" style="font-size: 24px; color: white;"></i>
+                            </div>
+                            <h3 style="margin: 0 0 8px; font-size: 18px; color: #101a31; font-weight: 700;">Send Email Reminder?</h3>
+                            <p style="margin: 0; font-size: 13px; color: #718096; line-height: 1.6;">An email will be sent to <strong>${witnessName}</strong> at <strong>${witnessEmail}</strong> with the witness statement link.</p>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="closeConfirmModal()" style="flex: 1; padding: 12px; background: #f8fafb; color: #263149; border: 1px solid #e4e9ee; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                Cancel
+                            </button>
+                            <button onclick="sendViaEmail(${tokenId}, '${witnessName.replace(/'/g, "\\'")}'); closeConfirmModal();" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #0B5ED7 0%, #0A58CA 100%); color: white; border: 1px solid #0A58CA; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(11, 94, 215, 0.3);">
+                                <i class="fa-solid fa-paper-plane" style="margin-right: 6px;"></i> Send Email
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', confirmModal);
+        }
+        
+        function confirmSendSMS(tokenId, witnessName, witnessPhone) {
+            // Close main modal
+            const mainModal = document.getElementById('contactModal');
+            if (mainModal) mainModal.remove();
+            
+            // Show confirmation modal
+            const confirmModal = `
+                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000;" id="confirmModal">
+                    <div style="background: white; border-radius: 12px; padding: 28px; max-width: 420px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                                <i class="fa-solid fa-message" style="font-size: 24px; color: white;"></i>
+                            </div>
+                            <h3 style="margin: 0 0 8px; font-size: 18px; color: #101a31; font-weight: 700;">Send SMS Reminder?</h3>
+                            <p style="margin: 0; font-size: 13px; color: #718096; line-height: 1.6;">An SMS will be sent to <strong>${witnessName}</strong> at <strong>${witnessPhone}</strong> with the witness statement link.</p>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="closeConfirmModal()" style="flex: 1; padding: 12px; background: #f8fafb; color: #263149; border: 1px solid #e4e9ee; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                Cancel
+                            </button>
+                            <button onclick="sendViaSMS(${tokenId}, '${witnessName.replace(/'/g, "\\'")}'); closeConfirmModal();" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%); color: white; border: 1px solid #4F46E5; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);">
+                                <i class="fa-solid fa-paper-plane" style="margin-right: 6px;"></i> Send SMS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', confirmModal);
+        }
+        
         async function sendViaEmail(tokenId, witnessName) {
-            if (!confirm(`Send email reminder to ${witnessName}?`)) return;
-            
-            const modal = document.getElementById('contactModal');
-            if (modal) modal.remove();
-            
             try {
                 const response = await fetch(`/supervisor/incidents/${incidentId}/witness/${tokenId}/email-reminder`, {
                     method: 'POST',
@@ -322,23 +355,18 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    showToast(`Email sent to ${witnessName}`, 'success');
+                    showToast(`Email sent successfully to ${witnessName}`, 'success');
                     setTimeout(() => location.reload(), 1500);
                 } else {
                     showToast(data.message || 'Failed to send email', 'error');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                showToast('An error occurred', 'error');
+                showToast('An error occurred while sending email', 'error');
             }
         }
         
         async function sendViaSMS(tokenId, witnessName) {
-            if (!confirm(`Send SMS reminder to ${witnessName}?`)) return;
-            
-            const modal = document.getElementById('contactModal');
-            if (modal) modal.remove();
-
             try {
                 const response = await fetch(`/supervisor/incidents/${incidentId}/witness/${tokenId}/reminder`, {
                     method: 'POST',
@@ -351,24 +379,20 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    showToast(`SMS sent to ${witnessName}`, 'success');
+                    showToast(`SMS sent successfully to ${witnessName}`, 'success');
                     setTimeout(() => location.reload(), 1500);
                 } else {
                     showToast(data.message || 'Failed to send SMS', 'error');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                showToast('An error occurred', 'error');
+                showToast('An error occurred while sending SMS', 'error');
             }
         }
         
-        function copyStatementLink(link) {
-            navigator.clipboard.writeText(link).then(() => {
-                showToast('Link copied to clipboard!', 'success');
-                closeContactModal();
-            }).catch(() => {
-                showToast('Failed to copy link', 'error');
-            });
+        function closeConfirmModal() {
+            const modal = document.getElementById('confirmModal');
+            if (modal) modal.remove();
         }
         
         function closeContactModal() {
