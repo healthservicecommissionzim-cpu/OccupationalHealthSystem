@@ -2098,6 +2098,9 @@
     </footer>
 
     <!-- Accessibility Features -->
+    <div style="position: fixed; bottom: 20px; right: 20px; background: red; color: white; padding: 10px; z-index: 99999;">
+        TEST - If you see this, HTML is rendering
+    </div>
     @include('components.accessibility-toolbar')
 
     <!-- Mobile Menu Toggle Script -->
