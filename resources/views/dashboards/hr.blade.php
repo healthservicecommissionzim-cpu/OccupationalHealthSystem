@@ -775,6 +775,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const injuryTypeData = @json($incidentsByInjuryType ?? []);
     const injuryTypeByFacilityData = @json($incidentsByInjuryTypeAndFacility ?? []);
 
+    console.log('Injury Type Data:', injuryTypeData);
+    console.log('Injury Type By Facility Data:', injuryTypeByFacilityData);
+
     // Function to create/update injury chart
     function createInjuryChart(view) {
         let labels, values;
@@ -784,6 +787,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Group by injury type
             labels = Object.keys(injuryTypeData);
             values = Object.values(injuryTypeData);
+            console.log('Type view - Labels:', labels, 'Values:', values);
         } else {
             // Group by facility
             const facilityCounts = {};
@@ -791,13 +795,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!facilityCounts[item.facility]) {
                     facilityCounts[item.facility] = 0;
                 }
-                facilityCounts[item.facility] += item.count;
+                facilityCounts[item.facility] += parseInt(item.count, 10);
             });
             labels = Object.keys(facilityCounts);
             values = Object.values(facilityCounts);
+            console.log('Facility view - Labels:', labels, 'Values:', values);
         }
 
-        const totalCases = values.reduce((sum, val) => sum + val, 0);
+        const totalCases = values.reduce((sum, val) => sum + parseInt(val, 10), 0);
+        
+        // If no data, show message
+        if (labels.length === 0 || values.length === 0) {
+            console.warn('No data available for chart', view);
+            document.getElementById('totalInjuryCasesLabel').textContent = '0 ' + (view === 'type' ? 'Types' : 'Facilities');
+            return;
+        }
         
         // Update total cases label
         const label = view === 'type' ? `${labels.length} Types` : `${labels.length} Facilities`;
@@ -820,7 +832,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const options = {
             series: [{
                 name: 'Cases',
-                data: values
+                data: values.map(v => parseInt(v, 10))
             }],
             chart: {
                 type: 'bar',
