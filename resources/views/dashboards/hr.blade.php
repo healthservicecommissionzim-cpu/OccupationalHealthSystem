@@ -761,242 +761,112 @@ document.addEventListener('DOMContentLoaded', function() {
     let injuryChartInstance = null;
     let currentInjuryView = 'type';
 
-    // Add CSS for x-axis labels
-    const style = document.createElement('style');
-    style.textContent = `
-        .apexcharts-xaxis-label {
-            transform: none !important;
-            text-anchor: middle !important;
-        }
-    `;
-    document.head.appendChild(style);
-
     // Data from controller
     const injuryTypeData = @json($incidentsByInjuryType ?? []);
     const injuryTypeByFacilityData = @json($incidentsByInjuryTypeAndFacility ?? []);
 
-    console.log('Injury Type Data:', injuryTypeData);
-    console.log('Injury Type By Facility Data:', injuryTypeByFacilityData);
-
     // Function to create/update injury chart
     function createInjuryChart(view) {
-        let labels, values;
-        const isHorizontal = view === 'type';
+        try {
+            let labels = [];
+            let values = [];
 
-        if (view === 'type') {
-            // Group by injury type
-            labels = Object.keys(injuryTypeData);
-            values = Object.values(injuryTypeData);
-            console.log('Type view - Labels:', labels, 'Values:', values);
-        } else {
-            // Group by facility - sum counts from injury type and facility combination
-            const facilityCounts = {};
-            if (Array.isArray(injuryTypeByFacilityData)) {
-                injuryTypeByFacilityData.forEach(item => {
-                    const facilityName = item.facility || 'Unknown';
-                    const count = parseInt(item.count, 10) || 0;
-                    if (!facilityCounts[facilityName]) {
-                        facilityCounts[facilityName] = 0;
-                    }
-                    facilityCounts[facilityName] += count;
-                });
+            if (view === 'type') {
+                // BY TYPE: horizontal bars
+                labels = Object.keys(injuryTypeData);
+                values = Object.values(injuryTypeData);
+            } else {
+                // BY FACILITY: aggregate by facility name, vertical columns
+                const facilityCounts = {};
+                if (Array.isArray(injuryTypeByFacilityData)) {
+                    injuryTypeByFacilityData.forEach(item => {
+                        const facility = item.facility || 'Unknown';
+                        const count = parseInt(item.count, 10) || 0;
+                        facilityCounts[facility] = (facilityCounts[facility] || 0) + count;
+                    });
+                }
+                labels = Object.keys(facilityCounts);
+                values = Object.values(facilityCounts);
             }
-            labels = Object.keys(facilityCounts).length > 0 ? Object.keys(facilityCounts) : ['No Data'];
-            values = labels.length > 0 && labels[0] !== 'No Data' ? Object.values(facilityCounts) : [0];
-            console.log('Facility view - Aggregated:', facilityCounts, 'Labels:', labels, 'Values:', values);
-        }
 
-        const totalCases = values.reduce((sum, val) => sum + parseInt(val, 10), 0);
-        
-        // If no data, show message
-        if (labels.length === 0 || values.length === 0 || (labels.length === 1 && labels[0] === 'No Data')) {
-            console.warn('No data available for chart', view);
-            document.getElementById('totalInjuryCasesLabel').textContent = '0 ' + (view === 'type' ? 'Types' : 'Facilities');
-            return;
-        }
-        
-        // Update total cases label
-        const label = view === 'type' ? `${labels.length} Types` : `${labels.length} Facilities`;
-        document.getElementById('totalInjuryCasesLabel').textContent = label;
-
-        // Split long labels into 2 lines for better readability (for horizontal bars)
-        const wrappedLabels = isHorizontal ? labels.map(label => {
-            if (label.length > 15) {
-                const words = label.split(' ');
-                const mid = Math.ceil(words.length / 2);
-                const line1 = words.slice(0, mid).join(' ');
-                const line2 = words.slice(mid).join(' ');
-                return line1 + '\n' + line2;
+            // Ensure we have data
+            if (!labels.length || !values.length) {
+                document.getElementById('totalInjuryCasesLabel').textContent = '0 ' + (view === 'type' ? 'Types' : 'Facilities');
+                return;
             }
-            return label;
-        }) : labels;
 
-        const calculatedHeight = isHorizontal ? Math.max(300, Math.min(labels.length * 30, 380)) : 380;
+            // Update label
+            document.getElementById('totalInjuryCasesLabel').textContent = view === 'type' 
+                ? `${labels.length} Types` 
+                : `${labels.length} Facilities`;
 
-        const options = {
-            series: [{
-                name: 'Cases',
-                data: values.map(v => parseInt(v, 10))
-            }],
-            chart: {
-                type: 'bar',
-                height: calculatedHeight,
-                sparkline: {
-                    enabled: false
+            const isHorizontal = view === 'type';
+            const chartHeight = isHorizontal ? Math.max(300, labels.length * 30) : 380;
+
+            const options = {
+                series: [{
+                    name: 'Cases',
+                    data: values
+                }],
+                chart: {
+                    type: 'bar',
+                    height: chartHeight,
+                    toolbar: { show: false },
+                    animations: { enabled: true, speed: 600 }
                 },
-                toolbar: {
-                    show: false
-                },
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 600
-                }
-            },
-            plotOptions: {
-                bar: {
-                    horizontal: isHorizontal,
-                    borderRadius: isHorizontal ? 4 : 6,
-                    barHeight: isHorizontal ? '75%' : undefined,
-                    columnWidth: isHorizontal ? undefined : '65%',
-                    distributed: true,
-                    dataLabels: {
-                        position: isHorizontal ? 'right' : 'top'
-                    }
-                }
-            },
-            dataLabels: {
-                enabled: false
-            },
-            colors: ['#10b981'],
-            xaxis: isHorizontal ? {
-                categories: wrappedLabels,
-                labels: {
-                    style: {
-                        fontSize: '11px',
-                        fontWeight: 500,
-                        colors: '#64748b'
-                    },
-                    formatter: function(val) {
-                        return Math.floor(val);
+                plotOptions: {
+                    bar: {
+                        horizontal: isHorizontal,
+                        borderRadius: 4,
+                        barHeight: isHorizontal ? '75%' : undefined,
+                        columnWidth: isHorizontal ? undefined : '65%',
+                        distributed: true
                     }
                 },
-                tickAmount: 5,
-                axisBorder: {
-                    show: false
-                },
-                axisTicks: {
-                    show: false
-                }
-            } : {
-                categories: wrappedLabels,
-                labels: {
-                    style: {
-                        fontSize: '11px',
-                        fontWeight: 500,
-                        colors: '#64748b'
-                    },
-                    rotate: labels.length > 8 ? -45 : 0,
-                    rotateAlways: false
-                },
-                axisBorder: {
-                    show: true,
-                    color: '#e2e8f0'
-                }
-            },
-            yaxis: isHorizontal ? {
-                labels: {
-                    style: {
-                        fontSize: '11px',
-                        fontWeight: 500,
-                        colors: '#64748b'
-                    },
-                    maxHeight: 100
-                }
-            } : {
-                labels: {
-                    style: {
-                        fontSize: '11px',
-                        fontWeight: 500,
-                        colors: '#64748b'
-                    },
-                    formatter: function(val) {
-                        return Math.floor(val);
-                    }
-                },
-                tickAmount: 5
-            },
-            grid: {
-                borderColor: '#e2e8f0',
-                strokeDashArray: 2,
-                yaxis: {
-                    lines: {
-                        show: isHorizontal
-                    }
-                },
+                dataLabels: { enabled: false },
+                colors: ['#10b981'],
                 xaxis: {
-                    lines: {
-                        show: !isHorizontal
+                    categories: labels,
+                    labels: {
+                        style: { fontSize: '11px', fontWeight: 500, colors: '#64748b' },
+                        rotate: !isHorizontal && labels.length > 8 ? -45 : 0
                     }
                 },
-                padding: {
-                    left: 4,
-                    right: 4,
-                    top: 8,
-                    bottom: 2
-                }
-            },
-            fill: {
-                type: 'solid',
-                opacity: 1
-            },
-            states: {
-                hover: {
-                    filter: {
-                        type: 'none'
+                yaxis: {
+                    labels: {
+                        style: { fontSize: '11px', fontWeight: 500, colors: '#64748b' },
+                        formatter: v => Math.floor(v)
                     }
                 },
-                active: {
-                    filter: {
-                        type: 'none'
-                    }
-                }
-            },
-            tooltip: {
-                enabled: true,
-                theme: 'light',
-                style: {
-                    fontSize: '12px'
+                grid: {
+                    borderColor: '#e2e8f0',
+                    strokeDashArray: 2
                 },
-                y: {
-                    formatter: function(val) {
-                        return Math.floor(val) + ' case' + (Math.floor(val) !== 1 ? 's' : '');
-                    }
+                tooltip: {
+                    theme: 'light',
+                    y: { formatter: v => Math.floor(v) + ' case' + (Math.floor(v) !== 1 ? 's' : '') }
                 },
-                marker: {
-                    show: false
-                }
-            },
-            legend: {
-                show: false
+                legend: { show: false }
+            };
+
+            if (injuryChartInstance) {
+                injuryChartInstance.destroy();
             }
-        };
 
-        if (injuryChartInstance) {
-            injuryChartInstance.destroy();
+            injuryChartInstance = new ApexCharts(document.querySelector('#injuryTypesChart'), options);
+            injuryChartInstance.render();
+        } catch (error) {
+            console.error('Error creating injury chart:', error);
         }
-
-        injuryChartInstance = new ApexCharts(document.querySelector("#injuryTypesChart"), options);
-        injuryChartInstance.render();
     }
 
-    // Initialize injury chart
+    // Initialize chart
     createInjuryChart('type');
 
-    // Handle dropdown change for injury types
-    const injuryToggle = document.getElementById('injuryTypeViewToggle');
-    if (injuryToggle) {
-        injuryToggle.addEventListener('change', function(e) {
+    // Handle dropdown
+    const toggle = document.getElementById('injuryTypeViewToggle');
+    if (toggle) {
+        toggle.addEventListener('change', e => {
             currentInjuryView = e.target.value;
             createInjuryChart(currentInjuryView);
         });
@@ -1026,12 +896,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-
-        // Update timestamp
-        const lastUpdated = document.querySelector('#lastUpdatedHR');
-        if (lastUpdated) {
-            lastUpdated.innerHTML = '<i class="fa-solid fa-sync-alt text-[10px] animate-spin"></i> Last updated: ' + data.timestamp;
-        }
     }
 
     // Function to fetch fresh data
