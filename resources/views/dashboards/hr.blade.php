@@ -778,6 +778,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to create/update injury chart
     function createInjuryChart(view) {
         let labels, values;
+        const isHorizontal = view === 'type';
 
         if (view === 'type') {
             // Group by injury type
@@ -802,8 +803,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const label = view === 'type' ? `${labels.length} Types` : `${labels.length} Facilities`;
         document.getElementById('totalInjuryCasesLabel').textContent = label;
 
-        // Split long labels into 2 lines for better readability
-        const wrappedLabels = labels.map(label => {
+        // Split long labels into 2 lines for better readability (for horizontal bars)
+        const wrappedLabels = isHorizontal ? labels.map(label => {
             if (label.length > 15) {
                 const words = label.split(' ');
                 const mid = Math.ceil(words.length / 2);
@@ -812,9 +813,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 return line1 + '\n' + line2;
             }
             return label;
-        });
+        }) : labels;
 
-        const calculatedHeight = Math.max(300, Math.min(labels.length * 30, 380));
+        const calculatedHeight = isHorizontal ? Math.max(300, Math.min(labels.length * 30, 380)) : 380;
 
         const options = {
             series: [{
@@ -838,12 +839,13 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             plotOptions: {
                 bar: {
-                    horizontal: true,
-                    borderRadius: 4,
-                    barHeight: '75%',
+                    horizontal: isHorizontal,
+                    borderRadius: isHorizontal ? 4 : 6,
+                    barHeight: isHorizontal ? '75%' : undefined,
+                    columnWidth: isHorizontal ? undefined : '65%',
                     distributed: true,
                     dataLabels: {
-                        position: 'right'
+                        position: isHorizontal ? 'right' : 'top'
                     }
                 }
             },
@@ -851,7 +853,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 enabled: false
             },
             colors: ['#10b981'],
-            xaxis: {
+            xaxis: isHorizontal ? {
                 categories: wrappedLabels,
                 labels: {
                     style: {
@@ -870,8 +872,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 axisTicks: {
                     show: false
                 }
+            } : {
+                categories: wrappedLabels,
+                labels: {
+                    style: {
+                        fontSize: '11px',
+                        fontWeight: 500,
+                        colors: '#64748b'
+                    },
+                    rotate: labels.length > 8 ? -45 : 0,
+                    rotateAlways: false
+                },
+                axisBorder: {
+                    show: true,
+                    color: '#e2e8f0'
+                }
             },
-            yaxis: {
+            yaxis: isHorizontal ? {
                 labels: {
                     style: {
                         fontSize: '11px',
@@ -880,18 +897,30 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     maxHeight: 100
                 }
+            } : {
+                labels: {
+                    style: {
+                        fontSize: '11px',
+                        fontWeight: 500,
+                        colors: '#64748b'
+                    },
+                    formatter: function(val) {
+                        return Math.floor(val);
+                    }
+                },
+                tickAmount: 5
             },
             grid: {
                 borderColor: '#e2e8f0',
                 strokeDashArray: 2,
                 yaxis: {
                     lines: {
-                        show: true
+                        show: isHorizontal
                     }
                 },
                 xaxis: {
                     lines: {
-                        show: false
+                        show: !isHorizontal
                     }
                 },
                 padding: {
