@@ -789,23 +789,27 @@ document.addEventListener('DOMContentLoaded', function() {
             values = Object.values(injuryTypeData);
             console.log('Type view - Labels:', labels, 'Values:', values);
         } else {
-            // Group by facility
+            // Group by facility - sum counts from injury type and facility combination
             const facilityCounts = {};
-            injuryTypeByFacilityData.forEach(item => {
-                if (!facilityCounts[item.facility]) {
-                    facilityCounts[item.facility] = 0;
-                }
-                facilityCounts[item.facility] += parseInt(item.count, 10);
-            });
-            labels = Object.keys(facilityCounts);
-            values = Object.values(facilityCounts);
-            console.log('Facility view - Labels:', labels, 'Values:', values);
+            if (Array.isArray(injuryTypeByFacilityData)) {
+                injuryTypeByFacilityData.forEach(item => {
+                    const facilityName = item.facility || 'Unknown';
+                    const count = parseInt(item.count, 10) || 0;
+                    if (!facilityCounts[facilityName]) {
+                        facilityCounts[facilityName] = 0;
+                    }
+                    facilityCounts[facilityName] += count;
+                });
+            }
+            labels = Object.keys(facilityCounts).length > 0 ? Object.keys(facilityCounts) : ['No Data'];
+            values = labels.length > 0 && labels[0] !== 'No Data' ? Object.values(facilityCounts) : [0];
+            console.log('Facility view - Aggregated:', facilityCounts, 'Labels:', labels, 'Values:', values);
         }
 
         const totalCases = values.reduce((sum, val) => sum + parseInt(val, 10), 0);
         
         // If no data, show message
-        if (labels.length === 0 || values.length === 0) {
+        if (labels.length === 0 || values.length === 0 || (labels.length === 1 && labels[0] === 'No Data')) {
             console.warn('No data available for chart', view);
             document.getElementById('totalInjuryCasesLabel').textContent = '0 ' + (view === 'type' ? 'Types' : 'Facilities');
             return;
