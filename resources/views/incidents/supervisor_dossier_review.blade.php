@@ -434,24 +434,48 @@
                 body: JSON.stringify({})
             })
             .then(response => {
-                if (!response.ok) {
+                const contentType = response.headers.get('content-type');
+                
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json().then(data => ({
+                        ok: response.ok,
+                        status: response.status,
+                        data: data
+                    }));
+                } else {
                     return response.text().then(text => {
                         console.error('Response Error:', {status: response.status, body: text});
-                        throw new Error(`Server Error (${response.status}): ${text}`);
+                        return {
+                            ok: response.ok,
+                            status: response.status,
+                            error: `Server Error (${response.status}): ${text.substring(0, 200)}`
+                        };
                     });
                 }
-                return response.json();
             })
-            .then(data => {
-                if (data.success) {
-                    showSuccessModal(data.message);
+            .then(result => {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                icon.className = 'fa-solid fa-paper-plane';
+                text.textContent = 'Submit & Escalate to HR';
+                
+                if (!result.ok) {
+                    if (result.error) {
+                        showErrorModal('Server error: ' + result.error);
+                    } else if (result.data && result.data.message) {
+                        showErrorModal(result.data.message);
+                    } else {
+                        showErrorModal('Failed to submit case to HR. Please try again.');
+                    }
+                    return;
+                }
+                
+                if (result.data && result.data.success) {
+                    showSuccessModal(result.data.message);
+                } else if (result.data && result.data.message) {
+                    showErrorModal(result.data.message);
                 } else {
-                    btn.classList.remove('loading');
-                    btn.disabled = false;
-                    icon.className = 'fa-solid fa-paper-plane';
-                    text.textContent = 'Submit & Escalate to HR';
-                    console.error('API Error:', data);
-                    showErrorModal(data.message || 'Failed to submit case');
+                    showErrorModal('Failed to submit case');
                 }
             })
             .catch(error => {
