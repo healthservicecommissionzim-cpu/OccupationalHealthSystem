@@ -116,19 +116,35 @@
                             </label>
                             <select id="documentType" style="width: 100%; padding: 0.6rem 0.85rem; border: 1.5px solid var(--slate-200); border-radius: 6px; font-size: 0.85rem; color: var(--slate-900); font-family: inherit; cursor: pointer; transition: all 0.2s ease;" onfocus="this.style.borderColor='#1D4533'; this.style.boxShadow='0 0 0 3px rgba(29, 69, 51, 0.25)'" onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
                                 <option value="">-- Choose Document Type --</option>
-                                <option value="doctors_report">1. Doctor's Report</option>
-                                <option value="injury_report">2. Injury Report from Z1149 dully completed</option>
-                                <option value="sick_leave">3. Sick Leave Forms</option>
-                                <option value="treatment_records">4. Certified Copies of Initial Treatment Records</option>
-                                <option value="national_id">5. Certified Copy of National Registration Card</option>
-                                <option value="banking_details">6. Banking Details Forms</option>
-                                <option value="bank_statement">7. Bank Statements (Nostro & ZiG)</option>
-                                <option value="police_report">8. Police Report</option>
-                                <option value="death_certificate">9. Death Certificate</option>
-                                <option value="heir_certificate">10. Certificate of Heir/Letter of Administration/Certificate of Guardianship</option>
-                                <option value="db8_form">11. DB8 Form</option>
-                                <option value="termination_letter">12. Letter of Termination of Service</option>
-                                <option value="marriage_certificate">13. Certified Copy of Marriage Certificate/Marriage Confirmation</option>
+                                
+                                <!-- IOD COMPENSATION REQUIREMENTS -->
+                                <optgroup label="IOD COMPENSATION REQUIRED DOCUMENTS">
+                                    <option value="doctors_report">1. Doctor's Report (with degree of disability) - ORIGINAL</option>
+                                    <option value="injury_report">2. Injury Report Form ZII49 (duly completed) - ORIGINAL</option>
+                                    <option value="sick_leave">3. Duly Completed Sick Leave Forms - ORIGINAL</option>
+                                    <option value="witness_statement_1">4. Eye Witness Statement #1 (At least 2 required)</option>
+                                    <option value="witness_statement_2">5. Eye Witness Statement #2 (At least 2 required)</option>
+                                    <option value="witness_statement_additional">6. Additional Eye Witness Statements</option>
+                                    <option value="job_duties_description">7. Description of Duties at Time of Injury (from Head of Department)</option>
+                                    <option value="national_id">8. Certified Copy of National Registration Card</option>
+                                    <option value="bank_statement">9. Bank Statements (ZiG and USD) - Showing Name and Account Number</option>
+                                    <option value="treatment_records">10. Certified Copies of Initial Treatment Cards - ORIGINAL</option>
+                                    <option value="banking_details">11. Banking Details Form (Completed by Member)</option>
+                                    <option value="late_submission_reason">12. Reasons for Late Submission (from Head of Department, if applicable)</option>
+                                    <option value="contact_details">13. Contact Details (Cell Number and Address)</option>
+                                </optgroup>
+                                
+                                <!-- OTHER DOCUMENTS -->
+                                <optgroup label="OTHER SUPPORTING DOCUMENTS">
+                                    <option value="police_report">Police Report</option>
+                                    <option value="death_certificate">Death Certificate</option>
+                                    <option value="heir_certificate">Certificate of Heir/Letter of Administration/Certificate of Guardianship</option>
+                                    <option value="db8_form">DB8 Form</option>
+                                    <option value="termination_letter">Letter of Termination of Service</option>
+                                    <option value="marriage_certificate">Certified Copy of Marriage Certificate/Marriage Confirmation</option>
+                                    <option value="NSSA_FORM_WCA1">NSSA Form W.C.A. 1 (Workers' Compensation Claim)</option>
+                                    <option value="OTHER">Other Documentation</option>
+                                </optgroup>
                             </select>
                         </div>
 
