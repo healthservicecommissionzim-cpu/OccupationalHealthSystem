@@ -48,182 +48,13 @@
 
         body {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(to bottom, #ffffff 0%, #f9fafb 100%);
+            background: #f8f9fa;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            padding: 0;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
             margin: 0;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(29, 69, 51, 0.02) 1px, transparent 1px),
-                radial-gradient(circle at 90% 80%, rgba(29, 69, 51, 0.02) 1px, transparent 1px);
-            background-size: 50px 50px, 80px 80px;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><filter id="blur"><feGaussianBlur in="SourceGraphic" stdDeviation="2"/></filter></defs><path d="M0,200 Q300,100 600,150 T1200,200 L1200,0 L0,0 Z" fill="%23d1fae5" opacity="0.3" filter="url(%23blur)"/><path d="M0,400 Q300,300 600,350 T1200,400 L1200,800 L0,800 Z" fill="%2310b981" opacity="0.08"/><circle cx="100" cy="150" r="80" fill="%23059669" opacity="0.05"/><circle cx="1100" cy="650" r="120" fill="%23047857" opacity="0.06"/></svg>');
-            background-repeat: repeat;
-            background-size: 1200px 800px;
-            background-position: 0 0;
-            z-index: -1;
-            pointer-events: none;
-            animation: float 20s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        /* ═══════════════════════════════════════HEADER════════════════════════════════════════ */
-        header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(12px);
-            padding: clamp(0.75rem, 2vw, 1rem) clamp(2%, 4vw, 4%);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            text-decoration: none;
-        }
-
-        .logo img {
-            height: clamp(35px, 6vw, 55px);
-            width: auto;
-        }
-
-        .logo-text {
-            font-weight: 800;
-            font-size: clamp(0.75rem, 2vw, 1rem);
-            color: var(--brand);
-            letter-spacing: -0.02em;
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-
-        nav {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: var(--slate-600);
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-
-        nav a:hover {
-            color: var(--brand);
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-        }
-
-        .btn {
-            padding: 0.6rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.3s;
-            font-size: 0.85rem;
-            border: none;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-
-        .btn-primary {
-            background: var(--brand);
-            color: white;
-            box-shadow: 0 4px 12px rgba(29, 69, 51, 0.2);
-        }
-
-        .btn-primary:hover {
-            background: var(--brand-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(29, 69, 51, 0.3);
-        }
-
-        /* ═══════════════════════════════════════MAIN LAYOUT════════════════════════════════════════ */
-        main {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: clamp(1rem, 3vw, 2rem) clamp(0.5rem, 2vw, 1.5rem);
-        }
-
-        /* ═══════════════════════════════════════FOOTER════════════════════════════════════════ */
-        footer {
-            background: var(--brand);
-            color: rgba(255, 255, 255, 0.9);
-            padding: clamp(1.25rem, 3vw, 2rem) clamp(2%, 4vw, 4%);
-            text-align: center;
-        }
-
-        footer h3 {
-            color: white;
-            margin-bottom: 0.5rem;
-            font-size: clamp(0.8rem, 2vw, 0.95rem);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            font-weight: 700;
-        }
-
-        footer p {
-            font-size: clamp(0.7rem, 2vw, 0.85rem);
-            color: rgba(255, 255, 255, 0.8);
-            line-height: 1.6;
-            margin: 0.5rem 0;
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-
-        .container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-            background-image:
-                radial-gradient(ellipse at 10% 20%, rgba(29, 69, 51, 0.05) 0%, transparent 60%),
-                radial-gradient(ellipse at 90% 80%, rgba(29, 69, 51, 0.04) 0%, transparent 60%);
         }
 
         .card {
@@ -627,66 +458,47 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <a href="{{ route('welcome') }}" class="logo">
-            <img src="{{ asset('images/hsc-logo.png') }}" alt="HSC Logo">
-            <span class="logo-text">HEALTH SERVICE COMMISSION</span>
-        </a>
-        
-        <nav>
-            <a href="{{ route('welcome') }}">Home</a>
-            <a href="{{ route('resources') }}">Resources</a>
-            <a href="{{ route('safety_protocols') }}">Safety Protocols</a>
-        </nav>
-        
-        <div class="nav-buttons">
-            <a href="{{ route('login') }}" class="btn btn-primary">Log In</a>
-        </div>
-    </header>
-
     <!-- Main Content -->
-    <main>
-        <div class="card" role="main" aria-label="Reset password panel">
-            <!-- BRAND -->
-            <div class="brand-header">
-                <img src="{{ asset('images/hsc-logo.png') }}" alt="HSC Logo" />
-                <div class="brand-title">HEALTH SERVICE <span>COMMISSION</span></div>
-            </div>
+    <div class="card" role="main" aria-label="Reset password panel">
+        <!-- BRAND -->
+        <div class="brand-header">
+            <img src="{{ asset('images/hsc-logo.png') }}" alt="HSC Logo" />
+            <div class="brand-title">HEALTH SERVICE <span>COMMISSION</span></div>
+        </div>
 
-            <h1 class="page-title">Set New Password</h1>
-            <p class="page-description">
-                Enter your new password below to regain access to your account.
-            </p>
+        <h1 class="page-title">Set New Password</h1>
+        <p class="page-description">
+            Enter your new password below to regain access to your account.
+        </p>
 
-            <!-- Errors -->
-            @if ($errors->any())
-                <div class="alert-error" role="alert">
-                    <i class="fa-solid fa-circle-exclamation"></i>
-                    <div>
-                        <strong>Please fix the following errors:</strong>
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
+        <!-- Errors -->
+        @if ($errors->any())
+            <div class="alert-error" role="alert">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <div>
+                    <strong>Please fix the following errors:</strong>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
-            @endif
+            </div>
+        @endif
 
-            <!-- FORM -->
-            <form method="POST" action="{{ route('password.store') }}" novalidate>
-                @csrf
+        <!-- FORM -->
+        <form method="POST" action="{{ route('password.store') }}" novalidate>
+            @csrf
 
-                <input type="hidden" name="token" value="{{ $token }}">
+            <input type="hidden" name="token" value="{{ $token }}">
 
-                <!-- Email (read-only, pre-filled from reset link) -->
-                <div class="form-group">
-                    <label for="email">Email address</label>
-                    <div class="input-wrapper @error('email') error @enderror">
-                        <input
-                            id="email"
-                            type="email"
+            <!-- Email (read-only, pre-filled from reset link) -->
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <div class="input-wrapper @error('email') error @enderror">
+                    <input
+                        id="email"
+                        type="email"
                             name="email"
                             value="{{ old('email', request()->email) }}"
                             required
@@ -765,16 +577,8 @@
                 <a href="{{ route('welcome') }}"> | Home</a>
             </div>
         </div>
-    </main>
-
-    <!-- Footer -->
-    <footer>
-        <h3>Health Service Commission</h3>
-        <p>Working Together for People's Health</p>
-        <p style="font-size: 0.75rem; margin-top: 0.75rem;">
-            © 2026 Health Service Commission. All rights reserved.
-        </p>
-    </footer>
+    </body>
+</html>
 
     <!-- JAVASCRIPT -->
     <script>
