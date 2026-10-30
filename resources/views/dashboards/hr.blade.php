@@ -170,8 +170,20 @@
 <!-- Charts Row -->
 <div class="grid grid-cols-1 gap-4 md:gap-6 mb-6">
     <div class="bg-surface rounded-lg border border-line shadow-sm p-4 md:p-6">
-        <h3 class="text-sm md:text-base lg:text-lg font-semibold text-ink mb-4 md:mb-6">Incidents by Type</h3>
-        <div id="facilityChart" style="height: 380px;"></div>
+        <div class="flex items-center justify-between mb-4 md:mb-6">
+            <div class="flex items-center gap-3">
+                <h3 class="text-sm md:text-base lg:text-lg font-semibold text-ink">Incidents by Type</h3>
+                <!-- View Toggle Dropdown -->
+                <select id="injuryTypeViewToggle" class="px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-[12px] font-medium text-slate-700 hover:border-brand focus:border-brand focus:ring-1 focus:ring-brand transition-colors cursor-pointer">
+                    <option value="type">BY TYPE</option>
+                    <option value="facility">BY FACILITY</option>
+                </select>
+            </div>
+            <span class="bg-brand bg-opacity-10 text-brand text-[11px] font-bold px-3 py-1 rounded-full" id="totalInjuryCasesLabel">
+                {{ count($incidentsByInjuryType) }} Types
+            </span>
+        </div>
+        <div id="injuryTypesChart" style="height: 380px;"></div>
     </div>
 </div>
 
@@ -746,6 +758,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const apiUrl = "{{ route('api.hr_dashboard_data') }}?date_range=" + dateRange;
     const pollInterval = 30000; // 30 seconds
     let pollIntervalId = null;
+    let injuryChartInstance = null;
+    let currentInjuryView = 'type';
 
     // Add CSS for x-axis labels
     const style = document.createElement('style');
@@ -756,6 +770,192 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     `;
     document.head.appendChild(style);
+
+    // Data from controller
+    const injuryTypeData = @json($incidentsByInjuryType ?? []);
+    const injuryTypeByFacilityData = @json($incidentsByInjuryTypeAndFacility ?? []);
+
+    // Function to create/update injury chart
+    function createInjuryChart(view) {
+        let labels, values;
+
+        if (view === 'type') {
+            // Group by injury type
+            labels = Object.keys(injuryTypeData);
+            values = Object.values(injuryTypeData);
+        } else {
+            // Group by facility
+            const facilityCounts = {};
+            injuryTypeByFacilityData.forEach(item => {
+                if (!facilityCounts[item.facility]) {
+                    facilityCounts[item.facility] = 0;
+                }
+                facilityCounts[item.facility] += item.count;
+            });
+            labels = Object.keys(facilityCounts);
+            values = Object.values(facilityCounts);
+        }
+
+        const totalCases = values.reduce((sum, val) => sum + val, 0);
+        
+        // Update total cases label
+        const label = view === 'type' ? `${labels.length} Types` : `${labels.length} Facilities`;
+        document.getElementById('totalInjuryCasesLabel').textContent = label;
+
+        // Split long labels into 2 lines for better readability
+        const wrappedLabels = labels.map(label => {
+            if (label.length > 15) {
+                const words = label.split(' ');
+                const mid = Math.ceil(words.length / 2);
+                const line1 = words.slice(0, mid).join(' ');
+                const line2 = words.slice(mid).join(' ');
+                return line1 + '\n' + line2;
+            }
+            return label;
+        });
+
+        const calculatedHeight = Math.max(300, Math.min(labels.length * 30, 380));
+
+        const options = {
+            series: [{
+                name: 'Cases',
+                data: values
+            }],
+            chart: {
+                type: 'bar',
+                height: calculatedHeight,
+                sparkline: {
+                    enabled: false
+                },
+                toolbar: {
+                    show: false
+                },
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 600
+                }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    borderRadius: 4,
+                    barHeight: '75%',
+                    distributed: true,
+                    dataLabels: {
+                        position: 'right'
+                    }
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            colors: ['#10b981'],
+            xaxis: {
+                categories: wrappedLabels,
+                labels: {
+                    style: {
+                        fontSize: '11px',
+                        fontWeight: 500,
+                        colors: '#64748b'
+                    },
+                    formatter: function(val) {
+                        return Math.floor(val);
+                    }
+                },
+                tickAmount: 5,
+                axisBorder: {
+                    show: false
+                },
+                axisTicks: {
+                    show: false
+                }
+            },
+            yaxis: {
+                labels: {
+                    style: {
+                        fontSize: '11px',
+                        fontWeight: 500,
+                        colors: '#64748b'
+                    },
+                    maxHeight: 100
+                }
+            },
+            grid: {
+                borderColor: '#e2e8f0',
+                strokeDashArray: 2,
+                yaxis: {
+                    lines: {
+                        show: true
+                    }
+                },
+                xaxis: {
+                    lines: {
+                        show: false
+                    }
+                },
+                padding: {
+                    left: 4,
+                    right: 4,
+                    top: 8,
+                    bottom: 2
+                }
+            },
+            fill: {
+                type: 'solid',
+                opacity: 1
+            },
+            states: {
+                hover: {
+                    filter: {
+                        type: 'none'
+                    }
+                },
+                active: {
+                    filter: {
+                        type: 'none'
+                    }
+                }
+            },
+            tooltip: {
+                enabled: true,
+                theme: 'light',
+                style: {
+                    fontSize: '12px'
+                },
+                y: {
+                    formatter: function(val) {
+                        return Math.floor(val) + ' case' + (Math.floor(val) !== 1 ? 's' : '');
+                    }
+                },
+                marker: {
+                    show: false
+                }
+            },
+            legend: {
+                show: false
+            }
+        };
+
+        if (injuryChartInstance) {
+            injuryChartInstance.destroy();
+        }
+
+        injuryChartInstance = new ApexCharts(document.querySelector("#injuryTypesChart"), options);
+        injuryChartInstance.render();
+    }
+
+    // Initialize injury chart
+    createInjuryChart('type');
+
+    // Handle dropdown change for injury types
+    const injuryToggle = document.getElementById('injuryTypeViewToggle');
+    if (injuryToggle) {
+        injuryToggle.addEventListener('change', function(e) {
+            currentInjuryView = e.target.value;
+            createInjuryChart(currentInjuryView);
+        });
+    }
 
     // Function to update dashboard with new data
     function updateDashboard(data) {
