@@ -1922,7 +1922,7 @@
             SECURE & CONFIDENTIAL PORTAL
         </div>
         
-        <div style="font-size: 0.85rem; font-weight: 600; color: var(--brand); letter-spacing: 0.05em; margin-bottom: 1.5rem; text-transform: uppercase;">
+        <div style="font-weight: 800; font-size: 1rem; color: var(--brand); letter-spacing: -0.02em; margin-bottom: 1.5rem;">
             INJURY ON DUTY / DEATH ON DUTY
         </div>
         
