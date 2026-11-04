@@ -144,6 +144,10 @@
             max-width: 70%;
         }
         
+        .logo:hover {
+            text-decoration: none !important;
+        }
+        
         .logo img {
             height: 55px;
             width: auto;
@@ -228,6 +232,7 @@
         
         .btn-primary:hover {
             background: var(--brand-dark);
+            color: white !important;
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(29, 69, 51, 0.3);
             text-decoration: none !important;
@@ -1861,6 +1866,7 @@
         </a>
         
         <nav>
+            <a href="https://hsc.org.zw/" target="_blank" rel="noopener noreferrer">Health Service Commission</a>
             <a href="{{ route('resources') }}">Resources</a>
             <a href="{{ route('safety_protocols') }}">Safety Protocols</a>
             <a href="javascript:void(0);" onclick="openSupportModal()">Help Desk</a>
@@ -1911,9 +1917,13 @@
         <div class="circle-3"></div>
         <div class="circle-4"></div>
 
-        <div class="hero-badge">
+        <div class="hero-badge" style="margin-bottom: 0.25rem;">
             <i class="fas fa-shield-alt"></i>
             SECURE & CONFIDENTIAL PORTAL
+        </div>
+        
+        <div style="font-size: 0.85rem; font-weight: 600; color: var(--brand); letter-spacing: 0.05em; margin-bottom: 1.5rem; text-transform: uppercase;">
+            INJURY ON DUTY / DEATH ON DUTY
         </div>
         
         <h1>Occupational <span>Health</span><br>Reimagined.</h1>

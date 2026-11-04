@@ -29,7 +29,7 @@
 </a>
 
 <a href="{{ route('supervisor.compliance_metrics') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-ink-soft hover:bg-brand-soft border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
-    <i class="fa-solid fa-shield-check w-5 text-center text-ink text-sm"></i>
+    <i class="fa-solid fa-clipboard-check w-5 text-center text-ink text-sm"></i>
     <span>Compliance Metrics</span>
 </a>
 
