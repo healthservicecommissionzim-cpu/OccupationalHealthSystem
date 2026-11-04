@@ -369,10 +369,21 @@
                         <label for="statement">
                             Witness Statement <span class="required">*</span>
                         </label>
+                        <div style="background: #eff6ff; border-left: 3px solid #3b82f6; padding: 0.85rem; border-radius: 6px; margin-bottom: 0.75rem;">
+                            <p style="font-size: 0.8rem; color: #1e40af; margin: 0; line-height: 1.6;">
+                                <strong>What to include in your statement:</strong><br>
+                                • What you saw happen before, during, and after the incident<br>
+                                • Where you were positioned when you witnessed the incident<br>
+                                • Time and date (if you remember specific details)<br>
+                                • Names of other people present<br>
+                                • Any injuries you observed<br>
+                                • Actions taken immediately after the incident
+                            </p>
+                        </div>
                         <textarea 
                             id="statement" 
                             name="statement" 
-                            placeholder="Please describe what you witnessed, including details about the incident, injuries, and any actions taken..."
+                            placeholder="Begin typing your witness statement here..."
                             required
                             onchange="updateCharCount()"
                             oninput="updateCharCount()"

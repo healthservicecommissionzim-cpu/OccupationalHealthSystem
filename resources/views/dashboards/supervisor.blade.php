@@ -457,17 +457,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const pollInterval = 30000; // 30 seconds
     let pollIntervalId = null;
 
-    // Add last updated timestamp display
-    const statsSection = document.querySelector('[data-dashboard-stats]') || 
-                        document.querySelector('.grid.grid-cols-1');
-    if (statsSection) {
-        const lastUpdatedDiv = document.createElement('div');
-        lastUpdatedDiv.id = 'lastUpdated';
-        lastUpdatedDiv.className = 'text-right text-[11px] text-slate-500 mt-2';
-        lastUpdatedDiv.innerHTML = '<i class="fa-solid fa-sync text-[10px]"></i> Auto-refreshing every 30s...';
-        statsSection.parentNode.insertBefore(lastUpdatedDiv, statsSection.nextSibling);
-    }
-
     // Function to update dashboard with new data
     function updateDashboard(data) {
         if (!data.success) return;
@@ -519,12 +508,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const notificationsBadge = document.querySelector('[data-notifications-count]');
         if (notificationsBadge) {
             notificationsBadge.textContent = data.unread_notifications;
-        }
-
-        // Update timestamp
-        const lastUpdated = document.querySelector('#lastUpdated');
-        if (lastUpdated) {
-            lastUpdated.innerHTML = '<i class="fa-solid fa-sync-alt text-[10px] animate-spin"></i> Last updated: ' + data.timestamp;
         }
     }
 
