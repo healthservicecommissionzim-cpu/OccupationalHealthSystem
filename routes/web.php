@@ -450,6 +450,7 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
     Route::get('/supervisor/incidents/{incident}/hod-report', [IncidentController::class, 'headOfDepartmentReport'])->name('incidents.hod_report')->middleware('role:supervisor', 'permission:manage_incidents');
     Route::post('/supervisor/incidents/{incident}/hod-report', [IncidentController::class, 'storeHeadOfDepartmentReport'])->name('incidents.store_hod_report')->middleware('role:supervisor', 'permission:manage_incidents');
     Route::get('/supervisor/incidents/{incident}/dossier-review', [IncidentController::class, 'supervisorDossierReview'])->name('incidents.supervisor_dossier_review')->middleware('role:supervisor', 'permission:manage_incidents');
+    Route::get('/supervisor/incidents/{incident}/download-dossier', [IncidentController::class, 'downloadSupervisorDossier'])->name('incidents.download_supervisor_dossier')->middleware('role:supervisor', 'permission:manage_incidents');
     Route::get('/supervisor/incidents/{incident}/generate-dossier-pdf', [IncidentController::class, 'generateSupervisorDossierPDF'])->name('incidents.generate_supervisor_dossier_pdf')->middleware('permission:view_incidents');
     Route::post('/supervisor/incidents/{incident}/submit-to-hr', [IncidentController::class, 'submitDossierToHR'])->name('incidents.submit_dossier_to_hr')->middleware('role:supervisor', 'permission:manage_incidents');
 

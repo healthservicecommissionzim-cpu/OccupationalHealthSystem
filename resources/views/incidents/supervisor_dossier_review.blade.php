@@ -267,6 +267,9 @@
 
         <!-- Action Buttons -->
         <div class="actions">
+            <a href="{{ route('incidents.download_supervisor_dossier', ['incident' => $incident]) }}" class="btn" style="background: #3b82f6; color: white; border-color: #3b82f6;">
+                <i class="fa-solid fa-file-pdf"></i> Download Dossier (PDF)
+            </a>
             <a href="{{ route('incidents.hod_report', ['incident' => $incident]) }}" class="btn">
                 <i class="fa-solid fa-pen"></i> Edit Report
             </a>

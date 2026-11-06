@@ -2065,6 +2065,34 @@ class IncidentController extends Controller
     }
 
     /**
+     * Download supervisor dossier as PDF
+     */
+    public function downloadSupervisorDossier(Incident $incident)
+    {
+        $user = auth()->user();
+
+        // Verify that the logged-in user is the assigned supervisor
+        if ($incident->assigned_supervisor_id !== $user->id) {
+            abort(403, 'You are not the assigned supervisor for this incident.');
+        }
+
+        // Get witness tokens for the incident
+        $witnessTokens = $incident->witnessTokens;
+
+        // Generate PDF
+        $pdf = \PDF::loadView('incidents.pdf.supervisor_dossier', compact('incident', 'witnessTokens'));
+        
+        // Set paper size and orientation
+        $pdf->setPaper('A4', 'portrait');
+        
+        // Generate filename
+        $filename = 'Supervisor_Dossier_' . $incident->reference_number . '_' . now()->format('Ymd') . '.pdf';
+        
+        // Return PDF download
+        return $pdf->download($filename);
+    }
+
+    /**
      * Submit the complete dossier to HR and escalate the incident.
      */
     public function submitDossierToHR(Request $request, Incident $incident)
