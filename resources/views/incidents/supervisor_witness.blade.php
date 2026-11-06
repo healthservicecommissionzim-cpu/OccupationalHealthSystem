@@ -440,7 +440,61 @@
             if (modal) modal.remove();
         }
         
-        // Send email with input validation
+        // Centered Result Modal (Success or Error)
+        function showResultModal(type, message) {
+            const isSuccess = type === 'success';
+            const bgColor = isSuccess ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' : 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)';
+            const icon = isSuccess ? 'fa-check-circle' : 'fa-exclamation-circle';
+            const title = isSuccess ? 'Success!' : 'Error';
+            
+            const modal = `
+                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 99999; animation: fadeIn 0.2s ease;" id="resultModal">
+                    <div style="background: white; border-radius: 16px; padding: 40px; max-width: 420px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center; animation: scaleIn 0.3s ease;">
+                        <div style="width: 80px; height: 80px; background: ${bgColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 8px 24px ${isSuccess ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)'};">
+                            <i class="fa-solid ${icon}" style="font-size: 36px; color: white;"></i>
+                        </div>
+                        <h3 style="margin: 0 0 12px; font-size: 24px; color: #101a31; font-weight: 700;">${title}</h3>
+                        <p style="margin: 0 0 28px; font-size: 15px; color: #718096; line-height: 1.6;">${message}</p>
+                        <button onclick="closeResultModal()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #079b6d 0%, #067c58 100%); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(7, 155, 109, 0.3); transition: all 0.2s;">
+                            OK
+                        </button>
+                    </div>
+                </div>
+                <style>
+                    @keyframes fadeIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+                    @keyframes scaleIn {
+                        from { transform: scale(0.9); opacity: 0; }
+                        to { transform: scale(1); opacity: 1; }
+                    }
+                </style>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modal);
+            
+            // Auto-close success modal after 3 seconds and reload
+            if (isSuccess) {
+                setTimeout(() => {
+                    closeResultModal();
+                    location.reload();
+                }, 3000);
+            }
+        }
+        
+        function closeResultModal() {
+            const modal = document.getElementById('resultModal');
+            if (modal) {
+                modal.style.opacity = '0';
+                setTimeout(() => {
+                    modal.remove();
+                    location.reload();
+                }, 200);
+            }
+        }
+        
+        // Send email with input validation - REWRITTEN
         async function sendEmailWithInput(tokenId, witnessName) {
             const emailInput = document.getElementById('witnessEmailInput');
             const emailError = document.getElementById('emailInputError');
@@ -454,56 +508,66 @@
                 return;
             }
             
+            // Disable button and show loading state
+            const sendButton = event.target;
+            const originalButtonHTML = sendButton.innerHTML;
+            sendButton.disabled = true;
+            sendButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right: 6px;"></i> Sending...';
+            
             try {
-                // First save the email if needed
+                // Step 1: Save the email address
                 const saveResponse = await fetch(`/supervisor/incidents/${incidentId}/witness/${tokenId}/add-email`, {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify({ email: email })
                 });
 
+                if (!saveResponse.ok) {
+                    throw new Error('Failed to save email address');
+                }
+
                 const saveData = await saveResponse.json();
                 
                 if (!saveData.success) {
-                    emailError.textContent = saveData.message || 'Failed to save email';
-                    emailError.style.display = 'block';
+                    closeEmailInputModal();
+                    showResultModal('error', saveData.message || 'Failed to save email address');
                     return;
                 }
                 
-                // Now send the email reminder
+                // Step 2: Send the email reminder
                 const sendResponse = await fetch(`/supervisor/incidents/${incidentId}/witness/${tokenId}/email-reminder`, {
                     method: 'POST',
                     headers: { 
                         'X-CSRF-TOKEN': csrfToken,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     }
                 });
 
-                // Close the email input modal
-                closeEmailInputModal();
-                
-                // Check if response is OK (status 200-299)
                 if (!sendResponse.ok) {
-                    const sendData = await sendResponse.json();
-                    showToast(sendData.message || 'Failed to send email', 'error');
-                    return;
+                    throw new Error('Failed to send email');
                 }
                 
                 const sendData = await sendResponse.json();
                 
-                if (sendData.success) {
-                    // Show success modal
-                    showSuccessModal(`Email sent successfully to ${witnessName}`);
-                } else {
-                    showToast(sendData.message || 'Failed to send email', 'error');
-                }
-            } catch (error) {
-                console.error('Error:', error);
+                // Close the input modal
                 closeEmailInputModal();
-                showToast('An error occurred while sending email', 'error');
+                
+                // Show result
+                if (sendData.success) {
+                    showResultModal('success', `Email reminder sent successfully to ${witnessName}!`);
+                } else {
+                    showResultModal('error', sendData.message || 'Failed to send email reminder');
+                }
+                
+            } catch (error) {
+                console.error('Email sending error:', error);
+                closeEmailInputModal();
+                showResultModal('error', 'An unexpected error occurred. Please try again or contact support.');
             }
         }
         
