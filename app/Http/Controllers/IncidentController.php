@@ -2078,9 +2078,12 @@ class IncidentController extends Controller
 
         // Get witness tokens for the incident
         $witnessTokens = $incident->witnessTokens;
+        
+        // Get first aid records for the incident
+        $firstAidRecords = $incident->firstAidRecords;
 
         // Generate PDF
-        $pdf = \PDF::loadView('incidents.pdf.supervisor_dossier', compact('incident', 'witnessTokens'));
+        $pdf = \PDF::loadView('incidents.pdf.supervisor_dossier', compact('incident', 'witnessTokens', 'firstAidRecords'));
         
         // Set paper size and orientation
         $pdf->setPaper('A4', 'portrait');

@@ -279,6 +279,45 @@
                 {{ $incident->incident_description ?? 'No description provided' }}
             </div>
         </div>
+        
+        <!-- Witness Summary -->
+        <div class="subsection-title">Witness Information</div>
+        <div class="content-box">
+            <div class="field-value">
+                <strong>Witnesses Present:</strong> {{ $witnessTokens->count() > 0 ? 'Yes' : 'No' }}<br>
+                @if($witnessTokens->count() > 0)
+                    <strong>Number of Witnesses:</strong> {{ $witnessTokens->count() }}<br>
+                    <strong>Statements Submitted:</strong> {{ $witnessTokens->where('statement_submitted_at', '!=', null)->count() }} of {{ $witnessTokens->count() }}
+                @endif
+            </div>
+        </div>
+        
+        <!-- First Aid Summary -->
+        <div class="subsection-title">First Aid Information</div>
+        <div class="content-box">
+            <div class="field-value">
+                <strong>First Aid Administered:</strong> {{ $firstAidRecords->count() > 0 ? 'Yes' : 'No' }}<br>
+                @if($firstAidRecords->count() > 0)
+                    <strong>Number of Records:</strong> {{ $firstAidRecords->count() }}<br>
+                    @foreach($firstAidRecords as $index => $record)
+                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e1e7ee;">
+                            <strong>Record {{ $index + 1 }}:</strong><br>
+                            <strong>Nurse:</strong> {{ $record->nurse_name ?? 'N/A' }} (License: {{ $record->nurse_license_number ?? 'N/A' }})<br>
+                            <strong>Date/Time:</strong> {{ $record->time_administered ? $record->time_administered->format('d M Y H:i') : 'N/A' }}<br>
+                            <strong>Location:</strong> {{ $record->location ?? 'N/A' }}<br>
+                            <strong>Severity:</strong> {{ $record->severity_level ?? 'N/A' }}<br>
+                            <strong>Status:</strong> {{ ucfirst($record->status ?? 'N/A') }}<br>
+                            @if($record->injury_description)
+                                <strong>Injury Description:</strong> {{ $record->injury_description }}<br>
+                            @endif
+                            @if($record->first_aid_description)
+                                <strong>Treatment Provided:</strong> {{ $record->first_aid_description }}
+                            @endif
+                        </div>
+                    @endforeach
+                @endif
+            </div>
+        </div>
     </div>
     
     <!-- Section 3: Supervisor Verification -->
