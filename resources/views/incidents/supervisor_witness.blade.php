@@ -555,8 +555,13 @@
                 }
                 
                 // Step 2: Send the email reminder
+                const emailReminderUrl = `/supervisor/incidents/${incidentId}/witness/${tokenId}/email-reminder`;
                 console.log('Step 2: Sending email reminder...');
-                const sendResponse = await fetch(`/supervisor/incidents/${incidentId}/witness/${tokenId}/email-reminder`, {
+                console.log('Email reminder URL:', emailReminderUrl);
+                console.log('Incident ID:', incidentId);
+                console.log('Token ID:', tokenId);
+                
+                const sendResponse = await fetch(emailReminderUrl, {
                     method: 'POST',
                     headers: { 
                         'X-CSRF-TOKEN': csrfToken,
