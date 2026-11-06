@@ -1065,9 +1065,8 @@ class IncidentController extends Controller
                 );
                 
                 // Update last reminder timestamp
-                $witnessToken->update([
-                    'witness_last_reminder_sent_at' => now(),
-                ]);
+                $witnessToken->witness_last_reminder_sent_at = now();
+                $witnessToken->save();
 
                 // Log email send in incident_notifications table
                 \App\Models\IncidentNotification::create([
@@ -1092,8 +1091,7 @@ class IncidentController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Email reminder sent successfully to ' . $witnessToken->witness_name,
-                    'last_reminder_sent' => $witnessToken->witness_last_reminder_sent_at->format('d M Y, H:i'),
-                ]);
+                ], 200);
 
             } catch (\Exception $emailError) {
                 // Handle email failure

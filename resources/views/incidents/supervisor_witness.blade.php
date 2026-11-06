@@ -567,20 +567,17 @@
 
                 console.log('Send response status:', sendResponse.status);
                 
-                // For debugging: log the response text
-                const responseText = await sendResponse.text();
-                console.log('Send response text:', responseText);
-                
                 if (!sendResponse.ok) {
-                    console.error('Send failed with status:', sendResponse.status);
+                    const errorText = await sendResponse.text();
+                    console.error('Send failed:', errorText);
                     closeEmailInputModal();
-                    showResultModal('error', 'Failed to send email. Server returned status: ' + sendResponse.status);
+                    showResultModal('error', 'Failed to send email. Please try again.');
                     return;
                 }
                 
                 let sendData;
                 try {
-                    sendData = JSON.parse(responseText);
+                    sendData = await sendResponse.json();
                     console.log('Send data:', sendData);
                 } catch (jsonError) {
                     console.error('Failed to parse send response:', jsonError);
