@@ -450,6 +450,22 @@ class DashboardController extends Controller
             ->pluck('count', 'name')
             ->toArray();
 
+        // Get incidents grouped by injury type and facility (for district HR with facility filter)
+        $incidentsByInjuryTypeAndFacility = \DB::table('incidents')
+            ->join('facilities', 'incidents.facility_id', '=', 'facilities.id')
+            ->join('incident_types', 'incidents.incident_type_id', '=', 'incident_types.id')
+            ->where('incidents.routed_to_hr_user_id', $user->id);
+        
+        if($dateFrom) {
+            $incidentsByInjuryTypeAndFacility->whereBetween('incidents.created_at', [$dateFrom, $dateTo]);
+        }
+        
+        $incidentsByInjuryTypeAndFacility = $incidentsByInjuryTypeAndFacility
+            ->groupBy('incident_types.name', 'facilities.name')
+            ->selectRaw('incident_types.name as injury_type, facilities.name as facility, COUNT(*) as count')
+            ->get()
+            ->toArray();
+
         // Get incidents grouped by department
         $incidentsByDepartment = \DB::table('incidents')
             ->join('departments', 'incidents.department_id', '=', 'departments.id')
@@ -507,7 +523,7 @@ class DashboardController extends Controller
 
         $unreadNotificationCount = $allNotifications->count();
 
-        $viewData = compact('statistics', 'incidentsByStatus', 'incidentsByFacility', 'incidentsByInjuryType', 'incidentsByDepartment', 'pendingReviewIncidents', 'dateRange', 'allNotifications', 'unreadNotificationCount');
+        $viewData = compact('statistics', 'incidentsByStatus', 'incidentsByFacility', 'incidentsByInjuryType', 'incidentsByInjuryTypeAndFacility', 'incidentsByDepartment', 'pendingReviewIncidents', 'dateRange', 'allNotifications', 'unreadNotificationCount');
 
         // Cache for 30 seconds
         \Illuminate\Support\Facades\Cache::put($cacheKey, $viewData, 30);
