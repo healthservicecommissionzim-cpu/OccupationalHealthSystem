@@ -1126,11 +1126,15 @@ class IncidentController extends Controller
                 'incident_id' => $incident->id,
                 'token_id' => $tokenId,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
             ]);
 
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while sending the email reminder.',
+                'debug' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
         }
     }
