@@ -516,6 +516,7 @@
             
             try {
                 // Step 1: Save the email address
+                console.log('Step 1: Saving email address...');
                 const saveResponse = await fetch(`/supervisor/incidents/${incidentId}/witness/${tokenId}/add-email`, {
                     method: 'POST',
                     headers: {
@@ -526,11 +527,26 @@
                     body: JSON.stringify({ email: email })
                 });
 
+                console.log('Save response status:', saveResponse.status);
+                
                 if (!saveResponse.ok) {
-                    throw new Error('Failed to save email address');
+                    const errorText = await saveResponse.text();
+                    console.error('Save failed:', errorText);
+                    closeEmailInputModal();
+                    showResultModal('error', 'Failed to save email address. Please try again.');
+                    return;
                 }
 
-                const saveData = await saveResponse.json();
+                let saveData;
+                try {
+                    saveData = await saveResponse.json();
+                    console.log('Save data:', saveData);
+                } catch (jsonError) {
+                    console.error('Failed to parse save response:', jsonError);
+                    closeEmailInputModal();
+                    showResultModal('error', 'Invalid response from server. Please try again.');
+                    return;
+                }
                 
                 if (!saveData.success) {
                     closeEmailInputModal();
@@ -539,6 +555,7 @@
                 }
                 
                 // Step 2: Send the email reminder
+                console.log('Step 2: Sending email reminder...');
                 const sendResponse = await fetch(`/supervisor/incidents/${incidentId}/witness/${tokenId}/email-reminder`, {
                     method: 'POST',
                     headers: { 
@@ -548,26 +565,54 @@
                     }
                 });
 
+                console.log('Send response status:', sendResponse.status);
+                
                 if (!sendResponse.ok) {
-                    throw new Error('Failed to send email');
+                    const errorText = await sendResponse.text();
+                    console.error('Send failed:', errorText);
+                    closeEmailInputModal();
+                    showResultModal('error', 'Failed to send email. Please try again.');
+                    return;
                 }
                 
-                const sendData = await sendResponse.json();
+                let sendData;
+                try {
+                    sendData = await sendResponse.json();
+                    console.log('Send data:', sendData);
+                } catch (jsonError) {
+                    console.error('Failed to parse send response:', jsonError);
+                    closeEmailInputModal();
+                    showResultModal('error', 'Email may have been sent, but received invalid response. Please check the witness list.');
+                    return;
+                }
                 
                 // Close the input modal
                 closeEmailInputModal();
                 
                 // Show result
                 if (sendData.success) {
+                    console.log('Success! Email sent to', witnessName);
                     showResultModal('success', `Email reminder sent successfully to ${witnessName}!`);
                 } else {
+                    console.error('Send failed with message:', sendData.message);
                     showResultModal('error', sendData.message || 'Failed to send email reminder');
                 }
                 
             } catch (error) {
-                console.error('Email sending error:', error);
+                console.error('Email sending error details:', error);
+                console.error('Error name:', error.name);
+                console.error('Error message:', error.message);
+                console.error('Error stack:', error.stack);
                 closeEmailInputModal();
-                showResultModal('error', 'An unexpected error occurred. Please try again or contact support.');
+                
+                // More specific error message
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    showResultModal('error', 'Network error. Please check your connection and try again.');
+                } else if (error.name === 'SyntaxError') {
+                    showResultModal('error', 'Email may have been sent. Please refresh the page to verify.');
+                } else {
+                    showResultModal('error', 'An unexpected error occurred: ' + error.message);
+                }
             }
         }
         
