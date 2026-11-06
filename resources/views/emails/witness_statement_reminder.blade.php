@@ -46,7 +46,7 @@
             
             <div class="info-box">
                 <strong>Incident Details:</strong>
-                <p><strong>Employee:</strong> {{ $incident->employee_name ?? 'N/A' }}</p>
+                <p><strong>Employee:</strong> {{ $incident->first_name }} {{ $incident->surname }}</p>
                 <p><strong>Location:</strong> {{ $incident->facility->name ?? 'N/A' }}</p>
                 <p><strong>Date:</strong> {{ $incident->incident_date->format('d M Y') }}</p>
             </div>
