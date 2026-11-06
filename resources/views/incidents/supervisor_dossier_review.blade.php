@@ -252,7 +252,7 @@
                 <!-- HOD Report Section -->
                 <div>
                     <div class="section-header">
-                        <i class="fa-solid fa-file-lines"></i> Head of Department Report
+                        <i class="fa-solid fa-file-lines"></i> Supervisor/HOD Report
                     </div>
                     <div class="hod-report">
                         {{ $incident->hod_report }}
