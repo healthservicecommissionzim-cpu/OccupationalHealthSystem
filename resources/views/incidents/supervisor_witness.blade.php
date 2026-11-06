@@ -440,22 +440,22 @@
             if (modal) modal.remove();
         }
         
-        // Centered Result Modal (Success or Error)
+        // Centered Result Modal (Success or Error) - COMPACT VERSION
         function showResultModal(type, message) {
             const isSuccess = type === 'success';
-            const bgColor = isSuccess ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' : 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)';
+            const bgColor = isSuccess ? '#10B981' : '#EF4444';
             const icon = isSuccess ? 'fa-check-circle' : 'fa-exclamation-circle';
-            const title = isSuccess ? 'Success!' : 'Error';
+            const title = isSuccess ? 'Success' : 'Error';
             
             const modal = `
-                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 99999; animation: fadeIn 0.2s ease;" id="resultModal">
-                    <div style="background: white; border-radius: 16px; padding: 40px; max-width: 420px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center; animation: scaleIn 0.3s ease;">
-                        <div style="width: 80px; height: 80px; background: ${bgColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 8px 24px ${isSuccess ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)'};">
-                            <i class="fa-solid ${icon}" style="font-size: 36px; color: white;"></i>
+                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 99999; animation: fadeIn 0.2s ease;" id="resultModal">
+                    <div style="background: white; border-radius: 12px; padding: 24px 28px; max-width: 340px; width: 85%; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; animation: scaleIn 0.2s ease;">
+                        <div style="width: 48px; height: 48px; background: ${bgColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;">
+                            <i class="fa-solid ${icon}" style="font-size: 22px; color: white;"></i>
                         </div>
-                        <h3 style="margin: 0 0 12px; font-size: 24px; color: #101a31; font-weight: 700;">${title}</h3>
-                        <p style="margin: 0 0 28px; font-size: 15px; color: #718096; line-height: 1.6;">${message}</p>
-                        <button onclick="closeResultModal()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #079b6d 0%, #067c58 100%); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(7, 155, 109, 0.3); transition: all 0.2s;">
+                        <h3 style="margin: 0 0 8px; font-size: 16px; color: #101a31; font-weight: 700;">${title}</h3>
+                        <p style="margin: 0 0 18px; font-size: 13px; color: #718096; line-height: 1.5;">${message}</p>
+                        <button onclick="closeResultModal()" style="width: 100%; padding: 10px; background: #079b6d; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
                             OK
                         </button>
                     </div>
@@ -466,7 +466,7 @@
                         to { opacity: 1; }
                     }
                     @keyframes scaleIn {
-                        from { transform: scale(0.9); opacity: 0; }
+                        from { transform: scale(0.95); opacity: 0; }
                         to { transform: scale(1); opacity: 1; }
                     }
                 </style>
@@ -474,12 +474,12 @@
             
             document.body.insertAdjacentHTML('beforeend', modal);
             
-            // Auto-close success modal after 3 seconds and reload
+            // Auto-close success modal after 2.5 seconds and reload
             if (isSuccess) {
                 setTimeout(() => {
                     closeResultModal();
                     location.reload();
-                }, 3000);
+                }, 2500);
             }
         }
         
@@ -567,17 +567,20 @@
 
                 console.log('Send response status:', sendResponse.status);
                 
+                // For debugging: log the response text
+                const responseText = await sendResponse.text();
+                console.log('Send response text:', responseText);
+                
                 if (!sendResponse.ok) {
-                    const errorText = await sendResponse.text();
-                    console.error('Send failed:', errorText);
+                    console.error('Send failed with status:', sendResponse.status);
                     closeEmailInputModal();
-                    showResultModal('error', 'Failed to send email. Please try again.');
+                    showResultModal('error', 'Failed to send email. Server returned status: ' + sendResponse.status);
                     return;
                 }
                 
                 let sendData;
                 try {
-                    sendData = await sendResponse.json();
+                    sendData = JSON.parse(responseText);
                     console.log('Send data:', sendData);
                 } catch (jsonError) {
                     console.error('Failed to parse send response:', jsonError);
