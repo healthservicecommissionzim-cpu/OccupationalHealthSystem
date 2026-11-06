@@ -255,7 +255,7 @@
                         
                         <div style="display: flex; flex-direction: column; gap: 12px;">
                             <!-- Email Option - ALWAYS SHOW -->
-                            <button onclick="showEmailInputModal(${tokenId}, '${witnessName.replace(/'/g, "\\'")}', '${witnessEmail}')" style="display: flex; align-items: center; gap: 12px; padding: 16px; background: linear-gradient(135deg, #0B5ED7 0%, #0A58CA 100%); color: white; border: 1px solid #0A58CA; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(11, 94, 215, 0.3);">
+                            <button onclick="showEmailInputModal(${tokenId}, '${witnessName.replace(/'/g, "\\'")}', '${witnessEmail}')" style="display: flex; align-items: center; gap: 12px; padding: 16px; background: linear-gradient(135deg, #079b6d 0%, #067c58 100%); color: white; border: 1px solid #067c58; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(7, 155, 109, 0.3);">
                                 <i class="fa-solid fa-envelope" style="font-size: 28px;"></i>
                                 <div style="text-align: left; flex: 1;">
                                     <div style="font-weight: 700; margin-bottom: 2px;">Send via Email</div>
@@ -265,7 +265,7 @@
                             </button>
                             
                             <!-- SMS Option -->
-                            <button onclick="confirmSendSMS(${tokenId}, '${witnessName.replace(/'/g, "\\'")}', '${witnessPhone}')" style="display: flex; align-items: center; gap: 12px; padding: 16px; background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%); color: white; border: 1px solid #4F46E5; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);">
+                            <button onclick="confirmSendSMS(${tokenId}, '${witnessName.replace(/'/g, "\\'")}', '${witnessPhone}')" style="display: flex; align-items: center; gap: 12px; padding: 16px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: 1px solid #059669; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);">
                                 <i class="fa-solid fa-message" style="font-size: 28px;"></i>
                                 <div style="text-align: left; flex: 1;">
                                     <div style="font-weight: 700; margin-bottom: 2px;">Send via SMS</div>
@@ -302,7 +302,7 @@
                 <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000;" id="confirmModal">
                     <div style="background: white; border-radius: 12px; padding: 28px; max-width: 420px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
                         <div style="text-align: center; margin-bottom: 20px;">
-                            <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                            <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
                                 <i class="fa-solid fa-message" style="font-size: 24px; color: white;"></i>
                             </div>
                             <h3 style="margin: 0 0 8px; font-size: 18px; color: #101a31; font-weight: 700;">Send SMS Reminder?</h3>
@@ -313,7 +313,7 @@
                             <button onclick="closeConfirmModal()" style="flex: 1; padding: 12px; background: #f8fafb; color: #263149; border: 1px solid #e4e9ee; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
                                 Cancel
                             </button>
-                            <button onclick="sendViaSMS(${tokenId}, '${witnessName.replace(/'/g, "\\'")}'); closeConfirmModal();" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%); color: white; border: 1px solid #4F46E5; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);">
+                            <button onclick="sendViaSMS(${tokenId}, '${witnessName.replace(/'/g, "\\'")}'); closeConfirmModal();" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: 1px solid #059669; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);">
                                 <i class="fa-solid fa-paper-plane" style="margin-right: 6px;"></i> Send SMS
                             </button>
                         </div>
@@ -404,7 +404,7 @@
                 <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000;" id="emailInputModal">
                     <div style="background: white; border-radius: 12px; padding: 28px; max-width: 450px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
                         <div style="text-align: center; margin-bottom: 20px;">
-                            <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #0B5ED7 0%, #0A58CA 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                            <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #079b6d 0%, #067c58 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
                                 <i class="fa-solid fa-envelope" style="font-size: 24px; color: white;"></i>
                             </div>
                             <h3 style="margin: 0 0 8px; font-size: 18px; color: #101a31; font-weight: 700;">Send Email Reminder</h3>
@@ -422,7 +422,7 @@
                             <button onclick="closeEmailInputModal()" style="flex: 1; padding: 12px; background: #f8fafb; color: #263149; border: 1px solid #e4e9ee; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
                                 Cancel
                             </button>
-                            <button onclick="sendEmailWithInput(${tokenId}, '${witnessName.replace(/'/g, "\\'")}');" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #0B5ED7 0%, #0A58CA 100%); color: white; border: 1px solid #0A58CA; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(11, 94, 215, 0.3);">
+                            <button onclick="sendEmailWithInput(${tokenId}, '${witnessName.replace(/'/g, "\\'")}');" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #079b6d 0%, #067c58 100%); color: white; border: 1px solid #067c58; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(7, 155, 109, 0.3);">
                                 <i class="fa-solid fa-paper-plane" style="margin-right: 6px;"></i> Send Email
                             </button>
                         </div>
@@ -482,10 +482,17 @@
                     }
                 });
 
-                const sendData = await sendResponse.json();
-                
                 // Close the email input modal
                 closeEmailInputModal();
+                
+                // Check if response is OK (status 200-299)
+                if (!sendResponse.ok) {
+                    const sendData = await sendResponse.json();
+                    showToast(sendData.message || 'Failed to send email', 'error');
+                    return;
+                }
+                
+                const sendData = await sendResponse.json();
                 
                 if (sendData.success) {
                     // Show success modal
@@ -505,7 +512,7 @@
                 <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000;" id="addEmailModal">
                     <div style="background: white; border-radius: 12px; padding: 28px; max-width: 450px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
                         <div style="text-align: center; margin-bottom: 20px;">
-                            <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #0B5ED7 0%, #0A58CA 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                            <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #079b6d 0%, #067c58 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
                                 <i class="fa-solid fa-envelope" style="font-size: 24px; color: white;"></i>
                             </div>
                             <h3 style="margin: 0 0 8px; font-size: 18px; color: #101a31; font-weight: 700;">Add Email Address</h3>
@@ -523,7 +530,7 @@
                             <button onclick="closeAddEmailModal()" style="flex: 1; padding: 12px; background: #f8fafb; color: #263149; border: 1px solid #e4e9ee; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
                                 Cancel
                             </button>
-                            <button onclick="saveWitnessEmail(${tokenId})" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #0B5ED7 0%, #0A58CA 100%); color: white; border: 1px solid #0A58CA; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(11, 94, 215, 0.3);">
+                            <button onclick="saveWitnessEmail(${tokenId})" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #079b6d 0%, #067c58 100%); color: white; border: 1px solid #067c58; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(7, 155, 109, 0.3);">
                                 <i class="fa-solid fa-save" style="margin-right: 6px;"></i> Save Email
                             </button>
                         </div>
