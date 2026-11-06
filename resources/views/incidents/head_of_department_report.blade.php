@@ -195,13 +195,26 @@
                             <div style="margin-bottom: 24px;">
                                 <div class="labelrow">Worker's Duties at the Time of Injury <span class="required">*</span></div>
                                 <div class="help">Minimum 100 characters. Maximum 5000 characters.</div>
+                                
+                                <div style="background: #e8f5f1; border-left: 3px solid #079b6d; padding: 12px 14px; border-radius: 6px; margin-bottom: 12px;">
+                                    <p style="font-size: 11px; color: #0a5843; margin: 0; line-height: 1.6; font-weight: 500;">
+                                        <strong style="display: block; margin-bottom: 6px;">What to include in your report:</strong>
+                                        • The task being performed at the time of injury<br>
+                                        • The worker's normal responsibilities<br>
+                                        • Equipment or materials involved<br>
+                                        • The circumstances immediately before the incident<br>
+                                        • Any factors that may have contributed to the incident<br>
+                                        • Safety measures in place (if applicable)
+                                    </p>
+                                </div>
+                                
                                 <textarea 
                                     id="desc" 
                                     name="hod_report" 
                                     required
                                     minlength="100"
                                     maxlength="5000"
-                                    placeholder="Provide a detailed description of the duties the worker was performing at the time of the injury.&#10;&#10;Include:&#10;• The task being performed&#10;• The worker's normal responsibilities&#10;• Equipment or materials involved&#10;• The circumstances immediately before the incident&#10;• Any factors that may have contributed to the incident"
+                                    placeholder="Begin typing your detailed report here..."
                                 >{{ old('hod_report') }}</textarea>
                                 <div class="count"><span id="count">0</span> / 5000 characters</div>
                                 @error('hod_report')
