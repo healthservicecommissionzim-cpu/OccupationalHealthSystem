@@ -1432,10 +1432,11 @@
         }
 
         .chat-header {
-            background: linear-gradient(135deg, var(--brand) 0%, #2d5a47 100%);
-            color: white;
+            background: white;
+            color: var(--dark);
             padding: 1.25rem;
             border-radius: 16px 16px 0 0;
+            border-bottom: 2px solid #e2e8f0;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -1449,24 +1450,27 @@
 
         .chat-title i {
             font-size: 1.5rem;
+            color: var(--brand);
         }
 
         .chat-title h3 {
             font-size: 1rem;
             font-weight: 700;
             margin: 0;
+            color: var(--dark);
         }
 
         .chat-title p {
             font-size: 0.75rem;
             margin: 0;
-            opacity: 0.9;
+            opacity: 0.7;
+            color: var(--slate);
         }
 
         .chat-close {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
+            background: #f5f7fa;
+            border: 1px solid #e2e8f0;
+            color: var(--slate);
             font-size: 1.25rem;
             cursor: pointer;
             width: 36px;
@@ -1479,7 +1483,8 @@
         }
 
         .chat-close:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: #e2e8f0;
+            color: var(--dark);
         }
 
         .chat-messages {
