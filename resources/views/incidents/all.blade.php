@@ -210,32 +210,59 @@
                                         
                                         switch($status) {
                                             case 'PENDING_SUPERVISOR_VERIFICATION':
-                                                $statusLabel = 'Pending Verification';
+                                                $statusLabel = 'Awaiting Supervisor Verification';
                                                 $statusClass = 'pending';
                                                 break;
                                             case 'VERIFIED_SUPERVISOR':
+                                                $statusLabel = 'Supervisor Verified';
+                                                $statusClass = 'escalated';
+                                                break;
                                             case 'ESCALATED_TO_HR':
-                                            case 'HR_APPROVED':
-                                                $statusLabel = 'Escalated';
+                                                $statusLabel = 'Escalated to HR';
                                                 $statusClass = 'escalated';
                                                 break;
                                             case 'PENDING_HR_REVIEW':
+                                                $statusLabel = 'Pending HR Review';
+                                                $statusClass = 'pending';
+                                                break;
                                             case 'HR_REVIEW':
+                                                $statusLabel = 'Under HR Review';
+                                                $statusClass = 'escalated';
+                                                break;
+                                            case 'HR_APPROVED':
+                                                $statusLabel = 'HR Approved';
+                                                $statusClass = 'escalated';
+                                                break;
                                             case 'CLINICAL_EXECUTIVE_REVIEW':
+                                                $statusLabel = 'Clinical Executive Review';
+                                                $statusClass = 'escalated';
+                                                break;
                                             case 'PENDING_PROVINCIAL_APPROVAL':
+                                                $statusLabel = 'Pending Provincial Approval';
+                                                $statusClass = 'pending';
+                                                break;
                                             case 'PENDING_MEDICAL_BOARD':
-                                                $statusLabel = 'Pending Review';
+                                                $statusLabel = 'Pending Medical Board';
                                                 $statusClass = 'pending';
                                                 break;
                                             case 'APPROVED_BY_PMD':
+                                                $statusLabel = 'Approved by PMD';
+                                                $statusClass = 'approved';
+                                                break;
                                             case 'RESOLVED':
+                                                $statusLabel = 'Case Resolved';
+                                                $statusClass = 'approved';
+                                                break;
                                             case 'NATIONAL_SIGN_OFF_APPROVED':
-                                                $statusLabel = 'Resolved';
+                                                $statusLabel = 'National Sign-Off Approved';
                                                 $statusClass = 'approved';
                                                 break;
                                             case 'REJECTED_BY_HR':
+                                                $statusLabel = 'Rejected by HR';
+                                                $statusClass = 'rejected';
+                                                break;
                                             case 'REJECTED':
-                                                $statusLabel = 'Rejected';
+                                                $statusLabel = 'Case Rejected';
                                                 $statusClass = 'rejected';
                                                 break;
                                             default:
