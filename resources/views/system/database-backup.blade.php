@@ -84,7 +84,7 @@
         .stat-label { margin: 0 0 3px; color: var(--muted); font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
         .stat-value { margin: 0; color: var(--brand); font-size: 1.3rem; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif; }
 
-        .layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr); align-items: start; gap: 16px; }
+        .layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(280px, 0.8fr); align-items: start; gap: 16px; }
         .main-column { display: flex; flex-direction: column; gap: 16px; }
         .side-column { display: flex; flex-direction: column; gap: 16px; height: 100%; }
         .card { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow); display: flex; flex-direction: column; }
@@ -128,6 +128,24 @@
         .empty-state { padding: 24px; text-align: center; color: var(--muted); }
         .empty-state i { display: block; margin-bottom: 8px; color: #c3cec7; font-size: 2rem; }
         .empty-state p { margin: 0; font-size: .8rem; }
+
+        /* Modal Styles */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(20, 35, 28, 0.7); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; animation: fadeIn 0.2s ease; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--surface); border-radius: var(--radius-lg); box-shadow: 0 24px 64px rgba(20, 35, 28, 0.24), 0 4px 12px rgba(20, 35, 28, 0.12); max-width: 480px; width: calc(100% - 32px); animation: slideUp 0.3s ease; }
+        .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--line); }
+        .modal-header h3 { margin: 0; font-size: 1.1rem; color: var(--ink); display: flex; align-items: center; gap: 10px; }
+        .modal-header h3 i { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; font-size: .9rem; }
+        .modal-header.warning h3 i { background: var(--warning-soft); color: var(--warning); }
+        .modal-header.info h3 i { background: var(--blue-soft); color: var(--blue); }
+        .modal-header.success h3 i { background: var(--success-soft); color: var(--success); }
+        .modal-body { padding: 20px 24px; }
+        .modal-body p { margin: 0; color: var(--ink-soft); line-height: 1.6; font-size: .88rem; }
+        .modal-footer { padding: 16px 24px; border-top: 1px solid var(--line); display: flex; gap: 10px; justify-content: flex-end; }
+        .modal-footer .btn { padding: 10px 18px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         @media (max-width: 768px) {
             .layout { grid-template-columns: 1fr; }
@@ -223,10 +241,6 @@
                                 <span>Create Backup Now</span>
                             </button>
                         </form>
-                        <div class="info-box">
-                            <strong><i class="fa-solid fa-lightbulb"></i> Best Practices</strong>
-                            <p>Create a backup before major updates. Keep a secure off-server copy, restrict access to authorized staff, and test restoration periodically.</p>
-                        </div>
                     </div>
                 </div>
 
@@ -273,16 +287,12 @@
                                     <td>{{ $backup['size'] }}</td>
                                     <td>
                                         <div class="actions">
-                                            <a href="{{ route('system.database_backup.download', $backup['filename']) }}" class="btn btn-secondary">
+                                            <button onclick="confirmDownload('{{ $backup['filename'] }}', '{{ route('system.database_backup.download', $backup['filename']) }}')" class="btn btn-secondary">
                                                 <i class="fa-solid fa-download"></i> Download
-                                            </a>
-                                            <form action="{{ route('system.database_backup.delete', $backup['filename']) }}" method="POST" class="deleteBackupForm" data-filename="{{ $backup['filename'] }}" style="display: inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger">
-                                                    <i class="fa-solid fa-trash-can"></i>
-                                                </button>
-                                            </form>
+                                            </button>
+                                            <button onclick="confirmDelete('{{ $backup['filename'] }}', '{{ route('system.database_backup.delete', $backup['filename']) }}')" class="btn btn-danger">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -345,7 +355,148 @@
         </div>
     </div>
 
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header warning">
+                <h3>
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Confirm Delete</span>
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="deleteFileName"></strong>? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal('deleteModal')" class="btn btn-secondary">Cancel</button>
+                <button onclick="executeDelete()" class="btn btn-danger">
+                    <i class="fa-solid fa-trash-can"></i> Delete Backup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Download Confirmation Modal -->
+    <div id="downloadModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header info">
+                <h3>
+                    <i class="fa-solid fa-download"></i>
+                    <span>Confirm Download</span>
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to download <strong id="downloadFileName"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal('downloadModal')" class="btn btn-secondary">Cancel</button>
+                <button onclick="executeDownload()" class="btn btn-primary">
+                    <i class="fa-solid fa-download"></i> Download
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header success">
+                <h3>
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span id="successTitle">Success</span>
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p id="successMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal('successModal')" class="btn btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+    let currentDeleteUrl = '';
+    let currentDownloadUrl = '';
+
+    function showModal(modalId) {
+        document.getElementById(modalId).classList.add('active');
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove('active');
+    }
+
+    function confirmDelete(filename, url) {
+        document.getElementById('deleteFileName').textContent = filename;
+        currentDeleteUrl = url;
+        showModal('deleteModal');
+    }
+
+    function confirmDownload(filename, url) {
+        document.getElementById('downloadFileName').textContent = filename;
+        currentDownloadUrl = url;
+        showModal('downloadModal');
+    }
+
+    async function executeDelete() {
+        closeModal('deleteModal');
+        
+        try {
+            const response = await fetch(currentDeleteUrl, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                document.getElementById('successTitle').textContent = 'Backup Deleted';
+                document.getElementById('successMessage').textContent = 'The backup file has been successfully deleted.';
+                showModal('successModal');
+                
+                // Reload page after modal closes
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                alert('Failed to delete backup. Please try again.');
+            }
+        } catch (error) {
+            alert('An error occurred while deleting the backup.');
+        }
+    }
+
+    function executeDownload() {
+        closeModal('downloadModal');
+        
+        // Create a hidden link and trigger download
+        const link = document.createElement('a');
+        link.href = currentDownloadUrl;
+        link.download = '';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Show success modal after a short delay
+        setTimeout(() => {
+            document.getElementById('successTitle').textContent = 'Download Started';
+            document.getElementById('successMessage').textContent = 'Your backup file download has been initiated successfully.';
+            showModal('successModal');
+        }, 500);
+    }
+
+    // Close modals when clicking outside
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                closeModal(overlay.id);
+            }
+        });
+    });
+
+    // Create backup form handling
     (() => {
         const form = document.getElementById('backupForm');
         const createButton = document.getElementById('createBackupButton');
@@ -356,17 +507,7 @@
                 createButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Creating backup…</span>';
             });
         }
-
-        document.querySelectorAll('.deleteBackupForm').forEach(form => {
-            form.addEventListener('submit', event => {
-                const filename = form.dataset.filename || 'this backup';
-                if (!window.confirm(`Delete "${filename}"? This action cannot be undone.`)) {
-                    event.preventDefault();
-                }
-            });
-        });
     })();
     </script>
 </body>
 </html>
-W e d n e s d a y ,   N o v e m b e r   1 1 ,   2 0 2 6   1 0 : 5 2 : 4 1   A M 
