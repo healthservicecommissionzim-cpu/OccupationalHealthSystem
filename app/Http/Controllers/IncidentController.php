@@ -961,6 +961,17 @@ class IncidentController extends Controller
                     'sent_at' => now(),
                 ]);
 
+                // ALSO log to communication_logs table for centralized tracking
+                \App\Services\CommunicationLogger::logSms(
+                    type: 'WITNESS_REMINDER_SMS',
+                    recipientPhone: $witnessToken->phone_number,
+                    message: $message,
+                    status: 'SENT',
+                    relatedEntityType: 'Incident',
+                    relatedEntityId: $incident->id,
+                    provider: 'Econet SMS'
+                );
+
                 Log::info('Witness reminder SMS sent', [
                     'incident_id' => $incident->id,
                     'witness_token_id' => $witnessToken->id,
@@ -980,7 +991,7 @@ class IncidentController extends Controller
                     'phone' => $witnessToken->phone_number,
                 ]);
 
-                // Log failed attempt
+                // Log failed attempt in incident_notifications
                 \App\Models\IncidentNotification::create([
                     'incident_id' => $incident->id,
                     'witness_token_id' => $witnessToken->id,
@@ -993,6 +1004,18 @@ class IncidentController extends Controller
                     'initiated_by_user_id' => $user->id,
                     'sent_at' => now(),
                 ]);
+
+                // ALSO log to communication_logs table
+                \App\Services\CommunicationLogger::logSms(
+                    type: 'WITNESS_REMINDER_SMS',
+                    recipientPhone: $witnessToken->phone_number,
+                    message: $message,
+                    status: 'FAILED',
+                    errorMessage: 'SMS service disabled or delivery failed',
+                    relatedEntityType: 'Incident',
+                    relatedEntityId: $incident->id,
+                    provider: 'Econet SMS'
+                );
 
                 return response()->json([
                     'success' => false,
@@ -1391,6 +1414,17 @@ class IncidentController extends Controller
                     'sent_at' => now(),
                 ]);
 
+                // ALSO log to communication_logs table for centralized tracking
+                \App\Services\CommunicationLogger::logSms(
+                    type: 'WITNESS_INITIAL_SMS',
+                    recipientPhone: $formattedPhone,
+                    message: $message,
+                    status: 'SENT',
+                    relatedEntityType: 'Incident',
+                    relatedEntityId: $incident->id,
+                    provider: 'Econet SMS'
+                );
+
                 return response()->json([
                     'success' => true,
                     'message' => 'SMS with witness link sent successfully to ' . $witnessToken->phone_number,
@@ -1417,6 +1451,18 @@ class IncidentController extends Controller
                     'initiated_by_user_id' => $user->id,
                     'sent_at' => now(),
                 ]);
+
+                // ALSO log to communication_logs table
+                \App\Services\CommunicationLogger::logSms(
+                    type: 'WITNESS_INITIAL_SMS',
+                    recipientPhone: $formattedPhone,
+                    message: $message,
+                    status: 'FAILED',
+                    errorMessage: $smsError->getMessage(),
+                    relatedEntityType: 'Incident',
+                    relatedEntityId: $incident->id,
+                    provider: 'Econet SMS'
+                );
 
                 // Task 10.4: Don't expose SMS service details to UI - return generic error
                 return response()->json([
