@@ -938,10 +938,11 @@ class IncidentController extends Controller
             $message = "HSC-OHS REMINDER: Please submit your witness statement for incident {$incident->reference_number}. " .
                        "Visit: " . url("/incidents/witness/{$witnessToken->token}");
 
-            try {
-                $smsService->send($witnessToken->phone_number, $message);
-                
-                // Task 6.3: Update witness_last_reminder_sent_at timestamp
+            // Send SMS and check the actual return value
+            $smsSent = $smsService->send($witnessToken->phone_number, $message);
+            
+            // Task 6.3: Update witness_last_reminder_sent_at timestamp (only if SMS sent successfully)
+            if ($smsSent) {
                 $witnessToken->update([
                     'witness_last_reminder_sent_at' => now(),
                 ]);
@@ -969,19 +970,17 @@ class IncidentController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Reminder SMS sent successfully to ' . $witnessToken->witness_name,
-                    'last_reminder_sent' => $witnessToken->witness_last_reminder_sent_at->format('d M Y, H:i'),
+                    'last_reminder_sent' => $witnessToken->fresh()->witness_last_reminder_sent_at->format('d M Y, H:i'),
                 ]);
-
-            } catch (\Exception $smsError) {
-                // Task 6.4: Handle SMS failure
-                Log::error('Witness reminder SMS failed', [
+            } else {
+                // SMS sending failed (returned false)
+                Log::warning('Witness reminder SMS failed - service returned false', [
                     'incident_id' => $incident->id,
                     'witness_token_id' => $witnessToken->id,
-                    'error' => $smsError->getMessage(),
+                    'phone' => $witnessToken->phone_number,
                 ]);
 
                 // Log failed attempt
-                // Task 7.3: Include initiated_by_user_id for audit logging of failed attempts
                 \App\Models\IncidentNotification::create([
                     'incident_id' => $incident->id,
                     'witness_token_id' => $witnessToken->id,
@@ -990,15 +989,14 @@ class IncidentController extends Controller
                     'recipient_phone' => $witnessToken->phone_number,
                     'status' => 'FAILED',
                     'message_content' => $message,
-                    'error_message' => $smsError->getMessage(),
+                    'error_message' => 'SMS service returned false - check Laravel logs for details',
                     'initiated_by_user_id' => $user->id,
                     'sent_at' => now(),
                 ]);
 
-                // Task 10.4: Don't expose SMS service details to UI - return generic error
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to send SMS reminder. Please try again or contact support.',
+                    'message' => 'Failed to send SMS reminder. The SMS service may be disabled or there was a delivery issue. Please check with your system administrator.',
                 ], 500);
             }
 
