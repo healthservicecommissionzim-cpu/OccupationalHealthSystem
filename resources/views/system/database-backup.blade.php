@@ -864,4 +864,3 @@
     }
 })();
 </script>
-@endsection
