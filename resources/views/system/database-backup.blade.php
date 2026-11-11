@@ -1,722 +1,286 @@
+{{-- Modern Database Backup Interface - Updated 2026-11-04 --}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Database Backup - HSC OHS</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Database Backup · System Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         :root {
-            --backup-green: #176044;
-            --backup-ink: #172b23;
-            --backup-muted: #65766d;
-            --backup-line: #e1e9e3;
-            --backup-bg: #f4f7f5;
+            --ink: #14231c;
+            --ink-soft: #52605a;
+            --muted: #7f8b85;
+            --line: #e6ebe8;
+            --surface: #ffffff;
+            --canvas: #f5f7f6;
+            --brand: #1d4533;
+            --brand-deep: #103022;
+            --brand-soft: #eaf4ee;
+            --success: #218653;
+            --success-soft: #e8f7ef;
+            --warning: #a86d0a;
+            --warning-soft: #fff6df;
+            --danger: #b33a42;
+            --danger-soft: #fff0f1;
+            --blue: #356bb3;
+            --blue-soft: #edf4ff;
+            --shadow: 0 18px 48px rgba(25, 46, 35, .07), 0 2px 8px rgba(25, 46, 35, .03);
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+            --ease: 180ms ease;
         }
 
+        * { box-sizing: border-box; }
+        html { background: var(--canvas); }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            color: var(--backup-ink);
-            background: var(--backup-bg);
-            min-height: 100vh;
-            padding: 32px 20px;
+            margin: 0;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 12% 0%, rgba(212, 235, 220, .55), transparent 30rem),
+                var(--canvas);
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.5;
         }
+        a { color: inherit; }
+        button, input, select, textarea { font: inherit; }
 
-        .backup-wrap {
-            max-width: 900px;
+        .shell {
+            width: min(1180px, calc(100% - 40px));
             margin: 0 auto;
+            padding: 16px 0 32px;
         }
 
-        .backup-header {
-            text-align: center;
-            margin-bottom: 32px;
+        .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+        .breadcrumb { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: .83rem; font-weight: 600; }
+        .breadcrumb a { text-decoration: none; transition: color var(--ease); }
+        .breadcrumb a:hover { color: var(--brand); }
+        .breadcrumb i { font-size: .65rem; color: #b6c0ba; }
+        .back-link { display: inline-flex; align-items: center; gap: 9px; padding: 10px 15px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: rgba(255,255,255,.72); color: var(--ink-soft); text-decoration: none; font-size: .84rem; font-weight: 700; transition: all var(--ease); }
+        .back-link:hover { border-color: #c9d8ce; color: var(--brand); background: var(--surface); transform: translateY(-1px); }
+
+        .alert { display: flex; align-items: flex-start; gap: 12px; margin: 0 0 20px; padding: 14px 16px; border: 1px solid; border-radius: var(--radius-md); font-size: .88rem; font-weight: 600; }
+        .alert i { margin-top: 2px; }
+        .alert.success { border-color: #bde7cd; background: var(--success-soft); color: #17663f; }
+        .alert.error { border-color: #f3c5c9; background: var(--danger-soft); color: #96343d; }
+
+        .profile-hero { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 18px; margin-bottom: 16px; border: 1px solid #dce7df; border-radius: var(--radius-lg); background: linear-gradient(120deg, #ffffff 0%, #f8fcf9 100%); box-shadow: var(--shadow); }
+        .identity { display: flex; align-items: center; gap: 12px; min-width: 0; }
+        .avatar { display: grid; place-items: center; flex: 0 0 48px; width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(145deg, var(--brand), #397557); color: white; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.1rem; font-weight: 800; box-shadow: 0 10px 20px rgba(29,69,51,.18); }
+        .eyebrow { margin: 0 0 2px; color: var(--brand); font-size: .65rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+        h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1 { margin: 0; font-size: clamp(1.1rem, 2vw, 1.4rem); line-height: 1.15; letter-spacing: -.035em; }
+        .hero-meta { margin: 3px 0 0; color: var(--ink-soft); font-size: .8rem; }
+        .hero-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .stat-box { text-align: center; padding: 10px; border-radius: var(--radius-sm); background: var(--brand-soft); }
+        .stat-label { margin: 0 0 3px; color: var(--muted); font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+        .stat-value { margin: 0; color: var(--brand); font-size: 1.3rem; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        .layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr); align-items: start; gap: 16px; }
+        .main-column { display: flex; flex-direction: column; gap: 16px; }
+        .side-column { display: flex; flex-direction: column; gap: 16px; }
+        .card { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow); display: flex; flex-direction: column; }
+        .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 14px 16px 12px; border-bottom: 1px solid var(--line); }
+        .card-heading { display: flex; align-items: flex-start; gap: 10px; }
+        .section-icon { display: grid; place-items: center; flex: 0 0 28px; width: 28px; height: 28px; border-radius: 8px; background: var(--brand-soft); color: var(--brand); font-size: .75rem; }
+        .card-header h2 { margin: 0; font-size: .9rem; letter-spacing: -.025em; }
+        .card-header p { margin: 2px 0 0; color: var(--muted); font-size: .7rem; }
+        .count { color: var(--muted); font-size: .78rem; font-weight: 700; white-space: nowrap; }
+        .card-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
+
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 14px; border: 0; border-radius: var(--radius-sm); cursor: pointer; font-size: .78rem; font-weight: 700; transition: all var(--ease); text-decoration: none; }
+        .btn-primary { background: var(--brand); color: white; box-shadow: 0 7px 15px rgba(29,69,51,.16); }
+        .btn-primary:hover { background: var(--brand-deep); transform: translateY(-1px); box-shadow: 0 10px 20px rgba(29,69,51,.22); }
+        .btn-secondary { background: var(--blue-soft); color: var(--blue); }
+        .btn-secondary:hover { background: #d8e8ff; transform: translateY(-1px); }
+        .btn-danger { background: var(--danger-soft); color: var(--danger); border: 1px solid #f3c5c9; }
+        .btn-danger:hover { background: #ffe3e5; border-color: #e9a8ae; transform: translateY(-1px); }
+        .btn-full { width: 100%; }
+
+        .backup-table { width: 100%; border-collapse: collapse; }
+        .backup-table th { padding: 10px 12px; text-align: left; color: var(--muted); font-size: .65rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; border-bottom: 1px solid var(--line); background: #f8faf9; }
+        .backup-table td { padding: 12px; border-bottom: 1px solid var(--line); font-size: .8rem; }
+        .backup-table tbody tr:hover { background: #fafcfb; }
+        .backup-table tbody tr:last-child td { border-bottom: 0; }
+        .backup-file { display: flex; align-items: center; gap: 10px; }
+        .file-icon { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 8px; background: var(--brand-soft); color: var(--brand); font-size: .75rem; }
+        .file-name { font-weight: 600; color: var(--ink); }
+        .file-meta { margin-top: 2px; color: var(--muted); font-size: .7rem; }
+        .actions { display: flex; gap: 6px; justify-content: flex-end; }
+        .actions .btn { padding: 6px 10px; font-size: .72rem; }
+
+        .info-box { padding: 12px; border-radius: var(--radius-md); background: var(--warning-soft); border: 1px solid #f5e5b7; }
+        .info-box strong { display: block; margin-bottom: 4px; color: var(--warning); font-size: .78rem; }
+        .info-box p { margin: 0; color: #7a5e0c; font-size: .75rem; line-height: 1.6; }
+
+        .tip-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+        .tip-list li { display: flex; align-items: flex-start; gap: 8px; font-size: .75rem; color: var(--ink-soft); line-height: 1.5; }
+        .tip-list i { margin-top: 2px; color: var(--brand); font-size: .7rem; }
+
+        .empty-state { padding: 24px; text-align: center; color: var(--muted); }
+        .empty-state i { display: block; margin-bottom: 8px; color: #c3cec7; font-size: 2rem; }
+        .empty-state p { margin: 0; font-size: .8rem; }
+
+        @media (max-width: 768px) {
+            .layout { grid-template-columns: 1fr; }
+            .hero-stats { grid-template-columns: 1fr; }
+            .backup-table { font-size: .75rem; }
+            .backup-table th, .backup-table td { padding: 8px; }
         }
-
-        .backup-header h1 {
-            font-size: 32px;
-            color: var(--backup-green);
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
-
-        .backup-header p {
-            color: var(--backup-muted);
-            font-size: 14px;
-        }
-
-.backup-flash {
-    display: flex;
-    gap: 12px;
-    margin: 16px 0 0;
-    padding: 14px 16px;
-    border-radius: 12px;
-    font-size: 12px;
-    line-height: 1.7;
-}
-
-.backup-success {
-    color: #17603c;
-    background: #effaf3;
-    border: 1px solid #bde8cb;
-}
-
-.backup-error {
-    color: #9d2727;
-    background: #fff3f2;
-    border: 1px solid #ffd2ce;
-}
-
-.backup-stats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
-    margin: 18px 0;
-}
-
-.backup-stat {
-    background: #fff;
-    border: 1px solid var(--backup-line);
-    border-radius: 15px;
-    padding: 17px 19px;
-    display: flex;
-    align-items: center;
-    gap: 13px;
-}
-
-.backup-stat-icon {
-    width: 40px;
-    height: 40px;
-    display: grid;
-    place-items: center;
-    border-radius: 12px;
-    background: #e8f5ed;
-    color: var(--backup-green);
-}
-
-.backup-stat small {
-    display: block;
-    color: var(--backup-muted);
-    font-size: 10px;
-    font-weight: 700;
-}
-
-.backup-stat strong {
-    display: block;
-    font-size: 21px;
-    margin-top: 2px;
-}
-
-.backup-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1.55fr) minmax(270px, .75fr);
-    gap: 19px;
-    align-items: start;
-}
-
-.backup-stack,
-.backup-side {
-    display: grid;
-    gap: 19px;
-}
-
-.backup-panel {
-    background: #fff;
-    border: 1px solid var(--backup-line);
-    border-radius: 17px;
-    overflow: hidden;
-    box-shadow: 0 10px 28px #102b2208;
-    min-width: 0;
-}
-
-.backup-head {
-    padding: 21px 22px 17px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 13px;
-}
-
-.backup-heading {
-    display: flex;
-    gap: 11px;
-    align-items: center;
-}
-
-.backup-tile {
-    width: 42px;
-    height: 42px;
-    display: grid;
-    place-items: center;
-    border-radius: 12px;
-    background: #e8f5ed;
-    color: var(--backup-green);
-    flex: 0 0 auto;
-}
-
-.backup-panel h2 {
-    font-size: 15px;
-    letter-spacing: -.3px;
-    margin: 0;
-}
-
-.backup-sub {
-    color: var(--backup-muted);
-    font-size: 11px;
-    margin: 5px 0 0;
-    line-height: 1.6;
-}
-
-.backup-body {
-    padding: 0 22px 22px;
-}
-
-.backup-btn {
-    border: 1px solid transparent;
-    border-radius: 10px;
-    min-height: 39px;
-    padding: 9px 13px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-size: 11px;
-    font-weight: 800;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.backup-primary {
-    color: #fff;
-    background: linear-gradient(120deg, #23714d, #174b34);
-    box-shadow: 0 5px 12px #1b62401c;
-}
-
-.backup-secondary {
-    color: #245bc5;
-    background: #eff6ff;
-    border-color: #d9e7ff;
-}
-
-.backup-danger {
-    color: #b42318;
-    background: #fff2f1;
-    border-color: #ffdedb;
-}
-
-.backup-create-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    flex-wrap: wrap;
-}
-
-.backup-micro {
-    font-size: 11px;
-    color: var(--backup-muted);
-}
-
-.backup-note {
-    display: flex;
-    gap: 11px;
-    padding: 14px 15px;
-    border: 1px solid #f0dfb0;
-    background: #fffbef;
-    color: #76571c;
-    border-radius: 12px;
-    margin-top: 19px;
-    font-size: 11px;
-    line-height: 1.75;
-}
-
-.backup-note strong {
-    display: block;
-    margin-bottom: 3px;
-}
-
-.backup-history-head {
-    padding: 21px 22px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid var(--backup-line);
-}
-
-.backup-count {
-    padding: 5px 9px;
-    border-radius: 999px;
-    background: #e8f5ed;
-    color: var(--backup-green);
-    font-size: 10px;
-    font-weight: 800;
-    white-space: nowrap;
-}
-
-.backup-toolbar {
-    padding: 13px 18px;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--backup-line);
-}
-
-.backup-search {
-    max-width: 320px;
-    flex: 1;
-}
-
-.backup-search input,
-.backup-sort {
-    width: 100%;
-    background: #f7faf8;
-    border: 1px solid var(--backup-line);
-    border-radius: 9px;
-    padding: 9px 11px;
-    color: var(--backup-ink);
-    font-size: 11px;
-}
-
-.backup-table-wrap {
-    overflow-x: auto;
-}
-
-.backup-table {
-    border-collapse: collapse;
-    width: 100%;
-    text-align: left;
-}
-
-.backup-table th {
-    background: #f7faf8;
-    color: #7b8a81;
-    font-size: 9px;
-    letter-spacing: .7px;
-    text-transform: uppercase;
-    padding: 12px 16px;
-    white-space: nowrap;
-}
-
-.backup-table td {
-    padding: 13px 16px;
-    border-top: 1px solid #edf1ee;
-    font-size: 11px;
-    color: #65766d;
-    vertical-align: middle;
-}
-
-.backup-table tbody tr:hover {
-    background: #fbfdfb;
-}
-
-.backup-file {
-    display: flex;
-    gap: 9px;
-    align-items: center;
-    min-width: 205px;
-}
-
-.backup-file-icon {
-    width: 33px;
-    height: 33px;
-    display: grid;
-    place-items: center;
-    background: #e8f5ed;
-    color: var(--backup-green);
-    border-radius: 9px;
-}
-
-.backup-filename {
-    color: var(--backup-ink);
-    font-weight: 750;
-    max-width: 240px;
-    overflow-wrap: anywhere;
-}
-
-.backup-filemeta {
-    font-size: 9px;
-    color: #89978f;
-    margin-top: 3px;
-}
-
-.backup-actions {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    justify-content: flex-end;
-}
-
-.backup-actions .backup-btn {
-    min-height: 30px;
-    padding: 6px 8px;
-    font-size: 10px;
-}
-
-.backup-empty {
-    text-align: center;
-    padding: 36px 20px;
-}
-
-.backup-empty[hidden] {
-    display: none;
-}
-
-.backup-empty i {
-    font-size: 25px;
-    color: #6e9d81;
-    margin-bottom: 10px;
-}
-
-.backup-empty h3 {
-    font-size: 13px;
-    margin: 0 0 5px;
-}
-
-.backup-empty p {
-    font-size: 11px;
-    color: var(--backup-muted);
-    margin: 0;
-}
-
-.backup-status {
-    padding: 20px;
-    background: linear-gradient(140deg, #16452f, #23714b);
-    color: #fff;
-    border: 0;
-}
-
-.backup-status p {
-    font-size: 11px;
-    line-height: 1.8;
-    color: #d3e8db;
-    margin: 12px 0 0;
-}
-
-.backup-side-panel {
-    padding: 20px;
-}
-
-.backup-side-panel h3 {
-    display: flex;
-    gap: 9px;
-    align-items: center;
-    font-size: 13px;
-    margin: 0 0 14px;
-}
-
-.backup-tips {
-    display: grid;
-    gap: 12px;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.backup-tips li {
-    display: flex;
-    gap: 9px;
-    font-size: 11px;
-    line-height: 1.7;
-    color: var(--backup-muted);
-}
-
-.backup-tips i,
-.backup-side-panel h3 i {
-    color: var(--backup-green);
-}
-
-.backup-help {
-    margin-top: 14px;
-    border: 1px solid var(--backup-line);
-    background: #fbfdfb;
-    border-radius: 10px;
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    color: var(--backup-green);
-    font-size: 11px;
-    font-weight: 800;
-    text-decoration: none;
-}
-
-.backup-footer {
-    margin-top: 26px;
-    padding: 17px 0;
-    border-top: 1px solid var(--backup-line);
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    color: #819087;
-    font-size: 10px;
-}
-
-.backup-footer strong {
-    color: #50665a;
-}
-
-@media (max-width: 950px) {
-    .backup-grid {
-        grid-template-columns: 1fr;
-    }
-    .backup-side {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .backup-status {
-        grid-column: span 2;
-    }
-}
-
-@media (max-width: 620px) {
-    .backup-wrap {
-        width: calc(100% - 26px);
-    }
-    .backup-hero {
-        padding: 22px;
-        border-radius: 17px;
-        align-items: flex-start;
-    }
-    .backup-hero h1 {
-        font-size: 28px;
-    }
-    .backup-hero-icon {
-        width: 52px;
-        height: 52px;
-        border-radius: 15px;
-        font-size: 22px;
-    }
-    .backup-stats {
-        gap: 8px;
-    }
-    .backup-stat {
-        padding: 12px 9px;
-        display: block;
-    }
-    .backup-stat-icon {
-        width: 30px;
-        height: 30px;
-        margin-bottom: 7px;
-    }
-    .backup-stat small {
-        font-size: 9px;
-    }
-    .backup-stat strong {
-        font-size: 17px;
-    }
-    .backup-head,
-    .backup-history-head {
-        padding: 17px;
-    }
-    .backup-body {
-        padding: 0 17px 17px;
-    }
-    .backup-toolbar {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .backup-search {
-        max-width: none;
-    }
-    .backup-side {
-        grid-template-columns: 1fr;
-    }
-    .backup-status {
-        grid-column: auto;
-    }
-    .backup-create-row .backup-btn {
-        width: 100%;
-    }
-    .backup-footer {
-        flex-direction: column;
-    }
-    .backup-table th,
-    .backup-table td {
-        padding: 11px 12px;
-    }
-}
-
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-}
-</style>
-
-<div class="backup-page">
-    <div class="backup-wrap">
-        <a href="{{ route('dashboards.super_admin') }}" class="backup-crumb">
-            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to Dashboard
-        </a>
-
-        <section class="backup-hero" aria-labelledby="backup-title">
-            <div>
-                <span class="backup-eyebrow">
-                    <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Secure system operations
-                </span>
-                <h1 id="backup-title">Database Backup</h1>
-                <p>Create, download and manage database backups from one secure workspace. Maintain a dependable recovery point before important updates and configuration changes.</p>
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="breadcrumb">
+                <a href="{{ route('dashboards.super_admin') }}">Dashboard</a>
+                <i class="fa-solid fa-chevron-right"></i>
+                <span>Database Backup</span>
             </div>
-            <div class="backup-hero-icon" aria-hidden="true">
-                <i class="fa-solid fa-database"></i>
-            </div>
-        </section>
+            <a href="{{ route('dashboards.super_admin') }}" class="back-link">
+                <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
 
+        <!-- Alerts -->
         @if(session('success'))
-        <div class="backup-flash backup-success" role="status">
-            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+        <div class="alert success">
+            <i class="fa-solid fa-circle-check"></i>
             <div>
-                <strong>Backup operation successful</strong><br>
-                {{ session('success') }}
+                <strong>Success!</strong> {{ session('success') }}
             </div>
         </div>
         @endif
 
         @if(session('error'))
-        <div class="backup-flash backup-error" role="alert">
-            <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+        <div class="alert error">
+            <i class="fa-solid fa-circle-exclamation"></i>
             <div>
-                <strong>Backup operation failed</strong><br>
-                {{ session('error') }}
+                <strong>Error!</strong> {{ session('error') }}
             </div>
         </div>
         @endif
 
-        <section class="backup-stats" aria-label="Backup summary">
-            <div class="backup-stat">
-                <div class="backup-stat-icon">
-                    <i class="fa-solid fa-box-archive"></i>
+        <!-- Hero Section -->
+        <div class="profile-hero">
+            <div class="identity">
+                <div class="avatar">
+                    <i class="fa-solid fa-database"></i>
                 </div>
                 <div>
-                    <small>Available backups</small>
-                    <strong>{{ count($backups) }}</strong>
+                    <div class="eyebrow">System Management</div>
+                    <h1>Database Backup</h1>
+                    <div class="hero-meta">Create and manage database backups</div>
                 </div>
             </div>
-            <div class="backup-stat">
-                <div class="backup-stat-icon">
-                    <i class="fa-regular fa-clock"></i>
+            <div class="hero-stats">
+                <div class="stat-box">
+                    <div class="stat-label">Total Backups</div>
+                    <div class="stat-value">{{ count($backups) }}</div>
                 </div>
-                <div>
-                    <small>Latest backup</small>
-                    <strong style="font-size:16px">{{ count($backups) ? $backups[0]['date'] : 'Not yet created' }}</strong>
+                <div class="stat-box">
+                    <div class="stat-label">Latest</div>
+                    <div class="stat-value" style="font-size: .9rem;">{{ count($backups) ? $backups[0]['date'] : 'None' }}</div>
                 </div>
-            </div>
-            <div class="backup-stat">
-                <div class="backup-stat-icon">
-                    <i class="fa-solid fa-shield-heart"></i>
-                </div>
-                <div>
-                    <small>Recovery readiness</small>
-                    <strong style="font-size:16px">Stay protected</strong>
+                <div class="stat-box">
+                    <div class="stat-label">Status</div>
+                    <div class="stat-value" style="font-size: .8rem; color: var(--success);">Ready</div>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <div class="backup-grid">
-            <div class="backup-stack">
-                <section class="backup-panel" aria-labelledby="create-title">
-                    <div class="backup-head">
-                        <div class="backup-heading">
-                            <div class="backup-tile">
+        <!-- Layout -->
+        <div class="layout">
+            <!-- Main Column -->
+            <div class="main-column">
+                <!-- Create Backup Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-heading">
+                            <div class="section-icon">
                                 <i class="fa-solid fa-cloud-arrow-down"></i>
                             </div>
                             <div>
-                                <h2 id="create-title">Create a new backup</h2>
-                                <p class="backup-sub">Generate a fresh database backup file on the server.</p>
+                                <h2>Create New Backup</h2>
+                                <p>Generate a fresh database backup file</p>
                             </div>
                         </div>
                     </div>
-                    <div class="backup-body">
-                        <form action="{{ route('system.database_backup.create') }}" method="POST" id="backupForm" class="backup-create-row">
+                    <div class="card-body">
+                        <form action="{{ route('system.database_backup.create') }}" method="POST" id="backupForm">
                             @csrf
-                            <div class="backup-micro">
-                                <i class="fa-solid fa-circle-check" style="color:#268457;margin-right:6px"></i>
-                                Recommended before system changes
-                            </div>
-                            <button type="submit" class="backup-btn backup-primary" id="createBackupButton">
-                                <i class="fa-solid fa-plus" aria-hidden="true"></i>
-                                <span>Create backup now</span>
+                            <button type="submit" class="btn btn-primary btn-full" id="createBackupButton">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>Create Backup Now</span>
                             </button>
                         </form>
-                        <div class="backup-note">
-                            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+                        <div class="info-box">
+                            <strong><i class="fa-solid fa-lightbulb"></i> Best Practices</strong>
+                            <p>Create a backup before major updates. Keep a secure off-server copy, restrict access to authorized staff, and test restoration periodically.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Backup History Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-heading">
+                            <div class="section-icon">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                            </div>
                             <div>
-                                <strong>Backup best practices</strong>
-                                Create a backup before major updates. Keep a secure off-server copy, restrict access to authorised staff, and test restoration periodically. Backup files may contain sensitive occupational health data.
+                                <h2>Backup History</h2>
+                                <p>Download or remove existing backup files</p>
                             </div>
                         </div>
+                        <span class="count">{{ count($backups) }} {{ count($backups) === 1 ? 'backup' : 'backups' }}</span>
                     </div>
-                </section>
-
-                <section class="backup-panel" aria-labelledby="history-title">
-                    <div class="backup-history-head">
-                        <div>
-                            <h2 id="history-title">Backup history</h2>
-                            <p class="backup-sub">Search, download or remove existing backup files.</p>
-                        </div>
-                        <span class="backup-count">{{ count($backups) }} {{ count($backups) === 1 ? 'backup' : 'backups' }}</span>
-                    </div>
-                    <div class="backup-toolbar">
-                        <label class="backup-search">
-                            <span class="sr-only">Search backup filenames</span>
-                            <input type="search" id="backupSearch" placeholder="Search backup filenames…" aria-label="Search backup filenames">
-                        </label>
-                        <select id="backupSort" class="backup-sort" aria-label="Sort backups">
-                            <option value="newest">Newest first</option>
-                            <option value="oldest">Oldest first</option>
-                            <option value="name">Filename A–Z</option>
-                        </select>
-                    </div>
-                    @if(count($backups) > 0)
-                    <div class="backup-table-wrap" id="backupTableWrap">
+                    <div class="card-body" style="padding: 0;">
+                        @if(count($backups) > 0)
                         <table class="backup-table">
                             <thead>
                                 <tr>
-                                    <th scope="col">Backup file</th>
-                                    <th scope="col">Created</th>
-                                    <th scope="col">Size</th>
-                                    <th scope="col" style="text-align:right">Actions</th>
+                                    <th>Backup File</th>
+                                    <th>Created</th>
+                                    <th>Size</th>
+                                    <th style="text-align: right;">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="backupRows">
+                            <tbody>
                                 @foreach($backups as $backup)
-                                <tr data-filename="{{ strtolower($backup['filename']) }}" data-date="{{ $backup['timestamp'] ?? 0 }}">
+                                <tr>
                                     <td>
                                         <div class="backup-file">
-                                            <div class="backup-file-icon">
-                                                <i class="fa-solid fa-file-zipper" aria-hidden="true"></i>
+                                            <div class="file-icon">
+                                                <i class="fa-solid fa-file-zipper"></i>
                                             </div>
                                             <div>
-                                                <div class="backup-filename">{{ $backup['filename'] }}</div>
-                                                <div class="backup-filemeta">Compressed database archive</div>
+                                                <div class="file-name">{{ $backup['filename'] }}</div>
+                                                <div class="file-meta">Compressed database archive</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td>{{ $backup['date'] }}</td>
                                     <td>{{ $backup['size'] }}</td>
                                     <td>
-                                        <div class="backup-actions">
-                                            <a href="{{ route('system.database_backup.download', $backup['filename']) }}" class="backup-btn backup-secondary" aria-label="Download {{ $backup['filename'] }}">
-                                                <i class="fa-solid fa-download" aria-hidden="true"></i> Download
+                                        <div class="actions">
+                                            <a href="{{ route('system.database_backup.download', $backup['filename']) }}" class="btn btn-secondary">
+                                                <i class="fa-solid fa-download"></i> Download
                                             </a>
-                                            <form action="{{ route('system.database_backup.delete', $backup['filename']) }}" method="POST" class="deleteBackupForm" data-filename="{{ $backup['filename'] }}">
+                                            <form action="{{ route('system.database_backup.delete', $backup['filename']) }}" method="POST" class="deleteBackupForm" data-filename="{{ $backup['filename'] }}" style="display: inline;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="backup-btn backup-danger" aria-label="Delete {{ $backup['filename'] }}">
-                                                    <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                                                <button type="submit" class="btn btn-danger">
+                                                    <i class="fa-solid fa-trash-can"></i>
                                                 </button>
                                             </form>
                                         </div>
@@ -725,142 +289,98 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        @else
+                        <div class="empty-state">
+                            <i class="fa-solid fa-box-open"></i>
+                            <p>No backups yet. Create your first backup to establish a recovery point.</p>
+                        </div>
+                        @endif
                     </div>
-                    <div class="backup-empty" id="backupNoMatches" hidden>
-                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                        <h3>No matching backups</h3>
-                        <p>Try another search term.</p>
-                    </div>
-                    @else
-                    <div class="backup-empty">
-                        <i class="fa-solid fa-box-open" aria-hidden="true"></i>
-                        <h3>No backups yet</h3>
-                        <p>Your backup history is empty. Create your first backup to establish a recovery point.</p>
-                    </div>
-                    @endif
-                </section>
+                </div>
             </div>
 
-            <aside class="backup-side">
-                <section class="backup-panel backup-status">
-                    <div class="backup-heading">
-                        <div class="backup-tile">
-                            <i class="fa-solid fa-shield-heart"></i>
-                        </div>
-                        <div>
-                            <h2>Protect your system data</h2>
-                            <p class="backup-sub" style="color:#cde5d7">Recovery readiness</p>
+            <!-- Side Column -->
+            <div class="side-column">
+                <!-- Status Card -->
+                <div class="card">
+                    <div class="card-header" style="background: linear-gradient(120deg, var(--brand), #397557); border: 0;">
+                        <div class="card-heading">
+                            <div class="section-icon" style="background: rgba(255,255,255,.2); color: white;">
+                                <i class="fa-solid fa-shield-heart"></i>
+                            </div>
+                            <div>
+                                <h2 style="color: white;">System Protection</h2>
+                                <p style="color: rgba(255,255,255,.8);">Recovery readiness</p>
+                            </div>
                         </div>
                     </div>
-                    <p>Backups support service continuity. Keep copies in approved, access-controlled storage and verify that recovery procedures work before you need them.</p>
-                </section>
+                    <div class="card-body">
+                        <p style="font-size: .8rem; color: var(--ink-soft); line-height: 1.6;">
+                            Backups support service continuity. Keep copies in approved, access-controlled storage and verify that recovery procedures work.
+                        </p>
+                    </div>
+                </div>
 
-                <section class="backup-panel backup-side-panel">
-                    <h3><i class="fa-solid fa-list-check"></i> Before you begin</h3>
-                    <ul class="backup-tips">
-                        <li>
-                            <i class="fa-solid fa-circle-check"></i>
-                            <span>Confirm the application is operating normally.</span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-circle-check"></i>
-                            <span>Ensure the server has enough free disk space.</span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-circle-check"></i>
-                            <span>Copy important backups to approved secure storage.</span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-circle-check"></i>
-                            <span>Verify file integrity and test restoration periodically.</span>
-                        </li>
-                    </ul>
-                </section>
-
-                <section class="backup-panel backup-side-panel">
-                    <h3><i class="fa-solid fa-life-ring"></i> Need help?</h3>
-                    <p class="backup-sub" style="font-size:11px">Review the backup guide for procedures and recovery guidance.</p>
-                    <a href="#" class="backup-help">
-                        <span><i class="fa-solid fa-book-open" style="margin-right:7px"></i>Database backup guide</span>
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    </a>
-                </section>
-            </aside>
+                <!-- Checklist Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-heading">
+                            <div class="section-icon">
+                                <i class="fa-solid fa-list-check"></i>
+                            </div>
+                            <div>
+                                <h2>Before You Begin</h2>
+                                <p>Pre-backup checklist</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <ul class="tip-list">
+                            <li>
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Confirm the application is operating normally</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Ensure server has enough free disk space</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Copy important backups to secure storage</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Test restoration periodically</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <footer class="backup-footer">
-            <div>
-                <strong>HSC Occupational Health System</strong>
-                <span style="margin:0 7px">|</span> Database Backup
-            </div>
-            <div>
-                <i class="fa-solid fa-shield-halved" style="margin-right:6px;color:#39815e"></i>
-                Health · Safety · Excellence
-            </div>
-        </footer>
     </div>
-</div>
 
-<script>
-(() => {
-    const form = document.getElementById('backupForm');
-    const createButton = document.getElementById('createBackupButton');
-    
-    if (form && createButton) {
-        form.addEventListener('submit', () => {
-            createButton.disabled = true;
-            createButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i><span>Creating backup…</span>';
-            createButton.setAttribute('aria-busy', 'true');
+    <script>
+    (() => {
+        const form = document.getElementById('backupForm');
+        const createButton = document.getElementById('createBackupButton');
+
+        if (form && createButton) {
+            form.addEventListener('submit', () => {
+                createButton.disabled = true;
+                createButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Creating backup…</span>';
+            });
+        }
+
+        document.querySelectorAll('.deleteBackupForm').forEach(form => {
+            form.addEventListener('submit', event => {
+                const filename = form.dataset.filename || 'this backup';
+                if (!window.confirm(`Delete "${filename}"? This action cannot be undone.`)) {
+                    event.preventDefault();
+                }
+            });
         });
-    }
-
-    document.querySelectorAll('.deleteBackupForm').forEach(form => {
-        form.addEventListener('submit', event => {
-            const filename = form.dataset.filename || 'this backup';
-            if (!window.confirm(`Delete "${filename}"? This action cannot be undone.`)) {
-                event.preventDefault();
-            }
-        });
-    });
-
-    const search = document.getElementById('backupSearch');
-    const sort = document.getElementById('backupSort');
-    const rows = document.getElementById('backupRows');
-
-    function filterRows() {
-        if (!rows) return;
-        
-        const query = (search.value || '').toLowerCase().trim();
-        const all = Array.from(rows.querySelectorAll('tr'));
-        
-        all.forEach(row => {
-            row.hidden = !row.dataset.filename.includes(query);
-        });
-        
-        const visible = all.filter(row => !row.hidden);
-        
-        visible.sort((a, b) => {
-            if (sort.value === 'oldest') {
-                return Number(a.dataset.date) - Number(b.dataset.date);
-            } else if (sort.value === 'name') {
-                return a.dataset.filename.localeCompare(b.dataset.filename);
-            } else {
-                return Number(b.dataset.date) - Number(a.dataset.date);
-            }
-        });
-        
-        visible.forEach(row => rows.appendChild(row));
-        
-        const noMatches = document.getElementById('backupNoMatches');
-        if (noMatches) noMatches.hidden = visible.length !== 0;
-        
-        const tableWrap = document.getElementById('backupTableWrap');
-        if (tableWrap) tableWrap.hidden = visible.length === 0;
-    }
-
-    if (search && sort && rows) {
-        search.addEventListener('input', filterRows);
-        sort.addEventListener('change', filterRows);
-    }
-})();
-</script>
+    })();
+    </script>
+</body>
+</html>
+W e d n e s d a y ,   N o v e m b e r   1 1 ,   2 0 2 6   1 0 : 5 2 : 4 1   A M 
