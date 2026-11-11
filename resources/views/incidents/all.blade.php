@@ -148,7 +148,7 @@
                     <span class="case">Total: {{ count($incidentsData ?? []) }} incidents</span>
                 </div>
             </div>
-            <a href="{{ auth()->user()->hasRole('supervisor') ? route('dashboards.supervisor') : route('dashboards.hr') }}" class="back"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+            <a href="@if(auth()->user()->hasRole('super_admin')) {{ route('dashboards.super_admin') }} @elseif(auth()->user()->hasRole('supervisor')) {{ route('dashboards.supervisor') }} @else {{ route('dashboards.hr') }} @endif" class="back"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
         </div>
 
         <!-- Incidents Table -->
