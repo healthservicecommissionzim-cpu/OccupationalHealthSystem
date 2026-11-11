@@ -52,6 +52,7 @@
         tbody tr:last-child td { border-bottom: none; }
         
         .ref-number { font-weight: 700; color: #079b6d; font-size: 12px; }
+        .status-text { font-weight: 700; color: #079b6d; font-size: 12px; }
         .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px; font-size: 9px; font-weight: 750; white-space: nowrap; text-transform: uppercase; }
         .status-badge.pending { background: #fff8e7; color: #c67a00; }
         .status-badge.escalated { background: #dbeafe; color: #1e40af; }
@@ -206,74 +207,56 @@
                                     @php
                                         $status = $incident['status'] ?? '';
                                         $statusLabel = '';
-                                        $statusClass = 'pending';
                                         
                                         switch($status) {
                                             case 'PENDING_SUPERVISOR_VERIFICATION':
                                                 $statusLabel = 'Awaiting Supervisor Verification';
-                                                $statusClass = 'pending';
                                                 break;
                                             case 'VERIFIED_SUPERVISOR':
                                                 $statusLabel = 'Supervisor Verified';
-                                                $statusClass = 'escalated';
                                                 break;
                                             case 'ESCALATED_TO_HR':
                                                 $statusLabel = 'Escalated to HR';
-                                                $statusClass = 'escalated';
                                                 break;
                                             case 'PENDING_HR_REVIEW':
                                                 $statusLabel = 'Pending HR Review';
-                                                $statusClass = 'pending';
                                                 break;
                                             case 'HR_REVIEW':
                                                 $statusLabel = 'Under HR Review';
-                                                $statusClass = 'escalated';
                                                 break;
                                             case 'HR_APPROVED':
                                                 $statusLabel = 'HR Approved';
-                                                $statusClass = 'escalated';
                                                 break;
                                             case 'CLINICAL_EXECUTIVE_REVIEW':
                                                 $statusLabel = 'Clinical Executive Review';
-                                                $statusClass = 'escalated';
                                                 break;
                                             case 'PENDING_PROVINCIAL_APPROVAL':
                                                 $statusLabel = 'Pending Provincial Approval';
-                                                $statusClass = 'pending';
                                                 break;
                                             case 'PENDING_MEDICAL_BOARD':
                                                 $statusLabel = 'Pending Medical Board';
-                                                $statusClass = 'pending';
                                                 break;
                                             case 'APPROVED_BY_PMD':
                                                 $statusLabel = 'Approved by PMD';
-                                                $statusClass = 'approved';
                                                 break;
                                             case 'RESOLVED':
                                                 $statusLabel = 'Case Resolved';
-                                                $statusClass = 'approved';
                                                 break;
                                             case 'NATIONAL_SIGN_OFF_APPROVED':
                                                 $statusLabel = 'National Sign-Off Approved';
-                                                $statusClass = 'approved';
                                                 break;
                                             case 'REJECTED_BY_HR':
                                                 $statusLabel = 'Rejected by HR';
-                                                $statusClass = 'rejected';
                                                 break;
                                             case 'REJECTED':
                                                 $statusLabel = 'Case Rejected';
-                                                $statusClass = 'rejected';
                                                 break;
                                             default:
                                                 $statusLabel = str_replace('_', ' ', ucwords(strtolower($status)));
                                                 break;
                                         }
                                     @endphp
-                                    <span class="status-badge {{ $statusClass }}">
-                                        <i class="fa-solid fa-circle" style="font-size: 6px;"></i>
-                                        {{ $statusLabel }}
-                                    </span>
+                                    <span class="status-text">{{ $statusLabel }}</span>
                                 </td>
                             </tr>
                         @empty
