@@ -148,7 +148,7 @@
                     <span class="case">Total: {{ count($incidentsData ?? []) }} incidents</span>
                 </div>
             </div>
-            <a href="javascript:history.back()" class="back"><i class="fa-solid fa-arrow-left"></i> Back</a>
+            <a href="{{ auth()->user()->hasRole('supervisor') ? route('dashboards.supervisor') : route('dashboards.hr') }}" class="back"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
         </div>
 
         <!-- Incidents Table -->
