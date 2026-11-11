@@ -311,7 +311,23 @@ class DatabaseBackupController extends Controller
                     'user' => auth()->user()->email
                 ]);
                 
+                // Check if request wants JSON (AJAX)
+                if (request()->wantsJson() || request()->ajax()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Backup deleted successfully.'
+                    ]);
+                }
+                
                 return back()->with('success', 'Backup deleted successfully.');
+            }
+            
+            // Check if request wants JSON (AJAX)
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Backup file not found.'
+                ], 404);
             }
             
             return back()->with('error', 'Backup file not found.');
@@ -322,6 +338,14 @@ class DatabaseBackupController extends Controller
                 'filename' => $filename,
                 'user' => auth()->user()->email
             ]);
+            
+            // Check if request wants JSON (AJAX)
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to delete backup file.'
+                ], 500);
+            }
             
             return back()->with('error', 'Failed to delete backup file.');
         }

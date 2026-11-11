@@ -444,11 +444,13 @@
         
         try {
             const response = await fetch(currentDeleteUrl, {
-                method: 'DELETE',
+                method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'application/json',
                     'Accept': 'application/json'
-                }
+                },
+                body: JSON.stringify({ _method: 'DELETE' })
             });
 
             if (response.ok) {
@@ -461,9 +463,11 @@
                     window.location.reload();
                 }, 2000);
             } else {
-                alert('Failed to delete backup. Please try again.');
+                const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+                alert('Failed to delete backup: ' + (errorData.message || 'Please try again.'));
             }
         } catch (error) {
+            console.error('Delete error:', error);
             alert('An error occurred while deleting the backup.');
         }
     }

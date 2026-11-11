@@ -312,7 +312,7 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
         Route::get('/database-backup', [\App\Http\Controllers\SuperAdmin\DatabaseBackupController::class, 'index'])->name('database_backup');
         Route::post('/database-backup/create', [\App\Http\Controllers\SuperAdmin\DatabaseBackupController::class, 'create'])->name('database_backup.create');
         Route::get('/database-backup/download/{filename}', [\App\Http\Controllers\SuperAdmin\DatabaseBackupController::class, 'download'])->name('database_backup.download');
-        Route::delete('/database-backup/delete/{filename}', [\App\Http\Controllers\SuperAdmin\DatabaseBackupController::class, 'delete'])->name('database_backup.delete');
+        Route::match(['post', 'delete'], '/database-backup/delete/{filename}', [\App\Http\Controllers\SuperAdmin\DatabaseBackupController::class, 'delete'])->name('database_backup.delete');
         
         // System Documentation Routes
         Route::get('/documentation', [\App\Http\Controllers\SuperAdmin\DocumentationController::class, 'index'])->name('documentation');
