@@ -48,6 +48,7 @@
         tbody tr:last-child td { border-bottom: none; }
         
         .ticket-id { font-weight: 700; color: #079b6d; font-size: 12px; cursor: pointer; }
+        .status-text { font-weight: 700; color: #079b6d; font-size: 12px; }
         .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px; font-size: 9px; font-weight: 750; white-space: nowrap; text-transform: uppercase; }
         .status-open { background: #dbeafe; color: #1e40af; }
         .status-in-progress { background: #fff8e7; color: #c67a00; }
@@ -174,8 +175,7 @@
                                 <td onclick="openTicketModal({{ $ticket->id }}, '{{ $ticket->ticket_number }}', '{{ $ticket->title }}')" style="cursor: pointer;">{{ $ticket->title }}</td>
                                 <td>{{ $ticket->category }}</td>
                                 <td>
-                                    <span class="status-badge status-{{ strtolower(str_replace('_', '-', $ticket->status)) }}">
-                                        <i class="fa-solid fa-circle" style="font-size: 6px;"></i>
+                                    <span class="status-text">
                                         {{ ucwords(str_replace('_', ' ', $ticket->status)) }}
                                     </span>
                                 </td>
