@@ -351,7 +351,12 @@
         
         // Fetch log details
         fetch(`/system/communication-logs/${logId}/details`)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load details');
+                }
+                return response.json();
+            })
             .then(data => {
                 modalContent.innerHTML = buildModalContent(data);
                 modal.style.display = 'block';
@@ -359,7 +364,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                modalContent.innerHTML = '<p style="color: #ef4444; text-align: center; padding: 20px;">Error loading details</p>';
+                modalContent.innerHTML = '<p style="color: #ef4444; text-align: center; padding: 20px;">Error loading details: ' + error.message + '</p>';
                 modal.style.display = 'block';
             });
     }
