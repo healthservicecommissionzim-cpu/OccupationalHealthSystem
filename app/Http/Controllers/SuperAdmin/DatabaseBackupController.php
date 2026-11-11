@@ -30,8 +30,24 @@ class DatabaseBackupController extends Controller
             
             // Ensure directory exists with full path
             $fullBackupPath = storage_path('app/' . $this->backupPath);
+            
+            // Check if directory exists or can be created
             if (!file_exists($fullBackupPath)) {
-                mkdir($fullBackupPath, 0755, true);
+                if (!@mkdir($fullBackupPath, 0755, true)) {
+                    throw new \Exception(
+                        "Cannot create backup directory at '{$fullBackupPath}'. " .
+                        "Please ensure the web server has write permissions to the storage/app directory. " .
+                        "Run: sudo chown -R www-data:www-data " . storage_path('app') . " && sudo chmod -R 775 " . storage_path('app')
+                    );
+                }
+            }
+            
+            // Verify directory is writable
+            if (!is_writable($fullBackupPath)) {
+                throw new \Exception(
+                    "Backup directory '{$fullBackupPath}' is not writable. " .
+                    "Please ensure proper permissions: sudo chmod -R 775 " . $fullBackupPath
+                );
             }
             
             // Also ensure using Storage facade
@@ -68,7 +84,7 @@ class DatabaseBackupController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
             
-            return back()->with('error', 'Backup operation failed: ' . $e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
     
