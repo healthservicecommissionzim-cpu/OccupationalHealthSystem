@@ -28,12 +28,6 @@ class RosterController extends Controller
         \App\Services\Roster\AssignmentService $assignmentService
     )
     {
-        // Auth middleware for all methods
-        $this->middleware('auth');
-        
-        // Policy-based authorization
-        $this->authorizeResource(StaffRoster::class, 'roster');
-        
         $this->rosterService = $rosterService;
         $this->rosterAccessService = $rosterAccessService;
         $this->importService = $importService;
