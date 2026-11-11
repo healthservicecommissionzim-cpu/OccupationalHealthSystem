@@ -335,6 +335,12 @@
                         </div>
                     </div>
                     <div class="card-body">
+                        <div class="info-box" style="margin-bottom: 12px;">
+                            <strong><i class="fa-solid fa-folder"></i> Backup Location</strong>
+                            <p style="margin-top: 4px; font-family: 'Courier New', monospace; font-size: .7rem; word-break: break-all;">
+                                storage/app/backups/database/
+                            </p>
+                        </div>
                         <ul class="tip-list">
                             <li>
                                 <i class="fa-solid fa-circle-check"></i>
