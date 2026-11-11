@@ -86,7 +86,7 @@
 
         .layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr); align-items: start; gap: 16px; }
         .main-column { display: flex; flex-direction: column; gap: 16px; }
-        .side-column { display: flex; flex-direction: column; gap: 16px; }
+        .side-column { display: flex; flex-direction: column; gap: 16px; height: 100%; }
         .card { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow); display: flex; flex-direction: column; }
         .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 14px 16px 12px; border-bottom: 1px solid var(--line); }
         .card-heading { display: flex; align-items: flex-start; gap: 10px; }
@@ -301,28 +301,8 @@
 
             <!-- Side Column -->
             <div class="side-column">
-                <!-- Status Card -->
-                <div class="card">
-                    <div class="card-header" style="background: linear-gradient(120deg, var(--brand), #397557); border: 0;">
-                        <div class="card-heading">
-                            <div class="section-icon" style="background: rgba(255,255,255,.2); color: white;">
-                                <i class="fa-solid fa-shield-heart"></i>
-                            </div>
-                            <div>
-                                <h2 style="color: white;">System Protection</h2>
-                                <p style="color: rgba(255,255,255,.8);">Recovery readiness</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <p style="font-size: .8rem; color: var(--ink-soft); line-height: 1.6;">
-                            Backups support service continuity. Keep copies in approved, access-controlled storage and verify that recovery procedures work.
-                        </p>
-                    </div>
-                </div>
-
                 <!-- Checklist Card -->
-                <div class="card">
+                <div class="card" style="flex: 1; display: flex; flex-direction: column;">
                     <div class="card-header">
                         <div class="card-heading">
                             <div class="section-icon">
@@ -334,7 +314,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="flex: 1;">
                         <div class="info-box" style="margin-bottom: 12px;">
                             <strong><i class="fa-solid fa-folder"></i> Backup Location</strong>
                             <p style="margin-top: 4px; font-family: 'Courier New', monospace; font-size: .7rem; word-break: break-all;">
