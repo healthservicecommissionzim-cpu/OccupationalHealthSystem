@@ -66,10 +66,59 @@
         /* Pagination */
         .pagination-wrapper { padding: 16px 22px; background: white; border-top: 1px solid #e4e9ee; }
         .pagination { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; align-items: center; }
-        .pagination a, .pagination span { padding: 8px 12px; border: 1px solid #e4e9ee; background: white; cursor: pointer; border-radius: 6px; font-size: 11px; font-weight: 650; transition: all 0.2s; text-decoration: none; color: #4e596c; min-width: 36px; text-align: center; }
-        .pagination a:hover { border-color: #079b6d; color: #079b6d; background: #f0f9f7; }
-        .pagination .active span { background: #079b6d; color: white; border-color: #079b6d; }
-        .pagination .disabled span { color: #cbd5e1; cursor: not-allowed; background: #f8fafb; }
+        
+        /* Laravel pagination elements */
+        .pagination nav { display: flex; justify-content: center; align-items: center; gap: 6px; width: 100%; }
+        .pagination nav div:first-child { display: none; } /* Hide text info */
+        .pagination nav div:last-child { display: flex; gap: 6px; flex-wrap: wrap; width: 100%; justify-content: center; }
+        
+        .pagination a, 
+        .pagination span { 
+            padding: 8px 12px; 
+            border: 1px solid #e4e9ee; 
+            background: white; 
+            cursor: pointer; 
+            border-radius: 6px; 
+            font-size: 11px; 
+            font-weight: 650; 
+            transition: all 0.2s; 
+            text-decoration: none; 
+            color: #4e596c; 
+            min-width: 36px; 
+            text-align: center; 
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Hide the SVG icons and show text instead */
+        .pagination svg { 
+            display: none !important; 
+        }
+        
+        /* Style the prev/next buttons */
+        .pagination a[rel="prev"]::before { content: "‹ Previous"; }
+        .pagination a[rel="next"]::after { content: "Next ›"; }
+        .pagination span[rel="prev"]::before { content: "‹ Previous"; }
+        .pagination span[rel="next"]::after { content: "Next ›"; }
+        
+        .pagination a:hover { 
+            border-color: #079b6d; 
+            color: #079b6d; 
+            background: #f0f9f7; 
+        }
+        
+        .pagination span[aria-current="page"] { 
+            background: #079b6d; 
+            color: white; 
+            border-color: #079b6d; 
+        }
+        
+        .pagination span[aria-disabled="true"] { 
+            color: #cbd5e1; 
+            cursor: not-allowed; 
+            background: #f8fafb; 
+        }
         
         /* Responsive */
         @media (max-width: 900px) {
