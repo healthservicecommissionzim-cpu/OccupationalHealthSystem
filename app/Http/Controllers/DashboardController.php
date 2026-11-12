@@ -3263,6 +3263,10 @@ class DashboardController extends Controller
             ->limit(500) // Limit to recent 500 incidents for performance
             ->get()
             ->map(function($incident) {
+                // Use facility coordinates if available, otherwise fall back to province coordinates
+                $lat = $incident->facility->latitude ?? $incident->facility->province->latitude ?? -19.0154;
+                $lng = $incident->facility->longitude ?? $incident->facility->province->longitude ?? 29.1549;
+                
                 return [
                     'id' => $incident->id,
                     'reference' => $incident->reference_number,
@@ -3272,9 +3276,9 @@ class DashboardController extends Controller
                     'facility' => $incident->facility->name ?? 'Unknown',
                     'province' => $incident->facility->province->name ?? 'Unknown',
                     'status' => $incident->status,
-                    // Use province coordinates for now
-                    'lat' => $incident->facility->province->latitude ?? -19.0154,
-                    'lng' => $incident->facility->province->longitude ?? 29.1549,
+                    'lat' => $lat,
+                    'lng' => $lng,
+                    'has_facility_coords' => !is_null($incident->facility->latitude), // For debugging
                 ];
             });
 

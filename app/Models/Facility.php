@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Facility extends Model
 {
-    protected $fillable = ['province_id', 'district_id', 'facility_type_id', 'name'];
+    protected $fillable = ['province_id', 'district_id', 'facility_type_id', 'name', 'latitude', 'longitude'];
 
     public function province()
     {
@@ -21,5 +21,10 @@ class Facility extends Model
     public function facilityType()
     {
         return $this->belongsTo(FacilityType::class, 'facility_type_id');
+    }
+
+    public function incidents()
+    {
+        return $this->hasMany(Incident::class);
     }
 }
