@@ -113,11 +113,19 @@
             overflow: hidden;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             height: 700px;
+            position: relative;
+            width: 100%;
         }
 
         #map {
             width: 100%;
             height: 100%;
+            border-radius: 12px;
+        }
+        
+        /* Ensure Google Maps controls don't overflow */
+        #map * {
+            box-sizing: border-box;
         }
 
         .legend {
@@ -200,11 +208,25 @@
 
             .map-container {
                 height: 500px;
+                max-width: 100%;
+            }
+            
+            #map {
+                border-radius: 8px;
             }
 
             .legend-items {
                 grid-template-columns: 1fr;
             }
+        }
+        
+        /* Fix for Google Maps overflow */
+        .gm-style {
+            border-radius: 12px;
+        }
+        
+        .gm-style > div {
+            border-radius: 12px;
         }
     </style>
 </head>
@@ -597,6 +619,11 @@
                 });
 
                 markers.push(marker);
+            });
+            
+            // Ensure map fits perfectly in container after loading
+            google.maps.event.addListenerOnce(map, 'idle', function() {
+                google.maps.event.trigger(map, 'resize');
             });
         }
 
