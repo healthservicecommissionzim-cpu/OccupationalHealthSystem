@@ -3258,7 +3258,7 @@ class DashboardController extends Controller
         // Fetch individual incidents with details for mapping
         $incidents = \App\Models\Incident::with(['facility.province', 'facility.district', 'incidentType'])
             ->where('status', '!=', 'CLOSED')
-            ->select('id', 'reference_number', 'incident_type_id', 'injury_severity', 'incident_date', 'facility_id', 'status')
+            ->select('id', 'reference_number', 'incident_type_id', 'incident_date', 'facility_id', 'status', 'is_workplace_fatality', 'is_road_traffic_accident')
             ->orderBy('incident_date', 'desc')
             ->limit(500) // Limit to recent 500 incidents for performance
             ->get()
@@ -3267,11 +3267,21 @@ class DashboardController extends Controller
                 $lat = $incident->facility->latitude ?? $incident->facility->province->latitude ?? -19.0154;
                 $lng = $incident->facility->longitude ?? $incident->facility->province->longitude ?? 29.1549;
                 
+                // Determine severity based on available flags
+                $severity = 'MINOR'; // Default
+                if ($incident->is_workplace_fatality) {
+                    $severity = 'FATAL';
+                } elseif ($incident->is_road_traffic_accident) {
+                    $severity = 'SERIOUS';
+                } elseif ($incident->status === 'ESCALATED_TO_HR' || $incident->status === 'UNDER_MEDICAL_REVIEW') {
+                    $severity = 'MODERATE';
+                }
+                
                 return [
                     'id' => $incident->id,
                     'reference' => $incident->reference_number,
                     'type' => $incident->incidentType->name ?? 'Not specified',
-                    'severity' => $incident->injury_severity,
+                    'severity' => $severity,
                     'date' => $incident->incident_date->format('Y-m-d'),
                     'facility' => $incident->facility->name ?? 'Unknown',
                     'province' => $incident->facility->province->name ?? 'Unknown',
