@@ -277,65 +277,42 @@
                 new google.maps.LatLng(zimbabweBounds.north, zimbabweBounds.east)  // Northeast
             );
 
-            // Initialize map with Zimbabwe bounds
+            // Initialize the map focused on Zimbabwe.
+            // The restriction uses a geographic rectangle around Zimbabwe.
+            // It prevents panning far away, but does not hide neighbouring countries
+            // that fall within the rectangle.
             map = new Map(document.getElementById('map'), {
-                mapId: 'HSC_OHS_ZIMBABWE_MAP', // Required for Advanced Markers
-                
-                // Allow unrestricted zooming and panning
-                // Users can zoom out beyond Zimbabwe if needed
-                
-                mapTypeId: 'hybrid',  // Satellite view with labels (roads, cities, borders)
+                mapId: 'HSC_OHS_ZIMBABWE_MAP',
+                center: {
+                    lat: -19.0154,
+                    lng: 29.1549
+                },
+                zoom: 7,
+                restriction: {
+                    latLngBounds: bounds,
+                    strictBounds: true
+                },
+                mapTypeId: 'roadmap',
                 mapTypeControl: true,
+                mapTypeControlOptions: {
+                    mapTypeIds: ['roadmap', 'hybrid', 'satellite']
+                },
                 streetViewControl: false,
                 fullscreenControl: true,
                 zoomControl: true,
                 gestureHandling: 'greedy',
-                
-                // Better map appearance
-                minZoom: 3,      // Prevents excessive zooming out to entire world
-                maxZoom: 20      // Allows detailed street-level zoom
+                minZoom: 6,
+                maxZoom: 20
             });
 
-            // Function to calculate responsive padding based on container size
-            function getResponsivePadding() {
-                const container = document.getElementById('map');
-                const width = container.offsetWidth;
-                const height = container.offsetHeight;
-                
-                // Optimal padding to fit entire Zimbabwe perfectly
-                const padding = {
-                    top: Math.max(40, height * 0.06),
-                    bottom: Math.max(40, height * 0.06),
-                    left: Math.max(40, width * 0.06),
-                    right: Math.max(40, width * 0.06)
-                };
-                
-                return padding;
-            }
-
-            // Function to fit map to Zimbabwe bounds with responsive padding
-            function fitMapToZimbabwe() {
-                const padding = getResponsivePadding();
-                map.fitBounds(bounds, padding);
-            }
-
-            // Initial fit to Zimbabwe bounds
-            fitMapToZimbabwe();
-
-            // Re-fit after map fully loads (ensures perfect initial display)
+            // Keep the initial Zimbabwe view consistent after the map finishes loading.
             google.maps.event.addListenerOnce(map, 'idle', function() {
-                fitMapToZimbabwe();
+                map.setCenter({ lat: -19.0154, lng: 29.1549 });
+                map.setZoom(7);
             });
 
-            // Re-fit on window resize to maintain proper bounds
-            let resizeTimer;
-            window.addEventListener('resize', function() {
-                // Debounce resize events to avoid excessive re-renders
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function() {
-                    fitMapToZimbabwe();
-                }, 250);
-            });
+            // Google Maps automatically resizes with its container.
+            // Do not call fitBounds() on resize, as that can zoom the map back out.
 
             // Add markers for each province
             provinceData.forEach(province => {
@@ -427,10 +404,7 @@
                         severityLabel = incident.severity || 'Unknown';
                 }
 
-                // Add small random offset to prevent markers stacking exactly on same spot
-                const latOffset = (Math.random() - 0.5) * 0.05;
-                const lngOffset = (Math.random() - 0.5) * 0.05;
-
+                // Keep incidents at their actual recorded coordinates.
                 // Create circle pin element for individual incidents (small circles)
                 const incidentPin = new PinElement({
                     background: color,
@@ -443,8 +417,8 @@
                 // Create marker
                 const incidentMarker = new AdvancedMarkerElement({
                     position: { 
-                        lat: parseFloat(incident.lat) + latOffset, 
-                        lng: parseFloat(incident.lng) + lngOffset 
+                        lat: parseFloat(incident.lat), 
+                        lng: parseFloat(incident.lng) 
                     },
                     map: map,
                     title: incident.reference,
@@ -474,11 +448,6 @@
             });
             
             console.log(`Loaded ${provinceData.length} provinces and ${incidentsData.length} individual incidents`);
-            
-            // Final fit after all markers are loaded
-            setTimeout(function() {
-                fitMapToZimbabwe();
-            }, 300);
         }
 
         // Load error handler
