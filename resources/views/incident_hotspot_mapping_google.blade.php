@@ -35,64 +35,70 @@
             background: #f5f7fa;
             color: #263149;
             font: 14px Inter, 'Segoe UI', Arial, sans-serif;
+            overflow: hidden;
         }
 
         .page {
-            max-width: 1400px;
-            margin: auto;
-            padding: 35px 25px 70px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         
-        /* Header - Matching facilities page */
+        /* Header - Compact for full-page map */
         .header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 25px;
+            align-items: center;
+            padding: 15px 25px;
+            background: white;
+            border-bottom: 1px solid #e1e7ee;
+            box-shadow: 0 2px 8px rgba(16, 26, 49, 0.06);
+            flex-shrink: 0;
         }
 
         .head {
             display: flex;
-            gap: 14px;
+            gap: 12px;
+            align-items: center;
         }
 
         .icon {
-            width: 46px;
-            height: 46px;
-            border-radius: 12px;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             background: #e9f8f3;
             color: #079b6d;
             display: grid;
             place-items: center;
-            font-size: 22px;
+            font-size: 18px;
         }
 
         .title {
             margin: 0;
             color: #101a31;
-            font-size: 24px;
+            font-size: 18px;
             font-weight: 750;
         }
 
         .sub {
-            margin-top: 5px;
+            margin-top: 2px;
             color: #718096;
-            font-size: 13px;
+            font-size: 11px;
         }
 
         .case {
             display: inline-block;
-            margin-top: 9px;
-            padding: 5px 10px;
+            margin-left: 15px;
+            padding: 4px 8px;
             border-radius: 6px;
             background: #eef2f6;
             color: #5d687b;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
         }
 
         .back {
-            padding: 10px 17px;
+            padding: 8px 15px;
             border: 1px solid #ccd6df;
             border-radius: 8px;
             background: white;
@@ -111,21 +117,12 @@
             background: #f8fafb;
         }
 
-        /* Card - Matching facilities page */
-        .card {
-            background: #fff;
-            border: 1px solid #e1e7ee;
-            border-radius: 14px;
-            box-shadow: 0 8px 25px rgba(16, 26, 49, 0.06);
-            overflow: hidden;
-            margin-bottom: 22px;
-        }
-
+        /* Map Container - Full page */
         .map-container {
-            height: 600px;
+            flex: 1;
             width: 100%;
             position: relative;
-            min-height: 450px;
+            overflow: hidden;
         }
 
         #map {
@@ -182,35 +179,43 @@
 
         @media (max-width: 900px) {
             .header {
-                flex-direction: column;
-                gap: 15px;
+                padding: 12px 15px;
+            }
+
+            .head {
+                gap: 10px;
+            }
+
+            .title {
+                font-size: 16px;
+            }
+
+            .sub {
+                font-size: 10px;
+            }
+
+            .case {
+                display: block;
+                margin-left: 0;
+                margin-top: 6px;
             }
 
             .back {
-                width: 100%;
-                text-align: center;
-                justify-content: center;
+                padding: 6px 12px;
+                font-size: 11px;
             }
         }
 
         @media (max-width: 768px) {
-            .page {
-                padding: 22px 15px;
+            .header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
             }
 
-            .title {
-                font-size: 20px;
-            }
-
-            .map-container {
-                height: 450px;
-                min-height: 400px;
-            }
-        }
-
-        @media (min-width: 769px) and (max-width: 1200px) {
-            .map-container {
-                height: 500px;
+            .back {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
@@ -223,17 +228,15 @@
                 <div>
                     <h1 class="title">Incident Hotspot Mapping</h1>
                     <div class="sub">Geographic distribution of workplace incidents across Zimbabwe</div>
-                    <span class="case">Showing {{ count($incidents ?? []) }} active incidents</span>
                 </div>
+                <span class="case">{{ count($incidents ?? []) }} incidents</span>
             </div>
             <a href="{{ route('dashboard') }}" class="back"><i class="fa-solid fa-arrow-left"></i> Back</a>
         </div>
 
-        <!-- Map Card -->
-        <div class="card">
-            <div class="map-container">
-                <div id="map"></div>
-            </div>
+        <!-- Full Page Map -->
+        <div class="map-container">
+            <div id="map"></div>
         </div>
     </div>
 
