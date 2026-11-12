@@ -294,13 +294,13 @@
                 const width = container.offsetWidth;
                 const height = container.offsetHeight;
                 
-                // Calculate padding with 30% zoom out effect
-                // Increased padding percentages to show more area around Zimbabwe
+                // Optimal padding to fit entire Zimbabwe map perfectly on screen
+                // Small padding prevents border cutoff while maximizing map visibility
                 const padding = {
-                    top: Math.max(60, height * 0.18),      // Increased from 0.08
-                    right: Math.max(60, width * 0.15),     // Increased from 0.05
-                    bottom: Math.max(60, height * 0.18),   // Increased from 0.08
-                    left: Math.max(60, width * 0.15)       // Increased from 0.05
+                    top: Math.max(30, height * 0.04),      // 4% of height, min 30px
+                    right: Math.max(30, width * 0.03),     // 3% of width, min 30px
+                    bottom: Math.max(30, height * 0.04),   // 4% of height, min 30px
+                    left: Math.max(30, width * 0.03)       // 3% of width, min 30px
                 };
                 
                 return padding;
