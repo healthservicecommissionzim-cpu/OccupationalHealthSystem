@@ -79,34 +79,6 @@
             padding: 0 2rem;
         }
 
-        .search-box {
-            position: relative;
-            margin-bottom: 1.5rem;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 0.875rem 1rem 0.875rem 3rem;
-            border: 2px solid #e1e8ed;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.2s;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #95a5a6;
-        }
-
         .map-container {
             background: white;
             border-radius: 12px;
@@ -245,17 +217,6 @@
     </header>
 
     <div class="container">
-        <div class="search-box">
-            <i class="fa-solid fa-search search-icon"></i>
-            <input 
-                type="text" 
-                id="searchInput" 
-                class="search-input" 
-                placeholder="Search for a facility or location in Zimbabwe..."
-                autocomplete="off"
-            >
-        </div>
-
         <div class="map-container">
             <div id="map"></div>
         </div>
@@ -445,7 +406,7 @@
     </script>
     
     <!-- Load Google Maps API with marker library -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCa0Bfxbhl60_Xk7wEU1nfdxMGjHqKneGA&libraries=places,marker&callback=initMap&loading=async&v=beta" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCa0Bfxbhl60_Xk7wEU1nfdxMGjHqKneGA&libraries=marker&callback=initMap&loading=async&v=beta" async defer></script>
     
     <script>
         // Zimbabwe incident data by province
@@ -453,7 +414,6 @@
 
         let map;
         let markers = [];
-        let searchMarker = null;
 
         // Zimbabwe boundaries
         const zimbabweBounds = {
@@ -468,7 +428,6 @@
             // Request needed libraries
             const { Map } = await google.maps.importLibrary("maps");
             const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
-            const { PlaceAutocompleteElement } = await google.maps.importLibrary("places");
 
             // Initialize map centered on Zimbabwe
             map = new Map(document.getElementById('map'), {
@@ -484,78 +443,6 @@
                 fullscreenControl: true,
                 zoomControl: true,
                 gestureHandling: 'greedy', // Allows easier zoom with scroll
-            });
-
-            // Initialize Places Autocomplete using the new API
-            const autocompleteInput = new PlaceAutocompleteElement({
-                componentRestrictions: { country: 'zw' },
-            });
-
-            // Replace the input with the autocomplete element
-            const searchBox = document.querySelector('.search-box');
-            const oldInput = document.getElementById('searchInput');
-            oldInput.style.display = 'none';
-            
-            // Style the autocomplete element to match our input
-            autocompleteInput.style.width = '100%';
-            autocompleteInput.style.padding = '0.875rem 1rem 0.875rem 3rem';
-            autocompleteInput.style.border = '2px solid #e1e8ed';
-            autocompleteInput.style.borderRadius = '10px';
-            autocompleteInput.style.fontSize = '1rem';
-            
-            searchBox.appendChild(autocompleteInput);
-
-            // Handle place selection
-            autocompleteInput.addEventListener('gmp-placeselect', async ({ place }) => {
-                await place.fetchFields({
-                    fields: ['displayName', 'formattedAddress', 'location']
-                });
-
-                if (!place.location) {
-                    alert('No location found for: ' + place.displayName);
-                    return;
-                }
-
-                // Remove previous search marker
-                if (searchMarker) {
-                    searchMarker.map = null;
-                }
-
-                // Center map on selected location
-                map.setCenter(place.location);
-                map.setZoom(14);
-
-                // Create pin for search result
-                const pinElement = new PinElement({
-                    background: '#667eea',
-                    borderColor: '#ffffff',
-                    glyphColor: '#ffffff',
-                    scale: 1.2,
-                });
-
-                // Add advanced marker for searched location
-                searchMarker = new AdvancedMarkerElement({
-                    map: map,
-                    position: place.location,
-                    title: place.displayName,
-                    content: pinElement.element,
-                });
-
-                // Info window for search result
-                const infoWindow = new google.maps.InfoWindow({
-                    content: `
-                        <div class="info-popup">
-                            <h3>${place.displayName}</h3>
-                            <p><i class="fa-solid fa-location-dot"></i> ${place.formattedAddress}</p>
-                        </div>
-                    `
-                });
-
-                searchMarker.addListener('gmp-click', () => {
-                    infoWindow.open(map, searchMarker);
-                });
-
-                infoWindow.open(map, searchMarker);
             });
 
             // Add markers for each province
