@@ -3240,7 +3240,7 @@ class DashboardController extends Controller
 
     public function incidentHotspotMapping()
     {
-        return view('incident_hotspot_mapping');
+        return view('incident_hotspot_mapping_google');
     }
 
     public function getProvinces()
