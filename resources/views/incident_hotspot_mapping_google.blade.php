@@ -284,6 +284,7 @@
                 // Allow unrestricted zooming and panning
                 // Users can zoom out beyond Zimbabwe if needed
                 
+                mapTypeId: 'satellite',  // Default to satellite view
                 mapTypeControl: true,
                 streetViewControl: false,
                 fullscreenControl: true,
