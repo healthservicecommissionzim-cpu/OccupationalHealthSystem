@@ -111,45 +111,6 @@
             background: #f8fafb;
         }
 
-        /* Stats - Matching facilities page */
-        .stats-inline {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 22px;
-        }
-
-        .stat-inline {
-            background: #f8fafb;
-            border: 1px solid #e4e9ee;
-            border-radius: 10px;
-            padding: 18px;
-            text-align: center;
-            transition: all 0.2s;
-            border-top: 3px solid #079b6d;
-        }
-
-        .stat-inline:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 26, 49, 0.08);
-        }
-
-        .stat-inline p {
-            font-size: 10px;
-            color: #8a95a5;
-            font-weight: 700;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-inline strong {
-            font-size: 24px;
-            font-weight: 750;
-            color: #101a31;
-            display: block;
-        }
-
         /* Card - Matching facilities page */
         .card {
             background: #fff;
@@ -219,10 +180,6 @@
         }
 
         @media (max-width: 900px) {
-            .stats-inline {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
             .header {
                 flex-direction: column;
                 gap: 15px;
@@ -244,10 +201,6 @@
                 font-size: 20px;
             }
 
-            .stats-inline {
-                grid-template-columns: 1fr;
-            }
-
             .map-container {
                 height: 500px;
             }
@@ -266,26 +219,6 @@
                 </div>
             </div>
             <a href="{{ route('dashboard') }}" class="back"><i class="fa-solid fa-arrow-left"></i> Back</a>
-        </div>
-
-        <!-- Stats Cards -->
-        <div class="stats-inline">
-            <div class="stat-inline">
-                <p>Total Incidents</p>
-                <strong>{{ number_format($provinceData->sum('incidents')) }}</strong>
-            </div>
-            <div class="stat-inline">
-                <p>Provinces</p>
-                <strong>{{ count($provinceData) }}</strong>
-            </div>
-            <div class="stat-inline">
-                <p>Facilities</p>
-                <strong>{{ number_format($provinceData->sum('facilities')) }}</strong>
-            </div>
-            <div class="stat-inline">
-                <p>Active Cases</p>
-                <strong>{{ count($incidents ?? []) }}</strong>
-            </div>
         </div>
 
         <!-- Map Card -->
@@ -327,7 +260,7 @@
             // Initialize map centered on Zimbabwe
             map = new Map(document.getElementById('map'), {
                 center: { lat: -19.0154, lng: 29.1549 },
-                zoom: 7,
+                zoom: 6.5, // Slightly zoomed out to show full country
                 mapId: 'HSC_OHS_ZIMBABWE_MAP', // Required for Advanced Markers
                 restriction: {
                     latLngBounds: zimbabweBounds,
@@ -338,6 +271,18 @@
                 fullscreenControl: true,
                 zoomControl: true,
                 gestureHandling: 'greedy', // Allows easier zoom with scroll
+            });
+
+            // Fit map to Zimbabwe bounds with padding to show all edges
+            const bounds = new google.maps.LatLngBounds(
+                new google.maps.LatLng(zimbabweBounds.south, zimbabweBounds.west),
+                new google.maps.LatLng(zimbabweBounds.north, zimbabweBounds.east)
+            );
+            map.fitBounds(bounds, {
+                top: 50,
+                right: 50,
+                bottom: 50,
+                left: 50
             });
 
             // Add markers for each province
