@@ -121,6 +121,8 @@
         .map-container {
             flex: 1;
             width: 100%;
+            height: 100%;
+            min-height: 0;
             position: relative;
             overflow: hidden;
         }
@@ -128,6 +130,7 @@
         #map {
             width: 100%;
             height: 100%;
+            min-height: 0;
         }
         
         /* Ensure Google Maps controls don't overflow */
@@ -277,15 +280,19 @@
             // Initialize map with Zimbabwe bounds
             map = new Map(document.getElementById('map'), {
                 mapId: 'HSC_OHS_ZIMBABWE_MAP', // Required for Advanced Markers
-                restriction: {
-                    latLngBounds: bounds,
-                    strictBounds: true
-                },
+                
+                // Allow unrestricted zooming and panning
+                // Users can zoom out beyond Zimbabwe if needed
+                
                 mapTypeControl: true,
                 streetViewControl: false,
                 fullscreenControl: true,
                 zoomControl: true,
                 gestureHandling: 'greedy',
+                
+                // Better map appearance
+                minZoom: 3,      // Prevents excessive zooming out to entire world
+                maxZoom: 20      // Allows detailed street-level zoom
             });
 
             // Function to calculate responsive padding based on container size
@@ -294,13 +301,12 @@
                 const width = container.offsetWidth;
                 const height = container.offsetHeight;
                 
-                // Optimal padding to fit entire Zimbabwe map perfectly on screen
-                // Small padding prevents border cutoff while maximizing map visibility
+                // Optimal padding to fit entire Zimbabwe perfectly
                 const padding = {
-                    top: Math.max(30, height * 0.04),      // 4% of height, min 30px
-                    right: Math.max(30, width * 0.03),     // 3% of width, min 30px
-                    bottom: Math.max(30, height * 0.04),   // 4% of height, min 30px
-                    left: Math.max(30, width * 0.03)       // 3% of width, min 30px
+                    top: Math.max(40, height * 0.06),
+                    bottom: Math.max(40, height * 0.06),
+                    left: Math.max(40, width * 0.06),
+                    right: Math.max(40, width * 0.06)
                 };
                 
                 return padding;
