@@ -294,14 +294,13 @@
                 const width = container.offsetWidth;
                 const height = container.offsetHeight;
                 
-                // Calculate padding as percentage of container size
-                // Larger containers need more absolute padding
-                // Smaller containers need proportional padding
+                // Calculate padding with 30% zoom out effect
+                // Increased padding percentages to show more area around Zimbabwe
                 const padding = {
-                    top: Math.max(40, height * 0.08),
-                    right: Math.max(40, width * 0.05),
-                    bottom: Math.max(40, height * 0.08),
-                    left: Math.max(40, width * 0.05)
+                    top: Math.max(60, height * 0.18),      // Increased from 0.08
+                    right: Math.max(60, width * 0.15),     // Increased from 0.05
+                    bottom: Math.max(60, height * 0.18),   // Increased from 0.08
+                    left: Math.max(60, width * 0.15)       // Increased from 0.05
                 };
                 
                 return padding;
