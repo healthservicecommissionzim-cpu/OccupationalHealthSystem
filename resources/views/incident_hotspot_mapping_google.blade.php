@@ -474,8 +474,6 @@
             map = new Map(document.getElementById('map'), {
                 center: { lat: -19.0154, lng: 29.1549 },
                 zoom: 7,
-                minZoom: 6,
-                maxZoom: 18,
                 mapId: 'HSC_OHS_ZIMBABWE_MAP', // Required for Advanced Markers
                 restriction: {
                     latLngBounds: zimbabweBounds,
@@ -483,7 +481,9 @@
                 },
                 mapTypeControl: true,
                 streetViewControl: false,
-                fullscreenControl: true
+                fullscreenControl: true,
+                zoomControl: true,
+                gestureHandling: 'greedy', // Allows easier zoom with scroll
             });
 
             // Initialize Places Autocomplete using the new API
