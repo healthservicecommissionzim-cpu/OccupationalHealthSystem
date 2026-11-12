@@ -3255,7 +3255,30 @@ class DashboardController extends Controller
                 ];
             });
 
-        return view('incident_hotspot_mapping_google', compact('provinceData'));
+        // Fetch individual incidents with details for mapping
+        $incidents = \App\Models\Incident::with(['facility.province', 'facility.district'])
+            ->where('status', '!=', 'CLOSED')
+            ->select('id', 'reference_number', 'incident_type', 'injury_severity', 'injury_date', 'facility_id', 'status')
+            ->orderBy('injury_date', 'desc')
+            ->limit(500) // Limit to recent 500 incidents for performance
+            ->get()
+            ->map(function($incident) {
+                return [
+                    'id' => $incident->id,
+                    'reference' => $incident->reference_number,
+                    'type' => $incident->incident_type,
+                    'severity' => $incident->injury_severity,
+                    'date' => $incident->injury_date->format('Y-m-d'),
+                    'facility' => $incident->facility->name ?? 'Unknown',
+                    'province' => $incident->facility->province->name ?? 'Unknown',
+                    'status' => $incident->status,
+                    // Use province coordinates for now
+                    'lat' => $incident->facility->province->latitude ?? -19.0154,
+                    'lng' => $incident->facility->province->longitude ?? 29.1549,
+                ];
+            });
+
+        return view('incident_hotspot_mapping_google', compact('provinceData', 'incidents'));
     }
 
     public function getProvinces()

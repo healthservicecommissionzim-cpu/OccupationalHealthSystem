@@ -411,9 +411,13 @@
     <script>
         // Zimbabwe incident data by province
         const provinceData = @json($provinceData ?? []);
+        // Individual incidents data
+        const incidentsData = @json($incidents ?? []);
 
         let map;
         let markers = [];
+        let incidentMarkers = [];
+        let showIndividualIncidents = false;
 
         // Zimbabwe boundaries
         const zimbabweBounds = {
@@ -507,6 +511,80 @@
 
                 markers.push(marker);
             });
+            
+            // Add individual incident markers
+            incidentsData.forEach(incident => {
+                // Determine color based on severity
+                let color;
+                let severityLabel;
+                switch(incident.severity) {
+                    case 'FATAL':
+                        color = '#8b0000'; // Dark red
+                        severityLabel = 'Fatal';
+                        break;
+                    case 'SERIOUS':
+                        color = '#e74c3c'; // Red
+                        severityLabel = 'Serious';
+                        break;
+                    case 'MODERATE':
+                        color = '#f39c12'; // Orange
+                        severityLabel = 'Moderate';
+                        break;
+                    case 'MINOR':
+                        color = '#3498db'; // Blue
+                        severityLabel = 'Minor';
+                        break;
+                    default:
+                        color = '#95a5a6'; // Gray
+                        severityLabel = incident.severity || 'Unknown';
+                }
+
+                // Add small random offset to prevent markers stacking exactly on same spot
+                const latOffset = (Math.random() - 0.5) * 0.05;
+                const lngOffset = (Math.random() - 0.5) * 0.05;
+
+                // Create small pin for individual incidents
+                const incidentPin = new PinElement({
+                    background: color,
+                    borderColor: '#ffffff',
+                    glyphColor: '#ffffff',
+                    scale: 0.7,
+                });
+
+                // Create marker
+                const incidentMarker = new AdvancedMarkerElement({
+                    position: { 
+                        lat: parseFloat(incident.lat) + latOffset, 
+                        lng: parseFloat(incident.lng) + lngOffset 
+                    },
+                    map: map,
+                    title: incident.reference,
+                    content: incidentPin.element,
+                });
+
+                // Info window for incident
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `
+                        <div class="info-popup">
+                            <h3 style="color: ${color};">${incident.reference}</h3>
+                            <p><i class="fa-solid fa-calendar"></i> <strong>Date:</strong> ${incident.date}</p>
+                            <p><i class="fa-solid fa-hospital"></i> <strong>Facility:</strong> ${incident.facility}</p>
+                            <p><i class="fa-solid fa-map-pin"></i> <strong>Province:</strong> ${incident.province}</p>
+                            <p><i class="fa-solid fa-exclamation-circle"></i> <strong>Type:</strong> ${incident.type || 'Not specified'}</p>
+                            <p><i class="fa-solid fa-heartbeat"></i> <strong>Severity:</strong> <span style="color: ${color}; font-weight: bold;">${severityLabel}</span></p>
+                            <p><i class="fa-solid fa-info-circle"></i> <strong>Status:</strong> ${incident.status}</p>
+                        </div>
+                    `
+                });
+
+                incidentMarker.addListener('gmp-click', () => {
+                    infoWindow.open(map, incidentMarker);
+                });
+
+                incidentMarkers.push(incidentMarker);
+            });
+            
+            console.log(`Loaded ${provinceData.length} provinces and ${incidentsData.length} individual incidents`);
             
             // Ensure map fits perfectly in container after loading
             google.maps.event.addListenerOnce(map, 'idle', function() {
