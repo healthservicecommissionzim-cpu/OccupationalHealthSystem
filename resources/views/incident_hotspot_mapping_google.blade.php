@@ -422,7 +422,188 @@
         };
     </script>
     
-    <!-- Load Google Maps API with callback and async loading -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCa0Bfxbhl60_Xk7wEU1nfdxMGjHqKneGA&libraries=places&callback=initMap&loading=async" async defer></script>
+    <!-- Load Google Maps API with marker library -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCa0Bfxbhl60_Xk7wEU1nfdxMGjHqKneGA&libraries=places,marker&callback=initMap&loading=async&v=beta" async defer></script>
+    
+    <script>
+        // Zimbabwe incident data by province
+        const provinceData = @json($provinceData ?? []);
+
+        let map;
+        let markers = [];
+        let searchMarker = null;
+
+        // Zimbabwe boundaries
+        const zimbabweBounds = {
+            north: -15.5,
+            south: -22.5,
+            west: 25.2,
+            east: 33.1
+        };
+
+        // This function is called by Google Maps API when loaded
+        async function initMap() {
+            // Request needed libraries
+            const { Map } = await google.maps.importLibrary("maps");
+            const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
+            const { PlaceAutocompleteElement } = await google.maps.importLibrary("places");
+
+            // Initialize map centered on Zimbabwe
+            map = new Map(document.getElementById('map'), {
+                center: { lat: -19.0154, lng: 29.1549 },
+                zoom: 7,
+                minZoom: 6,
+                maxZoom: 18,
+                mapId: 'HSC_OHS_ZIMBABWE_MAP', // Required for Advanced Markers
+                restriction: {
+                    latLngBounds: zimbabweBounds,
+                    strictBounds: true
+                },
+                mapTypeControl: true,
+                streetViewControl: false,
+                fullscreenControl: true
+            });
+
+            // Initialize Places Autocomplete using the new API
+            const autocompleteInput = new PlaceAutocompleteElement({
+                componentRestrictions: { country: 'zw' },
+            });
+
+            // Replace the input with the autocomplete element
+            const searchBox = document.querySelector('.search-box');
+            const oldInput = document.getElementById('searchInput');
+            oldInput.style.display = 'none';
+            
+            // Style the autocomplete element to match our input
+            autocompleteInput.style.width = '100%';
+            autocompleteInput.style.padding = '0.875rem 1rem 0.875rem 3rem';
+            autocompleteInput.style.border = '2px solid #e1e8ed';
+            autocompleteInput.style.borderRadius = '10px';
+            autocompleteInput.style.fontSize = '1rem';
+            
+            searchBox.appendChild(autocompleteInput);
+
+            // Handle place selection
+            autocompleteInput.addEventListener('gmp-placeselect', async ({ place }) => {
+                await place.fetchFields({
+                    fields: ['displayName', 'formattedAddress', 'location']
+                });
+
+                if (!place.location) {
+                    alert('No location found for: ' + place.displayName);
+                    return;
+                }
+
+                // Remove previous search marker
+                if (searchMarker) {
+                    searchMarker.map = null;
+                }
+
+                // Center map on selected location
+                map.setCenter(place.location);
+                map.setZoom(14);
+
+                // Create pin for search result
+                const pinElement = new PinElement({
+                    background: '#667eea',
+                    borderColor: '#ffffff',
+                    glyphColor: '#ffffff',
+                    scale: 1.2,
+                });
+
+                // Add advanced marker for searched location
+                searchMarker = new AdvancedMarkerElement({
+                    map: map,
+                    position: place.location,
+                    title: place.displayName,
+                    content: pinElement.element,
+                });
+
+                // Info window for search result
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `
+                        <div class="info-popup">
+                            <h3>${place.displayName}</h3>
+                            <p><i class="fa-solid fa-location-dot"></i> ${place.formattedAddress}</p>
+                        </div>
+                    `
+                });
+
+                searchMarker.addListener('gmp-click', () => {
+                    infoWindow.open(map, searchMarker);
+                });
+
+                infoWindow.open(map, searchMarker);
+            });
+
+            // Add markers for each province
+            provinceData.forEach(province => {
+                // Determine color based on incident count
+                let color;
+                let severity;
+                if (province.incidents > 35) {
+                    color = '#e74c3c';
+                    severity = 'High incident level';
+                } else if (province.incidents > 20) {
+                    color = '#e67e22';
+                    severity = 'Medium incident level';
+                } else if (province.incidents > 10) {
+                    color = '#f39c12';
+                    severity = 'Moderate incident level';
+                } else {
+                    color = '#27ae60';
+                    severity = 'Low incident level';
+                }
+
+                // Calculate marker size
+                const scale = Math.max(1, Math.min(3, province.incidents * 0.05));
+
+                // Create pin element with custom styling
+                const pinElement = new PinElement({
+                    background: color,
+                    borderColor: '#ffffff',
+                    glyphColor: '#ffffff',
+                    scale: scale,
+                });
+
+                // Create advanced marker
+                const marker = new AdvancedMarkerElement({
+                    position: { lat: parseFloat(province.lat), lng: parseFloat(province.lng) },
+                    map: map,
+                    title: province.name,
+                    content: pinElement.element,
+                });
+
+                // Info window content
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `
+                        <div class="info-popup">
+                            <h3>${province.name}</h3>
+                            <p>
+                                <i class="fa-solid fa-exclamation-triangle"></i>
+                                <strong>${province.incidents}</strong> incidents
+                            </p>
+                            <p>
+                                <i class="fa-solid fa-hospital"></i>
+                                <strong>${province.facilities}</strong> facilities
+                            </p>
+                            <span class="popup-tag" style="background: ${color}; color: white;">${severity}</span>
+                        </div>
+                    `
+                });
+
+                marker.addListener('gmp-click', () => {
+                    infoWindow.open(map, marker);
+                });
+
+                markers.push(marker);
+            });
+        }
+
+        // Load error handler
+        window.gm_authFailure = function() {
+            alert('Google Maps API authentication failed. Please check the API key.');
+        };
+    </script>
 </body>
 </html>
