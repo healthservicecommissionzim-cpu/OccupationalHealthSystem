@@ -213,9 +213,15 @@
                                     </span>
                                 </td>
                                 <td style="text-align: center;">
-                                    <button onclick="viewIncidentDetails({{ $incident->id }})" class="action-btn">
-                                        <i class="fa-solid fa-eye"></i> View
-                                    </button>
+                                    @if($incident->status === 'PENDING_SUPERVISOR_VERIFICATION')
+                                        <a href="{{ route('incidents.hod_report', $incident->id) }}" class="action-btn">
+                                            <i class="fa-solid fa-file-pen"></i> View
+                                        </a>
+                                    @else
+                                        <button onclick="viewIncidentDetails({{ $incident->id }})" class="action-btn">
+                                            <i class="fa-solid fa-eye"></i> View
+                                        </button>
+                                    @endif
                                 </td>
                             </tr>
                         @empty
