@@ -122,7 +122,7 @@
         }
 
         .map-container {
-            height: 700px;
+            height: 850px;
             position: relative;
             width: 100%;
         }
