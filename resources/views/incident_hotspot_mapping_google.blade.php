@@ -122,9 +122,10 @@
         }
 
         .map-container {
-            height: 750px;
-            position: relative;
+            height: 600px;
             width: 100%;
+            position: relative;
+            min-height: 450px;
         }
 
         #map {
@@ -202,6 +203,13 @@
             }
 
             .map-container {
+                height: 450px;
+                min-height: 400px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1200px) {
+            .map-container {
                 height: 500px;
             }
         }
@@ -243,7 +251,7 @@
         let incidentMarkers = [];
         let showIndividualIncidents = false;
 
-        // Zimbabwe boundaries
+        // Zimbabwe boundaries (accurate geographical coordinates)
         const zimbabweBounds = {
             north: -15.5,
             south: -22.5,
@@ -257,32 +265,67 @@
             const { Map } = await google.maps.importLibrary("maps");
             const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
 
-            // Initialize map centered on Zimbabwe
+            // Create bounds for Zimbabwe
+            const bounds = new google.maps.LatLngBounds(
+                new google.maps.LatLng(zimbabweBounds.south, zimbabweBounds.west), // Southwest
+                new google.maps.LatLng(zimbabweBounds.north, zimbabweBounds.east)  // Northeast
+            );
+
+            // Initialize map with Zimbabwe bounds
             map = new Map(document.getElementById('map'), {
-                center: { lat: -19.0154, lng: 29.1549 },
-                zoom: 6, // Adjusted for perfect fit
                 mapId: 'HSC_OHS_ZIMBABWE_MAP', // Required for Advanced Markers
                 restriction: {
-                    latLngBounds: zimbabweBounds,
+                    latLngBounds: bounds,
                     strictBounds: true
                 },
                 mapTypeControl: true,
                 streetViewControl: false,
                 fullscreenControl: true,
                 zoomControl: true,
-                gestureHandling: 'greedy', // Allows easier zoom with scroll
+                gestureHandling: 'greedy',
             });
 
-            // Fit map to Zimbabwe bounds with more padding for perfect fit
-            const bounds = new google.maps.LatLngBounds(
-                new google.maps.LatLng(zimbabweBounds.south, zimbabweBounds.west),
-                new google.maps.LatLng(zimbabweBounds.north, zimbabweBounds.east)
-            );
-            map.fitBounds(bounds, {
-                top: 80,
-                right: 80,
-                bottom: 80,
-                left: 80
+            // Function to calculate responsive padding based on container size
+            function getResponsivePadding() {
+                const container = document.getElementById('map');
+                const width = container.offsetWidth;
+                const height = container.offsetHeight;
+                
+                // Calculate padding as percentage of container size
+                // Larger containers need more absolute padding
+                // Smaller containers need proportional padding
+                const padding = {
+                    top: Math.max(40, height * 0.08),
+                    right: Math.max(40, width * 0.05),
+                    bottom: Math.max(40, height * 0.08),
+                    left: Math.max(40, width * 0.05)
+                };
+                
+                return padding;
+            }
+
+            // Function to fit map to Zimbabwe bounds with responsive padding
+            function fitMapToZimbabwe() {
+                const padding = getResponsivePadding();
+                map.fitBounds(bounds, padding);
+            }
+
+            // Initial fit to Zimbabwe bounds
+            fitMapToZimbabwe();
+
+            // Re-fit after map fully loads (ensures perfect initial display)
+            google.maps.event.addListenerOnce(map, 'idle', function() {
+                fitMapToZimbabwe();
+            });
+
+            // Re-fit on window resize to maintain proper bounds
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                // Debounce resize events to avoid excessive re-renders
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    fitMapToZimbabwe();
+                }, 250);
             });
 
             // Add markers for each province
@@ -423,10 +466,10 @@
             
             console.log(`Loaded ${provinceData.length} provinces and ${incidentsData.length} individual incidents`);
             
-            // Ensure map fits perfectly in container after loading
-            google.maps.event.addListenerOnce(map, 'idle', function() {
-                google.maps.event.trigger(map, 'resize');
-            });
+            // Final fit after all markers are loaded
+            setTimeout(function() {
+                fitMapToZimbabwe();
+            }, 300);
         }
 
         // Load error handler
