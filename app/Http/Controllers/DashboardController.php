@@ -3240,7 +3240,22 @@ class DashboardController extends Controller
 
     public function incidentHotspotMapping()
     {
-        return view('incident_hotspot_mapping_google');
+        // Fetch province data with incident and facility counts
+        $provinceData = \App\Models\Province::withCount('incidents')
+            ->withCount('facilities')
+            ->get()
+            ->map(function($province) {
+                return [
+                    'id' => $province->id,
+                    'name' => $province->name,
+                    'lat' => $province->latitude ?? -19.0154, // Default to Zimbabwe center
+                    'lng' => $province->longitude ?? 29.1549,
+                    'incidents' => $province->incidents_count,
+                    'facilities' => $province->facilities_count,
+                ];
+            });
+
+        return view('incident_hotspot_mapping_google', compact('provinceData'));
     }
 
     public function getProvinces()
@@ -3252,8 +3267,10 @@ class DashboardController extends Controller
                 return [
                     'id' => $province->id,
                     'name' => $province->name,
-                    'incident_count' => $province->incidents_count,
-                    'facility_count' => $province->facilities_count,
+                    'lat' => $province->latitude ?? 0,
+                    'lng' => $province->longitude ?? 0,
+                    'incidents' => $province->incidents_count,
+                    'facilities' => $province->facilities_count,
                 ];
             });
 

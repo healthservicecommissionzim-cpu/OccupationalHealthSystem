@@ -7,10 +7,16 @@
     <title>Incident Hotspot Mapping - HSC OHS</title>
     
     <!-- Favicon -->
+    @if(file_exists(public_path('hsclogo.png')))
     <link rel="icon" type="image/x-icon" href="{{ asset('hsclogo.png') }}">
+    @endif
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Preconnect to Google APIs for better performance -->
+    <link rel="preconnect" href="https://maps.googleapis.com">
+    <link rel="preconnect" href="https://maps.gstatic.com" crossorigin>
     
     <style>
         * {
@@ -416,7 +422,7 @@
         };
     </script>
     
-    <!-- Load Google Maps API with callback -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCa0Bfxbhl60_Xk7wEU1nfdxMGjHqKneGA&libraries=places&callback=initMap" async defer></script>
+    <!-- Load Google Maps API with callback and async loading -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCa0Bfxbhl60_Xk7wEU1nfdxMGjHqKneGA&libraries=places&callback=initMap&loading=async" async defer></script>
 </body>
 </html>

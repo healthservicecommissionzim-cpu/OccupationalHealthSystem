@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Province extends Model
 {
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'latitude', 'longitude'];
 
     public function districts()
     {
@@ -16,5 +16,13 @@ class Province extends Model
     public function facilities()
     {
         return $this->hasMany(Facility::class);
+    }
+
+    public function incidents()
+    {
+        return $this->hasManyThrough(
+            Incident::class,
+            Facility::class
+        );
     }
 }
