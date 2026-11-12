@@ -260,7 +260,7 @@
             // Initialize map centered on Zimbabwe
             map = new Map(document.getElementById('map'), {
                 center: { lat: -19.0154, lng: 29.1549 },
-                zoom: 6.5, // Slightly zoomed out to show full country
+                zoom: 6, // Adjusted for perfect fit
                 mapId: 'HSC_OHS_ZIMBABWE_MAP', // Required for Advanced Markers
                 restriction: {
                     latLngBounds: zimbabweBounds,
@@ -273,16 +273,16 @@
                 gestureHandling: 'greedy', // Allows easier zoom with scroll
             });
 
-            // Fit map to Zimbabwe bounds with padding to show all edges
+            // Fit map to Zimbabwe bounds with more padding for perfect fit
             const bounds = new google.maps.LatLngBounds(
                 new google.maps.LatLng(zimbabweBounds.south, zimbabweBounds.west),
                 new google.maps.LatLng(zimbabweBounds.north, zimbabweBounds.east)
             );
             map.fitBounds(bounds, {
-                top: 50,
-                right: 50,
-                bottom: 50,
-                left: 50
+                top: 80,
+                right: 80,
+                bottom: 80,
+                left: 80
             });
 
             // Add markers for each province
