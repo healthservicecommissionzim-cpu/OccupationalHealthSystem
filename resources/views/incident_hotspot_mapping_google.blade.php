@@ -1,175 +1,304 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Incident Hotspot Mapping · Zimbabwe</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incident Hotspot Mapping - Zimbabwe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { margin: 0; background: #f5f7fa; color: #263149; font: 14px Inter, 'Segoe UI', Arial, sans-serif; }
-        .page { max-width: 1600px; margin: auto; padding: 35px 25px 70px; }
-        
-        /* Header */
-        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
-        .head { display: flex; gap: 14px; }
-        .icon { width: 46px; height: 46px; border-radius: 12px; background: #e9f8f3; color: #079b6d; display: grid; place-items: center; font-size: 22px; }
-        .title { margin: 0; color: #101a31; font-size: 24px; font-weight: 750; }
-        .sub { margin-top: 5px; color: #718096; font-size: 13px; }
-        .back { padding: 10px 17px; border: 1px solid #ccd6df; border-radius: 8px; background: white; color: #101a31; font-weight: 650; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
-        .back:hover { background: #f8fafb; }
-        
-        /* Map Container */
-        .map-container { background: #fff; border: 1px solid #e1e7ee; border-radius: 14px; box-shadow: 0 8px 25px rgba(16,26,49,.06); overflow: hidden; margin-bottom: 22px; position: relative; }
-        #map { height: 650px; width: 100%; }
-        
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 22px; }
-        .stat-card { background: linear-gradient(135deg, #079b6d 0%, #067c58 100%); color: white; padding: 18px; border-radius: 14px; text-align: center; box-shadow: 0 8px 25px rgba(16,26,49,.06); }
-        .stat-card p { font-size: 10px; opacity: 0.9; margin-bottom: 8px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
-        .stat-card strong { font-size: 32px; font-weight: 750; display: block; }
-        
-        /* Search Box */
-        .search-container {
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+            color: #263149;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #079b6d, #067c58);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .header-title h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #101a31;
+            margin-bottom: 5px;
+        }
+
+        .header-title p {
+            font-size: 14px;
+            color: #718096;
+        }
+
+        .back-btn {
+            padding: 12px 20px;
+            background: white;
+            border: 1px solid #e1e7ee;
+            border-radius: 10px;
+            color: #263149;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #f8fafb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .map-wrapper {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 650px;
+        }
+
+        .search-box {
             position: absolute;
-            top: 15px;
-            left: 15px;
+            top: 20px;
+            left: 20px;
             z-index: 10;
             background: white;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            min-width: 350px;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            width: 350px;
         }
-        
-        #searchInput {
+
+        .search-box input {
             width: 100%;
-            padding: 10px 15px;
+            padding: 12px 15px;
             border: 1px solid #e1e7ee;
             border-radius: 8px;
-            font-family: 'Inter', sans-serif;
             font-size: 14px;
+            font-family: 'Inter', sans-serif;
         }
-        
-        /* Legend */
-        .legend {
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #079b6d;
+        }
+
+        .map-legend {
             position: absolute;
             bottom: 20px;
             right: 20px;
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             z-index: 10;
-            font-size: 12px;
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
+
         .legend-title {
+            font-size: 13px;
             font-weight: 700;
-            margin-bottom: 10px;
             color: #101a31;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
+
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 6px;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 12px;
         }
-        .legend-color {
-            width: 20px;
-            height: 20px;
+
+        .legend-dot {
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             border: 2px solid white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
-        
-        /* Responsive */
-        @media (max-width: 900px) {
-            .header { flex-direction: column; gap: 15px; }
-            .back { width: 100%; text-align: center; justify-content: center; }
-            .search-container { min-width: auto; width: calc(100% - 30px); }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
         }
-        @media (max-width: 650px) {
-            .page { padding: 22px 15px; }
-            #map { height: 450px; }
-            .stats-grid { grid-template-columns: 1fr; }
-            .legend { bottom: 10px; right: 10px; font-size: 11px; padding: 10px; }
+
+        .stat-card {
+            background: linear-gradient(135deg, #079b6d 0%, #067c58 100%);
+            padding: 24px;
+            border-radius: 14px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(7, 155, 109, 0.2);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 40px;
+            font-weight: 800;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .back-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            #map {
+                height: 450px;
+            }
+
+            .search-box {
+                width: calc(100% - 40px);
+                left: 20px;
+                right: 20px;
+            }
+
+            .map-legend {
+                bottom: 10px;
+                right: 10px;
+                font-size: 11px;
+                padding: 12px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="page">
+    <div class="container">
         <!-- Header -->
         <div class="header">
-            <div class="head">
-                <div class="icon"><i class="fa-solid fa-map-location-dot"></i></div>
-                <div>
-                    <h1 class="title">Incident Hotspot Mapping</h1>
-                    <div class="sub">Interactive Zimbabwe map showing incident distribution</div>
+            <div class="header-left">
+                <div class="header-icon">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                </div>
+                <div class="header-title">
+                    <h1>Incident Hotspot Mapping</h1>
+                    <p>Interactive Zimbabwe map showing incident distribution</p>
                 </div>
             </div>
-            <a href="{{ route('dashboards.super_admin') }}" class="back"><i class="fa-solid fa-arrow-left"></i> Back</a>
+            <a href="{{ route('dashboards.super_admin') }}" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
         </div>
 
         <!-- Map -->
-        <div class="map-container">
+        <div class="map-wrapper">
             <div id="map"></div>
             
-            <!-- Search Box -->
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Search facilities, districts, or cities in Zimbabwe...">
+            <div class="search-box">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Search for a location in Zimbabwe..."
+                    autocomplete="off"
+                >
             </div>
 
-            <!-- Legend -->
-            <div class="legend">
-                <div class="legend-title"><i class="fa-solid fa-circle-info"></i> Incident Levels</div>
+            <div class="map-legend">
+                <div class="legend-title">
+                    <i class="fa-solid fa-circle-info"></i>
+                    Incident Levels
+                </div>
                 <div class="legend-item">
-                    <div class="legend-color" style="background: #dc2626;"></div>
+                    <div class="legend-dot" style="background: #dc2626;"></div>
                     <span>High (35+ incidents)</span>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-color" style="background: #f59e0b;"></div>
-                    <span>Medium (20-35 incidents)</span>
+                    <div class="legend-dot" style="background: #f59e0b;"></div>
+                    <span>Medium (20-35)</span>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-color" style="background: #10b981;"></div>
-                    <span>Moderate (10-20 incidents)</span>
+                    <div class="legend-dot" style="background: #10b981;"></div>
+                    <span>Moderate (10-20)</span>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-color" style="background: #079b6d;"></div>
-                    <span>Low (&lt;10 incidents)</span>
+                    <div class="legend-dot" style="background: #079b6d;"></div>
+                    <span>Low (&lt;10)</span>
                 </div>
             </div>
         </div>
 
         <!-- Statistics -->
-        <div class="stats-grid">
+        <div class="stats">
             <div class="stat-card">
-                <p>Total Incidents</p>
-                <strong id="total-incidents">206</strong>
+                <div class="stat-label">Total Incidents</div>
+                <div class="stat-value">206</div>
             </div>
             <div class="stat-card">
-                <p>Provinces Covered</p>
-                <strong>10</strong>
+                <div class="stat-label">Provinces</div>
+                <div class="stat-value">10</div>
             </div>
             <div class="stat-card">
-                <p>Active Facilities</p>
-                <strong id="total-facilities">48</strong>
+                <div class="stat-label">Facilities</div>
+                <div class="stat-value">48</div>
             </div>
             <div class="stat-card">
-                <p>Active Cases</p>
-                <strong id="active-cases">89</strong>
+                <div class="stat-label">Active Cases</div>
+                <div class="stat-value">89</div>
             </div>
         </div>
     </div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCa0Bfxbhl60_Xk7wEU1nfdxMGjHqKneGA&libraries=places&callback=initMap" async defer></script>
     <script>
         // Zimbabwe provinces data
-        const zimbabweProvinces = [
+        const provinces = [
             { name: 'Harare', lat: -17.8252, lng: 31.0335, incidents: 45, facilities: 12 },
             { name: 'Bulawayo', lat: -20.1539, lng: 28.5830, incidents: 32, facilities: 8 },
             { name: 'Mashonaland Central', lat: -16.7833, lng: 31.1167, incidents: 18, facilities: 5 },
@@ -184,18 +313,16 @@
 
         let map;
         let markers = [];
-        let autocomplete;
         let searchMarker;
 
-        // Initialize map
         function initMap() {
-            // Center of Zimbabwe
-            const zimbabweCenter = { lat: -19.0154, lng: 29.1549 };
+            // Zimbabwe center
+            const center = { lat: -19.0154, lng: 29.1549 };
 
             // Create map
             map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 7,
-                center: zimbabweCenter,
+                center: center,
                 restriction: {
                     latLngBounds: {
                         north: -15.5,
@@ -208,47 +335,88 @@
                 minZoom: 6,
                 maxZoom: 18,
                 mapTypeControl: false,
+                streetViewControl: false,
+                fullscreenControl: true,
+                zoomControl: true,
                 styles: [
-                    {
-                        featureType: "all",
-                        elementType: "geometry",
-                        stylers: [{ color: "#f5f7fa" }]
-                    },
-                    {
-                        featureType: "water",
-                        elementType: "geometry",
-                        stylers: [{ color: "#c9e6f2" }]
-                    }
+                    { featureType: "all", elementType: "geometry", stylers: [{ color: "#f5f7fa" }] },
+                    { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9e6f2" }] },
+                    { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] }
                 ]
+            });
+
+            // Add province markers
+            provinces.forEach(province => {
+                const color = getColor(province.incidents);
+                const size = Math.min(35, province.incidents / 2 + 12);
+
+                const marker = new google.maps.Marker({
+                    position: { lat: province.lat, lng: province.lng },
+                    map: map,
+                    title: province.name,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: size,
+                        fillColor: color,
+                        fillOpacity: 0.85,
+                        strokeColor: '#ffffff',
+                        strokeWeight: 3
+                    },
+                    label: {
+                        text: String(province.incidents),
+                        color: '#ffffff',
+                        fontSize: '13px',
+                        fontWeight: 'bold'
+                    }
+                });
+
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `
+                        <div style="padding: 12px; font-family: Inter, sans-serif;">
+                            <h3 style="margin: 0 0 10px 0; color: #101a31; font-size: 17px; font-weight: 700;">
+                                ${province.name}
+                            </h3>
+                            <p style="margin: 5px 0; color: #718096; font-size: 14px;">
+                                <i class="fa-solid fa-triangle-exclamation" style="color: #079b6d;"></i>
+                                <strong>${province.incidents}</strong> incidents
+                            </p>
+                            <p style="margin: 5px 0; color: #718096; font-size: 14px;">
+                                <i class="fa-solid fa-hospital" style="color: #079b6d;"></i>
+                                <strong>${province.facilities}</strong> facilities
+                            </p>
+                        </div>
+                    `
+                });
+
+                marker.addListener('click', () => {
+                    infoWindow.open(map, marker);
+                });
+
+                markers.push(marker);
             });
 
             // Setup autocomplete
             const input = document.getElementById('searchInput');
-            const options = {
+            const autocomplete = new google.maps.places.Autocomplete(input, {
                 componentRestrictions: { country: 'zw' },
                 fields: ['geometry', 'name', 'formatted_address']
-            };
-            
-            autocomplete = new google.maps.places.Autocomplete(input, options);
-            autocomplete.bindTo('bounds', map);
-
-            // Search marker
-            searchMarker = new google.maps.Marker({
-                map: map,
-                anchorPoint: new google.maps.Point(0, -29)
             });
 
-            // Handle place selection
-            autocomplete.addListener('place_changed', function() {
-                searchMarker.setVisible(false);
+            autocomplete.bindTo('bounds', map);
+
+            searchMarker = new google.maps.Marker({
+                map: map,
+                visible: false
+            });
+
+            autocomplete.addListener('place_changed', () => {
                 const place = autocomplete.getPlace();
 
                 if (!place.geometry) {
-                    alert("No details available for: '" + place.name + "'");
+                    alert('No location found for: ' + place.name);
                     return;
                 }
 
-                // Zoom to place
                 if (place.geometry.viewport) {
                     map.fitBounds(place.geometry.viewport);
                 } else {
@@ -256,657 +424,35 @@
                     map.setZoom(15);
                 }
 
-                // Show marker
                 searchMarker.setPosition(place.geometry.location);
                 searchMarker.setVisible(true);
 
-                // Info window
-                const infowindow = new google.maps.InfoWindow({
-                    content: `<div style="padding:10px;font-family:Inter,sans-serif;">
-                        <h3 style="margin:0 0 8px 0;color:#101a31;font-size:16px;">
-                            <i class="fa-solid fa-location-dot" style="color:#079b6d;"></i>
-                            ${place.name}
-                        </h3>
-                        <p style="margin:4px 0;color:#718096;font-size:13px;">
-                            ${place.formatted_address || 'Zimbabwe'}
-                        </p>
-                    </div>`
-                });
-                infowindow.open(map, searchMarker);
-            });
-
-            // Add province markers
-            addProvinceMarkers();
-        }
-
-        // Add markers for provinces
-        function addProvinceMarkers() {
-            zimbabweProvinces.forEach(province => {
-                const marker = new google.maps.Marker({
-                    position: { lat: province.lat, lng: province.lng },
-                    map: map,
-                    title: province.name,
-                    icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        scale: Math.min(30, province.incidents / 2 + 10),
-                        fillColor: getColorByIncidents(province.incidents),
-                        fillOpacity: 0.8,
-                        strokeColor: '#ffffff',
-                        strokeWeight: 3
-                    },
-                    label: {
-                        text: province.incidents.toString(),
-                        color: '#ffffff',
-                        fontSize: '14px',
-                        fontWeight: 'bold'
-                    }
-                });
-
-                const infowindow = new google.maps.InfoWindow({
-                    content: `<div style="padding:10px;font-family:Inter,sans-serif;">
-                        <h3 style="margin:0 0 8px 0;color:#101a31;font-size:16px;">${province.name}</h3>
-                        <p style="margin:4px 0;color:#718096;font-size:13px;">
-                            <i class="fa-solid fa-triangle-exclamation" style="color:#079b6d;"></i> 
-                            <strong>${province.incidents}</strong> incidents
-                        </p>
-                        <p style="margin:4px 0;color:#718096;font-size:13px;">
-                            <i class="fa-solid fa-hospital" style="color:#079b6d;"></i> 
-                            <strong>${province.facilities}</strong> facilities
-                        </p>
-                    </div>`
-                });
-
-                marker.addListener('click', function() {
-                    infowindow.open(map, marker);
-                });
-
-                markers.push(marker);
-            });
-        }
-
-        // Get color based on incident count
-        function getColorByIncidents(count) {
-            if (count > 35) return '#dc2626';
-            if (count > 20) return '#f59e0b';
-            if (count > 10) return '#10b981';
-            return '#079b6d';
-        }
-    </script>
-</body>
-</html>
-    
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { margin: 0; background: #f5f7fa; color: #263149; font: 14px Inter, 'Segoe UI', Arial, sans-serif; }
-        .page { max-width: 1600px; margin: auto; padding: 35px 25px 70px; }
-        
-        /* Header */
-        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
-        .head { display: flex; gap: 14px; }
-        .icon { width: 46px; height: 46px; border-radius: 12px; background: #e9f8f3; color: #079b6d; display: grid; place-items: center; font-size: 22px; }
-        .title { margin: 0; color: #101a31; font-size: 24px; font-weight: 750; }
-        .sub { margin-top: 5px; color: #718096; font-size: 13px; }
-        .back { padding: 10px 17px; border: 1px solid #ccd6df; border-radius: 8px; background: white; color: #101a31; font-weight: 650; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
-        .back:hover { background: #f8fafb; }
-        
-        /* Map Container */
-        .map-container { background: #fff; border: 1px solid #e1e7ee; border-radius: 14px; box-shadow: 0 8px 25px rgba(16,26,49,.06); overflow: hidden; margin-bottom: 22px; position: relative; }
-        gmp-map { height: 650px; width: 100%; display: block; }
-        
-        /* Place Picker Styling */
-        .place-picker-container {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            z-index: 10;
-            background: white;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            min-width: 350px;
-        }
-        
-        gmpx-place-picker {
-            width: 100%;
-            font-family: 'Inter', sans-serif;
-        }
-        
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 22px; }
-        .stat-card { background: linear-gradient(135deg, #079b6d 0%, #067c58 100%); color: white; padding: 18px; border-radius: 14px; text-align: center; box-shadow: 0 8px 25px rgba(16,26,49,.06); }
-        .stat-card p { font-size: 10px; opacity: 0.9; margin-bottom: 8px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
-        .stat-card strong { font-size: 32px; font-weight: 750; display: block; }
-        
-        /* Legend */
-        .legend {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            z-index: 10;
-            font-size: 12px;
-        }
-        .legend-title {
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #101a31;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 6px;
-        }
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 2px solid white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        
-        /* Responsive */
-        @media (max-width: 900px) {
-            .header { flex-direction: column; gap: 15px; }
-            .back { width: 100%; text-align: center; justify-content: center; }
-            .place-picker-container { min-width: auto; width: calc(100% - 30px); }
-        }
-        @media (max-width: 650px) {
-            .page { padding: 22px 15px; }
-            gmp-map { height: 450px; }
-            .stats-grid { grid-template-columns: 1fr; }
-            .legend { bottom: 10px; right: 10px; font-size: 11px; padding: 10px; }
-        }
-    </style>
-</head>
-<body>
-    <!-- Google Maps API Loader with Zimbabwe-specific configuration -->
-    <gmpx-api-loader 
-        key="AIzaSyCa0Bfxbhl60_Xk7wEU1nfdxMGjHqKneGA" 
-        solution-channel="GMP_GE_zimbabwe_incidents_v1"
-        region="ZW"
-        language="en">
-    </gmpx-api-loader>
-
-    <div class="page">
-        <!-- Header -->
-        <div class="header">
-            <div class="head">
-                <div class="icon"><i class="fa-solid fa-map-location-dot"></i></div>
-                <div>
-                    <h1 class="title">Incident Hotspot Mapping</h1>
-                    <div class="sub">Interactive Zimbabwe map showing incident distribution</div>
-                </div>
-            </div>
-            <a href="{{ route('dashboards.super_admin') }}" class="back"><i class="fa-solid fa-arrow-left"></i> Back</a>
-        </div>
-
-        <!-- Map with Place Autocomplete -->
-        <div class="map-container">
-            <gmp-map 
-                center="-19.0154,29.1549" 
-                zoom="7" 
-                map-id="ZIMBABWE_INCIDENTS_MAP">
-                
-                <!-- Place Picker Search Box -->
-                <div slot="control-block-start-inline-start" class="place-picker-container">
-                    <gmpx-place-picker 
-                        placeholder="Search facilities, districts, or cities in Zimbabwe"
-                        country="ZW">
-                    </gmpx-place-picker>
-                </div>
-                
-                <!-- Search Result Marker -->
-                <gmp-advanced-marker id="search-marker"></gmp-advanced-marker>
-            </gmp-map>
-
-            <!-- Legend -->
-            <div class="legend">
-                <div class="legend-title"><i class="fa-solid fa-circle-info"></i> Incident Levels</div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #dc2626;"></div>
-                    <span>High (35+ incidents)</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #f59e0b;"></div>
-                    <span>Medium (20-35 incidents)</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #10b981;"></div>
-                    <span>Moderate (10-20 incidents)</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #079b6d;"></div>
-                    <span>Low (&lt;10 incidents)</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Statistics -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <p>Total Incidents</p>
-                <strong id="total-incidents">206</strong>
-            </div>
-            <div class="stat-card">
-                <p>Provinces Covered</p>
-                <strong>10</strong>
-            </div>
-            <div class="stat-card">
-                <p>Active Facilities</p>
-                <strong id="total-facilities">48</strong>
-            </div>
-            <div class="stat-card">
-                <p>Active Cases</p>
-                <strong id="active-cases">89</strong>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Zimbabwe provinces data with coordinates and incident counts
-        const zimbabweProvinces = [
-            { name: 'Harare', lat: -17.8252, lng: 31.0335, incidents: 45, facilities: 12 },
-            { name: 'Bulawayo', lat: -20.1539, lng: 28.5830, incidents: 32, facilities: 8 },
-            { name: 'Mashonaland Central', lat: -16.7833, lng: 31.1167, incidents: 18, facilities: 5 },
-            { name: 'Mashonaland East', lat: -18.0833, lng: 31.5833, incidents: 24, facilities: 6 },
-            { name: 'Mashonaland West', lat: -17.4333, lng: 29.8167, incidents: 15, facilities: 4 },
-            { name: 'Midlands', lat: -19.4500, lng: 29.8167, incidents: 28, facilities: 7 },
-            { name: 'Masvingo', lat: -20.0637, lng: 30.8275, incidents: 22, facilities: 5 },
-            { name: 'Matabeleland North', lat: -18.5000, lng: 27.5000, incidents: 12, facilities: 3 },
-            { name: 'Matabeleland South', lat: -21.0833, lng: 29.0000, incidents: 10, facilities: 2 },
-            { name: 'Manicaland', lat: -18.9667, lng: 32.6667, incidents: 20, facilities: 6 }
-        ];
-
-        // Initialize map when component is ready
-        async function init() {
-            await customElements.whenDefined('gmp-map');
-            
-            const map = document.querySelector('gmp-map');
-            const searchMarker = document.getElementById('search-marker');
-            const placePicker = document.querySelector('gmpx-place-picker');
-            const infowindow = new google.maps.InfoWindow();
-
-            // Configure map options to restrict to Zimbabwe
-            map.innerMap.setOptions({
-                mapTypeControl: false,
-                restriction: {
-                    latLngBounds: {
-                        north: -15.5,
-                        south: -22.5,
-                        west: 25.2,
-                        east: 33.1
-                    },
-                    strictBounds: true
-                },
-                minZoom: 6,
-                maxZoom: 18,
-                styles: [
-                    {
-                        featureType: "all",
-                        elementType: "geometry",
-                        stylers: [{ color: "#f5f7fa" }]
-                    },
-                    {
-                        featureType: "water",
-                        elementType: "geometry",
-                        stylers: [{ color: "#c9e6f2" }]
-                    },
-                    {
-                        featureType: "road",
-                        elementType: "geometry",
-                        stylers: [{ color: "#ffffff" }]
-                    }
-                ]
-            });
-
-            // Handle place selection from autocomplete
-            placePicker.addEventListener('gmpx-placechange', () => {
-                const place = placePicker.value;
-                
-                if (!place.location) {
-                    window.alert("No location found for: '" + place.name + "'");
-                    infowindow.close();
-                    searchMarker.position = null;
-                    return;
-                }
-
-                // Check if place is within Zimbabwe bounds
-                const lat = place.location.lat();
-                const lng = place.location.lng();
-                const isInZimbabwe = (lat >= -22.5 && lat <= -15.5 && lng >= 25.2 && lng <= 33.1);
-
-                if (!isInZimbabwe) {
-                    window.alert("Please search for locations within Zimbabwe only.");
-                    return;
-                }
-
-                // Zoom to the selected place
-                if (place.viewport) {
-                    map.innerMap.fitBounds(place.viewport);
-                } else {
-                    map.center = `${place.location.lat()},${place.location.lng()}`;
-                    map.zoom = 15;
-                }
-
-                // Place marker at searched location
-                searchMarker.position = place.location;
-                
-                // Show info window
-                infowindow.setContent(`
-                    <div style="padding: 10px; font-family: Inter, sans-serif;">
-                        <h3 style="margin: 0 0 8px 0; color: #101a31; font-size: 16px;">
-                            <i class="fa-solid fa-location-dot" style="color: #079b6d;"></i>
-                            ${place.displayName}
-                        </h3>
-                        <p style="margin: 4px 0; color: #718096; font-size: 13px;">
-                            ${place.formattedAddress || 'Zimbabwe'}
-                        </p>
-                        <p style="margin: 8px 0 0 0; color: #8a95a5; font-size: 12px; font-style: italic;">
-                            Click on province markers to see incident data
-                        </p>
-                    </div>
-                `);
-                infowindow.open(map.innerMap, searchMarker);
-            });
-
-            // Add province markers
-            addProvinceMarkers(map);
-        }
-
-        // Add markers for each province
-        async function addProvinceMarkers(map) {
-            const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-            
-            zimbabweProvinces.forEach(province => {
-                // Create custom marker
-                const markerDiv = document.createElement('div');
-                markerDiv.style.cssText = `
-                    background: ${getColorByIncidents(province.incidents)};
-                    width: ${Math.min(60, province.incidents + 20)}px;
-                    height: ${Math.min(60, province.incidents + 20)}px;
-                    border-radius: 50%;
-                    border: 3px solid white;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: white;
-                    font-weight: bold;
-                    font-size: 14px;
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-                    cursor: pointer;
-                    transition: transform 0.2s;
-                `;
-                markerDiv.textContent = province.incidents;
-                markerDiv.onmouseenter = () => { markerDiv.style.transform = 'scale(1.1)'; };
-                markerDiv.onmouseleave = () => { markerDiv.style.transform = 'scale(1)'; };
-
-                const marker = new AdvancedMarkerElement({
-                    map: map.innerMap,
-                    position: { lat: province.lat, lng: province.lng },
-                    content: markerDiv,
-                    title: province.name
-                });
-
-                // Info window for province
-                const infoWindow = new google.maps.InfoWindow({
+                const searchInfo = new google.maps.InfoWindow({
                     content: `
                         <div style="padding: 10px; font-family: Inter, sans-serif;">
-                            <h3 style="margin: 0 0 8px 0; color: #101a31; font-size: 16px;">${province.name}</h3>
-                            <p style="margin: 4px 0; color: #718096; font-size: 13px;">
-                                <i class="fa-solid fa-triangle-exclamation" style="color: #079b6d;"></i> 
-                                <strong>${province.incidents}</strong> incidents
-                            </p>
-                            <p style="margin: 4px 0; color: #718096; font-size: 13px;">
-                                <i class="fa-solid fa-hospital" style="color: #079b6d;"></i> 
-                                <strong>${province.facilities}</strong> facilities
+                            <h4 style="margin: 0 0 8px 0; color: #101a31; font-size: 16px;">
+                                <i class="fa-solid fa-location-dot" style="color: #079b6d;"></i>
+                                ${place.name}
+                            </h4>
+                            <p style="margin: 0; color: #718096; font-size: 13px;">
+                                ${place.formatted_address || 'Zimbabwe'}
                             </p>
                         </div>
                     `
                 });
 
-                markerDiv.addEventListener('click', () => {
-                    infoWindow.open(map.innerMap, marker);
-                });
+                searchInfo.open(map, searchMarker);
             });
         }
 
-        // Get color based on incident count
-        function getColorByIncidents(count) {
-            if (count > 35) return '#dc2626'; // Red
-            if (count > 20) return '#f59e0b'; // Orange
-            if (count > 10) return '#10b981'; // Green-ish
-            return '#079b6d'; // Green
+        function getColor(incidents) {
+            if (incidents > 35) return '#dc2626';
+            if (incidents > 20) return '#f59e0b';
+            if (incidents > 10) return '#10b981';
+            return '#079b6d';
         }
-
-        // Initialize when DOM is ready
-        document.addEventListener('DOMContentLoaded', init);
     </script>
-</body>
-</html>
     
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { margin: 0; background: #f5f7fa; color: #263149; font: 14px Inter, 'Segoe UI', Arial, sans-serif; }
-        .page { max-width: 1600px; margin: auto; padding: 35px 25px 70px; }
-        
-        /* Header */
-        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
-        .head { display: flex; gap: 14px; }
-        .icon { width: 46px; height: 46px; border-radius: 12px; background: #e9f8f3; color: #079b6d; display: grid; place-items: center; font-size: 22px; }
-        .title { margin: 0; color: #101a31; font-size: 24px; font-weight: 750; }
-        .sub { margin-top: 5px; color: #718096; font-size: 13px; }
-        .back { padding: 10px 17px; border: 1px solid #ccd6df; border-radius: 8px; background: white; color: #101a31; font-weight: 650; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
-        .back:hover { background: #f8fafb; }
-        
-        /* Map Container */
-        .map-container { background: #fff; border: 1px solid #e1e7ee; border-radius: 14px; box-shadow: 0 8px 25px rgba(16,26,49,.06); overflow: hidden; margin-bottom: 22px; }
-        #map { height: 650px; width: 100%; }
-        
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 22px; }
-        .stat-card { background: linear-gradient(135deg, #079b6d 0%, #067c58 100%); color: white; padding: 18px; border-radius: 14px; text-align: center; box-shadow: 0 8px 25px rgba(16,26,49,.06); }
-        .stat-card p { font-size: 10px; opacity: 0.9; margin-bottom: 8px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
-        .stat-card strong { font-size: 32px; font-weight: 750; display: block; }
-        
-        /* Responsive */
-        @media (max-width: 900px) {
-            .header { flex-direction: column; gap: 15px; }
-            .back { width: 100%; text-align: center; justify-content: center; }
-        }
-        @media (max-width: 650px) {
-            .page { padding: 22px 15px; }
-            #map { height: 450px; }
-            .stats-grid { grid-template-columns: 1fr; }
-        }
-    </style>
-</head>
-<body>
-    <div class="page">
-        <!-- Header -->
-        <div class="header">
-            <div class="head">
-                <div class="icon"><i class="fa-solid fa-map-location-dot"></i></div>
-                <div>
-                    <h1 class="title">Incident Hotspot Mapping</h1>
-                    <div class="sub">Interactive Zimbabwe map showing incident distribution</div>
-                </div>
-            </div>
-            <a href="{{ route('dashboards.super_admin') }}" class="back"><i class="fa-solid fa-arrow-left"></i> Back</a>
-        </div>
-
-        <!-- Map -->
-        <div class="map-container">
-            <div id="map"></div>
-        </div>
-
-        <!-- Statistics -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <p>Total Incidents</p>
-                <strong id="total-incidents">206</strong>
-            </div>
-            <div class="stat-card">
-                <p>Provinces Covered</p>
-                <strong>10</strong>
-            </div>
-            <div class="stat-card">
-                <p>Active Facilities</p>
-                <strong id="total-facilities">48</strong>
-            </div>
-            <div class="stat-card">
-                <p>Active Cases</p>
-                <strong id="active-cases">89</strong>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let map;
-        let markers = [];
-        
-        // Zimbabwe provinces data with coordinates and incident counts
-        const zimbabweProvinces = [
-            { name: 'Harare', lat: -17.8252, lng: 31.0335, incidents: 45, facilities: 12 },
-            { name: 'Bulawayo', lat: -20.1539, lng: 28.5830, incidents: 32, facilities: 8 },
-            { name: 'Mashonaland Central', lat: -16.7833, lng: 31.1167, incidents: 18, facilities: 5 },
-            { name: 'Mashonaland East', lat: -18.0833, lng: 31.5833, incidents: 24, facilities: 6 },
-            { name: 'Mashonaland West', lat: -17.4333, lng: 29.8167, incidents: 15, facilities: 4 },
-            { name: 'Midlands', lat: -19.4500, lng: 29.8167, incidents: 28, facilities: 7 },
-            { name: 'Masvingo', lat: -20.0637, lng: 30.8275, incidents: 22, facilities: 5 },
-            { name: 'Matabeleland North', lat: -18.5000, lng: 27.5000, incidents: 12, facilities: 3 },
-            { name: 'Matabeleland South', lat: -21.0833, lng: 29.0000, incidents: 10, facilities: 2 },
-            { name: 'Manicaland', lat: -18.9667, lng: 32.6667, incidents: 20, facilities: 6 }
-        ];
-
-        // Zimbabwe boundaries (approximate)
-        const zimbabweBounds = {
-            north: -15.5,
-            south: -22.5,
-            west: 25.2,
-            east: 33.1
-        };
-
-        // Initialize Google Map centered on Zimbabwe
-        async function initMap() {
-            try {
-                // Center of Zimbabwe
-                const zimbabweCenter = { lat: -19.0154, lng: 29.1549 };
-
-                // Request Google Maps libraries
-                const { Map } = await google.maps.importLibrary("maps");
-                const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-
-                // Create map restricted to Zimbabwe
-                map = new Map(document.getElementById("map"), {
-                    zoom: 7,
-                    center: zimbabweCenter,
-                    mapId: "ZIMBABWE_INCIDENTS_MAP",
-                    restriction: {
-                        latLngBounds: {
-                            north: zimbabweBounds.north,
-                            south: zimbabweBounds.south,
-                            west: zimbabweBounds.west,
-                            east: zimbabweBounds.east
-                        },
-                        strictBounds: true
-                    },
-                    minZoom: 6,
-                    maxZoom: 18,
-                    styles: [
-                        {
-                            featureType: "all",
-                            elementType: "geometry",
-                            stylers: [{ color: "#f5f7fa" }]
-                        },
-                        {
-                            featureType: "water",
-                            elementType: "geometry",
-                            stylers: [{ color: "#c9e6f2" }]
-                        },
-                        {
-                            featureType: "road",
-                            elementType: "geometry",
-                            stylers: [{ color: "#ffffff" }]
-                        }
-                    ]
-                });
-
-                // Add markers for each province
-                zimbabweProvinces.forEach(province => {
-                    // Create custom marker content
-                    const markerDiv = document.createElement('div');
-                    markerDiv.style.cssText = `
-                        background: ${getColorByIncidents(province.incidents)};
-                        width: ${Math.min(60, province.incidents + 20)}px;
-                        height: ${Math.min(60, province.incidents + 20)}px;
-                        border-radius: 50%;
-                        border: 3px solid white;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        color: white;
-                        font-weight: bold;
-                        font-size: 14px;
-                        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-                        cursor: pointer;
-                        transition: transform 0.2s;
-                    `;
-                    markerDiv.textContent = province.incidents;
-                    markerDiv.onmouseenter = () => { markerDiv.style.transform = 'scale(1.1)'; };
-                    markerDiv.onmouseleave = () => { markerDiv.style.transform = 'scale(1)'; };
-
-                    const marker = new AdvancedMarkerElement({
-                        map: map,
-                        position: { lat: province.lat, lng: province.lng },
-                        content: markerDiv,
-                        title: province.name
-                    });
-
-                    // Create info window
-                    const infoWindow = new google.maps.InfoWindow({
-                        content: `
-                            <div style="padding: 10px; font-family: Inter, sans-serif;">
-                                <h3 style="margin: 0 0 8px 0; color: #101a31; font-size: 16px;">${province.name}</h3>
-                                <p style="margin: 4px 0; color: #718096; font-size: 13px;">
-                                    <i class="fa-solid fa-triangle-exclamation" style="color: #079b6d;"></i> 
-                                    <strong>${province.incidents}</strong> incidents
-                                </p>
-                                <p style="margin: 4px 0; color: #718096; font-size: 13px;">
-                                    <i class="fa-solid fa-hospital" style="color: #079b6d;"></i> 
-                                    <strong>${province.facilities}</strong> facilities
-                                </p>
-                            </div>
-                        `
-                    });
-
-                    // Add click listener to show info window
-                    markerDiv.addEventListener('click', () => {
-                        infoWindow.open(map, marker);
-                    });
-
-                    markers.push(marker);
-                });
-
-                console.log('Map initialized successfully with ' + markers.length + ' markers');
-            } catch (error) {
-                console.error('Error initializing map:', error);
-            }
-        }
-
-        // Get color based on incident count
-        function getColorByIncidents(count) {
-            if (count > 35) return '#dc2626'; // Red - high incidents
-            if (count > 20) return '#f59e0b'; // Orange - medium incidents
-            if (count > 10) return '#10b981'; // Green-ish - moderate incidents
-            return '#079b6d'; // Green - low incidents
-        }
-
-        // Initialize map when page loads
-        window.addEventListener('load', initMap);
-    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCa0Bfxbhl60_Xk7wEU1nfdxMGjHqKneGA&libraries=places&callback=initMap" async defer></script>
 </body>
 </html>
