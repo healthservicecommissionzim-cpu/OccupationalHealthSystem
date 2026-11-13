@@ -807,15 +807,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const maxValue = Math.max(...values);
             const xAxisMax = Math.ceil(maxValue * 1.1); // Add 10% padding
 
-            // For horizontal bars, we need to format data as { x: value, y: label }
-            const chartData = isHorizontal 
-                ? labels.map((label, index) => ({ x: values[index], y: label }))
-                : values;
-
             const options = {
                 series: [{
                     name: 'Cases',
-                    data: chartData
+                    data: values
                 }],
                 chart: {
                     type: 'bar',
@@ -862,6 +857,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 yaxis: isHorizontal ? {
                     // For HORIZONTAL bars: y-axis shows CATEGORIES (names)
+                    categories: labels,
                     labels: {
                         style: { fontSize: '11px', fontWeight: 500, colors: '#64748b' }
                     }
