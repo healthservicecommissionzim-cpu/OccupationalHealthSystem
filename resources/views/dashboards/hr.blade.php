@@ -803,9 +803,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const isHorizontal = view === 'type';
             const chartHeight = isHorizontal ? Math.max(300, labels.length * 30) : 380;
 
-            // Calculate proper max value for y-axis
+            // Calculate proper max value for x-axis (since horizontal bar)
             const maxValue = Math.max(...values);
-            const yAxisMax = Math.ceil(maxValue * 1.1); // Add 10% padding
+            const xAxisMax = Math.ceil(maxValue * 1.1); // Add 10% padding
 
             const options = {
                 series: [{
@@ -829,31 +829,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 dataLabels: { enabled: false },
                 colors: ['#10b981'],
-                xaxis: {
-                    categories: labels,
-                    labels: {
-                        style: { fontSize: '11px', fontWeight: 500, colors: '#64748b' },
-                        rotate: !isHorizontal && labels.length > 8 ? -45 : 0,
-                        formatter: function(val) {
-                            // For horizontal charts, val is the category name
-                            return val;
-                        }
-                    },
-                    axisBorder: { show: true, color: '#e2e8f0' },
-                    axisTicks: { show: true, color: '#e2e8f0' }
-                },
-                yaxis: {
+                xaxis: isHorizontal ? {
+                    // For HORIZONTAL bars: x-axis shows VALUES (numbers)
                     labels: {
                         style: { fontSize: '11px', fontWeight: 500, colors: '#64748b' },
                         formatter: function(val) {
-                            // Always return integers
-                            return Math.floor(val);
+                            return Math.floor(val); // Show integers
                         }
                     },
                     tickAmount: 5,
                     min: 0,
-                    max: yAxisMax,
-                    forceNiceScale: false
+                    max: xAxisMax,
+                    axisBorder: { show: true, color: '#e2e8f0' },
+                    axisTicks: { show: true, color: '#e2e8f0' }
+                } : {
+                    // For VERTICAL bars: x-axis shows CATEGORIES (names)
+                    categories: labels,
+                    labels: {
+                        style: { fontSize: '11px', fontWeight: 500, colors: '#64748b' },
+                        rotate: labels.length > 8 ? -45 : 0
+                    },
+                    axisBorder: { show: true, color: '#e2e8f0' },
+                    axisTicks: { show: true, color: '#e2e8f0' }
+                },
+                yaxis: isHorizontal ? {
+                    // For HORIZONTAL bars: y-axis shows CATEGORIES (names)
+                    labels: {
+                        style: { fontSize: '11px', fontWeight: 500, colors: '#64748b' }
+                    }
+                } : {
+                    // For VERTICAL bars: y-axis shows VALUES (numbers)
+                    labels: {
+                        style: { fontSize: '11px', fontWeight: 500, colors: '#64748b' },
+                        formatter: function(val) {
+                            return Math.floor(val); // Show integers
+                        }
+                    },
+                    tickAmount: 5
                 },
                 grid: {
                     borderColor: '#e2e8f0',
@@ -869,6 +881,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 legend: { show: false }
             };
+
+            // Add categories for horizontal bars
+            if (isHorizontal) {
+                options.xaxis.categories = labels;
+            }
 
             if (injuryChartInstance) {
                 injuryChartInstance.destroy();
