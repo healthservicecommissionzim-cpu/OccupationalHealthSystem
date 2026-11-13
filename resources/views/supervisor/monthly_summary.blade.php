@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <!-- ApexCharts Library from Cloudflare CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.45.0/apexcharts.min.js" integrity="sha512-vIqZt7ReO939RQssENNbZ+Iu3j0CSsgk41nP3AYabLiIFajyebORlk7rKPjGddmO1FQkbuOb2EVK6rJkiHsmag==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- ApexCharts Library from Cloudflare CDN with correct SRI hash -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.45.0/apexcharts.min.js" integrity="sha512-UOduKRIf9+8H/k0GvYVVZp0SBIzVZ7aGvPstIKic8F172T1x51EMCIVhkaV1NbcFAB6RRKo4mWstwk3nAMUOCA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { margin: 0; background: #f5f7fa; color: #263149; font: 14px Inter, 'Segoe UI', Arial, sans-serif; }
