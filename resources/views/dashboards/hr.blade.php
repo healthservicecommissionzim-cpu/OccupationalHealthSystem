@@ -807,10 +807,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const maxValue = Math.max(...values);
             const xAxisMax = Math.ceil(maxValue * 1.1); // Add 10% padding
 
+            // For horizontal bars, we need to format data as { x: value, y: label }
+            const chartData = isHorizontal 
+                ? labels.map((label, index) => ({ x: values[index], y: label }))
+                : values;
+
             const options = {
                 series: [{
                     name: 'Cases',
-                    data: values
+                    data: chartData
                 }],
                 chart: {
                     type: 'bar',
@@ -831,19 +836,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 colors: ['#10b981'],
                 xaxis: isHorizontal ? {
                     // For HORIZONTAL bars: x-axis shows VALUES (numbers)
+                    type: 'numeric',
                     labels: {
                         style: { fontSize: '11px', fontWeight: 500, colors: '#64748b' },
                         formatter: function(val) {
                             return Math.floor(val); // Show integers
                         }
                     },
-                    tickAmount: 5,
                     min: 0,
                     max: xAxisMax,
+                    tickAmount: Math.min(xAxisMax, 5),
+                    forceNiceScale: true,
                     axisBorder: { show: true, color: '#e2e8f0' },
                     axisTicks: { show: true, color: '#e2e8f0' }
                 } : {
                     // For VERTICAL bars: x-axis shows CATEGORIES (names)
+                    type: 'category',
                     categories: labels,
                     labels: {
                         style: { fontSize: '11px', fontWeight: 500, colors: '#64748b' },
@@ -865,7 +873,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             return Math.floor(val); // Show integers
                         }
                     },
-                    tickAmount: 5
+                    min: 0,
+                    tickAmount: 5,
+                    forceNiceScale: true
                 },
                 grid: {
                     borderColor: '#e2e8f0',
@@ -881,11 +891,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 legend: { show: false }
             };
-
-            // Add categories for horizontal bars
-            if (isHorizontal) {
-                options.xaxis.categories = labels;
-            }
 
             if (injuryChartInstance) {
                 injuryChartInstance.destroy();
