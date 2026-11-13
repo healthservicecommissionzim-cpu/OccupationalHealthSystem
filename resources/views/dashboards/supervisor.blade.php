@@ -49,7 +49,10 @@
 <!-- KPI Cards -->
 <div class="mb-6">
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-        <h2 class="text-sm font-bold text-ink">Performance Metrics</h2>
+        <h2 class="text-sm font-bold text-ink flex items-center gap-2">
+            <i class="fa-solid fa-chart-line text-primary"></i>
+            Performance Metrics
+        </h2>
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 md:gap-3">
             <div class="relative" x-data="{ open: false }">
                 <button @click="open = !open" class="flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 bg-surface border border-line rounded-lg text-xs md:text-sm font-medium text-ink-soft hover:bg-canvas transition-colors shadow-sm w-full sm:w-auto">
