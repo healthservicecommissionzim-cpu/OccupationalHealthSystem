@@ -3,52 +3,155 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>Incidents by Facility · HR</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400,500,600,700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #f1f4f9; padding: 2rem; }
-        .container { max-width: 900px; margin: 0 auto; }
-        .header { margin-bottom: 2rem; display: flex; justify-content: space-between; }
-        .header h1 { font-size: 24px; font-weight: 700; }
-        .back-btn { padding: 8px 14px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px; text-decoration: none; color: #64748b; }
-        .card { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
-        .card-top { height: 4px; background: #1D4533; margin: -1.5rem -1.5rem 1rem -1.5rem; }
-        .card h3 { font-size: 13px; font-weight: 700; margin-bottom: 1rem; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { margin: 0; background: #f5f7fa; color: #263149; font: 14px Inter, 'Segoe UI', Arial, sans-serif; }
+        .page { max-width: 1400px; margin: auto; padding: 35px 25px 70px; }
+        
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
+        .head { display: flex; gap: 14px; }
+        .icon { width: 46px; height: 46px; border-radius: 12px; background: #e9f8f3; color: #079b6d; display: grid; place-items: center; font-size: 22px; }
+        .title { margin: 0; color: #101a31; font-size: 24px; font-weight: 750; }
+        .sub { margin-top: 5px; color: #718096; font-size: 13px; }
+        .case { display: inline-block; margin-top: 9px; padding: 5px 10px; border-radius: 6px; background: #eef2f6; color: #5d687b; font-size: 11px; font-weight: 700; }
+        .back { padding: 10px 17px; border: 1px solid #ccd6df; border-radius: 8px; background: white; color: #101a31; font-weight: 650; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .back:hover { background: #f8fafb; }
+        
+        /* Card */
+        .card { background: #fff; border: 1px solid #e1e7ee; border-radius: 14px; box-shadow: 0 8px 25px rgba(16,26,49,.06); overflow: hidden; margin-bottom: 22px; }
+        .chead { padding: 18px 22px; border-bottom: 1px solid #e1e7ee; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .ctitle { display: flex; align-items: center; gap: 9px; color: #101a31; font-size: 12px; font-weight: 750; text-transform: uppercase; letter-spacing: .55px; }
+        
+        /* Search */
+        .search-box { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: white; border: 1px solid #e4e9ee; border-radius: 8px; min-width: 250px; }
+        .search-box:focus-within { border-color: #079b6d; box-shadow: 0 0 0 3px rgba(7, 155, 109, 0.1); }
+        .search-box input { border: none; background: transparent; outline: none; width: 100%; font-size: 12px; color: #263149; }
+        .search-box input::placeholder { color: #8a95a5; }
+        .search-box i { color: #8a95a5; font-size: 13px; }
+        
+        /* Table */
+        .table-container { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 12px; }
-        th { background: #f8fafc; font-weight: 600; }
+        thead { background: #f8fafb; }
+        th { text-align: left; padding: 12px; font-size: 10px; font-weight: 750; color: #8a95a5; text-transform: uppercase; border-bottom: 2px solid #e4e9ee; letter-spacing: 0.5px; white-space: nowrap; }
+        td { padding: 14px 12px; border-bottom: 1px solid #e4e9ee; color: #4e596c; font-size: 12px; }
+        tbody tr { transition: background-color 0.2s ease; }
+        tbody tr:hover { background: #f8fafb; }
+        tbody tr:last-child td { border-bottom: none; }
+        
+        /* Empty State */
+        .empty-state { text-align: center; padding: 60px 20px; }
+        .empty-state i { font-size: 48px; color: #e4e9ee; display: block; margin-bottom: 12px; }
+        .empty-state p { font-size: 14px; color: #8a95a5; font-weight: 600; }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .chead { flex-direction: column; align-items: stretch; }
+            .search-box { min-width: 100%; }
+        }
+        @media (max-width: 650px) {
+            .page { padding: 22px 15px; }
+            .header { flex-direction: column; gap: 15px; }
+            .back { width: 100%; text-align: center; justify-content: center; }
+            table { font-size: 11px; }
+            th, td { padding: 10px 8px; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="page">
+        <!-- Header -->
         <div class="header">
-            <div><h1><i class="fa-solid fa-building"></i> Incidents by Facility</h1></div>
-            <a href="{{ route('dashboards.hr') }}" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back</a>
+            <div class="head">
+                <div class="icon"><i class="fa-solid fa-hospital"></i></div>
+                <div>
+                    <h1 class="title">Incidents by Facility</h1>
+                    <div class="sub">Facility-wise incident distribution and analysis</div>
+                    <span class="case">Total: {{ count($incidentsByFacility) }} facilities</span>
+                </div>
+            </div>
+            <a href="{{ route('dashboards.hr') }}" class="back"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
         </div>
+
+        <!-- Facility Table -->
         <div class="card">
-            <div class="card-top"></div>
-            <h3>Facility Distribution</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Facility</th>
-                        <th>Cases</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($incidentsByFacility as $facility => $count)
-                    <tr>
-                        <td>{{ $facility }}</td>
-                        <td>{{ $count }}</td>
-                    </tr>
-                    @empty
-                    <tr><td colspan="2">No data available</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
+            <div class="chead">
+                <div class="ctitle"><i class="fa-solid fa-table-list"></i> &nbsp; Facility Distribution</div>
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="tableSearch" placeholder="Search by facility name..." />
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 50px; text-align: center;">#</th>
+                            <th>Facility Name</th>
+                            <th style="width: 150px; text-align: center;">Total Cases</th>
+                            <th style="width: 150px; text-align: center;">Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody id="facilityTable">
+                        @php
+                            $totalCases = is_array($incidentsByFacility) 
+                                ? array_sum($incidentsByFacility) 
+                                : $incidentsByFacility->sum();
+                        @endphp
+                        @forelse($incidentsByFacility as $facility => $count)
+                            <tr>
+                                <td style="text-align: center; font-weight: 700; color: #8a95a5;">{{ $loop->iteration }}</td>
+                                <td style="font-weight: 600; color: #263149;">{{ $facility }}</td>
+                                <td style="text-align: center; font-weight: 700; color: #079b6d; font-size: 14px;">{{ $count }}</td>
+                                <td style="text-align: center;">
+                                    <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
+                                        <div style="flex: 0 0 100px; height: 6px; background: #e4e9ee; border-radius: 3px; overflow: hidden;">
+                                            <div style="width: {{ $totalCases > 0 ? round(($count / $totalCases) * 100, 1) : 0 }}%; height: 100%; background: linear-gradient(90deg, #079b6d 0%, #22c55e 100%);"></div>
+                                        </div>
+                                        <span style="font-weight: 700; color: #4e596c; font-size: 11px;">{{ $totalCases > 0 ? round(($count / $totalCases) * 100, 1) : 0 }}%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4">
+                                    <div class="empty-state">
+                                        <i class="fa-solid fa-inbox"></i>
+                                        <p>No facility data available</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+
+    <script>
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('tableSearch').addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#facilityTable tr');
+                
+                rows.forEach(row => {
+                    // Skip empty state row
+                    if (row.cells.length === 1 && row.cells[0].colSpan > 1) return;
+                    
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                });
+            });
+        });
+    </script>
 </body>
 </html>
