@@ -2732,15 +2732,35 @@ class DashboardController extends Controller
         $user = auth()->user();
         $userDistrict = $user->district_id;
         
-        $incidents = \App\Models\Incident::whereHas('facility', function($q) use ($userDistrict) {
-            $q->where('district_id', $userDistrict);
-        })->with('facility')->get();
+        // Build query based on user role
+        $query = \App\Models\Incident::with('facility');
+        
+        if ($user->hasRole('district_hr')) {
+            // District HR: Show only incidents from their district
+            if ($userDistrict) {
+                $query->whereHas('facility', function($q) use ($userDistrict) {
+                    $q->where('district_id', $userDistrict);
+                });
+            }
+        } elseif ($user->hasRole('hospital_hr')) {
+            // Hospital HR: Show only incidents from their facility
+            if ($user->facility_id) {
+                $query->where('facility_id', $user->facility_id);
+            }
+        } else {
+            // Other HR roles: Show incidents assigned to them OR all if central HR
+            if (!$user->hasRole('central_hr')) {
+                $query->where('routed_to_hr_user_id', $user->id);
+            }
+        }
+
+        $incidents = $query->get();
 
         $incidentsByFacility = $incidents->groupBy(function($incident) {
             return $incident->facility->name ?? 'Unknown';
         })->map(function($group) {
             return $group->count();
-        });
+        })->sortDesc();
 
         $statistics = [
             'total_cases' => $incidents->count(),
@@ -2755,15 +2775,35 @@ class DashboardController extends Controller
         $user = auth()->user();
         $userDistrict = $user->district_id;
         
-        $incidents = \App\Models\Incident::whereHas('facility', function($q) use ($userDistrict) {
-            $q->where('district_id', $userDistrict);
-        })->with('department')->get();
+        // Build query based on user role
+        $query = \App\Models\Incident::with('department');
+        
+        if ($user->hasRole('district_hr')) {
+            // District HR: Show only incidents from their district
+            if ($userDistrict) {
+                $query->whereHas('facility', function($q) use ($userDistrict) {
+                    $q->where('district_id', $userDistrict);
+                });
+            }
+        } elseif ($user->hasRole('hospital_hr')) {
+            // Hospital HR: Show only incidents from their facility
+            if ($user->facility_id) {
+                $query->where('facility_id', $user->facility_id);
+            }
+        } else {
+            // Other HR roles: Show incidents assigned to them OR all if central HR
+            if (!$user->hasRole('central_hr')) {
+                $query->where('routed_to_hr_user_id', $user->id);
+            }
+        }
+
+        $incidents = $query->get();
 
         $incidentsByDepartment = $incidents->groupBy(function($incident) {
             return $incident->department->name ?? 'Unknown';
         })->map(function($group) {
             return $group->count();
-        });
+        })->sortDesc();
 
         $statistics = [
             'total_cases' => $incidents->count(),
