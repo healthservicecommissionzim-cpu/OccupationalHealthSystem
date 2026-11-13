@@ -47,8 +47,8 @@
 
 @section('dashboard_content')
 <!-- KPI Cards -->
-<div class="mb-6">
-    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+<div class="mb-4">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4">
         <h2 class="text-sm font-bold text-ink flex items-center gap-2">
             <i class="fa-solid fa-chart-line text-primary"></i>
             Performance Metrics
