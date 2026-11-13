@@ -256,17 +256,37 @@
         }
 
         function openChartModal(monthStr, monthLabel) {
-            document.getElementById('modalTitle').textContent = monthLabel + ' - Cases by Type';
-            document.getElementById('chartModal').classList.add('active');
+            const modal = document.getElementById('chartModal');
+            const chartElement = document.getElementById('monthlyChart');
+            const modalTitle = document.getElementById('modalTitle');
             
+            // Show modal immediately
+            modal.classList.add('active');
+            
+            // Update title
+            modalTitle.innerHTML = '<i class="fa-solid fa-chart-pie"></i> ' + monthLabel + ' - Cases by Type';
+            
+            // Show loading state
+            chartElement.innerHTML = '<div style="text-align: center; padding: 80px 20px;"><i class="fa-solid fa-spinner fa-spin" style="font-size: 48px; color: #079b6d; margin-bottom: 16px; display: block;"></i><p style="color: #8a95a5; font-weight: 600; margin: 0;">Loading chart data...</p></div>';
+            
+            // Fetch data
             fetch(`/supervisor/incidents/by-month/${monthStr}`)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    renderChart(data);
+                    console.log('Chart data received:', data);
+                    // Small delay to ensure DOM is ready
+                    setTimeout(() => {
+                        renderChart(data);
+                    }, 100);
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('monthlyChart').innerHTML = '<div style="text-align: center; padding: 40px; color: #ef4444;"><i class="fa-solid fa-exclamation-circle" style="font-size: 32px; margin-bottom: 12px;"></i><p>Error loading chart data</p></div>';
+                    console.error('Error loading chart data:', error);
+                    chartElement.innerHTML = '<div style="text-align: center; padding: 60px 20px;"><i class="fa-solid fa-exclamation-circle" style="font-size: 48px; color: #ef4444; margin-bottom: 16px; display: block;"></i><p style="color: #ef4444; font-weight: 700; font-size: 16px; margin: 0 0 8px 0;">Error Loading Chart Data</p><p style="color: #8a95a5; font-size: 13px; margin: 0;">' + error.message + '</p></div>';
                 });
         }
 
@@ -279,7 +299,7 @@
             chartElement.innerHTML = '';
             
             if (!data || data.length === 0) {
-                chartElement.innerHTML = '<div style="text-align: center; padding: 40px; color: #8a95a5;"><i class="fa-solid fa-inbox" style="font-size: 32px; margin-bottom: 12px;"></i><p>No data available</p></div>';
+                chartElement.innerHTML = '<div style="text-align: center; padding: 40px; color: #8a95a5;"><i class="fa-solid fa-inbox" style="font-size: 32px; margin-bottom: 12px; display: block;"></i><p style="margin: 0;">No data available for this month</p></div>';
                 return;
             }
 
@@ -344,7 +364,10 @@
                             fontWeight: 600,
                             colors: '#8a95a5',
                             fontFamily: 'Inter'
-                        }
+                        },
+                        rotate: labels.length > 5 ? -45 : 0,
+                        rotateAlways: false,
+                        hideOverlappingLabels: true
                     }
                 },
                 yaxis: {
@@ -373,7 +396,13 @@
                 grid: {
                     borderColor: '#e4e9ee',
                     strokeDashArray: 3,
-                    xaxis: { lines: { show: false } }
+                    xaxis: { lines: { show: false } },
+                    padding: {
+                        top: 0,
+                        right: 10,
+                        bottom: 0,
+                        left: 10
+                    }
                 },
                 fill: {
                     type: 'gradient',
@@ -416,8 +445,18 @@
                 }
             };
 
-            const chart = new ApexCharts(chartElement, options);
-            chart.render();
+            try {
+                const chart = new ApexCharts(chartElement, options);
+                chart.render().then(() => {
+                    console.log('Chart rendered successfully');
+                }).catch(error => {
+                    console.error('Error rendering chart:', error);
+                    chartElement.innerHTML = '<div style="text-align: center; padding: 40px; color: #ef4444;"><i class="fa-solid fa-exclamation-circle" style="font-size: 32px; margin-bottom: 12px; display: block;"></i><p style="margin: 0;">Error rendering chart</p></div>';
+                });
+            } catch (error) {
+                console.error('ApexCharts error:', error);
+                chartElement.innerHTML = '<div style="text-align: center; padding: 40px; color: #ef4444;"><i class="fa-solid fa-exclamation-circle" style="font-size: 32px; margin-bottom: 12px; display: block;"></i><p style="margin: 0; font-weight: 600;">Chart library error</p><p style="margin-top: 8px; font-size: 11px; color: #8a95a5;">ApexCharts may not be loaded properly</p></div>';
+            }
         }
 
         // Close modal when clicking outside
