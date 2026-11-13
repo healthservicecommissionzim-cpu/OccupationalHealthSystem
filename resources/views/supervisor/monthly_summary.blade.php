@@ -8,7 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.45.0/apexcharts.min.js"></script>
+    <!-- ApexCharts Library from Cloudflare CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.45.0/apexcharts.min.js" integrity="sha512-vIqZt7ReO939RQssENNbZ+Iu3j0CSsgk41nP3AYabLiIFajyebORlk7rKPjGddmO1FQkbuOb2EVK6rJkiHsmag==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { margin: 0; background: #f5f7fa; color: #263149; font: 14px Inter, 'Segoe UI', Arial, sans-serif; }
@@ -224,6 +225,17 @@
     <script>
         // Update summary stats on page load
         function updateSummaryStats() {
+            // Check if summary stat elements exist before updating
+            const totalCasesEl = document.getElementById('totalCases');
+            const totalVerifiedEl = document.getElementById('totalVerified');
+            const totalCompliantEl = document.getElementById('totalCompliant');
+            
+            // Only proceed if elements exist
+            if (!totalCasesEl && !totalVerifiedEl && !totalCompliantEl) {
+                console.log('Summary stat elements not found in DOM - skipping update');
+                return;
+            }
+            
             let totalCases = 0, totalVerified = 0, totalCompliant = 0;
             const rows = document.querySelectorAll('.data-row');
             
@@ -235,9 +247,9 @@
                 }
             });
             
-            document.getElementById('totalCases').textContent = totalCases;
-            document.getElementById('totalVerified').textContent = totalVerified;
-            document.getElementById('totalCompliant').textContent = totalCompliant;
+            if (totalCasesEl) totalCasesEl.textContent = totalCases;
+            if (totalVerifiedEl) totalVerifiedEl.textContent = totalVerified;
+            if (totalCompliantEl) totalCompliantEl.textContent = totalCompliant;
         }
 
         function filterByYear(year) {
@@ -446,6 +458,13 @@
             };
 
             try {
+                // Check if ApexCharts is loaded
+                if (typeof ApexCharts === 'undefined') {
+                    console.error('ApexCharts library not loaded. Check CSP headers and script inclusion.');
+                    chartElement.innerHTML = '<div style="text-align: center; padding: 60px 20px;"><i class="fa-solid fa-exclamation-circle" style="font-size: 48px; color: #ef4444; margin-bottom: 16px; display: block;"></i><p style="color: #ef4444; font-weight: 700; font-size: 16px; margin: 0 0 8px 0;">Chart Library Not Loaded</p><p style="color: #8a95a5; font-size: 13px; margin: 0;">ApexCharts library failed to load. Please check your internet connection or CSP settings.</p></div>';
+                    return;
+                }
+                
                 const chart = new ApexCharts(chartElement, options);
                 chart.render().then(() => {
                     console.log('Chart rendered successfully');
