@@ -774,7 +774,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (view === 'type') {
                 // BY TYPE: horizontal bars
                 labels = Object.keys(injuryTypeData);
-                values = Object.values(injuryTypeData);
+                values = Object.values(injuryTypeData).map(v => parseInt(v, 10));
             } else {
                 // BY FACILITY: aggregate by facility name, vertical columns
                 const facilityCounts = {};
@@ -786,7 +786,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 }
                 labels = Object.keys(facilityCounts);
-                values = Object.values(facilityCounts);
+                values = Object.values(facilityCounts).map(v => parseInt(v, 10));
             }
 
             // Ensure we have data
@@ -802,6 +802,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const isHorizontal = view === 'type';
             const chartHeight = isHorizontal ? Math.max(300, labels.length * 30) : 380;
+
+            // Calculate proper max value for y-axis
+            const maxValue = Math.max(...values);
+            const yAxisMax = Math.ceil(maxValue * 1.1); // Add 10% padding
 
             const options = {
                 series: [{
@@ -829,14 +833,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     categories: labels,
                     labels: {
                         style: { fontSize: '11px', fontWeight: 500, colors: '#64748b' },
-                        rotate: !isHorizontal && labels.length > 8 ? -45 : 0
-                    }
+                        rotate: !isHorizontal && labels.length > 8 ? -45 : 0,
+                        formatter: function(val) {
+                            // For horizontal charts, val is the category name
+                            return val;
+                        }
+                    },
+                    axisBorder: { show: true, color: '#e2e8f0' },
+                    axisTicks: { show: true, color: '#e2e8f0' }
                 },
                 yaxis: {
                     labels: {
                         style: { fontSize: '11px', fontWeight: 500, colors: '#64748b' },
-                        formatter: v => Math.floor(v)
-                    }
+                        formatter: function(val) {
+                            // Always return integers
+                            return Math.floor(val);
+                        }
+                    },
+                    tickAmount: 5,
+                    min: 0,
+                    max: yAxisMax,
+                    forceNiceScale: false
                 },
                 grid: {
                     borderColor: '#e2e8f0',
@@ -844,7 +861,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 tooltip: {
                     theme: 'light',
-                    y: { formatter: v => Math.floor(v) + ' case' + (Math.floor(v) !== 1 ? 's' : '') }
+                    y: { 
+                        formatter: function(val) {
+                            return Math.floor(val) + ' case' + (Math.floor(val) !== 1 ? 's' : '');
+                        }
+                    }
                 },
                 legend: { show: false }
             };
