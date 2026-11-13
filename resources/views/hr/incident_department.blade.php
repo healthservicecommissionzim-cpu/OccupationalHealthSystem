@@ -102,7 +102,9 @@
                     </thead>
                     <tbody id="departmentTable">
                         @php
-                            $totalCases = array_sum($incidentsByDepartment);
+                            $totalCases = is_array($incidentsByDepartment) 
+                                ? array_sum($incidentsByDepartment) 
+                                : $incidentsByDepartment->sum();
                         @endphp
                         @forelse($incidentsByDepartment as $dept => $count)
                             <tr>
