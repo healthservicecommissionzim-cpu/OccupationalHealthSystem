@@ -164,39 +164,61 @@
 @php
     $totalCount = $recentIncidents->count();
 @endphp
-<div class="bg-surface rounded-lg border border-line shadow-sm mb-6 overflow-hidden" x-data="{ expanded: false }">
+<style>
+    /* Match all incidents page styling */
+    .dashboard-incidents-table { background: #fff; border: 1px solid #e1e7ee; border-radius: 14px; box-shadow: 0 8px 25px rgba(16,26,49,.06); overflow: hidden; }
+    .dashboard-incidents-table .table-header { padding: 18px 22px; border-bottom: 1px solid #e1e7ee; display: flex; justify-content: space-between; align-items: center; }
+    .dashboard-incidents-table .table-title { display: flex; align-items: center; gap: 9px; color: #101a31; font-size: 12px; font-weight: 750; text-transform: uppercase; letter-spacing: .55px; }
+    .dashboard-incidents-table .expand-btn { padding: 7px 12px; background: #079b6d; color: white; border-radius: 6px; font-size: 10px; font-weight: 650; transition: all 0.2s; border: none; cursor: pointer; }
+    .dashboard-incidents-table .expand-btn:hover { background: #067c58; transform: translateY(-1px); }
+    .dashboard-incidents-table table { width: 100%; border-collapse: collapse; }
+    .dashboard-incidents-table thead { background: #f8fafb; }
+    .dashboard-incidents-table th { text-align: left; padding: 12px; font-size: 10px; font-weight: 750; color: #8a95a5; text-transform: uppercase; border-bottom: 2px solid #e4e9ee; letter-spacing: 0.5px; white-space: nowrap; }
+    .dashboard-incidents-table td { padding: 14px 12px; border-bottom: 1px solid #e4e9ee; color: #4e596c; font-size: 12px; }
+    .dashboard-incidents-table tbody tr { transition: background-color 0.2s ease; }
+    .dashboard-incidents-table tbody tr:hover { background: #f8fafb; }
+    .dashboard-incidents-table tbody tr:last-child td { border-bottom: none; }
+    .dashboard-incidents-table .ref-number { font-weight: 700; color: #079b6d; font-size: 12px; }
+    .dashboard-incidents-table .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px; font-size: 9px; font-weight: 750; white-space: nowrap; text-transform: uppercase; }
+    .dashboard-incidents-table .status-badge.pending { background: #fff8e7; color: #c67a00; }
+    .dashboard-incidents-table .status-badge.verified { background: #e9f8f3; color: #067c58; }
+    .dashboard-incidents-table .status-badge.escalated { background: #eff6ff; color: #1e40af; }
+    .dashboard-incidents-table .action-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; background: #079b6d; color: white; text-decoration: none; border-radius: 6px; font-size: 10px; font-weight: 650; transition: all 0.2s; }
+    .dashboard-incidents-table .action-btn:hover { background: #067c58; transform: translateY(-1px); }
+    .dashboard-incidents-table .table-footer { padding: 16px 22px; background: white; border-top: 1px solid #e4e9ee; text-align: center; }
+    .dashboard-incidents-table .footer-text { font-size: 11px; color: #8a95a5; font-weight: 600; }
+    .dashboard-incidents-table .count-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; background: #e9f8f3; color: #067c58; font-weight: 700; margin: 0 4px; }
+</style>
+
+<div class="dashboard-incidents-table mb-6" x-data="{ expanded: false }">
     <!-- Header Section -->
-    <div class="p-4 md:p-6 border-b border-line flex items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-            <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-brand-soft flex items-center justify-center">
-                <i class="fa-solid fa-list-check text-brand text-lg"></i>
-            </div>
-            <div>
-                <h3 class="text-sm md:text-base font-semibold text-ink">
-                    Assigned Cases - Pending Review
-                </h3>
-            </div>
+    <div class="table-header">
+        <div class="table-title">
+            <i class="fa-solid fa-table-list"></i>
+            &nbsp; Assigned Cases - Pending Review
+            <span style="display: inline-block; margin-left: 12px; padding: 4px 10px; border-radius: 6px; background: #e9f8f3; color: #067c58; font-size: 10px; font-weight: 700;">{{ $totalCount }}</span>
         </div>
-        <button @click="expanded = !expanded" class="px-3 py-1.5 bg-brand text-surface rounded-lg text-xs font-semibold hover:bg-brand-deep transition-colors whitespace-nowrap">
+        <button @click="expanded = !expanded" class="expand-btn">
+            <i class="fa-solid fa-eye" x-show="!expanded"></i>
+            <i class="fa-solid fa-eye-slash" x-show="expanded"></i>
             <span x-show="!expanded">View All</span>
             <span x-show="expanded">Show Less</span>
         </button>
     </div>
 
-
-
     <!-- Table Section -->
     <div class="overflow-x-auto">
-        <table class="w-full">
+        <table>
             <thead>
-                <tr class="border-b border-line bg-canvas">
-                    <th class="text-left py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider">Reference</th>
-                    <th class="text-left py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider hidden sm:table-cell">Employee</th>
-                    <th class="text-left py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider hidden md:table-cell">Facility</th>
-                    <th class="text-left py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider hidden lg:table-cell">Type</th>
-                    <th class="text-left py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider">Date</th>
-                    <th class="text-center py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider">Status</th>
-                    <th class="text-center py-3 px-4 text-xs font-semibold text-muted uppercase tracking-wider">Action</th>
+                <tr>
+                    <th style="width: 50px; text-align: center;">#</th>
+                    <th>Reference</th>
+                    <th class="hidden sm:table-cell">Employee Name</th>
+                    <th class="hidden md:table-cell">Facility</th>
+                    <th class="hidden lg:table-cell">Incident Type</th>
+                    <th>Date Reported</th>
+                    <th style="text-align: center;">Status</th>
+                    <th style="width: 100px; text-align: center;">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -210,33 +232,33 @@
                         switch($status) {
                             case 'VERIFIED_SUPERVISOR':
                                 $statusLabel = 'Verified';
-                                $statusClass = 'bg-emerald-50 text-emerald-700';
+                                $statusClass = 'verified';
                                 break;
                             case 'ESCALATED_TO_HR':
                                 $statusLabel = 'Escalated';
-                                $statusClass = 'bg-blue-50 text-blue-700';
+                                $statusClass = 'escalated';
                                 break;
                             default:
                                 $statusLabel = 'Pending';
-                                $statusClass = 'bg-amber-50 text-amber-700';
+                                $statusClass = 'pending';
                         }
                     @endphp
-                    <tr x-show="expanded || {{ $displayCount }} <= 5" class="border-b border-line hover:bg-canvas transition-colors">
-                        <td class="py-3 px-4 text-xs md:text-sm font-semibold text-brand">{{ $incident->reference_number }}</td>
-                        <td class="py-3 px-4 text-xs md:text-sm text-ink-soft hidden sm:table-cell">{{ $incident->first_name }} {{ $incident->surname }}</td>
-                        <td class="py-3 px-4 text-xs md:text-sm text-ink-soft hidden md:table-cell truncate">{{ $incident->facility?->name ?? 'N/A' }}</td>
-                        <td class="py-3 px-4 text-xs md:text-sm text-ink-soft hidden lg:table-cell">{{ $incident->incidentType?->name ?? 'Unknown' }}</td>
-                        <td class="py-3 px-4 text-xs md:text-sm text-muted">{{ $incident->created_at->format('M d, Y') }}</td>
-                        <td class="py-3 px-4 text-center">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold {{ $statusClass }}">
-                                <i class="fa-solid fa-circle" style="font-size: 5px;"></i>
+                    <tr x-show="expanded || {{ $displayCount }} <= 5">
+                        <td style="text-align: center; font-weight: 700; color: #8a95a5;">{{ $loop->iteration }}</td>
+                        <td><span class="ref-number">{{ $incident->reference_number }}</span></td>
+                        <td class="hidden sm:table-cell">{{ $incident->first_name }} {{ $incident->surname }}</td>
+                        <td class="hidden md:table-cell">{{ Str::limit($incident->facility?->name ?? 'N/A', 30) }}</td>
+                        <td class="hidden lg:table-cell">{{ $incident->incidentType?->name ?? 'Unknown' }}</td>
+                        <td>{{ $incident->created_at->format('d M Y, H:i') }}</td>
+                        <td style="text-align: center;">
+                            <span class="status-badge {{ $statusClass }}">
+                                <i class="fa-solid fa-circle" style="font-size: 6px;"></i>
                                 {{ $statusLabel }}
                             </span>
                         </td>
-                        <td class="py-3 px-4 text-center">
-                            <a href="{{ route('incidents.supervisor_view', ['incident' => $incident]) }}" class="inline-flex items-center gap-1 px-2 py-1 bg-brand text-surface rounded text-xs font-semibold hover:bg-brand-deep transition-colors">
-                                <i class="fa-solid fa-eye text-xs"></i>
-                                <span class="hidden sm:inline">Review</span>
+                        <td style="text-align: center;">
+                            <a href="{{ route('incidents.supervisor_view', ['incident' => $incident]) }}" class="action-btn">
+                                <i class="fa-solid fa-eye"></i> View
                             </a>
                         </td>
                     </tr>
@@ -246,9 +268,9 @@
     </div>
     
     @if($totalCount > 1)
-    <div class="px-4 md:px-6 py-3 text-center border-t border-line bg-canvas">
-        <p class="text-xs md:text-sm text-muted font-medium">
-            Showing <span x-text="expanded ? '{{ $totalCount }}' : Math.min(5, {{ $totalCount }})"></span> of <span class="inline-block px-2.5 py-0.5 rounded-full bg-brand-soft text-brand font-semibold">{{ $totalCount }}</span> cases
+    <div class="table-footer">
+        <p class="footer-text">
+            Showing <span x-text="expanded ? '{{ $totalCount }}' : Math.min(5, {{ $totalCount }})"></span> of <span class="count-badge">{{ $totalCount }}</span> pending cases
         </p>
     </div>
     @endif
