@@ -1871,7 +1871,6 @@
         </a>
         
         <nav>
-            <a href="https://hsc.org.zw/" target="_blank" rel="noopener noreferrer">Health Service Commission</a>
             <a href="{{ route('resources') }}">Resources</a>
             <a href="{{ route('safety_protocols') }}">Safety Protocols</a>
             <a href="javascript:void(0);" onclick="openSupportModal()">Help Desk</a>
