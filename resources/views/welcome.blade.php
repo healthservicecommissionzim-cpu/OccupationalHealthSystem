@@ -1865,10 +1865,10 @@
 <body>
     <!-- Header -->
     <header>
-        <a href="{{ route('welcome') }}" class="logo">
+        <div class="logo">
             <img src="{{ asset('images/hsc-logo.png') }}" alt="HSC Logo" fetchpriority="high">
-            <span class="logo-text">HEALTH SERVICE COMMISSION</span>
-        </a>
+            <a href="https://hsc.org.zw/" target="_blank" rel="noopener noreferrer" class="logo-text" style="text-decoration: none; color: inherit;">HEALTH SERVICE COMMISSION</a>
+        </div>
         
         <nav>
             <a href="{{ route('resources') }}">Resources</a>
