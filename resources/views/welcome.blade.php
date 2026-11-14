@@ -7,6 +7,11 @@
     <title>HSC-OHS | Occupational Health & Safety Portal - Zimbabwe Healthcare Workers</title>
     <meta name="description" content="Report workplace incidents, exposures, and access occupational health services for Zimbabwe healthcare workers. Secure, fast, and confidential.">
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/hsc-logo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/hsc-logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/hsc-logo.png') }}">
+    
     <!-- DNS Prefetch for faster external resource loading -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
