@@ -227,6 +227,9 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
         Route::get('/compliance/dashboard', [\App\Http\Controllers\HSCController::class, 'complianceDashboard'])->name('compliance.dashboard');
         Route::get('/incident/trends', [\App\Http\Controllers\HSCController::class, 'incidentTrends'])->name('incident.trends');
         Route::get('/risk/assessment', [\App\Http\Controllers\HSCController::class, 'riskAssessment'])->name('risk.assessment');
+        Route::post('/risk/assessment/store', [\App\Http\Controllers\HSCController::class, 'storeRiskAssessment'])->name('risk.assessment.store');
+        Route::post('/risk/assessment/predictive-forecast', [\App\Http\Controllers\HSCController::class, 'getPredictiveForecast'])->name('risk.predictive-forecast');
+        Route::put('/risk/corrective-action/{id}', [\App\Http\Controllers\HSCController::class, 'updateCorrectiveAction'])->name('risk.corrective-action.update');
         Route::get('/workflow/health', [\App\Http\Controllers\HSCController::class, 'workflowHealth'])->name('workflow.health');
 
         // Quality Assurance

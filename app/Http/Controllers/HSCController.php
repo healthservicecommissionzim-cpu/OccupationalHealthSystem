@@ -7,8 +7,14 @@ use App\Models\AuditLog;
 use App\Models\IncidentNotification;
 use App\Models\Facility;
 use App\Models\User;
+use App\Models\RiskAssessment;
+use App\Models\RiskCorrectiveAction;
+use App\Models\RiskAssessmentAuditLog;
+use App\Models\Department;
+use App\Services\RiskPredictiveAnalytics;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HSCController extends Controller
 {
@@ -152,25 +158,223 @@ class HSCController extends Controller
         return view('hsc.monitoring.incident-trends-standalone', compact('trendsByType', 'incidentsByType'));
     }
 
-    public function riskAssessment()
+    public function riskAssessment(Request $request)
     {
-        $highRiskIncidents = Incident::where('created_at', '>=', Carbon::now()->subDays(30))
-            ->where('status', '!=', 'RESOLVED')
-            ->where('status', '!=', 'CLOSED')
-            ->with(['facility', 'incidentType'])
-            ->orderByDesc('created_at')
+        // Filters
+        $facilityId = $request->get('facility_id');
+        $hazardCategory = $request->get('hazard_category');
+        $status = $request->get('status', 'ACTIVE');
+
+        // Build risk assessments query
+        $riskQuery = RiskAssessment::with([
+            'facility.district.province',
+            'department',
+            'correctiveActions',
+            'auditLogs'
+        ]);
+
+        if ($facilityId) {
+            $riskQuery->where('facility_id', $facilityId);
+        }
+
+        if ($hazardCategory) {
+            $riskQuery->where('hazard_category', $hazardCategory);
+        }
+
+        if ($status) {
+            $riskQuery->where('status', $status);
+        }
+
+        $riskAssessments = $riskQuery->orderByDesc('residual_risk_score')
+            ->orderByDesc('predicted_risk_score')
             ->get();
 
-        $escalatedCases = Incident::whereIn('status', [
-            'ESCALATED_TO_DMO',
-            'ESCALATED_TO_MEDICAL_SUPERINTENDENT',
-            'ESCALATED_TO_PMD',
-            'PENDING_PMD_REVIEW'
-        ])->with(['facility', 'incidentType'])
-          ->orderByDesc('escalated_to_hr_at')
-          ->get();
+        // Calculate KPIs
+        $totalAssessments = $riskAssessments->count();
+        $highRiskCount = $riskAssessments->filter(fn($r) => $r->residual_risk_score >= 15)->count();
+        $needsReviewCount = $riskAssessments->filter(fn($r) => $r->status === 'NEEDS_REVIEW' || $r->escalation_warning)->count();
+        $escalationWarnings = $riskAssessments->filter(fn($r) => $r->escalation_warning)->count();
 
-        return view('hsc.monitoring.risk-assessment-standalone', compact('highRiskIncidents', 'escalatedCases'));
+        // Aggregate predictive insights
+        $totalLinkedIncidents30d = $riskAssessments->sum('linked_incidents_30d');
+        $totalLinkedIncidents90d = $riskAssessments->sum('linked_incidents_90d');
+        $totalLinkedDODs = $riskAssessments->sum('linked_dod_total');
+
+        // Get AI-predicted high risks (where AI score > manual score)
+        $aiPredictedHighRisks = $riskAssessments->filter(function($r) {
+            return $r->predicted_risk_score && $r->predicted_risk_score > $r->residual_risk_score;
+        });
+
+        // Build risk matrix data (5x5 grid)
+        $riskMatrix = $this->buildRiskMatrix($riskAssessments);
+
+        // Get pending corrective actions
+        $pendingActions = RiskCorrectiveAction::with(['riskAssessment.facility', 'assignedTo'])
+            ->whereIn('status', ['PENDING', 'IN_PROGRESS'])
+            ->orderBy('due_date')
+            ->take(10)
+            ->get();
+
+        $overdueActions = RiskCorrectiveAction::with(['riskAssessment.facility', 'assignedTo'])
+            ->overdue()
+            ->count();
+
+        // Facilities and departments for filters
+        $facilities = Facility::orderBy('name')->get();
+        $departments = Department::orderBy('name')->get();
+
+        // Hazard categories
+        $hazardCategories = ['Physical', 'Chemical', 'Biological', 'Ergonomic', 'Psychosocial', 'Environmental'];
+
+        return view('hsc.monitoring.risk-assessment-comprehensive', compact(
+            'riskAssessments',
+            'totalAssessments',
+            'highRiskCount',
+            'needsReviewCount',
+            'escalationWarnings',
+            'totalLinkedIncidents30d',
+            'totalLinkedIncidents90d',
+            'totalLinkedDODs',
+            'aiPredictedHighRisks',
+            'riskMatrix',
+            'pendingActions',
+            'overdueActions',
+            'facilities',
+            'departments',
+            'hazardCategories',
+            'selectedFacility' => $facilityId,
+            'selectedCategory' => $hazardCategory,
+            'selectedStatus' => $status
+        ));
+    }
+
+    /**
+     * Build 5x5 risk matrix with current hazards and predictive hotspots
+     */
+    private function buildRiskMatrix($riskAssessments)
+    {
+        $matrix = [];
+        
+        for ($severity = 5; $severity >= 1; $severity--) {
+            for ($likelihood = 1; $likelihood <= 5; $likelihood++) {
+                $score = $likelihood * $severity;
+                
+                // Get assessments in this cell (residual)
+                $residualHazards = $riskAssessments->filter(function($r) use ($likelihood, $severity) {
+                    return $r->residual_likelihood == $likelihood && $r->residual_severity == $severity;
+                })->count();
+
+                // Get predictive hotspots in this cell
+                $predictedHazards = $riskAssessments->filter(function($r) use ($likelihood, $severity) {
+                    return $r->predicted_likelihood == $likelihood && $r->predicted_severity == $severity;
+                })->count();
+
+                $matrix[$severity][$likelihood] = [
+                    'score' => $score,
+                    'residual_count' => $residualHazards,
+                    'predicted_count' => $predictedHazards,
+                    'level' => $this->getRiskLevel($score),
+                ];
+            }
+        }
+
+        return $matrix;
+    }
+
+    private function getRiskLevel($score)
+    {
+        if ($score >= 20) return 'CRITICAL';
+        if ($score >= 15) return 'HIGH';
+        if ($score >= 10) return 'MEDIUM';
+        if ($score >= 5) return 'LOW';
+        return 'VERY_LOW';
+    }
+
+    /**
+     * AJAX: Get predictive forecast for selected location
+     */
+    public function getPredictiveForecast(Request $request)
+    {
+        $analytics = new RiskPredictiveAnalytics();
+        
+        $prediction = $analytics->calculatePredictiveRisk(
+            $request->facility_id,
+            $request->department_id,
+            $request->specific_zone,
+            $request->task_type
+        );
+
+        return response()->json($prediction);
+    }
+
+    /**
+     * Store new risk assessment
+     */
+    public function storeRiskAssessment(Request $request)
+    {
+        $validated = $request->validate([
+            'facility_id' => 'required|exists:facilities,id',
+            'department_id' => 'nullable|exists:departments,id',
+            'specific_zone' => 'nullable|string',
+            'task_type' => 'nullable|string',
+            'equipment_involved' => 'nullable|string',
+            'hazard_description' => 'required|string',
+            'hazard_category' => 'required|string',
+            'inherent_likelihood' => 'required|integer|min:1|max:5',
+            'inherent_severity' => 'required|integer|min:1|max:5',
+            'residual_likelihood' => 'required|integer|min:1|max:5',
+            'residual_severity' => 'required|integer|min:1|max:5',
+            'elimination_controls' => 'nullable|string',
+            'substitution_controls' => 'nullable|string',
+            'engineering_controls' => 'nullable|string',
+            'administrative_controls' => 'nullable|string',
+            'ppe_controls' => 'nullable|string',
+        ]);
+
+        $validated['created_by'] = Auth::id();
+        $validated['last_reviewed_date'] = now();
+        $validated['next_review_date'] = now()->addMonths(6); // Default 6-month review cycle
+
+        $riskAssessment = RiskAssessment::create($validated);
+
+        // Run predictive analytics
+        $analytics = new RiskPredictiveAnalytics();
+        $analytics->updateRiskAssessmentPredictions($riskAssessment);
+
+        // Log creation
+        RiskAssessmentAuditLog::create([
+            'risk_assessment_id' => $riskAssessment->id,
+            'event_type' => 'CREATED',
+            'event_description' => 'Risk assessment created',
+            'user_id' => Auth::id(),
+            'user_name' => Auth::user()->name,
+            'user_role' => Auth::user()->role,
+        ]);
+
+        return redirect()->route('hsc.risk.assessment')
+            ->with('success', 'Risk assessment created successfully. AI predictions generated.');
+    }
+
+    /**
+     * Update corrective action status
+     */
+    public function updateCorrectiveAction(Request $request, $id)
+    {
+        $action = RiskCorrectiveAction::findOrFail($id);
+
+        $validated = $request->validate([
+            'status' => 'required|in:PENDING,IN_PROGRESS,COMPLETED,CANCELLED',
+            'completion_percentage' => 'nullable|integer|min:0|max:100',
+            'progress_notes' => 'nullable|string',
+        ]);
+
+        if ($validated['status'] === 'COMPLETED') {
+            $validated['completed_date'] = now();
+        }
+
+        $action->update($validated);
+
+        return response()->json(['success' => true, 'action' => $action]);
     }
 
     public function workflowHealth()
