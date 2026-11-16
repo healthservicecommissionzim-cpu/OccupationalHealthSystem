@@ -225,7 +225,6 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
 
         // Monitoring & Analytics
         Route::get('/compliance/dashboard', [\App\Http\Controllers\HSCController::class, 'complianceDashboard'])->name('compliance.dashboard');
-        Route::get('/facility/performance', [\App\Http\Controllers\HSCController::class, 'facilityPerformance'])->name('facility.performance');
         Route::get('/incident/trends', [\App\Http\Controllers\HSCController::class, 'incidentTrends'])->name('incident.trends');
         Route::get('/risk/assessment', [\App\Http\Controllers\HSCController::class, 'riskAssessment'])->name('risk.assessment');
         Route::get('/workflow/health', [\App\Http\Controllers\HSCController::class, 'workflowHealth'])->name('workflow.health');

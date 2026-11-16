@@ -41,10 +41,6 @@
             <i class="fa-solid fa-clipboard-check w-4 text-center text-slate-700"></i>
             <span>Compliance Dashboard</span>
         </a>
-        <a href="{{ route('hsc.facility.performance') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.facility.performance') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-building w-4 text-center text-slate-700"></i>
-            <span>Facility Performance</span>
-        </a>
         <a href="{{ route('hsc.incident.trends') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.incident.trends') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
             <i class="fa-solid fa-chart-area w-4 text-center text-slate-700"></i>
             <span>Incident Trends</span>

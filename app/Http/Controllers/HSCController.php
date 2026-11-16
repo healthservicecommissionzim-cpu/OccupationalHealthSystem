@@ -127,45 +127,29 @@ class HSCController extends Controller
         ));
     }
 
-    public function facilityPerformance()
-    {
-        $facilities = Facility::with([
-            'incidents' => function ($q) {
-                $q->where('created_at', '>=', Carbon::now()->subDays(90));
-            }
-        ])->get()->map(function ($facility) {
-            $incidents = $facility->incidents;
-            $total = $incidents->count();
-            $resolved = $incidents->where('status', 'RESOLVED')->count() + $incidents->where('status', 'CLOSED')->count();
-            
-            return [
-                'facility' => $facility,
-                'total_incidents_90days' => $total,
-                'resolved' => $resolved,
-                'pending' => $total - $resolved,
-                'resolution_rate' => $total > 0 ? round(($resolved / $total) * 100, 1) : 0,
-            ];
-        })->sortByDesc('total_incidents_90days');
-
-        return view('hsc.monitoring.facility-performance', compact('facilities'));
-    }
-
     public function incidentTrends()
     {
-        $trends30Days = Incident::selectRaw('DATE(created_at) as date, COUNT(*) as count, incident_type_id')
-            ->where('created_at', '>=', Carbon::now()->subDays(30))
-            ->groupBy('date', 'incident_type_id')
-            ->orderBy('date')
-            ->with('incidentType')
-            ->get();
-
+        // Get incidents by type for the chart (last 90 days)
         $trendsByType = Incident::selectRaw('incident_type_id, COUNT(*) as count')
             ->where('created_at', '>=', Carbon::now()->subDays(90))
             ->groupBy('incident_type_id')
             ->with('incidentType')
+            ->orderByDesc('count')
             ->get();
 
-        return view('hsc.monitoring.incident-trends', compact('trends30Days', 'trendsByType'));
+        // Get detailed incidents grouped by type for the modal
+        $incidentsByType = [];
+        foreach ($trendsByType as $trend) {
+            if ($trend->incident_type_id) {
+                $incidentsByType[$trend->incident_type_id] = Incident::where('incident_type_id', $trend->incident_type_id)
+                    ->where('created_at', '>=', Carbon::now()->subDays(90))
+                    ->with(['facility', 'incidentType'])
+                    ->orderByDesc('created_at')
+                    ->get();
+            }
+        }
+
+        return view('hsc.monitoring.incident-trends-standalone', compact('trendsByType', 'incidentsByType'));
     }
 
     public function riskAssessment()
