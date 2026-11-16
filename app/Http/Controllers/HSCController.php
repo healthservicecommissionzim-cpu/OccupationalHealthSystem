@@ -110,7 +110,7 @@ class HSCController extends Controller
             'incidents as compliant_incidents' => function ($q) {
                 $q->where('compliance_status', 'COMPLIANT');
             }
-        ])->get();
+        ])->orderByDesc('incidents_count')->get();
 
         $complianceTrend = Incident::selectRaw('DATE(created_at) as date, SUM(CASE WHEN compliance_status = \'COMPLIANT\' THEN 1 ELSE 0 END) as compliant, COUNT(*) as total')
             ->where('created_at', '>=', Carbon::now()->subDays(30))
@@ -118,7 +118,7 @@ class HSCController extends Controller
             ->orderBy('date')
             ->get();
 
-        return view('hsc.monitoring.compliance-dashboard', compact(
+        return view('hsc.monitoring.compliance-dashboard-standalone', compact(
             'totalCases', 'compliantCases', 'nonCompliantCases', 'complianceRate',
             'facilityCompliance', 'complianceTrend'
         ));
