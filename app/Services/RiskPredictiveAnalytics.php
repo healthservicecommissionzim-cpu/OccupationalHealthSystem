@@ -48,10 +48,13 @@ class RiskPredictiveAnalytics
             ->count();
 
         // Check for any DODs at this location (all time)
+        // Check status for death-related keywords
         $prediction['linked_dod_total'] = (clone $baseQuery)
-            ->where('incident_severity', 'DOD')
-            ->orWhere('incident_type', 'Death')
-            ->orWhere('status', 'like', '%DEATH%')
+            ->where(function($q) {
+                $q->where('status', 'like', '%DEATH%')
+                  ->orWhere('status', 'like', '%FATAL%')
+                  ->orWhere('status', 'like', '%DOD%');
+            })
             ->count();
 
         // Escalate likelihood based on frequency thresholds
@@ -119,13 +122,21 @@ class RiskPredictiveAnalytics
 
         foreach ($incidents as $incident) {
             // Map incident outcomes to severity
-            if (stripos($incident->status, 'DEATH') !== false || $incident->incident_severity === 'DOD') {
+            $status = strtoupper($incident->status ?? '');
+            $description = strtolower($incident->incident_description ?? '');
+            
+            if (stripos($status, 'DEATH') !== false || 
+                stripos($status, 'FATAL') !== false ||
+                stripos($status, 'DOD') !== false) {
                 $severityScore += 5;
-            } elseif (stripos($incident->incident_description, 'fracture') !== false || 
-                      stripos($incident->incident_description, 'amputation') !== false ||
-                      stripos($incident->incident_description, 'severe') !== false) {
+            } elseif (stripos($description, 'fracture') !== false || 
+                      stripos($description, 'amputation') !== false ||
+                      stripos($description, 'severe') !== false ||
+                      stripos($description, 'major') !== false) {
                 $severityScore += 4;
-            } elseif (stripos($incident->incident_description, 'injury') !== false) {
+            } elseif (stripos($description, 'injury') !== false ||
+                      stripos($description, 'cut') !== false ||
+                      stripos($description, 'burn') !== false) {
                 $severityScore += 3;
             } else {
                 $severityScore += 2;
