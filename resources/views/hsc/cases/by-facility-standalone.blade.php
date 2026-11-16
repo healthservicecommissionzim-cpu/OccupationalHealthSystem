@@ -60,16 +60,6 @@
         
         /* Empty State */
         .empty-state { text-align: center; padding: 60px 20px; }
-        .empty-state i { font-size: 48px; color: #e4e9ee; display: block; margin-bottom: 12px; }
-        .empty-state p { font-size: 14px; color: #8a95a5; font-weight: 600; }
-        
-        /* Stats Summary */
-        .stats-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; padding: 20px; background: #f8fafb; border-bottom: 1px solid #e4e9ee; }
-        .stat-item { text-align: center; }
-        .stat-value { display: block; font-size: 24px; font-weight: 750; color: #101a31; margin-bottom: 5px; }
-        .stat-label { display: block; font-size: 11px; color: #718096; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-        
-        /* Responsive */
         @media (max-width: 900px) {
             .chead { flex-direction: column; align-items: stretch; }
             .filters { flex-direction: column; }
@@ -81,7 +71,6 @@
             .back { width: 100%; text-align: center; justify-content: center; }
             table { font-size: 11px; }
             th, td { padding: 10px 8px; }
-            .stats-summary { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -109,26 +98,6 @@
 
         <!-- Main Card -->
         <div class="card">
-            <!-- Statistics Summary -->
-            <div class="stats-summary">
-                <div class="stat-item">
-                    <span class="stat-value">{{ $facilitySummary->count() }}</span>
-                    <span class="stat-label">Total Records</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">{{ $uniqueFacilities }}</span>
-                    <span class="stat-label">Unique Facilities</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">{{ $totalIncidents }}</span>
-                    <span class="stat-label">Total Cases</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">{{ $years->count() }}</span>
-                    <span class="stat-label">Years Covered</span>
-                </div>
-            </div>
-            
             <!-- Card Header -->
             <div class="chead">
                 <div class="ctitle">
@@ -157,10 +126,10 @@
                             <tr>
                                 <th style="width: 60px; text-align: center;">#</th>
                                 <th style="width: 100px;">YEAR</th>
-                                <th>FACILITY NAME</th>
-                                <th>LOCATION</th>
+                                <th style="width: 250px;">FACILITY NAME</th>
+                                <th style="width: 200px;">LOCATION</th>
                                 <th style="width: 100px; text-align: center;">COUNT</th>
-                                <th>CASE TYPES DESCRIPTION</th>
+                                <th style="width: auto;">CASE TYPES DESCRIPTION</th>
                             </tr>
                         </thead>
                         <tbody>
