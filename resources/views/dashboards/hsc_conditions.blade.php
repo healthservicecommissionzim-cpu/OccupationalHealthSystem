@@ -180,14 +180,7 @@
     <span>My Support Tickets</span>
 </a>
 
-<div class="my-3 border-t border-slate-200"></div>
 
-<!-- Logout -->
-<a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-red-600 hover:bg-red-50 border-l-[3px] border-transparent hover:border-red-300 transition-all font-medium text-[13px]">
-    <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i>
-    <span>Logout</span>
-</a>
-<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
 @endsection
 
 @section('dashboard_content')

@@ -1605,7 +1605,7 @@ class DashboardController extends Controller
 
         // Get recent incidents for the table (last 30 days, excluding resolved/rejected)
         $recentIncidentsTable = \App\Models\Incident::with(['facility', 'incidentType'])
-            ->select('id', 'reference_number', 'first_name', 'surname', 'status', 'created_at', 'facility_id')
+            ->select('id', 'reference_number', 'first_name', 'surname', 'status', 'created_at', 'facility_id', 'incident_type_id')
             ->where('created_at', '>=', now()->subDays(30))
             ->whereNotIn('status', ['RESOLVED', 'CLOSED', 'APPROVED_BY_PMD', 'REJECTED_BY_HR', 'REJECTED', 'REJECTED_SUPERVISOR'])
             ->orderBy('created_at', 'desc')
