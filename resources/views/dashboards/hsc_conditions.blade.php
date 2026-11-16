@@ -464,3 +464,178 @@
 </div>
 @endif
 @endsection
+
+
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
+<script>
+    // Defer chart initialization until DOM is ready and ApexCharts is loaded
+    window.addEventListener('load', function() {
+        let currentChart = null;
+        let currentView = 'province';
+
+        // Data from controller
+        const provinceData = @json($injuryTypesByProvince);
+        const districtData = @json($injuryTypesByDistrict);
+
+        // Function to create/update chart
+        function createChart(view) {
+            const data = view === 'province' ? provinceData : districtData;
+            const labels = data.map(item => view === 'province' ? item.province : item.district);
+            const values = data.map(item => parseInt(item.count, 10));
+            const totalCases = values.reduce((sum, val) => sum + val, 0);
+            
+            // Update total cases label
+            document.getElementById('totalIncidentsLabel').textContent = totalCases + ' Total Cases';
+            
+            const isHorizontal = view === 'province';
+            
+            // Calculate dynamic height for horizontal bar chart based on number of bars
+            let chartHeight = 350;
+            if (isHorizontal) {
+                chartHeight = Math.max(250, labels.length * 25 + 40);
+            }
+            
+            const options = {
+                series: [{
+                    name: 'Number of Cases',
+                    data: values.length > 0 ? values : [0]
+                }],
+                chart: {
+                    type: 'bar',
+                    height: chartHeight,
+                    fontFamily: 'Inter, sans-serif',
+                    toolbar: {
+                        show: true,
+                        tools: {
+                            download: true
+                        }
+                    },
+                    animations: {
+                        enabled: true,
+                        speed: 800,
+                        animateGradually: {
+                            enabled: true,
+                            delay: 150
+                        }
+                    }
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: isHorizontal,
+                        columnWidth: isHorizontal ? undefined : '70%',
+                        barHeight: isHorizontal ? '70%' : undefined,
+                        borderRadius: 4,
+                        dataLabels: {
+                            position: 'top'
+                        }
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val) {
+                        return Math.floor(val);
+                    },
+                    offsetY: isHorizontal ? 0 : -20,
+                    offsetX: isHorizontal ? 5 : 0,
+                    style: {
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        colors: ['#079b6d']
+                    }
+                },
+                xaxis: {
+                    categories: labels,
+                    labels: {
+                        rotate: isHorizontal ? 0 : -45,
+                        rotateAlways: !isHorizontal,
+                        style: {
+                            fontSize: '11px',
+                            fontWeight: '600',
+                            colors: '#64748b'
+                        },
+                        formatter: function(val) {
+                            return isHorizontal ? Math.floor(val) : val;
+                        }
+                    },
+                    axisBorder: {
+                        show: true,
+                        color: '#e2e8f0'
+                    },
+                    axisTicks: {
+                        show: true,
+                        color: '#e2e8f0'
+                    },
+                    type: isHorizontal ? 'numeric' : 'category',
+                    tickAmount: isHorizontal ? 'dataPoints' : undefined
+                },
+                yaxis: {
+                    labels: {
+                        style: {
+                            fontSize: '11px',
+                            fontWeight: '500',
+                            colors: '#64748b'
+                        },
+                        formatter: function(val) {
+                            return Math.floor(val);
+                        }
+                    }
+                },
+                colors: ['#079b6d'],
+                grid: {
+                    show: true,
+                    borderColor: '#f1f5f9',
+                    strokeDashArray: 3,
+                    position: 'back',
+                    xaxis: {
+                        lines: {
+                            show: isHorizontal
+                        }
+                    },
+                    yaxis: {
+                        lines: {
+                            show: !isHorizontal
+                        }
+                    }
+                },
+                tooltip: {
+                    enabled: true,
+                    theme: 'light',
+                    y: {
+                        formatter: function(val) {
+                            return Math.floor(val) + ' cases';
+                        }
+                    },
+                    style: {
+                        fontSize: '12px',
+                        fontFamily: 'Inter, sans-serif'
+                    }
+                }
+            };
+
+            // Destroy previous chart if exists
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            // Create new chart
+            currentChart = new ApexCharts(document.querySelector("#incidentsTypesChart"), options);
+            currentChart.render().then(() => {
+                // Hide skeleton and show chart
+                document.getElementById('chartSkeleton').style.display = 'none';
+                document.getElementById('incidentsTypesChart').style.display = 'block';
+            });
+        }
+
+        // Initialize with province view
+        createChart('province');
+
+        // Handle dropdown change
+        document.getElementById('chartViewToggle').addEventListener('change', function(e) {
+            currentView = e.target.value;
+            createChart(currentView);
+        });
+
+    });
+</script>
+@endsection
