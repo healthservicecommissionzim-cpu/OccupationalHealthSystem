@@ -70,14 +70,14 @@ class HSCController extends Controller
     {
         $facilities = Facility::with(['incidents' => function ($q) {
             $q->with('incidentType', 'department');
-        }])->get();
+        }, 'district'])->get();
 
         $facilityStats = Facility::select('id', 'name')
             ->withCount('incidents')
             ->orderByDesc('incidents_count')
             ->get();
 
-        return view('hsc.cases.by-facility', compact('facilities', 'facilityStats'));
+        return view('hsc.cases.by-facility-standalone', compact('facilities', 'facilityStats'));
     }
 
     public function casesByDate(Request $request)
