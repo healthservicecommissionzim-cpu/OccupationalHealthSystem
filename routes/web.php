@@ -221,10 +221,7 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
     Route::middleware(['role:hsc_conditions', 'permission:view_incidents'])->prefix('hsc')->name('hsc.')->group(function () {
         // Case Management
         Route::get('/cases/all', [\App\Http\Controllers\HSCController::class, 'allCases'])->name('cases.all');
-        Route::get('/cases/by-status', [\App\Http\Controllers\HSCController::class, 'casesByStatus'])->name('cases.by-status');
         Route::get('/cases/by-facility', [\App\Http\Controllers\HSCController::class, 'casesByFacility'])->name('cases.by-facility');
-        Route::get('/cases/by-date', [\App\Http\Controllers\HSCController::class, 'casesByDate'])->name('cases.by-date');
-        Route::get('/cases/search', [\App\Http\Controllers\HSCController::class, 'searchCases'])->name('cases.search');
 
         // Monitoring & Analytics
         Route::get('/compliance/dashboard', [\App\Http\Controllers\HSCController::class, 'complianceDashboard'])->name('compliance.dashboard');

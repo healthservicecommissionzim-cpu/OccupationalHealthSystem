@@ -44,33 +44,6 @@ class HSCController extends Controller
         return view('hsc.cases.all-standalone', compact('incidents', 'statusCounts'));
     }
 
-    public function casesByStatus()
-    {
-        $statuses = [
-            'PENDING_SUPERVISOR_VERIFICATION',
-            'VERIFIED_SUPERVISOR',
-            'ESCALATED_TO_HR',
-            'PENDING_HR_REVIEW',
-            'ESCALATED_TO_DMO',
-            'ESCALATED_TO_MEDICAL_SUPERINTENDENT',
-            'ESCALATED_TO_PMD',
-            'PENDING_PMD_REVIEW',
-            'RESOLVED',
-            'CLOSED',
-            'REJECTED_BY_HR',
-            'REJECTED',
-        ];
-
-        $casesByStatus = [];
-        foreach ($statuses as $status) {
-            $casesByStatus[$status] = Incident::where('status', $status)
-                ->with(['facility', 'incidentType'])
-                ->get();
-        }
-
-        return view('hsc.cases.by-status', compact('casesByStatus', 'statuses'));
-    }
-
     public function casesByFacility()
     {
         // Get aggregated facility summary data
@@ -118,52 +91,6 @@ class HSCController extends Controller
             ->filter(fn($item) => $item['total_cases'] > 0); // Only facilities with cases
 
         return view('hsc.cases.by-facility-standalone', compact('facilitySummary'));
-    }
-
-    public function casesByDate(Request $request)
-    {
-        $startDate = $request->input('start_date', Carbon::now()->subMonths(3)->format('Y-m-d'));
-        $endDate = $request->input('end_date', Carbon::now()->format('Y-m-d'));
-
-        $incidents = Incident::whereBetween('created_at', [$startDate, $endDate])
-            ->with(['facility', 'incidentType'])
-            ->orderByDesc('created_at')
-            ->paginate(50);
-
-        $dateStats = Incident::selectRaw('DATE(created_at) as date, COUNT(*) as count')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get();
-
-        return view('hsc.cases.by-date', compact('incidents', 'dateStats', 'startDate', 'endDate'));
-    }
-
-    public function searchCases(Request $request)
-    {
-        $query = Incident::query();
-
-        if ($request->filled('query')) {
-            $search = $request->query;
-            $query->where(function ($q) use ($search) {
-                $q->where('reference_number', 'ilike', "%{$search}%")
-                  ->orWhere('first_name', 'ilike', "%{$search}%")
-                  ->orWhere('surname', 'ilike', "%{$search}%")
-                  ->orWhere('id_number', 'ilike', "%{$search}%");
-            });
-        }
-
-        if ($request->filled('incident_type')) {
-            $query->where('incident_type_id', $request->incident_type);
-        }
-
-        if ($request->filled('facility')) {
-            $query->where('facility_id', $request->facility);
-        }
-
-        $incidents = $query->with(['facility', 'incidentType', 'department'])->paginate(50);
-
-        return view('hsc.cases.search', compact('incidents'));
     }
 
     // ============================================================================
