@@ -389,30 +389,72 @@
                         $statusClass = '';
                         
                         switch($status) {
+                            case 'PENDING_SUPERVISOR_VERIFICATION':
+                                $statusLabel = 'Awaiting Supervisor Verification';
+                                $statusClass = 'bg-amber-50 text-amber-700';
+                                break;
                             case 'VERIFIED_SUPERVISOR':
-                                $statusLabel = 'Verified';
-                                $statusClass = 'bg-emerald-50 text-emerald-700';
+                                $statusLabel = 'Verified by Supervisor';
+                                $statusClass = 'bg-blue-50 text-blue-700';
+                                break;
+                            case 'REJECTED_SUPERVISOR':
+                                $statusLabel = 'Rejected by Supervisor';
+                                $statusClass = 'bg-red-50 text-red-700';
                                 break;
                             case 'ESCALATED_TO_HR':
+                                $statusLabel = 'Escalated to HR';
+                                $statusClass = 'bg-purple-50 text-purple-700';
+                                break;
                             case 'PENDING_HR_REVIEW':
-                                $statusLabel = 'HR Review';
-                                $statusClass = 'bg-blue-50 text-blue-700';
+                            case 'HR_REVIEW_IN_PROGRESS':
+                                $statusLabel = 'Awaiting HR Review';
+                                $statusClass = 'bg-indigo-50 text-indigo-700';
+                                break;
+                            case 'APPROVED_BY_HR':
+                            case 'HR_APPROVED':
+                                $statusLabel = 'Approved by HR';
+                                $statusClass = 'bg-teal-50 text-teal-700';
+                                break;
+                            case 'REJECTED_BY_HR':
+                            case 'HR_REJECTED':
+                                $statusLabel = 'Rejected by HR';
+                                $statusClass = 'bg-red-50 text-red-700';
+                                break;
+                            case 'ESCALATED_TO_PMD':
+                            case 'PENDING_PMD_REVIEW':
+                                $statusLabel = 'Awaiting PMD Verification';
+                                $statusClass = 'bg-orange-50 text-orange-700';
+                                break;
+                            case 'PMD_REVIEW_IN_PROGRESS':
+                                $statusLabel = 'PMD Review in Progress';
+                                $statusClass = 'bg-yellow-50 text-yellow-700';
+                                break;
+                            case 'APPROVED_BY_PMD':
+                            case 'PMD_APPROVED':
+                                $statusLabel = 'Approved by PMD';
+                                $statusClass = 'bg-emerald-50 text-emerald-700';
+                                break;
+                            case 'REJECTED_BY_PMD':
+                            case 'PMD_REJECTED':
+                                $statusLabel = 'Rejected by PMD';
+                                $statusClass = 'bg-red-50 text-red-700';
+                                break;
+                            case 'PENDING_ACTION':
+                                $statusLabel = 'Pending Action';
+                                $statusClass = 'bg-amber-50 text-amber-700';
                                 break;
                             case 'RESOLVED':
                             case 'CLOSED':
-                            case 'APPROVED_BY_PMD':
                                 $statusLabel = 'Resolved';
                                 $statusClass = 'bg-emerald-50 text-emerald-700';
                                 break;
-                            case 'REJECTED_BY_HR':
                             case 'REJECTED':
-                            case 'REJECTED_SUPERVISOR':
                                 $statusLabel = 'Rejected';
                                 $statusClass = 'bg-red-50 text-red-700';
                                 break;
                             default:
-                                $statusLabel = 'Pending';
-                                $statusClass = 'bg-amber-50 text-amber-700';
+                                $statusLabel = ucwords(str_replace('_', ' ', strtolower($status)));
+                                $statusClass = 'bg-gray-50 text-gray-700';
                         }
                     @endphp
                     <tr x-show="expanded || {{ $displayCount }} <= 5" class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
