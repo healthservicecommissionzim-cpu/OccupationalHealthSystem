@@ -24,18 +24,18 @@
         .back:hover { background: #f8fafb; }
         
         /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 25px; }
-        .stat-card { background: #fff; border: 1px solid #e1e7ee; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(16,26,49,.04); }
-        .stat-label { font-size: 11px; color: #718096; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-        .stat-value { font-size: 32px; font-weight: 800; color: #101a31; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .stat-card { background: #fff; border: 1px solid #e1e7ee; border-radius: 10px; padding: 14px 16px; box-shadow: 0 2px 8px rgba(16,26,49,.03); }
+        .stat-label { font-size: 10px; color: #718096; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+        .stat-value { font-size: 24px; font-weight: 800; color: #101a31; }
         .stat-value.green { color: #067c58; }
         .stat-value.red { color: #dc2626; }
         .stat-value.blue { color: #1e40af; }
         
         /* Progress Cards */
-        .progress-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-bottom: 25px; }
-        .progress-card { background: #fff; border: 1px solid #e1e7ee; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(16,26,49,.04); }
-        .progress-title { font-size: 13px; font-weight: 700; color: #101a31; margin-bottom: 15px; }
+        .progress-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .progress-card { background: #fff; border: 1px solid #e1e7ee; border-radius: 10px; padding: 16px; box-shadow: 0 2px 8px rgba(16,26,49,.03); }
+        .progress-title { font-size: 12px; font-weight: 700; color: #101a31; margin-bottom: 12px; }
         .progress-bar-container { width: 100%; height: 12px; background: #e4e9ee; border-radius: 999px; overflow: hidden; margin-bottom: 10px; }
         .progress-bar { height: 100%; background: linear-gradient(90deg, #067c58, #0a9e6f); border-radius: 999px; transition: width 0.3s ease; }
         .progress-text { font-size: 11px; color: #718096; }
@@ -47,8 +47,15 @@
         
         /* Table Card */
         .card { background: #fff; border: 1px solid #e1e7ee; border-radius: 14px; box-shadow: 0 8px 25px rgba(16,26,49,.06); overflow: hidden; }
-        .card-header { padding: 18px 22px; border-bottom: 1px solid #e1e7ee; background: #f8fafb; }
+        .card-header { padding: 18px 22px; border-bottom: 1px solid #e1e7ee; background: #f8fafb; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
         .card-title { display: flex; align-items: center; gap: 9px; color: #101a31; font-size: 13px; font-weight: 750; text-transform: uppercase; letter-spacing: .55px; }
+        
+        /* Search Box */
+        .search-box { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: white; border: 1px solid #e4e9ee; border-radius: 8px; min-width: 280px; }
+        .search-box:focus-within { border-color: #079b6d; box-shadow: 0 0 0 3px rgba(7, 155, 109, 0.1); }
+        .search-box input { border: none; background: transparent; outline: none; width: 100%; font-size: 12px; color: #263149; }
+        .search-box input::placeholder { color: #8a95a5; }
+        .search-box i { color: #8a95a5; font-size: 13px; }
         
         /* Table */
         .table-container { overflow-x: auto; }
@@ -152,6 +159,10 @@
                     <i class="fa-solid fa-hospital"></i>
                     Facility Compliance Scores
                 </div>
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" placeholder="Search facilities..." />
+                </div>
             </div>
             
             @php
@@ -220,5 +231,25 @@
             @endif
         </div>
     </div>
+
+    <script>
+        // Live search functionality
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const searchValue = this.value.toLowerCase();
+            const table = document.querySelector('table tbody');
+            const rows = table.getElementsByTagName('tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const text = row.textContent.toLowerCase();
+                
+                if (text.includes(searchValue)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        });
+    </script>
 </body>
 </html>

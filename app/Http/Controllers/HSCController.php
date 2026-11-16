@@ -101,7 +101,10 @@ class HSCController extends Controller
     {
         $totalCases = Incident::count();
         $compliantCases = Incident::where('compliance_status', 'COMPLIANT')->count();
-        $nonCompliantCases = Incident::where('compliance_status', 'NON_COMPLIANT')->count();
+        
+        // Non-compliant includes all cases that are NOT marked as compliant
+        // (NULL, NON_COMPLIANT, or any other status)
+        $nonCompliantCases = $totalCases - $compliantCases;
         
         $complianceRate = $totalCases > 0 ? round(($compliantCases / $totalCases) * 100, 1) : 0;
 
