@@ -226,26 +226,26 @@ class HSCController extends Controller
         // Hazard categories
         $hazardCategories = ['Physical', 'Chemical', 'Biological', 'Ergonomic', 'Psychosocial', 'Environmental'];
 
-        return view('hsc.monitoring.risk-assessment-comprehensive', compact(
-            'riskAssessments',
-            'totalAssessments',
-            'highRiskCount',
-            'needsReviewCount',
-            'escalationWarnings',
-            'totalLinkedIncidents30d',
-            'totalLinkedIncidents90d',
-            'totalLinkedDODs',
-            'aiPredictedHighRisks',
-            'riskMatrix',
-            'pendingActions',
-            'overdueActions',
-            'facilities',
-            'departments',
-            'hazardCategories',
+        return view('hsc.monitoring.risk-assessment-comprehensive', [
+            'riskAssessments' => $riskAssessments,
+            'totalAssessments' => $totalAssessments,
+            'highRiskCount' => $highRiskCount,
+            'needsReviewCount' => $needsReviewCount,
+            'escalationWarnings' => $escalationWarnings,
+            'totalLinkedIncidents30d' => $totalLinkedIncidents30d,
+            'totalLinkedIncidents90d' => $totalLinkedIncidents90d,
+            'totalLinkedDODs' => $totalLinkedDODs,
+            'aiPredictedHighRisks' => $aiPredictedHighRisks,
+            'riskMatrix' => $riskMatrix,
+            'pendingActions' => $pendingActions,
+            'overdueActions' => $overdueActions,
+            'facilities' => $facilities,
+            'departments' => $departments,
+            'hazardCategories' => $hazardCategories,
             'selectedFacility' => $facilityId,
             'selectedCategory' => $hazardCategory,
-            'selectedStatus' => $status
-        ));
+            'selectedStatus' => $status,
+        ]);
     }
 
     /**
