@@ -28,21 +28,9 @@
             <i class="fa-solid fa-list-check w-4 text-center text-slate-700"></i>
             <span>All Cases</span>
         </a>
-        <a href="{{ route('hsc.cases.by-status') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-filter w-4 text-center text-slate-700"></i>
-            <span>Cases by Status</span>
-        </a>
         <a href="{{ route('hsc.cases.by-facility') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
             <i class="fa-solid fa-hospital w-4 text-center text-slate-700"></i>
             <span>Cases by Facility</span>
-        </a>
-        <a href="{{ route('hsc.cases.by-date') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-calendar w-4 text-center text-slate-700"></i>
-            <span>Cases by Date Range</span>
-        </a>
-        <a href="{{ route('hsc.cases.search') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-magnifying-glass w-4 text-center text-slate-700"></i>
-            <span>Search Cases</span>
         </a>
     </div>
 </div>
