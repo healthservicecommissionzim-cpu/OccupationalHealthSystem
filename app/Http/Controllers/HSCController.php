@@ -18,7 +18,12 @@ class HSCController extends Controller
 
     public function allCases(Request $request)
     {
-        $query = Incident::with(['facility', 'department', 'incidentType', 'assignedSupervisor']);
+        $query = Incident::with([
+            'facility.district.province', 
+            'department', 
+            'incidentType', 
+            'assignedSupervisor'
+        ]);
         
         if ($request->filled('search')) {
             $search = $request->search;
@@ -33,10 +38,10 @@ class HSCController extends Controller
             $query->where('status', $request->status);
         }
 
-        $incidents = $query->paginate(50);
+        $incidents = $query->orderByDesc('created_at')->paginate(50);
         $statusCounts = Incident::groupBy('status')->selectRaw('status, count(*) as count')->pluck('count', 'status');
 
-        return view('hsc.cases.all', compact('incidents', 'statusCounts'));
+        return view('hsc.cases.all-standalone', compact('incidents', 'statusCounts'));
     }
 
     public function casesByStatus()
