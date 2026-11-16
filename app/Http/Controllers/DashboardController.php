@@ -1583,22 +1583,6 @@ class DashboardController extends Controller
             'total_incidents' => $incidentStats->total_count ?? 0,
         ];
 
-        // Workflow Pipeline Distribution in single query
-        $statusCounts = \DB::table('incidents')
-            ->selectRaw('status, COUNT(*) as count')
-            ->groupBy('status')
-            ->pluck('count', 'status');
-
-        $workflowDistribution = [
-            'PENDING_SUPERVISOR_VERIFICATION' => $statusCounts['PENDING_SUPERVISOR_VERIFICATION'] ?? 0,
-            'VERIFIED_SUPERVISOR' => $statusCounts['VERIFIED_SUPERVISOR'] ?? 0,
-            'HR_REVIEW' => ($statusCounts['ESCALATED_TO_HR'] ?? 0) + ($statusCounts['PENDING_HR_REVIEW'] ?? 0),
-            'CLINICAL_EXECUTIVE_REVIEW' => ($statusCounts['ESCALATED_TO_DMO'] ?? 0) + ($statusCounts['ESCALATED_TO_MEDICAL_SUPERINTENDENT'] ?? 0) + ($statusCounts['ESCALATED_TO_CMO'] ?? 0),
-            'PENDING_PROVINCIAL_APPROVAL' => ($statusCounts['ESCALATED_TO_PMD'] ?? 0) + ($statusCounts['PENDING_PMD_REVIEW'] ?? 0),
-            'PENDING_MEDICAL_BOARD' => $statusCounts['REFERRED_TO_MEDICAL_BOARD'] ?? 0,
-            'MINISTRY_LEVEL' => $statusCounts['REFERRED_TO_MINISTRY_HQ'] ?? 0,
-        ];
-
         // Get incident types data - using province/district grouping (removed facility type)
         $injuryTypesByProvince = \DB::table('incidents')
             ->join('provinces', 'incidents.province_id', '=', 'provinces.id')
@@ -1619,22 +1603,6 @@ class DashboardController extends Controller
             ->limit(20)
             ->get();
 
-        // Recent incidents monthly trend
-        $currentYear = now()->year;
-        $recentIncidents = \DB::table('incidents')
-            ->selectRaw('MONTH(created_at) as month, COUNT(*) as count')
-            ->whereYear('created_at', $currentYear)
-            ->where('created_at', '>=', now()->startOfYear())
-            ->groupBy('month')
-            ->orderBy('month', 'asc')
-            ->get()
-            ->map(function($incident) {
-                return [
-                    'date' => now()->startOfYear()->addMonths($incident->month - 1)->format('Y-m-01'),
-                    'count' => $incident->count
-                ];
-            });
-
         // Get recent incidents for the table (last 30 days, excluding resolved/rejected)
         $recentIncidentsTable = \App\Models\Incident::with(['facility', 'incidentType'])
             ->select('id', 'reference_number', 'first_name', 'surname', 'status', 'created_at', 'facility_id')
@@ -1646,8 +1614,6 @@ class DashboardController extends Controller
 
         $viewData = compact(
             'incidentStatistics',
-            'workflowDistribution',
-            'recentIncidents',
             'injuryTypesByProvince',
             'injuryTypesByDistrict',
             'recentIncidentsTable'
