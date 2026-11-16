@@ -129,63 +129,105 @@
         const trendsByType = @json($trendsByType);
         const incidentsByType = @json($incidentsByType);
         
-        // Chart colors
-        const colors = ['#0d7a3d', '#0f8c47', '#11a052', '#13b45d', '#1bb74d', '#23cc5a', '#2be067', '#33f574', '#3bff7f', '#43ff8a'];
+        // Chart colors - gradient greens
+        const colors = ['#0d7a3d', '#0f8c47', '#11a052', '#13b45d', '#1bb74d', '#23cc5a', '#2be067', '#33f574', '#3bff7f', '#43ff8a', '#4bff95', '#53ffa0', '#5bffab', '#63ffb6', '#6bffc1', '#73ffcc', '#7bffd7', '#83ffe2', '#8bffed', '#53ff2f'];
         
-        // Create Bar Chart
+        // Prepare data for horizontal bar chart
+        const chartLabels = trendsByType.map(item => item.incident_type?.name || 'Unknown');
+        const chartValues = trendsByType.map(item => item.count);
+        const chartData = chartLabels.map((label, index) => ({
+            x: label,
+            y: chartValues[index]
+        }));
+        
+        // Create Horizontal Bar Chart
         const typeChartOptions = {
             series: [{
                 name: 'Incidents',
-                data: trendsByType.map(item => ({
-                    x: item.incident_type?.name || 'Unknown',
-                    y: item.count,
-                    typeId: item.incident_type_id
-                }))
+                data: chartData
             }],
             chart: {
                 type: 'bar',
-                height: 400,
+                height: Math.max(400, trendsByType.length * 50),
                 toolbar: { show: true },
                 events: {
                     dataPointSelection: function(event, chartContext, config) {
-                        const dataPoint = config.w.config.series[0].data[config.dataPointIndex];
-                        showIncidentDetails(dataPoint.x, dataPoint.typeId);
+                        const dataPoint = trendsByType[config.dataPointIndex];
+                        showIncidentDetails(dataPoint.incident_type?.name || 'Unknown', dataPoint.incident_type_id);
                     }
                 }
             },
             plotOptions: {
                 bar: {
-                    borderRadius: 8,
+                    borderRadius: 6,
                     distributed: true,
-                    horizontal: false,
-                    columnWidth: '60%'
+                    horizontal: true,
+                    barHeight: '70%'
                 }
             },
             colors: colors,
             dataLabels: {
                 enabled: true,
+                textAnchor: 'start',
                 style: {
-                    fontSize: '12px',
+                    fontSize: '11px',
                     fontWeight: 'bold',
                     colors: ['#fff']
+                },
+                formatter: function (val) {
+                    return val;
+                },
+                offsetX: 10
+            },
+            grid: {
+                borderColor: '#e4e9ee',
+                strokeDashArray: 4,
+                xaxis: {
+                    lines: {
+                        show: true
+                    }
+                },
+                yaxis: {
+                    lines: {
+                        show: false
+                    }
+                },
+                padding: {
+                    top: 0,
+                    right: 20,
+                    bottom: 0,
+                    left: 10
                 }
             },
             xaxis: {
-                categories: trendsByType.map(item => item.incident_type?.name || 'Unknown'),
+                type: 'numeric',
                 labels: {
                     style: {
                         fontSize: '11px',
-                        fontWeight: 600
+                        fontWeight: 600,
+                        colors: '#718096'
+                    },
+                    formatter: function(val) {
+                        return Math.floor(val);
                     }
+                },
+                axisBorder: {
+                    show: true,
+                    color: '#e4e9ee'
+                },
+                axisTicks: {
+                    show: true,
+                    color: '#e4e9ee'
                 }
             },
             yaxis: {
-                title: {
-                    text: 'Number of Incidents',
+                labels: {
                     style: {
-                        fontSize: '12px',
-                        fontWeight: 600
-                    }
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        colors: '#4e596c'
+                    },
+                    maxWidth: 200
                 }
             },
             title: {
@@ -193,18 +235,36 @@
                 align: 'center',
                 style: {
                     fontSize: '12px',
-                    color: '#718096'
+                    color: '#718096',
+                    fontWeight: 600
                 }
             },
             tooltip: {
+                theme: 'light',
                 y: {
                     formatter: function(val) {
                         return val + " incidents"
                     }
+                },
+                style: {
+                    fontSize: '12px'
                 }
             },
             legend: {
                 show: false
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shade: 'light',
+                    type: 'vertical',
+                    shadeIntensity: 0.2,
+                    gradientToColors: undefined,
+                    inverseColors: false,
+                    opacityFrom: 0.95,
+                    opacityTo: 0.85,
+                    stops: [0, 100]
+                }
             }
         };
 
