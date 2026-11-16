@@ -328,20 +328,45 @@
 @php
     $totalCount = $recentIncidentsTable->count();
 @endphp
-<div class="bg-white rounded-lg border border-slate-200 shadow-sm mb-6 overflow-hidden mt-6 md:mt-8" x-data="{ expanded: false }">
+<style>
+    /* Match supervisor dashboard styling */
+    .dashboard-incidents-table { background: #fff; border: 1px solid #e1e7ee; border-radius: 14px; box-shadow: 0 8px 25px rgba(16,26,49,.06); overflow: hidden; margin-bottom: 24px; margin-top: 32px; }
+    .dashboard-incidents-table .table-header { padding: 18px 22px; border-bottom: 1px solid #e1e7ee; display: flex; justify-content: space-between; align-items: center; }
+    .dashboard-incidents-table .table-title { display: flex; align-items: center; gap: 9px; color: #101a31; font-size: 12px; font-weight: 750; text-transform: uppercase; letter-spacing: .55px; }
+    .dashboard-incidents-table .expand-btn { padding: 7px 12px; background: #079b6d; color: white; border-radius: 6px; font-size: 10px; font-weight: 650; transition: all 0.2s; border: none; cursor: pointer; }
+    .dashboard-incidents-table .expand-btn:hover { background: #067c58; transform: translateY(-1px); }
+    .dashboard-incidents-table table { width: 100%; border-collapse: collapse; }
+    .dashboard-incidents-table thead { background: #f8fafb; }
+    .dashboard-incidents-table th { text-align: left; padding: 12px; font-size: 10px; font-weight: 750; color: #8a95a5; text-transform: uppercase; border-bottom: 2px solid #e4e9ee; letter-spacing: 0.5px; white-space: nowrap; }
+    .dashboard-incidents-table td { padding: 14px 12px; border-bottom: 1px solid #e4e9ee; color: #4e596c; font-size: 12px; }
+    .dashboard-incidents-table tbody tr { transition: background-color 0.2s ease; }
+    .dashboard-incidents-table tbody tr:hover { background: #f8fafb; }
+    .dashboard-incidents-table tbody tr:last-child td { border-bottom: none; }
+    .dashboard-incidents-table .ref-number { font-weight: 700; color: #079b6d; font-size: 12px; }
+    .dashboard-incidents-table .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px; font-size: 9px; font-weight: 750; white-space: nowrap; text-transform: uppercase; }
+    .dashboard-incidents-table .status-badge.pending { background: #fff8e7; color: #c67a00; }
+    .dashboard-incidents-table .status-badge.verified { background: #e9f8f3; color: #067c58; }
+    .dashboard-incidents-table .status-badge.escalated { background: #eff6ff; color: #1e40af; }
+    .dashboard-incidents-table .status-badge.rejected { background: #fee; color: #991b1b; }
+    .dashboard-incidents-table .status-badge.approved { background: #d1fae5; color: #065f46; }
+    .dashboard-incidents-table .action-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; background: #079b6d; color: white; text-decoration: none; border-radius: 6px; font-size: 10px; font-weight: 650; transition: all 0.2s; }
+    .dashboard-incidents-table .action-btn:hover { background: #067c58; transform: translateY(-1px); }
+    .dashboard-incidents-table .table-footer { padding: 16px 22px; background: white; border-top: 1px solid #e4e9ee; text-align: center; }
+    .dashboard-incidents-table .footer-text { font-size: 11px; color: #8a95a5; font-weight: 600; }
+    .dashboard-incidents-table .count-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; background: #e9f8f3; color: #067c58; font-weight: 700; margin: 0 4px; }
+</style>
+
+<div class="dashboard-incidents-table" x-data="{ expanded: false }">
     <!-- Header Section -->
-    <div class="p-4 md:p-6 border-b border-slate-200 flex items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-            <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-brand bg-opacity-10 flex items-center justify-center">
-                <i class="fa-solid fa-list-check text-brand text-lg"></i>
-            </div>
-            <div>
-                <h3 class="text-sm md:text-base font-semibold text-navy">
-                    Recent Incidents
-                </h3>
-            </div>
+    <div class="table-header">
+        <div class="table-title">
+            <i class="fa-solid fa-table-list"></i>
+            &nbsp; Recent Incidents
+            <span style="display: inline-block; margin-left: 12px; padding: 4px 10px; border-radius: 6px; background: #e9f8f3; color: #067c58; font-size: 10px; font-weight: 700;">{{ $totalCount }}</span>
         </div>
-        <button @click="expanded = !expanded" class="px-3 py-1.5 bg-brand text-white rounded-lg text-xs font-semibold hover:bg-brand-dark transition-colors whitespace-nowrap">
+        <button @click="expanded = !expanded" class="expand-btn">
+            <i class="fa-solid fa-eye" x-show="!expanded"></i>
+            <i class="fa-solid fa-eye-slash" x-show="expanded"></i>
             <span x-show="!expanded">View All</span>
             <span x-show="expanded">Show Less</span>
         </button>
@@ -349,16 +374,17 @@
 
     <!-- Table Section -->
     <div class="overflow-x-auto">
-        <table class="w-full">
+        <table>
             <thead>
-                <tr class="border-b border-slate-200 bg-slate-50">
-                    <th class="text-left py-3 px-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">Reference</th>
-                    <th class="text-left py-3 px-4 text-xs font-semibold text-slate-600 uppercase tracking-wider hidden sm:table-cell">Employee</th>
-                    <th class="text-left py-3 px-4 text-xs font-semibold text-slate-600 uppercase tracking-wider hidden md:table-cell">Facility</th>
-                    <th class="text-left py-3 px-4 text-xs font-semibold text-slate-600 uppercase tracking-wider hidden lg:table-cell">Type</th>
-                    <th class="text-left py-3 px-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">Date</th>
-                    <th class="text-center py-3 px-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">Status</th>
-                    <th class="text-center py-3 px-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">Action</th>
+                <tr>
+                    <th style="width: 50px; text-align: center;">#</th>
+                    <th>Reference</th>
+                    <th class="hidden sm:table-cell">Employee Name</th>
+                    <th class="hidden md:table-cell">Facility</th>
+                    <th class="hidden lg:table-cell">Incident Type</th>
+                    <th>Date Reported</th>
+                    <th style="text-align: center;">Status</th>
+                    <th style="width: 100px; text-align: center;">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -371,89 +397,55 @@
                         
                         switch($status) {
                             case 'PENDING_SUPERVISOR_VERIFICATION':
-                                $statusLabel = 'Awaiting Supervisor Verification';
-                                $statusClass = 'bg-amber-50 text-amber-700';
+                                $statusLabel = 'Pending';
+                                $statusClass = 'pending';
                                 break;
                             case 'VERIFIED_SUPERVISOR':
-                                $statusLabel = 'Verified by Supervisor';
-                                $statusClass = 'bg-blue-50 text-blue-700';
+                                $statusLabel = 'Verified';
+                                $statusClass = 'verified';
                                 break;
                             case 'REJECTED_SUPERVISOR':
-                                $statusLabel = 'Rejected by Supervisor';
-                                $statusClass = 'bg-red-50 text-red-700';
-                                break;
-                            case 'ESCALATED_TO_HR':
-                                $statusLabel = 'Escalated to HR';
-                                $statusClass = 'bg-purple-50 text-purple-700';
-                                break;
-                            case 'PENDING_HR_REVIEW':
-                            case 'HR_REVIEW_IN_PROGRESS':
-                                $statusLabel = 'Awaiting HR Review';
-                                $statusClass = 'bg-indigo-50 text-indigo-700';
-                                break;
-                            case 'APPROVED_BY_HR':
-                            case 'HR_APPROVED':
-                                $statusLabel = 'Approved by HR';
-                                $statusClass = 'bg-teal-50 text-teal-700';
-                                break;
                             case 'REJECTED_BY_HR':
-                            case 'HR_REJECTED':
-                                $statusLabel = 'Rejected by HR';
-                                $statusClass = 'bg-red-50 text-red-700';
-                                break;
-                            case 'ESCALATED_TO_PMD':
-                            case 'PENDING_PMD_REVIEW':
-                                $statusLabel = 'Awaiting PMD Verification';
-                                $statusClass = 'bg-orange-50 text-orange-700';
-                                break;
-                            case 'PMD_REVIEW_IN_PROGRESS':
-                                $statusLabel = 'PMD Review in Progress';
-                                $statusClass = 'bg-yellow-50 text-yellow-700';
-                                break;
-                            case 'APPROVED_BY_PMD':
-                            case 'PMD_APPROVED':
-                                $statusLabel = 'Approved by PMD';
-                                $statusClass = 'bg-emerald-50 text-emerald-700';
-                                break;
                             case 'REJECTED_BY_PMD':
-                            case 'PMD_REJECTED':
-                                $statusLabel = 'Rejected by PMD';
-                                $statusClass = 'bg-red-50 text-red-700';
-                                break;
-                            case 'PENDING_ACTION':
-                                $statusLabel = 'Pending Action';
-                                $statusClass = 'bg-amber-50 text-amber-700';
-                                break;
-                            case 'RESOLVED':
-                            case 'CLOSED':
-                                $statusLabel = 'Resolved';
-                                $statusClass = 'bg-emerald-50 text-emerald-700';
-                                break;
                             case 'REJECTED':
                                 $statusLabel = 'Rejected';
-                                $statusClass = 'bg-red-50 text-red-700';
+                                $statusClass = 'rejected';
+                                break;
+                            case 'ESCALATED_TO_HR':
+                            case 'PENDING_HR_REVIEW':
+                            case 'ESCALATED_TO_PMD':
+                            case 'PENDING_PMD_REVIEW':
+                                $statusLabel = 'Escalated';
+                                $statusClass = 'escalated';
+                                break;
+                            case 'APPROVED_BY_HR':
+                            case 'APPROVED_BY_PMD':
+                            case 'RESOLVED':
+                            case 'CLOSED':
+                                $statusLabel = 'Approved';
+                                $statusClass = 'approved';
                                 break;
                             default:
-                                $statusLabel = ucwords(str_replace('_', ' ', strtolower($status)));
-                                $statusClass = 'bg-gray-50 text-gray-700';
+                                $statusLabel = 'Pending';
+                                $statusClass = 'pending';
                         }
                     @endphp
-                    <tr x-show="expanded || {{ $displayCount }} <= 5" class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
-                        <td class="py-3 px-4 text-xs md:text-sm font-semibold text-brand">{{ $incident->reference_number }}</td>
-                        <td class="py-3 px-4 text-xs md:text-sm text-slate-700 hidden sm:table-cell">{{ $incident->first_name }} {{ $incident->surname }}</td>
-                        <td class="py-3 px-4 text-xs md:text-sm text-slate-700 hidden md:table-cell truncate">{{ $incident->facility?->name ?? 'N/A' }}</td>
-                        <td class="py-3 px-4 text-xs md:text-sm text-slate-700 hidden lg:table-cell">{{ $incident->incidentType?->name ?? 'Unknown' }}</td>
-                        <td class="py-3 px-4 text-xs md:text-sm text-slate-500">{{ $incident->created_at->format('M d, Y') }}</td>
-                        <td class="py-3 px-4 text-center">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold {{ $statusClass }}">
-                                <i class="fa-solid fa-circle" style="font-size: 5px;"></i>
+                    <tr x-show="expanded || {{ $displayCount }} <= 5">
+                        <td style="text-align: center; font-weight: 700; color: #8a95a5;">{{ $loop->iteration }}</td>
+                        <td><span class="ref-number">{{ $incident->reference_number }}</span></td>
+                        <td class="hidden sm:table-cell">{{ $incident->first_name }} {{ $incident->surname }}</td>
+                        <td class="hidden md:table-cell">{{ Str::limit($incident->facility?->name ?? 'N/A', 30) }}</td>
+                        <td class="hidden lg:table-cell">{{ $incident->incidentType?->name ?? 'Unknown' }}</td>
+                        <td>{{ $incident->created_at->format('d M Y, H:i') }}</td>
+                        <td style="text-align: center;">
+                            <span class="status-badge {{ $statusClass }}">
+                                <i class="fa-solid fa-circle" style="font-size: 6px;"></i>
                                 {{ $statusLabel }}
                             </span>
                         </td>
-                        <td class="py-3 px-4 text-center">
-                            <a href="{{ route('incidents.hsc_view', ['incident' => $incident]) }}" class="inline-flex items-center gap-1 px-2 py-1 bg-brand text-white rounded text-xs font-semibold hover:bg-brand-dark transition-colors">
-                                <i class="fa-solid fa-eye text-xs"></i>
-                                <span class="hidden sm:inline">Review</span>
+                        <td style="text-align: center;">
+                            <a href="{{ route('incidents.hsc_view', ['incident' => $incident]) }}" class="action-btn">
+                                <i class="fa-solid fa-eye"></i> View
                             </a>
                         </td>
                     </tr>
@@ -463,240 +455,12 @@
     </div>
     
     @if($totalCount > 1)
-    <div class="px-4 md:px-6 py-3 text-center border-t border-slate-200 bg-slate-50">
-        <p class="text-xs md:text-sm text-slate-500 font-medium">
-            Showing <span x-text="expanded ? '{{ $totalCount }}' : Math.min(5, {{ $totalCount }})"></span> of <span class="inline-block px-2.5 py-0.5 rounded-full bg-brand bg-opacity-10 text-brand font-semibold">{{ $totalCount }}</span> incidents
+    <div class="table-footer">
+        <p class="footer-text">
+            Showing <span x-text="expanded ? '{{ $totalCount }}' : Math.min(5, {{ $totalCount }})"></span> of <span class="count-badge">{{ $totalCount }}</span> incidents
         </p>
     </div>
     @endif
 </div>
 @endif
-@endsection
-
-@section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
-<script>
-    // Defer chart initialization until DOM is ready and ApexCharts is loaded
-    window.addEventListener('load', function() {
-        let currentChart = null;
-        let currentView = 'province';
-
-        // Data from controller
-        const provinceData = @json($injuryTypesByProvince);
-        const districtData = @json($injuryTypesByDistrict);
-
-        // Function to create/update chart
-        function createChart(view) {
-            const data = view === 'province' ? provinceData : districtData;
-            const labels = data.map(item => view === 'province' ? item.province : item.district);
-            const values = data.map(item => parseInt(item.count, 10));
-            const totalCases = values.reduce((sum, val) => sum + val, 0);
-            
-            console.log('Creating chart for view:', view);
-            console.log('Labels:', labels);
-            console.log('Values:', values);
-            console.log('Total Cases:', totalCases);
-            
-            // Update total cases label
-            document.getElementById('totalIncidentsLabel').textContent = totalCases + ' Total Cases';
-            
-            const isHorizontal = view === 'province';
-            
-            // Calculate dynamic height for horizontal bar chart based on number of bars
-            let chartHeight = 350;
-            if (isHorizontal) {
-                chartHeight = Math.max(250, labels.length * 25 + 40);
-            }
-            
-            // For horizontal charts, format data with x and y explicitly
-            const chartData = isHorizontal ? 
-                labels.map((label, index) => ({
-                    x: label,
-                    y: values[index]
-                })) : values;
-            
-            const options = {
-                series: [{
-                    name: 'Number of Cases',
-                    data: chartData.length > 0 ? chartData : [0]
-                }],
-                chart: {
-                    type: 'bar',
-                    height: chartHeight,
-                    fontFamily: 'Inter, sans-serif',
-                    toolbar: {
-                        show: true,
-                        tools: {
-                            download: true
-                        }
-                    },
-                    animations: {
-                        enabled: true,
-                        speed: 800,
-                        animateGradually: {
-                            enabled: true,
-                            delay: 150
-                        }
-                    }
-                },
-                plotOptions: {
-                    bar: {
-                        horizontal: isHorizontal,
-                        columnWidth: isHorizontal ? undefined : '70%',
-                        barHeight: '65%',
-                        borderRadius: 6,
-                        dataLabels: {
-                            position: isHorizontal ? 'right' : 'top'
-                        },
-                        distributed: true
-                    }
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                colors: ['#0d7a3d', '#0f8c47', '#119e51', '#13b05b', '#15c265', '#1dd46f', '#20e87f', '#23fa89', '#26ff93', '#29ffa0', '#2cff8a', '#2fff83', '#32ff7c', '#35ff75', '#38ff6e', '#3bff67', '#3eff60', '#41ff59', '#44ff52', '#47ff4b'],
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shade: 'light',
-                        type: 'vertical',
-                        shadeIntensity: 0.4,
-                        gradientToColors: ['#1bb74d', '#1dd46f', '#20e87f', '#23fa89', '#26ff93', '#29ffa0', '#2cff8a', '#2fff83', '#32ff7c', '#35ff75', '#38ff6e', '#3bff67', '#3eff60', '#41ff59', '#44ff52', '#47ff4b', '#4aff44', '#4dff3d', '#50ff36', '#53ff2f'],
-                        inverseColors: false,
-                        opacityFrom: 0.95,
-                        opacityTo: 0.85,
-                        stops: [0, 100]
-                    }
-                },
-                xaxis: isHorizontal ? {
-                    type: 'numeric',
-                    labels: {
-                        style: {
-                            fontSize: '11px',
-                            fontWeight: 600,
-                            colors: '#475569'
-                        },
-                        formatter: function(val) {
-                            return Math.round(val);
-                        }
-                    },
-                    tickAmount: 'dataPoints',
-                    axisBorder: {
-                        show: true,
-                        color: '#e2e8f0'
-                    },
-                    title: {
-                        text: 'Number of Cases',
-                        style: {
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            color: '#475569'
-                        }
-                    }
-                } : {
-                    categories: labels.length > 0 ? labels : ['No Data'],
-                    labels: {
-                        style: {
-                            fontSize: '11px',
-                            fontWeight: 600,
-                            colors: '#64748b'
-                        },
-                        rotate: -45,
-                        rotateAlways: false
-                    },
-                    axisBorder: {
-                        show: true,
-                        color: '#e2e8f0'
-                    },
-                    title: {
-                        text: view === 'district' ? 'District' : 'Province',
-                        style: {
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            color: '#475569'
-                        }
-                    }
-                },
-                yaxis: isHorizontal ? {
-                    labels: {
-                        style: {
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            colors: '#1e293b'
-                        },
-                        maxWidth: 180
-                    }
-                } : {
-                    labels: {
-                        style: {
-                            fontSize: '11px',
-                            fontWeight: 600,
-                            colors: '#475569'
-                        },
-                        formatter: function(val) {
-                            return Math.round(val);
-                        }
-                    },
-                    tickAmount: 5,
-                    title: {
-                        text: 'Number of Cases',
-                        style: {
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            color: '#475569'
-                        }
-                    }
-                },
-                grid: {
-                    borderColor: '#f1f5f9',
-                    strokeDashArray: 3,
-                    xaxis: {
-                        lines: {
-                            show: false
-                        }
-                    },
-                    yaxis: {
-                        lines: {
-                            show: true
-                        }
-                    }
-                },
-                tooltip: {
-                    theme: 'dark',
-                    y: {
-                        formatter: function(val) {
-                            return val + ' cases';
-                        }
-                    }
-                },
-                legend: {
-                    show: false
-                }
-            };
-
-            // Destroy previous chart if exists
-            if (currentChart) {
-                currentChart.destroy();
-            }
-
-            // Create new chart
-            currentChart = new ApexCharts(document.querySelector("#incidentsTypesChart"), options);
-            currentChart.render().then(() => {
-                // Hide skeleton and show chart
-                document.getElementById('chartSkeleton').style.display = 'none';
-                document.getElementById('incidentsTypesChart').style.display = 'block';
-            });
-        }
-
-        // Initialize with province view
-        createChart('province');
-
-        // Handle dropdown change
-        document.getElementById('chartViewToggle').addEventListener('change', function(e) {
-            currentView = e.target.value;
-            createChart(currentView);
-        });
-
-    });
-</script>
 @endsection
