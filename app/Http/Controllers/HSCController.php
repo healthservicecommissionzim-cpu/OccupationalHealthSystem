@@ -68,16 +68,51 @@ class HSCController extends Controller
 
     public function casesByFacility()
     {
-        $facilities = Facility::with(['incidents' => function ($q) {
-            $q->with('incidentType', 'department');
-        }, 'district'])->get();
+        // Get aggregated facility summary data
+        $facilitySummary = Incident::selectRaw('
+                EXTRACT(YEAR FROM created_at) as year,
+                facility_id,
+                COUNT(*) as total_cases
+            ')
+            ->with(['facility.district.province', 'facility.incidents.incidentType'])
+            ->groupBy('year', 'facility_id')
+            ->orderByDesc('year')
+            ->orderBy('facility_id')
+            ->get()
+            ->map(function ($item) {
+                $facility = $item->facility;
+                
+                // Get all incidents for this facility in this year
+                $incidents = Incident::where('facility_id', $item->facility_id)
+                    ->whereYear('created_at', $item->year)
+                    ->with('incidentType')
+                    ->get();
+                
+                // Group by incident type and count
+                $caseTypeBreakdown = $incidents->groupBy('incidentType.name')
+                    ->map(function ($group) {
+                        return $group->count();
+                    })
+                    ->sortDesc();
+                
+                // Build description string (e.g., "Back Injury (5), Falls (3), Burns (2)")
+                $description = $caseTypeBreakdown->map(function ($count, $type) {
+                    return ($type ?? 'Unknown') . " ({$count})";
+                })->join(', ');
+                
+                return [
+                    'year' => $item->year,
+                    'facility_name' => $facility->name,
+                    'district' => $facility->district?->name ?? 'N/A',
+                    'province' => $facility->district?->province?->name ?? 'N/A',
+                    'total_cases' => $item->total_cases,
+                    'description' => $description ?: 'No case types recorded',
+                    'case_types_breakdown' => $caseTypeBreakdown,
+                ];
+            })
+            ->filter(fn($item) => $item['total_cases'] > 0); // Only facilities with cases
 
-        $facilityStats = Facility::select('id', 'name')
-            ->withCount('incidents')
-            ->orderByDesc('incidents_count')
-            ->get();
-
-        return view('hsc.cases.by-facility-standalone', compact('facilities', 'facilityStats'));
+        return view('hsc.cases.by-facility-standalone', compact('facilitySummary'));
     }
 
     public function casesByDate(Request $request)
