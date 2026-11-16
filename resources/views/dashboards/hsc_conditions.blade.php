@@ -397,36 +397,67 @@
                         
                         switch($status) {
                             case 'PENDING_SUPERVISOR_VERIFICATION':
-                                $statusLabel = 'Pending';
+                                $statusLabel = 'Awaiting Supervisor';
                                 $statusClass = 'pending';
                                 break;
                             case 'VERIFIED_SUPERVISOR':
-                                $statusLabel = 'Verified';
+                                $statusLabel = 'Verified by Supervisor';
                                 $statusClass = 'verified';
                                 break;
                             case 'REJECTED_SUPERVISOR':
-                            case 'REJECTED_BY_HR':
-                            case 'REJECTED_BY_PMD':
-                            case 'REJECTED':
-                                $statusLabel = 'Rejected';
+                                $statusLabel = 'Rejected by Supervisor';
                                 $statusClass = 'rejected';
                                 break;
                             case 'ESCALATED_TO_HR':
                             case 'PENDING_HR_REVIEW':
-                            case 'ESCALATED_TO_PMD':
-                            case 'PENDING_PMD_REVIEW':
-                                $statusLabel = 'Escalated';
+                            case 'HR_REVIEW_IN_PROGRESS':
+                                $statusLabel = 'Awaiting HR Review';
                                 $statusClass = 'escalated';
                                 break;
                             case 'APPROVED_BY_HR':
-                            case 'APPROVED_BY_PMD':
-                            case 'RESOLVED':
-                            case 'CLOSED':
-                                $statusLabel = 'Approved';
+                            case 'HR_APPROVED':
+                                $statusLabel = 'Approved by HR';
                                 $statusClass = 'approved';
                                 break;
+                            case 'REJECTED_BY_HR':
+                            case 'HR_REJECTED':
+                                $statusLabel = 'Rejected by HR';
+                                $statusClass = 'rejected';
+                                break;
+                            case 'ESCALATED_TO_PMD':
+                            case 'PENDING_PMD_REVIEW':
+                                $statusLabel = 'Awaiting PMD Review';
+                                $statusClass = 'escalated';
+                                break;
+                            case 'PMD_REVIEW_IN_PROGRESS':
+                                $statusLabel = 'PMD Reviewing';
+                                $statusClass = 'escalated';
+                                break;
+                            case 'APPROVED_BY_PMD':
+                            case 'PMD_APPROVED':
+                                $statusLabel = 'Approved by PMD';
+                                $statusClass = 'approved';
+                                break;
+                            case 'REJECTED_BY_PMD':
+                            case 'PMD_REJECTED':
+                                $statusLabel = 'Rejected by PMD';
+                                $statusClass = 'rejected';
+                                break;
+                            case 'PENDING_ACTION':
+                                $statusLabel = 'Pending Action';
+                                $statusClass = 'pending';
+                                break;
+                            case 'RESOLVED':
+                            case 'CLOSED':
+                                $statusLabel = 'Resolved';
+                                $statusClass = 'approved';
+                                break;
+                            case 'REJECTED':
+                                $statusLabel = 'Rejected';
+                                $statusClass = 'rejected';
+                                break;
                             default:
-                                $statusLabel = 'Pending';
+                                $statusLabel = 'Pending Review';
                                 $statusClass = 'pending';
                         }
                     @endphp
@@ -531,25 +562,30 @@
                     bar: {
                         horizontal: isHorizontal,
                         columnWidth: isHorizontal ? undefined : '70%',
-                        barHeight: isHorizontal ? '70%' : undefined,
-                        borderRadius: 4,
+                        barHeight: isHorizontal ? '65%' : undefined,
+                        borderRadius: 6,
                         dataLabels: {
-                            position: 'top'
-                        }
+                            position: isHorizontal ? 'right' : 'top'
+                        },
+                        distributed: true
+                    }
+                },
+                colors: ['#0d7a3d', '#0f8c47', '#119e51', '#13b05b', '#15c265', '#1dd46f', '#20e87f', '#23fa89', '#26ff93', '#29ffa0', '#2cff8a', '#2fff83', '#32ff7c', '#35ff75', '#38ff6e', '#3bff67', '#3eff60', '#41ff59', '#44ff52', '#47ff4b'],
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shade: 'light',
+                        type: 'vertical',
+                        shadeIntensity: 0.4,
+                        gradientToColors: ['#1bb74d', '#1dd46f', '#20e87f', '#23fa89', '#26ff93', '#29ffa0', '#2cff8a', '#2fff83', '#32ff7c', '#35ff75', '#38ff6e', '#3bff67', '#3eff60', '#41ff59', '#44ff52', '#47ff4b', '#4aff44', '#4dff3d', '#50ff36', '#53ff2f'],
+                        inverseColors: false,
+                        opacityFrom: 0.95,
+                        opacityTo: 0.85,
+                        stops: [0, 100]
                     }
                 },
                 dataLabels: {
-                    enabled: true,
-                    formatter: function (val) {
-                        return Math.floor(val);
-                    },
-                    offsetY: isHorizontal ? 0 : -20,
-                    offsetX: isHorizontal ? 5 : 0,
-                    style: {
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        colors: ['#079b6d']
-                    }
+                    enabled: false
                 },
                 xaxis: {
                     categories: isHorizontal ? undefined : labels,
@@ -632,16 +668,19 @@
                 },
                 tooltip: {
                     enabled: true,
-                    theme: 'light',
+                    theme: 'dark',
                     y: {
                         formatter: function(val) {
-                            return Math.floor(val) + ' cases';
+                            return val + ' cases';
                         }
                     },
                     style: {
                         fontSize: '12px',
                         fontFamily: 'Inter, sans-serif'
                     }
+                },
+                legend: {
+                    show: false
                 }
             };
 
