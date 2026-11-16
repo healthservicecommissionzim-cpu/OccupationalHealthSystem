@@ -1563,61 +1563,69 @@ class DashboardController extends Controller
      */
     public function hscConditions()
     {
-        // Get all incident statistics in single optimized query
-        $incidentStats = \DB::table('incidents')
-            ->selectRaw("
-                COUNT(*) as total_count,
-                SUM(CASE WHEN status = 'PENDING_SUPERVISOR_VERIFICATION' THEN 1 ELSE 0 END) as pending_incidents,
-                SUM(CASE WHEN status IN ('ESCALATED_TO_HR', 'PENDING_HR_REVIEW', 'ESCALATED_TO_DMO', 'PENDING_PMD_REVIEW') THEN 1 ELSE 0 END) as active_workflows,
-                SUM(CASE WHEN status IN ('RESOLVED', 'APPROVED_BY_PMD', 'CLOSED') THEN 1 ELSE 0 END) as resolved_incidents,
-                SUM(CASE WHEN status IN ('REJECTED_BY_HR', 'REJECTED', 'REJECTED_SUPERVISOR') THEN 1 ELSE 0 END) as rejected_incidents
-            ")
-            ->first();
+        // Cache key for this dashboard
+        $cacheKey = 'hsc_conditions_dashboard_data';
+        $cacheTTL = 300; // 5 minutes cache
+        
+        // Try to get cached data
+        $viewData = \Cache::remember($cacheKey, $cacheTTL, function () {
+            // Get all incident statistics in single optimized query
+            $incidentStats = \DB::table('incidents')
+                ->selectRaw("
+                    COUNT(*) as total_count,
+                    SUM(CASE WHEN status = 'PENDING_SUPERVISOR_VERIFICATION' THEN 1 ELSE 0 END) as pending_incidents,
+                    SUM(CASE WHEN status IN ('ESCALATED_TO_HR', 'PENDING_HR_REVIEW', 'ESCALATED_TO_DMO', 'PENDING_PMD_REVIEW') THEN 1 ELSE 0 END) as active_workflows,
+                    SUM(CASE WHEN status IN ('RESOLVED', 'APPROVED_BY_PMD', 'CLOSED') THEN 1 ELSE 0 END) as resolved_incidents,
+                    SUM(CASE WHEN status IN ('REJECTED_BY_HR', 'REJECTED', 'REJECTED_SUPERVISOR') THEN 1 ELSE 0 END) as rejected_incidents
+                ")
+                ->first();
 
-        $incidentStatistics = [
-            'total_cases' => $incidentStats->total_count ?? 0,
-            'pending_incidents' => $incidentStats->pending_incidents ?? 0,
-            'active_workflows' => $incidentStats->active_workflows ?? 0,
-            'resolved_incidents' => $incidentStats->resolved_incidents ?? 0,
-            'rejected_incidents' => $incidentStats->rejected_incidents ?? 0,
-            'total_incidents' => $incidentStats->total_count ?? 0,
-        ];
+            $incidentStatistics = [
+                'total_cases' => $incidentStats->total_count ?? 0,
+                'pending_incidents' => $incidentStats->pending_incidents ?? 0,
+                'active_workflows' => $incidentStats->active_workflows ?? 0,
+                'resolved_incidents' => $incidentStats->resolved_incidents ?? 0,
+                'rejected_incidents' => $incidentStats->rejected_incidents ?? 0,
+                'total_incidents' => $incidentStats->total_count ?? 0,
+            ];
 
-        // Get incident types data - using province/district grouping (removed facility type)
-        $injuryTypesByProvince = \DB::table('incidents')
-            ->join('provinces', 'incidents.province_id', '=', 'provinces.id')
-            ->whereNotNull('incidents.province_id')
-            ->selectRaw('provinces.name as province, COUNT(*) as count')
-            ->groupBy('provinces.id', 'provinces.name')
-            ->orderByDesc('count')
-            ->limit(10)
-            ->get();
+            // Get incident types data - using province/district grouping (removed facility type)
+            $injuryTypesByProvince = \DB::table('incidents')
+                ->join('provinces', 'incidents.province_id', '=', 'provinces.id')
+                ->whereNotNull('incidents.province_id')
+                ->selectRaw('provinces.name as province, COUNT(*) as count')
+                ->groupBy('provinces.id', 'provinces.name')
+                ->orderByDesc('count')
+                ->limit(10)
+                ->get();
 
-        // Injury types by district (optimized with limit)
-        $injuryTypesByDistrict = \DB::table('incidents')
-            ->join('districts', 'incidents.district_id', '=', 'districts.id')
-            ->whereNotNull('incidents.district_id')
-            ->selectRaw('districts.name as district, COUNT(*) as count')
-            ->groupBy('districts.id', 'districts.name')
-            ->orderByDesc('count')
-            ->limit(20)
-            ->get();
+            // Injury types by district (optimized with limit)
+            $injuryTypesByDistrict = \DB::table('incidents')
+                ->join('districts', 'incidents.district_id', '=', 'districts.id')
+                ->whereNotNull('incidents.district_id')
+                ->selectRaw('districts.name as district, COUNT(*) as count')
+                ->groupBy('districts.id', 'districts.name')
+                ->orderByDesc('count')
+                ->limit(20)
+                ->get();
 
-        // Get recent incidents for the table (last 30 days, excluding resolved/rejected)
-        $recentIncidentsTable = \App\Models\Incident::with(['facility', 'incidentType'])
-            ->select('id', 'reference_number', 'first_name', 'surname', 'status', 'created_at', 'facility_id', 'incident_type_id')
-            ->where('created_at', '>=', now()->subDays(30))
-            ->whereNotIn('status', ['RESOLVED', 'CLOSED', 'APPROVED_BY_PMD', 'REJECTED_BY_HR', 'REJECTED', 'REJECTED_SUPERVISOR'])
-            ->orderBy('created_at', 'desc')
-            ->limit(50)
-            ->get();
+            // Get recent incidents for the table (last 30 days, excluding resolved/rejected)
+            // Reduced to 20 for initial load, with "Load More" option
+            $recentIncidentsTable = \App\Models\Incident::with(['facility:id,name', 'incidentType:id,name'])
+                ->select('id', 'reference_number', 'first_name', 'surname', 'status', 'created_at', 'facility_id', 'incident_type_id')
+                ->where('created_at', '>=', now()->subDays(30))
+                ->whereNotIn('status', ['RESOLVED', 'CLOSED', 'APPROVED_BY_PMD', 'REJECTED_BY_HR', 'REJECTED', 'REJECTED_SUPERVISOR'])
+                ->orderBy('created_at', 'desc')
+                ->limit(20)
+                ->get();
 
-        $viewData = compact(
-            'incidentStatistics',
-            'injuryTypesByProvince',
-            'injuryTypesByDistrict',
-            'recentIncidentsTable'
-        );
+            return compact(
+                'incidentStatistics',
+                'injuryTypesByProvince',
+                'injuryTypesByDistrict',
+                'recentIncidentsTable'
+            );
+        });
 
         return view('dashboards.hsc_conditions', $viewData);
     }

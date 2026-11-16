@@ -315,7 +315,12 @@
             {{ $injuryTypesByProvince->sum('count') }} Total Cases
         </span>
     </div>
-    <div id="incidentsTypesChart" style="height: 380px;"></div>
+    <!-- Loading skeleton (hidden after chart loads) -->
+    <div id="chartSkeleton" class="animate-pulse">
+        <div class="h-80 bg-slate-100 rounded"></div>
+    </div>
+    <!-- Chart container (initially hidden) -->
+    <div id="incidentsTypesChart" style="height: 380px; display: none;"></div>
 </div>
 
 <!-- Recent Incidents Table -->
@@ -469,9 +474,10 @@
 @endsection
 
 @section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    // Defer chart initialization until DOM is ready and ApexCharts is loaded
+    window.addEventListener('load', function() {
         let currentChart = null;
         let currentView = 'province';
 
@@ -675,7 +681,11 @@
 
             // Create new chart
             currentChart = new ApexCharts(document.querySelector("#incidentsTypesChart"), options);
-            currentChart.render();
+            currentChart.render().then(() => {
+                // Hide skeleton and show chart
+                document.getElementById('chartSkeleton').style.display = 'none';
+                document.getElementById('incidentsTypesChart').style.display = 'block';
+            });
         }
 
         // Initialize with province view

@@ -7,6 +7,11 @@
     <title>HSC-OHS | Occupational Health & Safety Portal - Zimbabwe Healthcare Workers</title>
     <meta name="description" content="Report workplace incidents, exposures, and access occupational health services for Zimbabwe healthcare workers. Secure, fast, and confidential.">
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="<?php echo e(asset('images/hsc-logo.png')); ?>">
+    <link rel="shortcut icon" type="image/png" href="<?php echo e(asset('images/hsc-logo.png')); ?>">
+    <link rel="apple-touch-icon" href="<?php echo e(asset('images/hsc-logo.png')); ?>">
+    
     <!-- DNS Prefetch for faster external resource loading -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
@@ -240,17 +245,20 @@
         
         /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+            background: linear-gradient(135deg, rgba(240, 253, 244, 0.65) 0%, rgba(255, 255, 255, 0.65) 100%), url('<?php echo e(asset("images/hero image.jpg")); ?>');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             padding: 4rem 4% 3rem;
             text-align: center;
             position: relative;
             overflow: hidden;
         }
 
-        /* Mobile hero - show background image */
+        /* Mobile hero - adjust for better mobile display */
         @media (max-width: 500px) {
             .hero {
-                background: linear-gradient(135deg, rgba(240, 253, 244, 0.85) 0%, rgba(255, 255, 255, 0.85) 100%), url('<?php echo e(asset("images/hero image.jpg")); ?>');
+                background: linear-gradient(135deg, rgba(240, 253, 244, 0.70) 0%, rgba(255, 255, 255, 0.70) 100%), url('<?php echo e(asset("images/hero image.jpg")); ?>');
                 background-size: cover;
                 background-position: center;
                 background-attachment: fixed;
@@ -261,6 +269,23 @@
                 justify-content: center;
                 align-items: center;
             }
+        }
+
+        /* Remove the SVG background decorations */
+        .hero::before {
+            display: none;
+        }
+
+        /* Remove decorative white circles */
+        .hero::after {
+            display: none;
+        }
+
+        .hero .circle-1,
+        .hero .circle-2,
+        .hero .circle-3,
+        .hero .circle-4 {
+            display: none;
         }
 
         .hero::before {
@@ -1865,13 +1890,12 @@
 <body>
     <!-- Header -->
     <header>
-        <a href="<?php echo e(route('welcome')); ?>" class="logo">
+        <div class="logo">
             <img src="<?php echo e(asset('images/hsc-logo.png')); ?>" alt="HSC Logo" fetchpriority="high">
-            <span class="logo-text">HEALTH SERVICE COMMISSION</span>
-        </a>
+            <a href="https://hsc.org.zw/" target="_blank" rel="noopener noreferrer" class="logo-text" style="text-decoration: none; color: inherit;">HEALTH SERVICE COMMISSION</a>
+        </div>
         
         <nav>
-            <a href="https://hsc.org.zw/" target="_blank" rel="noopener noreferrer">Health Service Commission</a>
             <a href="<?php echo e(route('resources')); ?>">Resources</a>
             <a href="<?php echo e(route('safety_protocols')); ?>">Safety Protocols</a>
             <a href="javascript:void(0);" onclick="openSupportModal()">Help Desk</a>
