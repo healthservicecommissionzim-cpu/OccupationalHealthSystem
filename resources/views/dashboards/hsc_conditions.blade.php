@@ -95,7 +95,7 @@
             <span>Case Audits</span>
         </a>
         <a href="{{ route('hsc.audit.documents') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-file-check w-4 text-center text-slate-700"></i>
+            <i class="fa-solid fa-file-circle-check w-4 text-center text-slate-700"></i>
             <span>Document Verification</span>
         </a>
         <a href="{{ route('hsc.audit.timeline') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
