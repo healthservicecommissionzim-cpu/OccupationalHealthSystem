@@ -167,7 +167,7 @@ class HSCController extends Controller
             'ESCALATED_TO_PMD',
             'PENDING_PMD_REVIEW'
         ])->with(['facility', 'incidentType'])
-          ->orderByDesc('escalated_to_dmo_at')
+          ->orderByDesc('escalated_to_hr_at')
           ->get();
 
         return view('hsc.monitoring.risk-assessment-standalone', compact('highRiskIncidents', 'escalatedCases'));
@@ -345,7 +345,7 @@ class HSCController extends Controller
             'ESCALATED_TO_PMD',
             'PENDING_PMD_REVIEW'
         ])->with(['facility', 'incidentType', 'assignedHRUser'])
-            ->orderByDesc('escalated_to_dmo_at')
+            ->orderByDesc('escalated_to_hr_at')
             ->paginate(50);
 
         return view('hsc.system.escalation-tracking', compact('escalatedCases'));
@@ -365,7 +365,7 @@ class HSCController extends Controller
         $metrics = [
             'avg_supervisor_verification_time' => $this->getAverageTimeToVerification(),
             'avg_time_to_resolution' => $this->getAverageTimeToResolution(),
-            'total_escalations_this_month' => Incident::whereMonth('escalated_to_dmo_at', Carbon::now()->month)->count(),
+            'total_escalations_this_month' => Incident::whereMonth('escalated_to_hr_at', Carbon::now()->month)->count(),
             'compliance_percentage' => $this->getCompliancePercentage(),
         ];
 

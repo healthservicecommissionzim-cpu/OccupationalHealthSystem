@@ -395,7 +395,7 @@
                                             {{ str_replace(['ESCALATED_TO_', 'PENDING_', '_REVIEW'], '', $incident->status) }}
                                         </span>
                                     </td>
-                                    <td>{{ $incident->escalated_to_dmo_at?->format('M d, Y') ?? $incident->created_at->format('M d, Y') }}</td>
+                                    <td>{{ $incident->escalated_to_hr_at?->format('M d, Y') ?? $incident->created_at->format('M d, Y') }}</td>
                                     <td style="text-align: center;">
                                         <a href="{{ route('incidents.hsc_view', $incident) }}" style="color: #1e40af; font-weight: 700; text-decoration: none; font-size: 11px;">
                                             <i class="fa-solid fa-file-lines"></i> REVIEW
