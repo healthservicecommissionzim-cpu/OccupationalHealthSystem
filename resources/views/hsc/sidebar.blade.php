@@ -28,8 +28,8 @@
 </div>
 
 <!-- Monitoring & Analytics Section -->
-<div x-data="{ open: {{ request()->routeIs('hsc.compliance.*', 'hsc.facility.*', 'hsc.incident.*', 'hsc.risk.*', 'hsc.workflow.*') ? 'true' : 'false' }} }" class="space-y-1">
-    <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.compliance.*', 'hsc.facility.*', 'hsc.incident.*', 'hsc.risk.*', 'hsc.workflow.*') ? 'border-brand-light' : 'border-transparent' }} hover:border-[#1bb74d] transition-all font-medium text-[13px]">
+<div x-data="{ open: {{ request()->routeIs('hsc.compliance.*', 'hsc.facility.*', 'hsc.incident.*', 'hsc.risk.*') ? 'true' : 'false' }} }" class="space-y-1">
+    <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.compliance.*', 'hsc.facility.*', 'hsc.incident.*', 'hsc.risk.*') ? 'border-brand-light' : 'border-transparent' }} hover:border-[#1bb74d] transition-all font-medium text-[13px]">
         <span class="flex items-center gap-3">
             <i class="fa-solid fa-chart-line w-5 text-center text-slate-700 text-sm"></i>
             Monitoring & Analytics
@@ -48,10 +48,6 @@
         <a href="{{ route('hsc.risk.assessment') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.risk.assessment') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
             <i class="fa-solid fa-exclamation-triangle w-4 text-center text-orange-600"></i>
             <span>Risk Assessment</span>
-        </a>
-        <a href="{{ route('hsc.workflow.health') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.workflow.health') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-heartbeat w-4 text-center text-slate-700"></i>
-            <span>Workflow Health</span>
         </a>
     </div>
 </div>
