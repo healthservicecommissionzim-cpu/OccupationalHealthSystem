@@ -170,9 +170,15 @@
 <!-- COMPONENT 1: Macro KPI Banner - HSC Safety Conditions Monitoring -->
 <div class="mb-6">
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-        <h2 class="text-[14px] font-bold text-navy flex items-center gap-2">
-            <i class="fa-solid fa-chart-pie text-brand"></i> SAFETY CONDITIONS OVERVIEW
-        </h2>
+        <div class="flex items-center gap-4">
+            <h2 class="text-[14px] font-bold text-navy flex items-center gap-2">
+                <i class="fa-solid fa-chart-pie text-brand"></i> SAFETY CONDITIONS OVERVIEW
+            </h2>
+            <a href="{{ route('hsc.workflow.health') }}" class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-lg text-[11px] font-semibold text-blue-700 hover:bg-blue-100 transition-colors">
+                <i class="fa-solid fa-arrow-trend-up text-[10px]"></i>
+                <span>Workflow Health</span>
+            </a>
+        </div>
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <button class="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-[11px] font-medium text-slate-600 hover:bg-slate-50 transition-colors shadow-sm w-full sm:w-auto">
                 <i class="fa-regular fa-calendar text-slate-400 text-[10px]"></i>Last 30 Days
