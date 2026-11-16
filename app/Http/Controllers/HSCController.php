@@ -166,9 +166,11 @@ class HSCController extends Controller
             'ESCALATED_TO_MEDICAL_SUPERINTENDENT',
             'ESCALATED_TO_PMD',
             'PENDING_PMD_REVIEW'
-        ])->with(['facility', 'incidentType'])->get();
+        ])->with(['facility', 'incidentType'])
+          ->orderByDesc('escalated_to_dmo_at')
+          ->get();
 
-        return view('hsc.monitoring.risk-assessment', compact('highRiskIncidents', 'escalatedCases'));
+        return view('hsc.monitoring.risk-assessment-standalone', compact('highRiskIncidents', 'escalatedCases'));
     }
 
     public function workflowHealth()
