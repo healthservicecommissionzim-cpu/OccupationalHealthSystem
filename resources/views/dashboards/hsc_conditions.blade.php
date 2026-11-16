@@ -203,18 +203,18 @@
             @endcan
         </div>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 md:gap-3">
         <!-- Total Cases -->
         <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden" data-stat="total">
             <div class="h-0.5 bg-brand"></div>
-            <div class="p-2.5 flex items-start justify-between gap-2">
+            <div class="p-2 flex items-start justify-between gap-2">
                 <div class="flex-1">
-                    <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Total Cases</span>
-                    <p class="text-xl font-bold text-slate-900 mt-0.5">{{ number_format($incidentStatistics['total_cases'] ?? 0) }}</p>
-                    <p class="text-xs text-slate-500 mt-0.5">All time</p>
+                    <span class="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">Total Cases</span>
+                    <p class="text-lg font-bold text-slate-900 mt-0.5">{{ number_format($incidentStatistics['total_cases'] ?? 0) }}</p>
+                    <p class="text-[10px] text-slate-500 mt-0.5">All time</p>
                 </div>
-                <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex items-center justify-center">
-                    <i class="fa-solid fa-briefcase text-blue-600"></i>
+                <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex items-center justify-center">
+                    <i class="fa-solid fa-briefcase text-blue-600 text-sm"></i>
                 </div>
             </div>
         </div>
@@ -222,14 +222,14 @@
         <!-- Active Cases -->
         <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden" data-stat="active">
             <div class="h-0.5 bg-brand"></div>
-            <div class="p-2.5 flex items-start justify-between gap-2">
+            <div class="p-2 flex items-start justify-between gap-2">
                 <div class="flex-1">
-                    <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Active Cases</span>
-                    <p class="text-xl font-bold text-slate-900 mt-0.5">{{ number_format($incidentStatistics['active_workflows'] ?? 0) }}</p>
-                    <p class="text-xs text-slate-500 mt-0.5">In workflow</p>
+                    <span class="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">Active Cases</span>
+                    <p class="text-lg font-bold text-slate-900 mt-0.5">{{ number_format($incidentStatistics['active_workflows'] ?? 0) }}</p>
+                    <p class="text-[10px] text-slate-500 mt-0.5">In workflow</p>
                 </div>
-                <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg flex items-center justify-center">
-                    <i class="fa-solid fa-spinner text-amber-600"></i>
+                <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg flex items-center justify-center">
+                    <i class="fa-solid fa-spinner text-amber-600 text-sm"></i>
                 </div>
             </div>
         </div>
@@ -237,16 +237,16 @@
         <!-- Resolved Cases -->
         <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden" data-stat="resolved">
             <div class="h-0.5 bg-brand"></div>
-            <div class="p-2.5 flex items-start justify-between gap-2">
+            <div class="p-2 flex items-start justify-between gap-2">
                 <div class="flex-1">
-                    <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Resolved Cases</span>
-                    <p class="text-xl font-bold text-slate-900 mt-0.5">{{ number_format($incidentStatistics['resolved_incidents'] ?? 0) }}</p>
-                    <p class="text-xs text-slate-500 mt-0.5">
+                    <span class="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">Resolved Cases</span>
+                    <p class="text-lg font-bold text-slate-900 mt-0.5">{{ number_format($incidentStatistics['resolved_incidents'] ?? 0) }}</p>
+                    <p class="text-[10px] text-slate-500 mt-0.5">
                         {{ ($incidentStatistics['total_incidents'] ?? 0) > 0 ? round((($incidentStatistics['resolved_incidents'] ?? 0) / ($incidentStatistics['total_incidents'] ?? 1)) * 100, 1) : 0 }}% rate
                     </p>
                 </div>
-                <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg flex items-center justify-center">
-                    <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg flex items-center justify-center">
+                    <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>
                 </div>
             </div>
         </div>
@@ -254,14 +254,14 @@
         <!-- Rejected Cases -->
         <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden" data-stat="rejected">
             <div class="h-0.5 bg-brand"></div>
-            <div class="p-2.5 flex items-start justify-between gap-2">
+            <div class="p-2 flex items-start justify-between gap-2">
                 <div class="flex-1">
-                    <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Rejected Cases</span>
-                    <p class="text-xl font-bold text-slate-900 mt-0.5">{{ number_format($incidentStatistics['rejected_incidents'] ?? 0) }}</p>
-                    <p class="text-xs text-slate-500 mt-0.5">Not approved</p>
+                    <span class="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">Rejected Cases</span>
+                    <p class="text-lg font-bold text-slate-900 mt-0.5">{{ number_format($incidentStatistics['rejected_incidents'] ?? 0) }}</p>
+                    <p class="text-[10px] text-slate-500 mt-0.5">Not approved</p>
                 </div>
-                <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-red-50 to-red-100 rounded-lg flex items-center justify-center">
-                    <i class="fa-solid fa-circle-xmark text-red-600"></i>
+                <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-red-50 to-red-100 rounded-lg flex items-center justify-center">
+                    <i class="fa-solid fa-circle-xmark text-red-600 text-sm"></i>
                 </div>
             </div>
         </div>
@@ -269,14 +269,14 @@
         <!-- Hazards Identified -->
         <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden" data-stat="hazards">
             <div class="h-0.5 bg-brand"></div>
-            <div class="p-2.5 flex items-start justify-between gap-2">
+            <div class="p-2 flex items-start justify-between gap-2">
                 <div class="flex-1">
-                    <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Hazards Identified</span>
-                    <p class="text-xl font-bold text-slate-900 mt-0.5">14</p>
-                    <p class="text-xs text-slate-500 mt-0.5">Requiring action</p>
+                    <span class="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">Hazards Identified</span>
+                    <p class="text-lg font-bold text-slate-900 mt-0.5">14</p>
+                    <p class="text-[10px] text-slate-500 mt-0.5">Requiring action</p>
                 </div>
-                <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg flex items-center justify-center">
-                    <i class="fa-solid fa-triangle-exclamation text-orange-600"></i>
+                <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg flex items-center justify-center">
+                    <i class="fa-solid fa-triangle-exclamation text-orange-600 text-sm"></i>
                 </div>
             </div>
         </div>
@@ -284,14 +284,14 @@
         <!-- Compliance Status -->
         <div class="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden" data-stat="compliance">
             <div class="h-0.5 bg-brand"></div>
-            <div class="p-2.5 flex items-start justify-between gap-2">
+            <div class="p-2 flex items-start justify-between gap-2">
                 <div class="flex-1">
-                    <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">Compliance Rate</span>
-                    <p class="text-xl font-bold text-slate-900 mt-0.5">82%</p>
-                    <p class="text-xs text-slate-500 mt-0.5">This month</p>
+                    <span class="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">Compliance Rate</span>
+                    <p class="text-lg font-bold text-slate-900 mt-0.5">82%</p>
+                    <p class="text-[10px] text-slate-500 mt-0.5">This month</p>
                 </div>
-                <div class="flex-shrink-0 w-9 h-9 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg flex items-center justify-center">
-                    <i class="fa-solid fa-trending-up text-purple-600"></i>
+                <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg flex items-center justify-center">
+                    <i class="fa-solid fa-trending-up text-purple-600 text-sm"></i>
                 </div>
             </div>
         </div>
