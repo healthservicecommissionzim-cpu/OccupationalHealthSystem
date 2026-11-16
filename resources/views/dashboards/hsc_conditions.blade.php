@@ -556,7 +556,8 @@
                             enabled: true,
                             delay: 150
                         }
-                    }
+                    },
+                    offsetY: -10
                 },
                 plotOptions: {
                     bar: {
@@ -613,6 +614,7 @@
                     tickAmount: isHorizontal ? 'dataPoints' : undefined,
                     title: isHorizontal ? {
                         text: 'Number of Cases',
+                        offsetY: -5,
                         style: {
                             fontSize: '12px',
                             fontWeight: 600,
@@ -651,18 +653,19 @@
                 },
                 colors: ['#079b6d'],
                 grid: {
-                    show: true,
                     borderColor: '#f1f5f9',
                     strokeDashArray: 3,
-                    position: 'back',
+                    padding: {
+                        bottom: -10
+                    },
                     xaxis: {
                         lines: {
-                            show: isHorizontal
+                            show: false
                         }
                     },
                     yaxis: {
                         lines: {
-                            show: !isHorizontal
+                            show: true
                         }
                     }
                 },
