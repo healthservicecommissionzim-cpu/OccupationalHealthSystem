@@ -496,10 +496,17 @@
                 chartHeight = Math.max(250, labels.length * 25 + 40);
             }
             
+            // For horizontal charts, format data with x and y explicitly
+            const chartData = isHorizontal ? 
+                labels.map((label, index) => ({
+                    x: label,
+                    y: values[index]
+                })) : values;
+            
             const options = {
                 series: [{
                     name: 'Number of Cases',
-                    data: values.length > 0 ? values : [0]
+                    data: chartData.length > 0 ? chartData : [0]
                 }],
                 chart: {
                     type: 'bar',
@@ -545,7 +552,7 @@
                     }
                 },
                 xaxis: {
-                    categories: labels,
+                    categories: isHorizontal ? undefined : labels,
                     labels: {
                         rotate: isHorizontal ? 0 : -45,
                         rotateAlways: !isHorizontal,
@@ -567,9 +574,26 @@
                         color: '#e2e8f0'
                     },
                     type: isHorizontal ? 'numeric' : 'category',
-                    tickAmount: isHorizontal ? 'dataPoints' : undefined
+                    tickAmount: isHorizontal ? 'dataPoints' : undefined,
+                    title: isHorizontal ? {
+                        text: 'Number of Cases',
+                        style: {
+                            fontSize: '12px',
+                            fontWeight: 600,
+                            color: '#475569'
+                        }
+                    } : undefined
                 },
-                yaxis: {
+                yaxis: isHorizontal ? {
+                    labels: {
+                        style: {
+                            fontSize: '12px',
+                            fontWeight: 600,
+                            colors: '#1e293b'
+                        },
+                        maxWidth: 180
+                    }
+                } : {
                     labels: {
                         style: {
                             fontSize: '11px',
@@ -578,6 +602,14 @@
                         },
                         formatter: function(val) {
                             return Math.floor(val);
+                        }
+                    },
+                    title: {
+                        text: 'Number of Cases',
+                        style: {
+                            fontSize: '12px',
+                            fontWeight: 600,
+                            color: '#475569'
                         }
                     }
                 },
