@@ -35,18 +35,18 @@
         .ctitle i { color: #079b6d; }
         
         /* Workflow Stage Row */
-        .workflow-row { padding: 18px 22px; border-bottom: 1px solid #e4e9ee; display: flex; align-items: center; gap: 16px; transition: background 0.2s; }
+        .workflow-row { padding: 12px 22px; border-bottom: 1px solid #e4e9ee; display: flex; align-items: center; gap: 16px; transition: background 0.2s; }
         .workflow-row:hover { background: #f8fafb; }
         .workflow-row:last-child { border-bottom: none; }
         
         .stage-info { flex: 1; }
-        .stage-name { font-size: 13px; font-weight: 700; color: #101a31; margin-bottom: 8px; display: block; }
-        .progress-bar-container { width: 100%; height: 8px; background: #e4e9ee; border-radius: 4px; overflow: hidden; }
-        .progress-bar { height: 100%; background: linear-gradient(90deg, #079b6d 0%, #06d888 100%); border-radius: 4px; transition: width 0.5s ease; }
+        .stage-name { font-size: 12px; font-weight: 700; color: #101a31; margin-bottom: 6px; display: block; }
+        .progress-bar-container { width: 100%; height: 6px; background: #e4e9ee; border-radius: 3px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #079b6d 0%, #06d888 100%); border-radius: 3px; transition: width 0.5s ease; }
         
-        .stage-count { min-width: 70px; text-align: right; }
-        .count-number { font-size: 24px; font-weight: 750; color: #079b6d; display: block; }
-        .count-label { font-size: 10px; color: #8a95a5; text-transform: uppercase; font-weight: 600; margin-top: 2px; }
+        .stage-count { min-width: 60px; text-align: right; }
+        .count-number { font-size: 18px; font-weight: 750; color: #079b6d; display: block; }
+        .count-label { font-size: 9px; color: #8a95a5; text-transform: uppercase; font-weight: 600; margin-top: 2px; }
         
         .stage-percent { min-width: 60px; text-align: right; font-size: 14px; font-weight: 700; color: #64748b; }
         
@@ -86,14 +86,9 @@
             </a>
         </div>
 
-        {{-- Total Cases Card --}}
-        <div class="stat-card">
-            @php
-                $total = collect($stageCounts)->sum();
-            @endphp
-            <span class="stat-number">{{ number_format($total) }}</span>
-            <div class="stat-label">Total Cases in Workflow</div>
-        </div>
+        @php
+            $total = collect($stageCounts)->sum();
+        @endphp
 
         {{-- Workflow Stages Card --}}
         <div class="card">
@@ -137,49 +132,6 @@
                     <p>No cases in workflow at this time.</p>
                 </div>
             @endif
-        </div>
-
-        {{-- Workflow Stages Reference --}}
-        <div class="card">
-            <div class="chead">
-                <div class="ctitle">
-                    <i class="fas fa-info-circle"></i>
-                    Workflow Stages Reference
-                </div>
-            </div>
-            <div style="padding: 22px;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
-                    @foreach($workflowStages as $index => $stage)
-                        @php
-                            $formattedStage = str_replace('_', ' ', ucwords(strtolower($stage)));
-                            $stageNumber = $index + 1;
-                        @endphp
-                        <div style="padding: 14px; background: #f8fafb; border-radius: 8px; border-left: 3px solid #079b6d;">
-                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-                                <div style="width: 28px; height: 28px; background: #079b6d; color: white; border-radius: 6px; display: grid; place-items: center; font-size: 12px; font-weight: 700;">
-                                    {{ $stageNumber }}
-                                </div>
-                                <span style="font-size: 11px; font-weight: 700; color: #101a31;">{{ $formattedStage }}</span>
-                            </div>
-                            <p style="font-size: 10px; color: #64748b; line-height: 1.5; margin-left: 38px;">
-                                @if(str_contains($stage, 'PENDING'))
-                                    Awaiting action or review
-                                @elseif(str_contains($stage, 'VERIFIED') || str_contains($stage, 'APPROVED'))
-                                    Completed verification
-                                @elseif(str_contains($stage, 'ESCALATED'))
-                                    Escalated to higher authority
-                                @elseif(str_contains($stage, 'RESOLVED'))
-                                    Case resolved and closed
-                                @elseif(str_contains($stage, 'CLOSED'))
-                                    Final status, no further action
-                                @else
-                                    In progress
-                                @endif
-                            </p>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
         </div>
 
     </div>

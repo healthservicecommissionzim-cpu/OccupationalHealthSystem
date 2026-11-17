@@ -8,16 +8,16 @@
 @section('sidebar_content')
 <div class="px-5 pt-3 pb-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Navigation</div>
 
-<!-- Incident Mapping -->
-<a href="{{ route('hsc.cases.incident-mapping') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
-    <i class="fa-solid fa-map-location-dot w-5 text-center text-blue-600 text-sm"></i>
-    <span>Incident Mapping</span>
-</a>
-
 <!-- Dashboard -->
 <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-brand-light transition-all font-medium text-[13px]">
     <i class="fa-solid fa-chart-pie w-5 text-center text-slate-700 text-sm"></i>
     <span>Dashboard</span>
+</a>
+
+<!-- Incident Mapping -->
+<a href="{{ route('hsc.cases.incident-mapping') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
+    <i class="fa-solid fa-map-location-dot w-5 text-center text-blue-600 text-sm"></i>
+    <span>Incident Mapping</span>
 </a>
 
 <!-- Case Management Section -->
