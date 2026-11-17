@@ -148,7 +148,7 @@
             }],
             chart: {
                 type: 'bar',
-                height: Math.max(350, trendsByType.length * 30),
+                height: Math.max(300, trendsByType.length * 25),
                 toolbar: { show: true },
                 events: {
                     dataPointSelection: function(event, chartContext, config) {
@@ -162,7 +162,7 @@
                     borderRadius: 6,
                     distributed: true,
                     horizontal: true,
-                    barHeight: '60%'
+                    barHeight: '55%'
                 }
             },
             colors: colors,
@@ -201,6 +201,8 @@
             },
             xaxis: {
                 type: 'numeric',
+                tickAmount: 5,
+                decimalsInFloat: 0,
                 labels: {
                     style: {
                         fontSize: '11px',
