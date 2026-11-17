@@ -234,13 +234,8 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
         Route::put('/risk/corrective-action/{id}', [\App\Http\Controllers\HSCController::class, 'updateCorrectiveAction'])->name('risk.corrective-action.update');
         Route::get('/workflow/health', [\App\Http\Controllers\HSCController::class, 'workflowHealth'])->name('workflow.health');
 
-        // Reports & Evidence
-        Route::get('/reports/generate', [\App\Http\Controllers\HSCController::class, 'generateReports'])->name('reports.generate');
-        Route::get('/reports/export', [\App\Http\Controllers\HSCController::class, 'exportData'])->name('reports.export');
-        Route::get('/reports/statistics', [\App\Http\Controllers\HSCController::class, 'statisticalSummary'])->name('reports.statistics');
-        Route::get('/reports/comparative', [\App\Http\Controllers\HSCController::class, 'comparativeAnalysis'])->name('reports.comparative');
-
     });
+
 
     Route::get('/dashboards/super-admin', [DashboardController::class, 'superAdmin'])->name('dashboards.super_admin')->middleware('role:super_admin', 'permission:view_dashboard');
     

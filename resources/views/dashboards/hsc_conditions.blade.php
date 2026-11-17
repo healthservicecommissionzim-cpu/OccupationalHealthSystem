@@ -70,35 +70,6 @@
     </div>
 </div>
 
-<!-- Reports & Evidence Section -->
-<div x-data="{ open: false }" class="space-y-1">
-    <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-[#1bb74d] transition-all font-medium text-[13px]">
-        <span class="flex items-center gap-3">
-            <i class="fa-solid fa-file-pdf w-5 text-center text-slate-700 text-sm"></i>
-            Reports & Evidence
-        </span>
-        <i class="fa-solid fa-chevron-down text-xs transition-transform" :class="{ 'rotate-180': open }"></i>
-    </button>
-    <div x-show="open" class="space-y-1 pl-2">
-        <a href="{{ route('hsc.reports.generate') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-file-export w-4 text-center text-slate-700"></i>
-            <span>Generate Reports</span>
-        </a>
-        <a href="{{ route('hsc.reports.export') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-download w-4 text-center text-slate-700"></i>
-            <span>Export Data</span>
-        </a>
-        <a href="{{ route('hsc.reports.statistics') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-chart-bar w-4 text-center text-slate-700"></i>
-            <span>Statistical Summary</span>
-        </a>
-        <a href="{{ route('hsc.reports.comparative') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-code-branch w-4 text-center text-slate-700"></i>
-            <span>Comparative Analysis</span>
-        </a>
-    </div>
-</div>
-
 <!-- Support Section -->
 <a href="{{ route('support.create_ticket') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
     <i class="fa-solid fa-headset w-5 text-center text-slate-700 text-sm"></i>

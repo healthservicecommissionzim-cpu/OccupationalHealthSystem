@@ -468,47 +468,4 @@ class HSCController extends Controller
     // REPORTS & EVIDENCE SECTION
     // ============================================================================
 
-    public function generateReports(Request $request)
-    {
-        return view('hsc.reports.generate');
-    }
-
-    public function exportData(Request $request)
-    {
-        $incidents = Incident::with(['facility', 'incidentType', 'department'])->get();
-        return view('hsc.reports.export', compact('incidents'));
-    }
-
-    public function statisticalSummary()
-    {
-        $stats = [
-            'total_cases' => Incident::count(),
-            'active_cases' => Incident::where('status', '!=', 'RESOLVED')->where('status', '!=', 'CLOSED')->count(),
-            'resolved_cases' => Incident::where('status', 'RESOLVED')->orWhere('status', 'CLOSED')->count(),
-            'rejected_cases' => Incident::where('status', 'like', '%REJECTED%')->count(),
-            'total_by_type' => Incident::selectRaw('incident_type_id, COUNT(*) as count')
-                ->groupBy('incident_type_id')
-                ->with('incidentType')
-                ->get(),
-            'total_by_facility' => Facility::withCount('incidents')->orderByDesc('incidents_count')->take(10)->get(),
-        ];
-
-        return view('hsc.reports.statistics', compact('stats'));
-    }
-
-    public function comparativeAnalysis()
-    {
-        $comparison = [
-            'this_month' => Incident::whereMonth('created_at', Carbon::now()->month)
-                ->whereYear('created_at', Carbon::now()->year)
-                ->count(),
-            'last_month' => Incident::whereMonth('created_at', Carbon::now()->subMonth()->month)
-                ->whereYear('created_at', Carbon::now()->subMonth()->year)
-                ->count(),
-            'this_quarter' => Incident::whereBetween('created_at', [Carbon::now()->startOfQuarter(), Carbon::now()->endOfQuarter()])->count(),
-            'last_quarter' => Incident::whereBetween('created_at', [Carbon::now()->subQuarter()->startOfQuarter(), Carbon::now()->subQuarter()->endOfQuarter()])->count(),
-        ];
-
-        return view('hsc.reports.comparative', compact('comparison'));
-    }
 }
