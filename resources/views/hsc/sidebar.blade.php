@@ -1,7 +1,13 @@
 <div class="px-5 pt-3 pb-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Navigation</div>
 
+<!-- Incident Mapping -->
+<a href="{{ route('hsc.cases.incident-mapping') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.cases.incident-mapping') ? 'border-brand-light' : 'border-transparent' }} hover:border-brand transition-all font-medium text-[13px]">
+    <i class="fa-solid fa-map-location-dot w-5 text-center text-blue-600 text-sm"></i>
+    <span>Incident Mapping</span>
+</a>
+
 <!-- Dashboard -->
-<a href="{{ route('dashboards.hsc_conditions') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-brand-light transition-all font-medium text-[13px]">
+<a href="{{ route('dashboards.hsc_conditions') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('dashboards.hsc_conditions') ? 'border-brand-light' : 'border-transparent' }} hover:border-brand transition-all font-medium text-[13px]">
     <i class="fa-solid fa-chart-pie w-5 text-center text-slate-700 text-sm"></i>
     <span>Dashboard</span>
 </a>
@@ -27,10 +33,6 @@
         <a href="{{ route('hsc.cases.death-on-duty') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.cases.death-on-duty') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
             <i class="fa-solid fa-heart-crack w-4 text-center text-red-600"></i>
             <span>Death on Duty Cases</span>
-        </a>
-        <a href="{{ route('hsc.cases.incident-mapping') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.cases.incident-mapping') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-map-location-dot w-4 text-center text-blue-600"></i>
-            <span>Incident Mapping</span>
         </a>
     </div>
 </div>
