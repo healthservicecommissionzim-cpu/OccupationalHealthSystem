@@ -172,12 +172,12 @@
             const sidebarLinks = document.querySelectorAll('#sidebar a, #sidebar button:not(#sidebarCloseBtn)');
             sidebarLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
-                    // Only auto-close on mobile
-                    if (window.innerWidth < 768) {
-                        sidebar.classList.add('-translate-x-full');
-                        if (overlay) overlay.classList.add('hidden');
-                        localStorage.setItem('sidebarCollapsed', 'true');
-                        mainContent.classList.add('collapsed');
+                    // Don't auto-close on mobile - let user close manually
+                    // Only close if it's a direct navigation link (not dropdown toggle)
+                    const isDropdownButton = this.getAttribute('@click') || this.getAttribute('x-on:click');
+                    if (!isDropdownButton && this.tagName === 'A') {
+                        // Still allow navigation but don't close sidebar
+                        // User must use the close button to collapse
                     }
                 });
             });
