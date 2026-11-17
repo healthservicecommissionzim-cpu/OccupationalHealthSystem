@@ -52,35 +52,6 @@
     </div>
 </div>
 
-<!-- Quality Assurance Section -->
-<div x-data="{ open: {{ request()->routeIs('hsc.audit.*') ? 'true' : 'false' }} }" class="space-y-1">
-    <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.audit.*') ? 'border-brand-light' : 'border-transparent' }} hover:border-[#1bb74d] transition-all font-medium text-[13px]">
-        <span class="flex items-center gap-3">
-            <i class="fa-solid fa-clipboard-check w-5 text-center text-slate-700 text-sm"></i>
-            Quality Assurance
-        </span>
-        <i class="fa-solid fa-chevron-down text-xs transition-transform" :class="{ 'rotate-180': open }"></i>
-    </button>
-    <div x-show="open" class="space-y-1 pl-2">
-        <a href="{{ route('hsc.audit.cases') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.audit.cases') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-magnifying-glass-chart w-4 text-center text-slate-700"></i>
-            <span>Case Audits</span>
-        </a>
-        <a href="{{ route('hsc.audit.documents') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.audit.documents') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-file-check w-4 text-center text-slate-700"></i>
-            <span>Document Verification</span>
-        </a>
-        <a href="{{ route('hsc.audit.timeline') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.audit.timeline') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-hourglass-end w-4 text-center text-slate-700"></i>
-            <span>Timeline Compliance</span>
-        </a>
-        <a href="{{ route('hsc.audit.procedures') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.audit.procedures') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-gavel w-4 text-center text-slate-700"></i>
-            <span>Procedure Adherence</span>
-        </a>
-    </div>
-</div>
-
 <!-- Reports & Evidence Section -->
 <div x-data="{ open: {{ request()->routeIs('hsc.reports.*') ? 'true' : 'false' }} }" class="space-y-1">
     <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.reports.*') ? 'border-brand-light' : 'border-transparent' }} hover:border-[#1bb74d] transition-all font-medium text-[13px]">

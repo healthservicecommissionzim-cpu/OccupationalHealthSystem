@@ -232,12 +232,6 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
         Route::put('/risk/corrective-action/{id}', [\App\Http\Controllers\HSCController::class, 'updateCorrectiveAction'])->name('risk.corrective-action.update');
         Route::get('/workflow/health', [\App\Http\Controllers\HSCController::class, 'workflowHealth'])->name('workflow.health');
 
-        // Quality Assurance
-        Route::get('/audit/cases', [\App\Http\Controllers\HSCController::class, 'auditCases'])->name('audit.cases');
-        Route::get('/audit/documents', [\App\Http\Controllers\HSCController::class, 'auditDocuments'])->name('audit.documents');
-        Route::get('/audit/timeline', [\App\Http\Controllers\HSCController::class, 'auditTimeline'])->name('audit.timeline');
-        Route::get('/audit/procedures', [\App\Http\Controllers\HSCController::class, 'auditProcedures'])->name('audit.procedures');
-
         // Reports & Evidence
         Route::get('/reports/generate', [\App\Http\Controllers\HSCController::class, 'generateReports'])->name('reports.generate');
         Route::get('/reports/export', [\App\Http\Controllers\HSCController::class, 'exportData'])->name('reports.export');
