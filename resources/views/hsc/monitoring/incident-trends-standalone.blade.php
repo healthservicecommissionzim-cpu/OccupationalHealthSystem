@@ -148,7 +148,7 @@
             }],
             chart: {
                 type: 'bar',
-                height: Math.max(400, trendsByType.length * 50),
+                height: Math.max(350, trendsByType.length * 30),
                 toolbar: { show: true },
                 events: {
                     dataPointSelection: function(event, chartContext, config) {
@@ -162,7 +162,7 @@
                     borderRadius: 6,
                     distributed: true,
                     horizontal: true,
-                    barHeight: '70%'
+                    barHeight: '60%'
                 }
             },
             colors: colors,
