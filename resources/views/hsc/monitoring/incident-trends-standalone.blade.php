@@ -167,17 +167,7 @@
             },
             colors: colors,
             dataLabels: {
-                enabled: true,
-                textAnchor: 'start',
-                style: {
-                    fontSize: '11px',
-                    fontWeight: 'bold',
-                    colors: ['#fff']
-                },
-                formatter: function (val) {
-                    return val;
-                },
-                offsetX: 10
+                enabled: false
             },
             grid: {
                 borderColor: '#e4e9ee',
