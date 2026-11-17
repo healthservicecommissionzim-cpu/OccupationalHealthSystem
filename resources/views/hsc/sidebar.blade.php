@@ -81,34 +81,6 @@
     </div>
 </div>
 
-<!-- System Oversight Section -->
-<div x-data="{ open: {{ request()->routeIs('hsc.system.*') ? 'true' : 'false' }} }" class="space-y-1">
-    <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.system.*') ? 'border-brand-light' : 'border-transparent' }} hover:border-[#1bb74d] transition-all font-medium text-[13px]">
-        <span class="flex items-center gap-3">
-            <i class="fa-solid fa-sliders w-5 text-center text-slate-700 text-sm"></i>
-            System Oversight
-        </span>
-        <i class="fa-solid fa-chevron-down text-xs transition-transform" :class="{ 'rotate-180': open }"></i>
-    </button>
-    <div x-show="open" class="space-y-1 pl-2">
-        <a href="{{ route('hsc.system.user-activity') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.system.user-activity') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-user-secret w-4 text-center text-slate-700"></i>
-            <span>User Activity Log</span>
-        </a>
-        <a href="{{ route('hsc.system.escalations') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.system.escalations') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-arrow-up-right-dots w-4 text-center text-red-600"></i>
-            <span>Escalation Tracking</span>
-        </a>
-        <a href="{{ route('hsc.system.notifications') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.system.notifications') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-bell w-4 text-center text-slate-700"></i>
-            <span>Notification History</span>
-        </a>
-        <a href="{{ route('hsc.system.performance') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.system.performance') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-gauge w-4 text-center text-slate-700"></i>
-            <span>Performance Metrics</span>
-        </a>
-    </div>
-</div>
 
 <div class="my-3 border-t border-slate-200"></div>
 

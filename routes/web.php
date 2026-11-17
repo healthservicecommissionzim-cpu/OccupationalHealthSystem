@@ -238,11 +238,6 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
         Route::get('/reports/statistics', [\App\Http\Controllers\HSCController::class, 'statisticalSummary'])->name('reports.statistics');
         Route::get('/reports/comparative', [\App\Http\Controllers\HSCController::class, 'comparativeAnalysis'])->name('reports.comparative');
 
-        // System Oversight
-        Route::get('/system/user-activity', [\App\Http\Controllers\HSCController::class, 'userActivityLog'])->name('system.user-activity');
-        Route::get('/system/escalations', [\App\Http\Controllers\HSCController::class, 'escalationTracking'])->name('system.escalations');
-        Route::get('/system/notifications', [\App\Http\Controllers\HSCController::class, 'notificationHistory'])->name('system.notifications');
-        Route::get('/system/performance', [\App\Http\Controllers\HSCController::class, 'performanceMetrics'])->name('system.performance');
     });
 
     Route::get('/dashboards/super-admin', [DashboardController::class, 'superAdmin'])->name('dashboards.super_admin')->middleware('role:super_admin', 'permission:view_dashboard');
