@@ -104,6 +104,63 @@ class HSCController extends Controller
         return view('hsc.cases.death-on-duty');
     }
 
+    public function incidentMapping()
+    {
+        // Fetch province data with incident and facility counts
+        $provinceData = \App\Models\Province::withCount('incidents')
+            ->withCount('facilities')
+            ->get()
+            ->map(function($province) {
+                return [
+                    'id' => $province->id,
+                    'name' => $province->name,
+                    'lat' => $province->latitude ?? -19.0154, // Default to Zimbabwe center
+                    'lng' => $province->longitude ?? 29.1549,
+                    'incidents' => $province->incidents_count,
+                    'facilities' => $province->facilities_count,
+                ];
+            });
+
+        // Fetch individual incidents with details for mapping
+        $incidents = Incident::with(['facility.province', 'facility.district', 'incidentType'])
+            ->where('status', '!=', 'CLOSED')
+            ->select('id', 'reference_number', 'incident_type_id', 'incident_date', 'facility_id', 'status', 'is_workplace_fatality', 'is_road_traffic_accident')
+            ->orderBy('incident_date', 'desc')
+            ->limit(500) // Limit to recent 500 incidents for performance
+            ->get()
+            ->map(function($incident) {
+                // Use facility coordinates if available, otherwise fall back to province coordinates
+                $lat = $incident->facility->latitude ?? $incident->facility->province->latitude ?? -19.0154;
+                $lng = $incident->facility->longitude ?? $incident->facility->province->longitude ?? 29.1549;
+                
+                // Determine severity based on available flags
+                $severity = 'MINOR'; // Default
+                if ($incident->is_workplace_fatality) {
+                    $severity = 'FATAL';
+                } elseif ($incident->is_road_traffic_accident) {
+                    $severity = 'SERIOUS';
+                } elseif ($incident->status === 'ESCALATED_TO_HR' || $incident->status === 'UNDER_MEDICAL_REVIEW') {
+                    $severity = 'MODERATE';
+                }
+                
+                return [
+                    'id' => $incident->id,
+                    'reference' => $incident->reference_number,
+                    'type' => $incident->incidentType->name ?? 'Not specified',
+                    'severity' => $severity,
+                    'date' => $incident->incident_date->format('Y-m-d'),
+                    'facility' => $incident->facility->name ?? 'Unknown',
+                    'province' => $incident->facility->province->name ?? 'Unknown',
+                    'status' => $incident->status,
+                    'lat' => $lat,
+                    'lng' => $lng,
+                    'has_facility_coords' => !is_null($incident->facility->latitude), // For debugging
+                ];
+            });
+
+        return view('hsc.cases.incident-mapping', compact('provinceData', 'incidents'));
+    }
+
     // ============================================================================
     // MONITORING & ANALYTICS SECTION
     // ============================================================================
