@@ -24,6 +24,10 @@
             <i class="fa-solid fa-hospital w-4 text-center text-slate-700"></i>
             <span>Cases by Facility</span>
         </a>
+        <a href="{{ route('hsc.cases.death-on-duty') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.cases.death-on-duty') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
+            <i class="fa-solid fa-heart-crack w-4 text-center text-red-600"></i>
+            <span>Death on Duty Cases</span>
+        </a>
     </div>
 </div>
 

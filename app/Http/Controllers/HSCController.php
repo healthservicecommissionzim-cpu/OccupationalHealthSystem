@@ -99,6 +99,11 @@ class HSCController extends Controller
         return view('hsc.cases.by-facility-standalone', compact('facilitySummary'));
     }
 
+    public function deathOnDutyCases()
+    {
+        return view('hsc.cases.death-on-duty');
+    }
+
     // ============================================================================
     // MONITORING & ANALYTICS SECTION
     // ============================================================================
