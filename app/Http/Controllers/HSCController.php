@@ -198,11 +198,11 @@ class HSCController extends Controller
     public function incidentTrends()
     {
         // Get incident types that have repeated (2+ occurrences) in last 180 days
-        // Group by incident_type_id and body_part (injury location)
-        $repeatPatterns = Incident::selectRaw('incident_type_id, body_part, COUNT(*) as repeat_count')
+        // Simplified: Just group by incident_type_id
+        $repeatPatterns = Incident::selectRaw('incident_type_id, COUNT(*) as repeat_count')
             ->where('created_at', '>=', Carbon::now()->subDays(180))
             ->whereNotNull('incident_type_id')
-            ->groupBy('incident_type_id', 'body_part')
+            ->groupBy('incident_type_id')
             ->having('repeat_count', '>=', 2)
             ->with(['incidentType'])
             ->orderByDesc('repeat_count')
@@ -211,19 +211,10 @@ class HSCController extends Controller
         // Get detailed incidents for each pattern (for modal)
         $patternDetails = [];
         foreach ($repeatPatterns as $pattern) {
-            $key = $pattern->incident_type_id . '_' . ($pattern->body_part ?? 'null');
+            $key = $pattern->incident_type_id;
             
-            $query = Incident::where('incident_type_id', $pattern->incident_type_id)
-                ->where('created_at', '>=', Carbon::now()->subDays(180));
-            
-            // Handle body_part - could be null
-            if ($pattern->body_part === null) {
-                $query->whereNull('body_part');
-            } else {
-                $query->where('body_part', $pattern->body_part);
-            }
-            
-            $patternDetails[$key] = $query
+            $patternDetails[$key] = Incident::where('incident_type_id', $pattern->incident_type_id)
+                ->where('created_at', '>=', Carbon::now()->subDays(180))
                 ->with(['facility', 'incidentType'])
                 ->orderByDesc('created_at')
                 ->get()

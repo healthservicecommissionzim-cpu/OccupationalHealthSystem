@@ -160,7 +160,7 @@
                         <tr>
                             <th>RANK</th>
                             <th>INCIDENT TYPE</th>
-                            <th>BODY PART AFFECTED</th>
+                            <th>DESCRIPTION</th>
                             <th class="center">REPEAT COUNT</th>
                             <th class="center">ACTION</th>
                         </tr>
@@ -168,7 +168,7 @@
                     <tbody>
                         @foreach($repeatPatterns as $index => $pattern)
                         @php
-                            $patternKey = $pattern->incident_type_id . '_' . ($pattern->body_part ?? 'null');
+                            $patternKey = $pattern->incident_type_id;
                         @endphp
                         <tr>
                             <td style="text-align: center; font-weight: 700; color: #8a95a5; font-size: 16px;">
@@ -179,8 +179,8 @@
                             </td>
                             <td>
                                 <span class="injury-type">
-                                    <i class="fa-solid fa-heart-pulse"></i>
-                                    {{ $pattern->body_part ?: 'Not Specified' }}
+                                    <i class="fa-solid fa-file-lines"></i>
+                                    {{ $pattern->incidentType->description ?? 'No description available' }}
                                 </span>
                             </td>
                             <td class="center">
@@ -189,7 +189,7 @@
                                 </span>
                             </td>
                             <td class="center">
-                                <button class="view-btn" onclick="showPatternDetails('{{ $patternKey }}', '{{ addslashes($pattern->incidentType->name ?? 'Unknown') }}', '{{ addslashes($pattern->body_part ?: 'Not Specified') }}', {{ $pattern->repeat_count }})">
+                                <button class="view-btn" onclick="showPatternDetails('{{ $patternKey }}', '{{ addslashes($pattern->incidentType->name ?? 'Unknown') }}', {{ $pattern->repeat_count }})">
                                     <i class="fa-solid fa-eye"></i> View Details
                                 </button>
                             </td>
@@ -244,10 +244,10 @@
             }
         }
 
-        function showPatternDetails(patternKey, incidentType, injuryType, repeatCount) {
+        function showPatternDetails(patternKey, incidentType, repeatCount) {
             modalTitle.innerHTML = `
                 <i class="fa-solid fa-clipboard-list"></i>
-                ${incidentType} - ${injuryType} (${repeatCount} Incidents)
+                ${incidentType} (${repeatCount} Incidents)
             `;
             
             const facilities = patternDetails[patternKey] || {};
@@ -295,8 +295,8 @@
                                         <div class="detail-value">${new Date(incident.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
                                     </div>
                                     <div class="detail-item">
-                                        <div class="detail-label">Body Part Affected</div>
-                                        <div class="detail-value">${incident.body_part || 'Not specified'}</div>
+                                        <div class="detail-label">Incident Description</div>
+                                        <div class="detail-value">${incident.incident_description ? incident.incident_description.substring(0, 100) + '...' : 'No description'}</div>
                                     </div>
                                     <div class="detail-item">
                                         <div class="detail-label">Status</div>
