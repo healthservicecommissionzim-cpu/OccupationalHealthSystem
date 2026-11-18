@@ -133,6 +133,28 @@
             min-height: 0;
         }
         
+        /* Zoom Display */
+        .zoom-display {
+            position: absolute;
+            bottom: 120px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            z-index: 1000;
+            pointer-events: none;
+            border: 1px solid #e1e7ee;
+        }
+        
+        .zoom-display i {
+            color: #079b6d;
+            margin-right: 4px;
+        }
+        
         /* Ensure Google Maps controls don't overflow */
         #map * {
             box-sizing: border-box;
@@ -240,6 +262,10 @@
         <!-- Full Page Map -->
         <div class="map-container">
             <div id="map"></div>
+            <div class="zoom-display" id="zoomDisplay">
+                <i class="fas fa-search-plus"></i>
+                <span id="zoomLevel">Zoom: 0%</span>
+            </div>
         </div>
     </div>
 
@@ -288,7 +314,7 @@
                 // Allow unrestricted zooming and panning
                 // Users can zoom out beyond Zimbabwe if needed
                 
-                mapTypeId: 'hybrid',  // Satellite view with labels (roads, cities, borders)
+                mapTypeId: 'terrain',  // Terrain view with labels (default)
                 mapTypeControl: true,
                 streetViewControl: false,
                 fullscreenControl: true,
@@ -329,7 +355,25 @@
             // Re-fit after map fully loads (ensures perfect initial display)
             google.maps.event.addListenerOnce(map, 'idle', function() {
                 fitMapToZimbabwe();
+                updateZoomDisplay(); // Initial zoom display
             });
+
+            // Add zoom change listener to update zoom percentage
+            map.addListener('zoom_changed', function() {
+                updateZoomDisplay();
+            });
+
+            // Function to update zoom display
+            function updateZoomDisplay() {
+                const currentZoom = map.getZoom();
+                const minZoom = 3;
+                const maxZoom = 20;
+                
+                // Calculate percentage (3 = 0%, 20 = 100%)
+                const zoomPercentage = Math.round(((currentZoom - minZoom) / (maxZoom - minZoom)) * 100);
+                
+                document.getElementById('zoomLevel').textContent = `Zoom: ${zoomPercentage}%`;
+            }
 
             // Re-fit on window resize to maintain proper bounds
             let resizeTimer;
