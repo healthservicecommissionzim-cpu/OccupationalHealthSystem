@@ -309,7 +309,7 @@
                 
                 // Set initial center to Zimbabwe
                 center: { lat: -19.0154, lng: 29.1549 }, // Center of Zimbabwe
-                zoom: 6.5, // Initial zoom level showing full Zimbabwe
+                zoom: 7.08, // Initial zoom level (24% zoom percentage)
                 
                 // Allow unrestricted zooming and panning
                 // Users can zoom out beyond Zimbabwe if needed
