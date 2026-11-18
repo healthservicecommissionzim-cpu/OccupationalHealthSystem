@@ -225,6 +225,9 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
         Route::get('/cases/death-on-duty', [\App\Http\Controllers\HSCController::class, 'deathOnDutyCases'])->name('cases.death-on-duty');
         Route::get('/cases/incident-mapping', [\App\Http\Controllers\HSCController::class, 'incidentMapping'])->name('cases.incident-mapping');
 
+        // Insights and Reports
+        Route::get('/reports/executive-dashboard', [\App\Http\Controllers\HSCController::class, 'executiveDashboard'])->name('reports.executive_dashboard');
+
         // Monitoring & Analytics
         Route::get('/compliance/dashboard', [\App\Http\Controllers\HSCController::class, 'complianceDashboard'])->name('compliance.dashboard');
         Route::get('/incident/trends', [\App\Http\Controllers\HSCController::class, 'incidentTrends'])->name('incident.trends');

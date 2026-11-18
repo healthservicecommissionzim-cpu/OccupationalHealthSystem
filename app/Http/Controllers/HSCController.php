@@ -197,27 +197,54 @@ class HSCController extends Controller
 
     public function incidentTrends()
     {
-        // Get incidents by type for the chart (last 90 days)
-        $trendsByType = Incident::selectRaw('incident_type_id, COUNT(*) as count')
-            ->where('created_at', '>=', Carbon::now()->subDays(90))
-            ->groupBy('incident_type_id')
-            ->with('incidentType')
-            ->orderByDesc('count')
+        // Get facilities with repeat incidents (2+ incidents in last 180 days)
+        $repeatFacilities = Incident::selectRaw('facility_id, COUNT(*) as incident_count, 
+                                                 MIN(created_at) as first_incident, 
+                                                 MAX(created_at) as last_incident')
+            ->where('created_at', '>=', Carbon::now()->subDays(180))
+            ->whereNotNull('facility_id')
+            ->groupBy('facility_id')
+            ->having('incident_count', '>=', 2)
+            ->with('facility')
+            ->orderByDesc('incident_count')
             ->get();
 
-        // Get detailed incidents grouped by type for the modal
-        $incidentsByType = [];
-        foreach ($trendsByType as $trend) {
-            if ($trend->incident_type_id) {
-                $incidentsByType[$trend->incident_type_id] = Incident::where('incident_type_id', $trend->incident_type_id)
-                    ->where('created_at', '>=', Carbon::now()->subDays(90))
-                    ->with(['facility', 'incidentType'])
-                    ->orderByDesc('created_at')
-                    ->get();
-            }
+        // Get incident details for each repeat facility
+        $facilityIncidents = [];
+        foreach ($repeatFacilities as $facility) {
+            $facilityIncidents[$facility->facility_id] = Incident::where('facility_id', $facility->facility_id)
+                ->where('created_at', '>=', Carbon::now()->subDays(180))
+                ->with(['incidentType', 'facility'])
+                ->orderByDesc('created_at')
+                ->get();
         }
 
-        return view('hsc.monitoring.incident-trends-standalone', compact('trendsByType', 'incidentsByType'));
+        // Get repeat incident types at same facility (pattern detection)
+        $repeatPatterns = Incident::selectRaw('facility_id, incident_type_id, COUNT(*) as pattern_count')
+            ->where('created_at', '>=', Carbon::now()->subDays(180))
+            ->whereNotNull('facility_id')
+            ->whereNotNull('incident_type_id')
+            ->groupBy('facility_id', 'incident_type_id')
+            ->having('pattern_count', '>=', 2)
+            ->with(['facility', 'incidentType'])
+            ->orderByDesc('pattern_count')
+            ->get();
+
+        // Calculate total facilities with repeats vs total
+        $totalFacilities = Incident::distinct('facility_id')
+            ->where('created_at', '>=', Carbon::now()->subDays(180))
+            ->whereNotNull('facility_id')
+            ->count('facility_id');
+
+        $facilitiesWithRepeats = $repeatFacilities->count();
+
+        return view('hsc.monitoring.incident-trends-standalone', compact(
+            'repeatFacilities', 
+            'facilityIncidents', 
+            'repeatPatterns',
+            'totalFacilities',
+            'facilitiesWithRepeats'
+        ));
     }
 
     public function riskAssessment(Request $request)
