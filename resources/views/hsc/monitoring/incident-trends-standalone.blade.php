@@ -160,7 +160,7 @@
                         <tr>
                             <th>RANK</th>
                             <th>INCIDENT TYPE</th>
-                            <th>INJURY TYPE</th>
+                            <th>BODY PART AFFECTED</th>
                             <th class="center">REPEAT COUNT</th>
                             <th class="center">ACTION</th>
                         </tr>
@@ -168,7 +168,7 @@
                     <tbody>
                         @foreach($repeatPatterns as $index => $pattern)
                         @php
-                            $patternKey = $pattern->incident_type_id . '_' . ($pattern->injury_type_id ?? 'null');
+                            $patternKey = $pattern->incident_type_id . '_' . ($pattern->body_part ?? 'null');
                         @endphp
                         <tr>
                             <td style="text-align: center; font-weight: 700; color: #8a95a5; font-size: 16px;">
@@ -180,7 +180,7 @@
                             <td>
                                 <span class="injury-type">
                                     <i class="fa-solid fa-heart-pulse"></i>
-                                    {{ $pattern->injuryType->name ?? 'Not Specified' }}
+                                    {{ $pattern->body_part ?: 'Not Specified' }}
                                 </span>
                             </td>
                             <td class="center">
@@ -189,7 +189,7 @@
                                 </span>
                             </td>
                             <td class="center">
-                                <button class="view-btn" onclick="showPatternDetails('{{ $patternKey }}', '{{ addslashes($pattern->incidentType->name ?? 'Unknown') }}', '{{ addslashes($pattern->injuryType->name ?? 'Not Specified') }}', {{ $pattern->repeat_count }})">
+                                <button class="view-btn" onclick="showPatternDetails('{{ $patternKey }}', '{{ addslashes($pattern->incidentType->name ?? 'Unknown') }}', '{{ addslashes($pattern->body_part ?: 'Not Specified') }}', {{ $pattern->repeat_count }})">
                                     <i class="fa-solid fa-eye"></i> View Details
                                 </button>
                             </td>
@@ -296,7 +296,7 @@
                                     </div>
                                     <div class="detail-item">
                                         <div class="detail-label">Body Part Affected</div>
-                                        <div class="detail-value">${incident.body_part_affected?.name || 'Not specified'}</div>
+                                        <div class="detail-value">${incident.body_part || 'Not specified'}</div>
                                     </div>
                                     <div class="detail-item">
                                         <div class="detail-label">Status</div>
