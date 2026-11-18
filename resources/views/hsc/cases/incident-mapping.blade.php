@@ -309,7 +309,7 @@
                 
                 // Set initial center to Zimbabwe
                 center: { lat: -19.0154, lng: 29.1549 }, // Center of Zimbabwe
-                zoom: 7.08, // Initial zoom level (24% zoom percentage)
+                zoom: 7.1, // Initial zoom level set to display at 24% zoom
                 
                 // Allow unrestricted zooming and panning
                 // Users can zoom out beyond Zimbabwe if needed
@@ -354,8 +354,8 @@
 
             // Re-fit after map fully loads (ensures perfect initial display)
             google.maps.event.addListenerOnce(map, 'idle', function() {
-                // Set to 24% zoom (zoom level 7.08) on initial load
-                map.setZoom(7.08);
+                // Set to 24% zoom on initial load
+                map.setZoom(7.1);
                 updateZoomDisplay(); // Initial zoom display
             });
 
