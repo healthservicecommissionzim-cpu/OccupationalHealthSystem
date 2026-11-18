@@ -354,7 +354,8 @@
 
             // Re-fit after map fully loads (ensures perfect initial display)
             google.maps.event.addListenerOnce(map, 'idle', function() {
-                fitMapToZimbabwe();
+                // Set to 24% zoom (zoom level 7.08) on initial load
+                map.setZoom(7.08);
                 updateZoomDisplay(); // Initial zoom display
             });
 
