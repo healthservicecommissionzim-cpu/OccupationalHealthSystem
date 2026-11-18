@@ -198,51 +198,61 @@ class HSCController extends Controller
     public function incidentTrends()
     {
         // Get facilities with repeat incidents (2+ incidents in last 180 days)
-        $repeatFacilities = Incident::selectRaw('facility_id, COUNT(*) as incident_count, 
-                                                 MIN(created_at) as first_incident, 
-                                                 MAX(created_at) as last_incident')
+        $repeatFacilityIds = Incident::selectRaw('facility_id, COUNT(*) as incident_count')
             ->where('created_at', '>=', Carbon::now()->subDays(180))
             ->whereNotNull('facility_id')
             ->groupBy('facility_id')
             ->having('incident_count', '>=', 2)
-            ->with('facility')
-            ->orderByDesc('incident_count')
-            ->get();
+            ->pluck('facility_id')
+            ->toArray();
 
-        // Get incident details for each repeat facility
-        $facilityIncidents = [];
-        foreach ($repeatFacilities as $facility) {
-            $facilityIncidents[$facility->facility_id] = Incident::where('facility_id', $facility->facility_id)
-                ->where('created_at', '>=', Carbon::now()->subDays(180))
-                ->with(['incidentType', 'facility'])
-                ->orderByDesc('created_at')
-                ->get();
+        // Get all incidents from facilities with repeat patterns
+        $query = Incident::whereIn('facility_id', $repeatFacilityIds)
+            ->where('created_at', '>=', Carbon::now()->subDays(180))
+            ->with(['facility', 'incidentType']);
+
+        // Search filter
+        if (request('search')) {
+            $search = request('search');
+            $query->where(function($q) use ($search) {
+                $q->where('reference_number', 'like', "%{$search}%")
+                  ->orWhere('first_name', 'like', "%{$search}%")
+                  ->orWhere('surname', 'like', "%{$search}%")
+                  ->orWhere('national_id', 'like', "%{$search}%");
+            });
         }
 
-        // Get repeat incident types at same facility (pattern detection)
-        $repeatPatterns = Incident::selectRaw('facility_id, incident_type_id, COUNT(*) as pattern_count')
+        // Status filter
+        if (request('status')) {
+            $query->where('status', request('status'));
+        }
+
+        // Facility filter
+        if (request('facility')) {
+            $query->where('facility_id', request('facility'));
+        }
+
+        $incidents = $query->orderByDesc('created_at')->paginate(20);
+
+        // Status counts
+        $statusCounts = Incident::whereIn('facility_id', $repeatFacilityIds)
             ->where('created_at', '>=', Carbon::now()->subDays(180))
-            ->whereNotNull('facility_id')
-            ->whereNotNull('incident_type_id')
-            ->groupBy('facility_id', 'incident_type_id')
-            ->having('pattern_count', '>=', 2)
-            ->with(['facility', 'incidentType'])
-            ->orderByDesc('pattern_count')
+            ->selectRaw('status, COUNT(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status');
+
+        // Get unique facilities for filter dropdown
+        $facilities = Facility::whereIn('id', $repeatFacilityIds)
+            ->orderBy('name')
             ->get();
 
-        // Calculate total facilities with repeats vs total
-        $totalFacilities = Incident::distinct('facility_id')
-            ->where('created_at', '>=', Carbon::now()->subDays(180))
-            ->whereNotNull('facility_id')
-            ->count('facility_id');
-
-        $facilitiesWithRepeats = $repeatFacilities->count();
+        // Total facilities with repeats
+        $facilitiesWithRepeats = count($repeatFacilityIds);
 
         return view('hsc.monitoring.incident-trends-standalone', compact(
-            'repeatFacilities', 
-            'facilityIncidents', 
-            'repeatPatterns',
-            'totalFacilities',
+            'incidents',
+            'statusCounts',
+            'facilities',
             'facilitiesWithRepeats'
         ));
     }
