@@ -197,64 +197,38 @@ class HSCController extends Controller
 
     public function incidentTrends()
     {
-        // Get facilities with repeat incidents (2+ incidents in last 180 days)
-        $repeatFacilityIds = Incident::selectRaw('facility_id, COUNT(*) as incident_count')
+        // Get incident types that have repeated (2+ occurrences) in last 180 days
+        $repeatPatterns = Incident::selectRaw('incident_type_id, injury_type_id, COUNT(*) as repeat_count')
             ->where('created_at', '>=', Carbon::now()->subDays(180))
-            ->whereNotNull('facility_id')
-            ->groupBy('facility_id')
-            ->having('incident_count', '>=', 2)
-            ->pluck('facility_id')
-            ->toArray();
-
-        // Get all incidents from facilities with repeat patterns
-        $query = Incident::whereIn('facility_id', $repeatFacilityIds)
-            ->where('created_at', '>=', Carbon::now()->subDays(180))
-            ->with(['facility', 'incidentType']);
-
-        // Search filter
-        if (request('search')) {
-            $search = request('search');
-            $query->where(function($q) use ($search) {
-                $q->where('reference_number', 'like', "%{$search}%")
-                  ->orWhere('first_name', 'like', "%{$search}%")
-                  ->orWhere('surname', 'like', "%{$search}%")
-                  ->orWhere('national_id', 'like', "%{$search}%");
-            });
-        }
-
-        // Status filter
-        if (request('status')) {
-            $query->where('status', request('status'));
-        }
-
-        // Facility filter
-        if (request('facility')) {
-            $query->where('facility_id', request('facility'));
-        }
-
-        $incidents = $query->orderByDesc('created_at')->paginate(20);
-
-        // Status counts
-        $statusCounts = Incident::whereIn('facility_id', $repeatFacilityIds)
-            ->where('created_at', '>=', Carbon::now()->subDays(180))
-            ->selectRaw('status, COUNT(*) as count')
-            ->groupBy('status')
-            ->pluck('count', 'status');
-
-        // Get unique facilities for filter dropdown
-        $facilities = Facility::whereIn('id', $repeatFacilityIds)
-            ->orderBy('name')
+            ->whereNotNull('incident_type_id')
+            ->groupBy('incident_type_id', 'injury_type_id')
+            ->having('repeat_count', '>=', 2)
+            ->with(['incidentType', 'injuryType'])
+            ->orderByDesc('repeat_count')
             ->get();
 
-        // Total facilities with repeats
-        $facilitiesWithRepeats = count($repeatFacilityIds);
+        // Get detailed incidents for each pattern (for modal)
+        $patternDetails = [];
+        foreach ($repeatPatterns as $pattern) {
+            $key = $pattern->incident_type_id . '_' . ($pattern->injury_type_id ?? 'null');
+            
+            $patternDetails[$key] = Incident::where('incident_type_id', $pattern->incident_type_id)
+                ->where('injury_type_id', $pattern->injury_type_id)
+                ->where('created_at', '>=', Carbon::now()->subDays(180))
+                ->with(['facility', 'incidentType', 'injuryType', 'bodyPartAffected'])
+                ->orderByDesc('created_at')
+                ->get()
+                ->groupBy('facility_id')
+                ->map(function($facilityIncidents) {
+                    return [
+                        'facility' => $facilityIncidents->first()->facility,
+                        'count' => $facilityIncidents->count(),
+                        'incidents' => $facilityIncidents
+                    ];
+                });
+        }
 
-        return view('hsc.monitoring.incident-trends-standalone', compact(
-            'incidents',
-            'statusCounts',
-            'facilities',
-            'facilitiesWithRepeats'
-        ));
+        return view('hsc.monitoring.incident-trends-standalone', compact('repeatPatterns', 'patternDetails'));
     }
 
     public function riskAssessment(Request $request)
