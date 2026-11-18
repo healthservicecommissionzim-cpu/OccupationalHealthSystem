@@ -24,11 +24,7 @@
     <div x-show="open" class="space-y-1 pl-2">
         <a href="{{ route('hsc.cases.all') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.cases.all') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
             <i class="fa-solid fa-list-check w-4 text-center text-slate-700"></i>
-            <span>All Cases</span>
-        </a>
-        <a href="{{ route('hsc.cases.by-facility') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.cases.by-facility') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-hospital w-4 text-center text-slate-700"></i>
-            <span>Cases by Facility</span>
+            <span>Injury on Duty Cases</span>
         </a>
         <a href="{{ route('hsc.cases.death-on-duty') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.cases.death-on-duty') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
             <i class="fa-solid fa-heart-crack w-4 text-center text-red-600"></i>
@@ -72,7 +68,10 @@
         <i class="fa-solid fa-chevron-down text-xs transition-transform" :class="{ 'rotate-180': open }"></i>
     </button>
     <div x-show="open" class="space-y-1 pl-2">
-        <!-- Links will be added here later -->
+        <a href="{{ route('hsc.cases.by-facility') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.cases.by-facility') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
+            <i class="fa-solid fa-hospital w-4 text-center text-slate-700"></i>
+            <span>Injury Cases By Facility</span>
+        </a>
     </div>
 </div>
 
