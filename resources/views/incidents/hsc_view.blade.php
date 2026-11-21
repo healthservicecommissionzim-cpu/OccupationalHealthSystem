@@ -147,100 +147,159 @@
                         <span class="field-value">{{ $incident->created_at->format('d M Y H:i') }}</span>
                     </div>
                     
-                    @if($incident->supervisor_verified_at)
-                    <div class="field">
-                        <span class="field-label">Supervisor Verification</span>
-                        <span class="field-value">
-                            <span style="color: #22c55e; font-weight: 600;"><i class="fa-solid fa-check-circle"></i> Verified</span>
-                        </span>
-                    </div>
-                    <div class="field">
-                        <span class="field-label">Verified By</span>
-                        <span class="field-value">{{ $incident->assignedSupervisor->name ?? 'N/A' }}</span>
-                    </div>
-                    <div class="field">
-                        <span class="field-label">Verification Date</span>
-                        <span class="field-value">{{ $incident->supervisor_verified_at->format('d M Y H:i') }}</span>
-                    </div>
-                    <div class="field">
-                        <span class="field-label">On-Duty Status</span>
-                        <span class="field-value">
-                            @if($incident->on_duty_confirmation)
-                                <span style="color: #22c55e; font-weight: 600;"><i class="fa-solid fa-check-circle"></i> Yes, On Duty</span>
-                            @else
-                                <span style="color: #ef4444; font-weight: 600;"><i class="fa-solid fa-times-circle"></i> No, Not On Duty</span>
-                            @endif
-                        </span>
-                    </div>
-                    @endif
-                    
                     <div class="field col-span-2">
                         <span class="field-label">Description</span>
                         <span class="field-desc">{{ $incident->incident_description }}</span>
                     </div>
+                    
+                    @if($incident->supervisor_verified_at)
+                    <!-- Supervisor Verification Section -->
+                    <div class="col-span-2" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid #e1e7ee;">
+                        <h6 style="font-size: 13px; font-weight: 700; color: #0d7a3d; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <i class="fa-solid fa-user-check"></i> Supervisor Verification
+                        </h6>
+                        <div class="grid-2">
+                            <div class="field">
+                                <span class="field-label">Verification Status</span>
+                                <span class="field-value">
+                                    <span style="color: #22c55e; font-weight: 600;"><i class="fa-solid fa-check-circle"></i> Verified</span>
+                                </span>
+                            </div>
+                            <div class="field">
+                                <span class="field-label">Verified By</span>
+                                <span class="field-value">{{ $incident->assignedSupervisor->name ?? 'N/A' }}</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-label">Verification Date</span>
+                                <span class="field-value">{{ $incident->supervisor_verified_at->format('d M Y H:i') }}</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-label">On-Duty Status</span>
+                                <span class="field-value">
+                                    @if($incident->on_duty_confirmation)
+                                        <span style="color: #22c55e; font-weight: 600;"><i class="fa-solid fa-check-circle"></i> Yes, On Duty</span>
+                                    @else
+                                        <span style="color: #ef4444; font-weight: 600;"><i class="fa-solid fa-times-circle"></i> No, Not On Duty</span>
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
 
-        <!-- Head of Department Report Card -->
-        @if($incident->hod_report)
-        <div class="card">
+        <!-- HOD/Supervisor Report & Witness Statements Card with Tabs -->
+        @if($incident->hod_report || ($incident->witnessTokens && $incident->witnessTokens->count() > 0))
+        <div class="card" x-data="{ activeTab: 'report' }">
             <div class="card-header">
-                <h3><i class="fa-solid fa-file-signature"></i> Head of Department Report</h3>
+                <h3><i class="fa-solid fa-file-signature"></i> HOD/Supervisor Report & Witness Statements</h3>
             </div>
-            <div class="card-body">
-                <div class="alert alert-info" style="margin-bottom: 1.5rem;">
-                    <p><i class="fa-solid fa-check-circle"></i> Report Submitted</p>
+            
+            <!-- Tabs -->
+            <div style="border-bottom: 2px solid #e1e7ee; background: #f8fafb;">
+                <div style="display: flex; gap: 0;">
+                    @if($incident->hod_report)
+                    <button 
+                        @click="activeTab = 'report'" 
+                        :class="activeTab === 'report' ? 'tab-active' : 'tab-inactive'"
+                        class="tab-button"
+                    >
+                        <i class="fa-solid fa-file-text"></i> HOD/Supervisor Report
+                    </button>
+                    @endif
+                    
+                    @if($incident->witnessTokens && $incident->witnessTokens->count() > 0)
+                    <button 
+                        @click="activeTab = 'witnesses'" 
+                        :class="activeTab === 'witnesses' ? 'tab-active' : 'tab-inactive'"
+                        class="tab-button"
+                    >
+                        <i class="fa-solid fa-users"></i> Witness Statements ({{ $incident->witnessTokens->count() }})
+                    </button>
+                    @endif
                 </div>
-                <div class="grid-2">
-                    <div class="field">
-                        <span class="field-label">Submitted By</span>
-                        <span class="field-value">{{ $incident->hodReportSubmittedBy->name ?? 'N/A' }}</span>
+            </div>
+            
+            <div class="card-body">
+                <!-- HOD Report Tab Content -->
+                @if($incident->hod_report)
+                <div x-show="activeTab === 'report'" style="display: none;">
+                    <div class="alert alert-info" style="margin-bottom: 1.5rem;">
+                        <p><i class="fa-solid fa-check-circle"></i> Report Submitted</p>
                     </div>
-                    <div class="field">
-                        <span class="field-label">Submitted Date</span>
-                        <span class="field-value">{{ $incident->hod_report_submitted_at->format('d M Y H:i') }}</span>
-                    </div>
-                    <div class="field col-span-2">
-                        <span class="field-label">Report Content</span>
-                        <span class="field-desc">{{ $incident->hod_report }}</span>
+                    <div class="grid-2">
+                        <div class="field">
+                            <span class="field-label">Submitted By</span>
+                            <span class="field-value">{{ $incident->hodReportSubmittedBy->name ?? 'N/A' }}</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-label">Submitted Date</span>
+                            <span class="field-value">{{ $incident->hod_report_submitted_at->format('d M Y H:i') }}</span>
+                        </div>
+                        <div class="field col-span-2">
+                            <span class="field-label">Report Content</span>
+                            <span class="field-desc">{{ $incident->hod_report }}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        @endif
-
-        <!-- Witness Statements Card -->
-        @if($incident->witnessTokens && $incident->witnessTokens->count() > 0)
-        <div class="card">
-            <div class="card-header">
-                <h3><i class="fa-solid fa-users"></i> Witness Statements ({{ $incident->witnessTokens->count() }})</h3>
-            </div>
-            <div class="card-body">
-                @foreach($incident->witnessTokens as $token)
-                <div class="witness-item">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
-                        <span class="witness-name">{{ $token->witness_name ?? 'Witness' }}</span>
-                        @if($token->status === 'COMPLETED')
-                        <span class="status-badge status-completed">
-                            <i class="fa-solid fa-check-circle"></i> Completed
-                        </span>
-                        @else
-                        <span class="status-badge status-pending">
-                            <i class="fa-solid fa-clock"></i> Pending
-                        </span>
+                @endif
+                
+                <!-- Witness Statements Tab Content -->
+                @if($incident->witnessTokens && $incident->witnessTokens->count() > 0)
+                <div x-show="activeTab === 'witnesses'" style="display: none;">
+                    @foreach($incident->witnessTokens as $token)
+                    <div class="witness-item">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                            <span class="witness-name">{{ $token->witness_name ?? 'Witness' }}</span>
+                            @if($token->status === 'COMPLETED')
+                            <span class="status-badge status-completed">
+                                <i class="fa-solid fa-check-circle"></i> Completed
+                            </span>
+                            @else
+                            <span class="status-badge status-pending">
+                                <i class="fa-solid fa-clock"></i> Pending
+                            </span>
+                            @endif
+                        </div>
+                        @if($token->witness_statement)
+                        <div class="witness-statement">{{ $token->witness_statement }}</div>
+                        @endif
+                        @if($token->created_at)
+                        <div class="witness-date">{{ $token->created_at->diffForHumans() }}</div>
                         @endif
                     </div>
-                    @if($token->witness_statement)
-                    <div class="witness-statement">{{ $token->witness_statement }}</div>
-                    @endif
-                    @if($token->created_at)
-                    <div class="witness-date">{{ $token->created_at->diffForHumans() }}</div>
-                    @endif
+                    @endforeach
                 </div>
-                @endforeach
+                @endif
             </div>
         </div>
+        
+        <style>
+            .tab-button {
+                padding: 14px 24px;
+                font-size: 13px;
+                font-weight: 600;
+                border: none;
+                background: none;
+                cursor: pointer;
+                transition: all 0.2s;
+                border-bottom: 3px solid transparent;
+            }
+            .tab-active {
+                color: #0d7a3d;
+                border-bottom-color: #0d7a3d;
+                background: white;
+            }
+            .tab-inactive {
+                color: #64748b;
+            }
+            .tab-inactive:hover {
+                color: #0d7a3d;
+                background: #f1f5f9;
+            }
+        </style>
         @endif
 
         <!-- First Aid Records Card -->
