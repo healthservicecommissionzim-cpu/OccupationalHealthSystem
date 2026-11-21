@@ -146,25 +146,14 @@
                         <span class="field-label">Reported Date</span>
                         <span class="field-value">{{ $incident->created_at->format('d M Y H:i') }}</span>
                     </div>
-                    <div class="field col-span-2">
-                        <span class="field-label">Description</span>
-                        <span class="field-desc">{{ $incident->incident_description }}</span>
+                    
+                    @if($incident->supervisor_verified_at)
+                    <div class="field">
+                        <span class="field-label">Supervisor Verification</span>
+                        <span class="field-value">
+                            <span style="color: #22c55e; font-weight: 600;"><i class="fa-solid fa-check-circle"></i> Verified</span>
+                        </span>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Supervisor Verification Card -->
-        @if($incident->supervisor_verified_at)
-        <div class="card">
-            <div class="card-header">
-                <h3><i class="fa-solid fa-user-check"></i> Supervisor Verification</h3>
-            </div>
-            <div class="card-body">
-                <div class="alert alert-success" style="margin-bottom: 1.5rem;">
-                    <p><i class="fa-solid fa-check-circle"></i> Verified by Supervisor</p>
-                </div>
-                <div class="grid-2">
                     <div class="field">
                         <span class="field-label">Verified By</span>
                         <span class="field-value">{{ $incident->assignedSupervisor->name ?? 'N/A' }}</span>
@@ -183,10 +172,15 @@
                             @endif
                         </span>
                     </div>
+                    @endif
+                    
+                    <div class="field col-span-2">
+                        <span class="field-label">Description</span>
+                        <span class="field-desc">{{ $incident->incident_description }}</span>
+                    </div>
                 </div>
             </div>
         </div>
-        @endif
 
         <!-- Head of Department Report Card -->
         @if($incident->hod_report)
