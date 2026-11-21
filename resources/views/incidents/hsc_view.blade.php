@@ -192,7 +192,7 @@
 
         <!-- HOD/Supervisor Report & Witness Statements Card with Tabs -->
         @if($incident->hod_report || ($incident->witnessTokens && $incident->witnessTokens->count() > 0))
-        <div class="card" x-data="{ activeTab: 'report' }">
+        <div class="card" x-data="{ activeTab: '{{ $incident->hod_report ? 'report' : 'witnesses' }}' }">
             <div class="card-header">
                 <h3><i class="fa-solid fa-file-signature"></i> HOD/Supervisor Report & Witness Statements</h3>
             </div>
@@ -225,7 +225,7 @@
             <div class="card-body">
                 <!-- HOD Report Tab Content -->
                 @if($incident->hod_report)
-                <div x-show="activeTab === 'report'" style="display: none;">
+                <div x-show="activeTab === 'report'">
                     <div class="alert alert-info" style="margin-bottom: 1.5rem;">
                         <p><i class="fa-solid fa-check-circle"></i> Report Submitted</p>
                     </div>
@@ -248,7 +248,7 @@
                 
                 <!-- Witness Statements Tab Content -->
                 @if($incident->witnessTokens && $incident->witnessTokens->count() > 0)
-                <div x-show="activeTab === 'witnesses'" style="display: none;">
+                <div x-show="activeTab === 'witnesses'">
                     @foreach($incident->witnessTokens as $token)
                     <div class="witness-item">
                         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
@@ -271,6 +271,14 @@
                         @endif
                     </div>
                     @endforeach
+                </div>
+                @endif
+                
+                <!-- Empty State if No Content -->
+                @if(!$incident->hod_report && (!$incident->witnessTokens || $incident->witnessTokens->count() == 0))
+                <div style="text-align: center; padding: 40px 20px; color: #64748b;">
+                    <i class="fa-solid fa-inbox" style="font-size: 48px; color: #cbd5e1; margin-bottom: 16px;"></i>
+                    <p style="font-size: 14px; font-weight: 600;">No report or witness statements available</p>
                 </div>
                 @endif
             </div>
