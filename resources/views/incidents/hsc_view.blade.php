@@ -149,6 +149,41 @@
                         <span class="field-label">Description</span>
                         <span class="field-desc">{{ $incident->incident_description }}</span>
                     </div>
+                    
+                    @if($incident->supervisor_verified_at)
+                    <!-- Supervisor Verification Section -->
+                    <div class="col-span-2" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid #e1e7ee;">
+                        <h6 style="font-size: 13px; font-weight: 700; color: #0d7a3d; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <i class="fa-solid fa-user-check"></i> Supervisor Verification
+                        </h6>
+                        <div class="grid-2">
+                            <div class="field">
+                                <span class="field-label">Verification Status</span>
+                                <span class="field-value">
+                                    <span style="color: #22c55e; font-weight: 600;"><i class="fa-solid fa-check-circle"></i> Verified</span>
+                                </span>
+                            </div>
+                            <div class="field">
+                                <span class="field-label">Verified By</span>
+                                <span class="field-value">{{ $incident->assignedSupervisor->name ?? 'N/A' }}</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-label">Verification Date</span>
+                                <span class="field-value">{{ $incident->supervisor_verified_at->format('d M Y H:i') }}</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-label">On-Duty Status</span>
+                                <span class="field-value">
+                                    @if($incident->on_duty_confirmation)
+                                        <span style="color: #22c55e; font-weight: 600;"><i class="fa-solid fa-check-circle"></i> Yes, On Duty</span>
+                                    @else
+                                        <span style="color: #ef4444; font-weight: 600;"><i class="fa-solid fa-times-circle"></i> No, Not On Duty</span>
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
