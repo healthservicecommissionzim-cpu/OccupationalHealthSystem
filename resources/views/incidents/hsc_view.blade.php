@@ -535,7 +535,8 @@
         </div>
         @endif
 
-        <!-- Workflow Timeline Card -->
+        <!-- Workflow Timeline Card - Hidden for Conditions of Service role -->
+        @unless(auth()->user()->hasRole('hsc_conditions'))
         <div class="card">
             <div class="card-header">
                 <h3><i class="fa-solid fa-timeline"></i> Complete Workflow Timeline</h3>
@@ -624,6 +625,7 @@
                 </div>
             </div>
         </div>
+        @endunless
 
         <!-- Footer -->
         <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e1e7ee; text-align: center;">
