@@ -271,14 +271,14 @@
             --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        @keyframes slideUp {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-20px); }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
         }
 
         .notification {
@@ -287,46 +287,45 @@
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 9999;
-            animation: slideDown 0.4s ease-out;
+            animation: fadeIn 0.3s ease;
         }
 
         .notification.hide {
-            animation: slideUp 0.4s ease-out forwards;
+            animation: fadeOut 0.3s ease forwards;
         }
 
         .notification-content {
             background: var(--white);
             border-radius: var(--radius);
-            padding: 2rem;
+            padding: 2rem 3rem;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             text-align: center;
-            min-width: 360px;
-            max-width: 500px;
+            min-width: 400px;
         }
 
         .notification.success .notification-icon {
             color: var(--green-500);
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 1rem;
         }
 
         .notification.error .notification-icon {
             color: var(--red-500);
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 1rem;
         }
 
         .notification-title {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: 700;
             color: var(--slate-900);
             margin-bottom: 0.5rem;
         }
 
         .notification-message {
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: var(--slate-600);
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1500,11 +1499,14 @@
             
             document.body.appendChild(container);
             
-            // Auto-hide after 4 seconds
+            // Auto-hide after 2 seconds
             setTimeout(() => {
                 container.classList.add('hide');
                 setTimeout(() => {
                     container.remove();
+                }, 300); // Match fadeOut animation duration
+            }, 2000); // 2 seconds display time
+        }
                 }, 400);
             }, 4000);
         }
