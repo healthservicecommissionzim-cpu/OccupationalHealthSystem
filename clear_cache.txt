@@ -1,0 +1,10 @@
+Run these commands on your server to clear Laravel cache:
+
+php artisan cache:clear
+php artisan config:clear
+php artisan view:clear
+php artisan route:clear
+php artisan optimize:clear
+
+Or combined:
+php artisan optimize:clear && php artisan config:clear && php artisan view:clear

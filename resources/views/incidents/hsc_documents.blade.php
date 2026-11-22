@@ -79,47 +79,50 @@
         }
         .doc-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
         }
         .doc-card {
             background: white;
             border: 1px solid #e1e7ee;
-            border-radius: 12px;
+            border-radius: 10px;
             overflow: hidden;
             transition: all 0.2s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         .doc-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
         }
         .doc-header {
-            padding: 1.25rem;
+            padding: 0.9rem 1rem;
             background: #f8fafb;
             border-bottom: 1px solid #e1e7ee;
         }
         .doc-type {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             color: #8a95a5;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .doc-name {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
             color: #101a31;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         .doc-status {
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 4px;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 600;
         }
         .doc-status.verified {
@@ -131,42 +134,43 @@
             color: #92400e;
         }
         .doc-body {
-            padding: 1.25rem;
+            padding: 1rem;
         }
         .doc-meta {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            margin-bottom: 1rem;
+            gap: 6px;
+            margin-bottom: 0.85rem;
         }
         .meta-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 12px;
+            gap: 6px;
+            font-size: 11px;
             color: #4e596c;
         }
         .meta-item i {
             color: #8a95a5;
-            width: 16px;
+            width: 14px;
+            font-size: 10px;
         }
         .doc-actions {
             display: flex;
-            gap: 8px;
+            gap: 6px;
         }
         .btn {
             flex: 1;
-            padding: 10px 16px;
-            border-radius: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
             border: none;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 4px;
             text-decoration: none;
         }
         .btn-primary {

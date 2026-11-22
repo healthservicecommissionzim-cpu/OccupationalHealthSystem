@@ -2517,6 +2517,9 @@ class IncidentController extends Controller
             if (!$canView) {
                 abort(403, 'Unauthorized');
             }
+        } elseif ($user->hasRole('hsc_conditions')) {
+            // HSC Conditions of Service users can view all documents for review
+            $canView = true;
         } else {
             abort(403, 'Unauthorized');
         }
@@ -2538,15 +2541,20 @@ class IncidentController extends Controller
             'gif' => 'image/gif',
             'webp' => 'image/webp',
             'txt' => 'text/plain',
+            'doc' => 'application/msword',
+            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'xls' => 'application/vnd.ms-excel',
+            'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ];
 
         $mimeType = $mimeTypes[$ext] ?? $attachment->mime_type ?? 'application/octet-stream';
 
-        // Read file and return as response
+        // Read file and return as response with inline disposition
         $fileContent = file_get_contents($filePath);
         
         return response($fileContent)
             ->header('Content-Type', $mimeType)
+            ->header('Content-Disposition', 'inline; filename="' . $attachment->file_name . '"')
             ->header('Content-Length', filesize($filePath))
             ->header('Cache-Control', 'public, max-age=3600')
             ->header('Accept-Ranges', 'bytes');
