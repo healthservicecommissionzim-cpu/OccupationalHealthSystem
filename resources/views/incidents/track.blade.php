@@ -1507,9 +1507,6 @@
                 }, 300); // Match fadeOut animation duration
             }, 2000); // 2 seconds display time
         }
-                }, 400);
-            }, 4000);
-        }
     </script>
 </body>
 </html>
