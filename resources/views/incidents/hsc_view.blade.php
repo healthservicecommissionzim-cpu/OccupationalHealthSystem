@@ -295,11 +295,10 @@
         @php
             $documentsCount = $incident->attachments ? $incident->attachments->count() : 0;
         @endphp
-        @if($documentsCount > 0)
         <div style="margin-bottom: 2rem;">
             <a href="{{ route('hsc.incident.documents', ['incident' => $incident->id]) }}" class="view-docs-btn">
                 <i class="fa-solid fa-paperclip"></i>
-                <span>View Supporting Documents ({{ $documentsCount }})</span>
+                <span>View Supporting Documents @if($documentsCount > 0)({{ $documentsCount }})@endif</span>
                 <i class="fa-solid fa-arrow-right"></i>
             </a>
         </div>
@@ -335,7 +334,6 @@
                 margin-left: 12px;
             }
         </style>
-        @endif
 
         <!-- HOD/Supervisor Report & Witness Statements Card with Tabs -->
         @if($incident->hod_report || ($incident->witnessTokens && $incident->witnessTokens->count() > 0))
