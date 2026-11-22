@@ -120,18 +120,12 @@
                                 <!-- IOD COMPENSATION REQUIREMENTS -->
                                 <optgroup label="IOD COMPENSATION REQUIRED DOCUMENTS">
                                     <option value="doctors_report">1. Doctor's Report (with degree of disability) - ORIGINAL</option>
-                                    <option value="injury_report">2. Injury Report Form ZII49 (duly completed) - ORIGINAL</option>
-                                    <option value="sick_leave">3. Duly Completed Sick Leave Forms - ORIGINAL</option>
-                                    <option value="witness_statement_1">4. Eye Witness Statement #1 (At least 2 required)</option>
-                                    <option value="witness_statement_2">5. Eye Witness Statement #2 (At least 2 required)</option>
-                                    <option value="witness_statement_additional">6. Additional Eye Witness Statements</option>
-                                    <option value="job_duties_description">7. Description of Duties at Time of Injury (from Head of Department)</option>
-                                    <option value="national_id">8. Certified Copy of National Registration Card</option>
-                                    <option value="bank_statement">9. Bank Statements (ZiG and USD) - Showing Name and Account Number</option>
-                                    <option value="treatment_records">10. Certified Copies of Initial Treatment Cards - ORIGINAL</option>
-                                    <option value="banking_details">11. Banking Details Form (Completed by Member)</option>
-                                    <option value="late_submission_reason">12. Reasons for Late Submission (from Head of Department, if applicable)</option>
-                                    <option value="contact_details">13. Contact Details (Cell Number and Address)</option>
+                                    <option value="sick_leave">2. Duly Completed Sick Leave Forms - ORIGINAL</option>
+                                    <option value="national_id">3. Certified Copy of National Registration Card</option>
+                                    <option value="bank_statement">4. Bank Statements (ZiG and USD) - Showing Name and Account Number</option>
+                                    <option value="treatment_records">5. Certified Copies of Initial Treatment Cards - ORIGINAL</option>
+                                    <option value="banking_details">6. Banking Details Form (Completed by Member)</option>
+                                    <option value="late_submission_reason">7. Reasons for Late Submission (from Head of Department, if applicable)</option>
                                 </optgroup>
                                 
                                 <!-- OTHER DOCUMENTS -->
