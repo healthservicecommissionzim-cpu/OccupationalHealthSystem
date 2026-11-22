@@ -475,6 +475,21 @@ class HSCController extends Controller
         return view('hsc.monitoring.workflow-health', compact('stageCounts', 'workflowStages'));
     }
 
+    /**
+     * View all supporting documents for a specific incident
+     */
+    public function viewDocuments($incidentId)
+    {
+        $incident = Incident::with([
+            'attachments',
+            'attachments.uploadedBy',
+            'facility',
+            'department'
+        ])->findOrFail($incidentId);
+
+        return view('incidents.hsc_documents', compact('incident'));
+    }
+
     // ============================================================================
     // REPORTS & EVIDENCE SECTION
     // ============================================================================

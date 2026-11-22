@@ -216,6 +216,7 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
 
     Route::get('/dashboards/hsc-conditions', [DashboardController::class, 'hscConditions'])->name('dashboards.hsc_conditions')->middleware('role:hsc_conditions', 'permission:view_dashboard');
     Route::get('/hsc/incidents/{incident}', [IncidentController::class, 'hscView'])->name('incidents.hsc_view')->middleware('role:hsc_conditions', 'permission:view_incidents');
+    Route::get('/hsc/incidents/{incident}/documents', [\App\Http\Controllers\HSCController::class, 'viewDocuments'])->name('hsc.incident.documents')->middleware('role:hsc_conditions', 'permission:view_incidents');
 
     // HSC Conditions Officer Routes
     Route::middleware(['role:hsc_conditions', 'permission:view_incidents'])->prefix('hsc')->name('hsc.')->group(function () {
