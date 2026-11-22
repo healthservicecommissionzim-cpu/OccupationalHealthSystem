@@ -291,50 +291,6 @@
             </div>
         </div>
 
-        <!-- View Documents Button -->
-        @php
-            $documentsCount = $incident->attachments ? $incident->attachments->count() : 0;
-        @endphp
-        <div style="margin-bottom: 2rem;">
-            <a href="{{ route('hsc.incident.documents', ['incident' => $incident->id]) }}" class="view-docs-btn">
-                <i class="fa-solid fa-paperclip"></i>
-                <span>View Supporting Documents @if($documentsCount > 0)({{ $documentsCount }})@endif</span>
-                <i class="fa-solid fa-arrow-right"></i>
-            </a>
-        </div>
-        
-        <style>
-            .view-docs-btn {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 18px 24px;
-                background: linear-gradient(135deg, #0d7a3d 0%, #1bb74d 100%);
-                color: white;
-                text-decoration: none;
-                border-radius: 12px;
-                font-size: 14px;
-                font-weight: 650;
-                transition: all 0.3s;
-                box-shadow: 0 4px 12px rgba(13, 122, 61, 0.2);
-            }
-            .view-docs-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(13, 122, 61, 0.3);
-            }
-            .view-docs-btn i:first-child {
-                font-size: 18px;
-                margin-right: 12px;
-            }
-            .view-docs-btn span {
-                flex: 1;
-            }
-            .view-docs-btn i:last-child {
-                font-size: 14px;
-                margin-left: 12px;
-            }
-        </style>
-
         <!-- HOD/Supervisor Report & Witness Statements Card with Tabs -->
         @if($incident->hod_report || ($incident->witnessTokens && $incident->witnessTokens->count() > 0))
         <div class="card" x-data="{ activeTab: '{{ $incident->hod_report ? 'report' : 'witnesses' }}' }">
@@ -421,6 +377,50 @@
             </div>
         </div>
         @endif
+
+        <!-- View Documents Button -->
+        @php
+            $documentsCount = $incident->attachments ? $incident->attachments->count() : 0;
+        @endphp
+        <div style="margin-bottom: 2rem;">
+            <a href="{{ route('hsc.incident.documents', ['incident' => $incident->id]) }}" class="view-docs-btn">
+                <i class="fa-solid fa-paperclip"></i>
+                <span>View Supporting Documents @if($documentsCount > 0)({{ $documentsCount }})@endif</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+        
+        <style>
+            .view-docs-btn {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 18px 24px;
+                background: linear-gradient(135deg, #0d7a3d 0%, #1bb74d 100%);
+                color: white;
+                text-decoration: none;
+                border-radius: 12px;
+                font-size: 14px;
+                font-weight: 650;
+                transition: all 0.3s;
+                box-shadow: 0 4px 12px rgba(13, 122, 61, 0.2);
+            }
+            .view-docs-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(13, 122, 61, 0.3);
+            }
+            .view-docs-btn i:first-child {
+                font-size: 18px;
+                margin-right: 12px;
+            }
+            .view-docs-btn span {
+                flex: 1;
+            }
+            .view-docs-btn i:last-child {
+                font-size: 14px;
+                margin-left: 12px;
+            }
+        </style>
     </div>
 </body>
 </html>
