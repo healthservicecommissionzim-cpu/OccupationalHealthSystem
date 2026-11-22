@@ -587,7 +587,7 @@ class IncidentController extends Controller
         $validated = $request->validate([
             'incident_id' => 'required|exists:incidents,id',
             'documents' => 'required|array|min:1|max:20',
-            'documents.*.type' => 'required|string|in:doctors_report,injury_report,sick_leave,witness_statement_1,witness_statement_2,witness_statement_additional,job_duties_description,national_id,bank_statement,treatment_records,banking_details,late_submission_reason,contact_details,police_report,death_certificate,heir_certificate,db8_form,termination_letter,marriage_certificate,NSSA_FORM_WCA1,OTHER',
+            'documents.*.type' => 'required|string|in:doctors_report,injury_report,sick_leave,witness_statement_1,witness_statement_2,witness_statement_additional,job_duties_description,national_id,bank_statement,treatment_records,banking_details,birth_certificate,late_submission_reason,contact_details,police_report,death_certificate,heir_certificate,db8_form,termination_letter,marriage_certificate,NSSA_FORM_WCA1,OTHER',
             'documents.*.file' => 'required|file|max:10240',
         ], [
             'incident_id.required' => 'Incident ID is required.',
@@ -622,6 +622,7 @@ class IncidentController extends Controller
                 'bank_statement' => 'Bank_Statements',
                 'treatment_records' => 'Treatment_Records',
                 'banking_details' => 'Banking_Details_Forms',
+                'birth_certificate' => 'Birth_Certificate',
                 'late_submission_reason' => 'Late_Submission_Reason',
                 'contact_details' => 'Contact_Details',
                 'police_report' => 'Police_Report',
