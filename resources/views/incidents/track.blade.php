@@ -620,6 +620,7 @@
         .status-badge.verified { background: #dbeafe; color: #0c4a6e; }
         .status-badge.investigating { background: #fce7f3; color: #831843; }
         .status-badge.resolved { background: #dcfce7; color: #15803d; }
+        .status-badge.rejected { background: #fee2e2; color: #991b1b; }
 
         .modal-header h2 {
             font-size: 1.5rem;
@@ -1323,9 +1324,34 @@
             const modalTitle = document.getElementById('modalTitle');
             const modalBody = document.getElementById('modalBody');
             
-            const statusClass = incident.status.toLowerCase().replace(/ /g, '-');
-            statusBadge.className = 'status-badge ' + statusClass;
-            statusBadge.textContent = incident.status;
+            // Map technical status to user-friendly status
+            const statusMap = {
+                'SUBMITTED': { text: 'Awaiting Supervisor Verification', class: 'pending' },
+                'PENDING_SUPERVISOR_VERIFICATION': { text: 'Awaiting Supervisor Verification', class: 'pending' },
+                'VERIFIED_SUPERVISOR': { text: 'Supervisor Verified', class: 'verified' },
+                'PENDING_WITNESS_STATEMENTS': { text: 'Awaiting Witness Statements', class: 'pending' },
+                'PENDING_HOD_REPORT': { text: 'Awaiting HOD Report', class: 'pending' },
+                'ESCALATED_TO_HR': { text: 'Under HR Review', class: 'investigating' },
+                'PENDING_HR_REVIEW': { text: 'Under HR Review', class: 'investigating' },
+                'ESCALATED_TO_DMO': { text: 'Under Medical Review (DMO)', class: 'investigating' },
+                'ESCALATED_TO_MEDICAL_SUPERINTENDENT': { text: 'Under Medical Review (Med Supt)', class: 'investigating' },
+                'ESCALATED_TO_CMO': { text: 'Under Medical Review (CMO)', class: 'investigating' },
+                'ESCALATED_TO_PMD': { text: 'Under PMD Review', class: 'investigating' },
+                'PENDING_PMD_REVIEW': { text: 'Under PMD Review', class: 'investigating' },
+                'APPROVED_BY_PMD': { text: 'Approved - PMD Recommendation Complete', class: 'resolved' },
+                'ESCALATED_TO_HSC': { text: 'Under HSC Review', class: 'investigating' },
+                'PENDING_HSC_REVIEW': { text: 'Under HSC Review', class: 'investigating' },
+                'APPROVED_BY_HSC': { text: 'Approved - HSC Recommendation Complete', class: 'resolved' },
+                'RESOLVED': { text: 'Case Resolved', class: 'resolved' },
+                'CLOSED': { text: 'Case Closed', class: 'resolved' },
+                'REJECTED_SUPERVISOR': { text: 'Not Approved - Supervisor', class: 'rejected' },
+                'REJECTED_BY_HR': { text: 'Not Approved - HR', class: 'rejected' },
+                'REJECTED': { text: 'Not Approved', class: 'rejected' }
+            };
+            
+            const statusInfo = statusMap[incident.status] || { text: incident.status.replace(/_/g, ' '), class: 'pending' };
+            statusBadge.className = 'status-badge ' + statusInfo.class;
+            statusBadge.textContent = statusInfo.text;
             
             let titleHtml = 'Incident #' + incident.reference_number;
             if (incident.first_aid_records && incident.first_aid_records.length > 0) {
