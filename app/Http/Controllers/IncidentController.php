@@ -537,7 +537,8 @@ class IncidentController extends Controller
             'facility',
             'district',
             'province',
-            'supervisorDesignation'
+            'supervisorDesignation',
+            'attachments'
         ])->where('reference_number', $request->reference_number)->first();
 
         if (!$incident) {
@@ -573,6 +574,15 @@ class IncidentController extends Controller
                     'id' => $record->id,
                     'nurse_name' => $record->nurse_name,
                     'severity_level' => $record->severity_level
+                ];
+            })->toArray(),
+            'attachments' => $incident->attachments->map(function($attachment) {
+                return [
+                    'id' => $attachment->id,
+                    'document_type' => $attachment->document_type,
+                    'file_name' => $attachment->file_name,
+                    'upload_status' => $attachment->upload_status,
+                    'created_at' => $attachment->created_at
                 ];
             })->toArray()
         ];

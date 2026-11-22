@@ -1398,6 +1398,68 @@
                 </div>
             `;
             
+            // Add documents section if there are any uploaded documents
+            if (incident.attachments && incident.attachments.length > 0) {
+                html += `
+                    <div class="detail-section">
+                        <div class="detail-section-title"><i class="fa-solid fa-paperclip"></i> Uploaded Documents (${incident.attachments.length})</div>
+                `;
+                
+                // Map document types to readable labels
+                const documentTypeLabels = {
+                    'doctors_report': "Doctor's Report (With Degree of Disability)",
+                    'injury_report': 'Injury Report Form ZII49',
+                    'sick_leave': 'Sick Leave Forms',
+                    'national_id': 'National Registration Card',
+                    'bank_statement': 'Bank Statements',
+                    'treatment_records': 'Treatment Records',
+                    'banking_details': 'Banking Details Form',
+                    'birth_certificate': 'Birth Certificate',
+                    'late_submission_reason': 'Late Submission Reason',
+                    'police_report': 'Police Report',
+                    'death_certificate': 'Death Certificate',
+                    'heir_certificate': 'Heir Certificate',
+                    'db8_form': 'DB8 Form',
+                    'termination_letter': 'Termination Letter',
+                    'marriage_certificate': 'Marriage Certificate',
+                    'NSSA_FORM_WCA1': 'NSSA Form W.C.A. 1',
+                    'OTHER': 'Other Document'
+                };
+                
+                incident.attachments.forEach((doc, index) => {
+                    const docLabel = documentTypeLabels[doc.document_type] || doc.document_type;
+                    const statusColor = doc.upload_status === 'VERIFIED' ? '#22c55e' : '#f59e0b';
+                    const statusText = doc.upload_status === 'VERIFIED' ? 'Verified' : 'Pending Review';
+                    
+                    html += `
+                        <div style="padding: 10px; background: #f8fafb; border-radius: 6px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+                                <i class="fa-solid fa-file" style="color: #64748b; font-size: 16px;"></i>
+                                <div>
+                                    <div style="font-size: 13px; font-weight: 600; color: #101a31;">${docLabel}</div>
+                                    <div style="font-size: 11px; color: #64748b;">Uploaded ${new Date(doc.created_at).toLocaleDateString()}</div>
+                                </div>
+                            </div>
+                            <div style="padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 600; background: ${statusColor}20; color: ${statusColor};">
+                                ${statusText}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `</div>`;
+            } else {
+                html += `
+                    <div class="detail-section">
+                        <div class="detail-section-title"><i class="fa-solid fa-paperclip"></i> Uploaded Documents</div>
+                        <div style="padding: 20px; text-align: center; color: #94a3b8; font-size: 13px;">
+                            <i class="fa-solid fa-inbox" style="font-size: 32px; margin-bottom: 8px; display: block;"></i>
+                            No documents uploaded yet
+                        </div>
+                    </div>
+                `;
+            }
+            
             modalBody.innerHTML = html;
             modal.style.display = 'flex';
 
