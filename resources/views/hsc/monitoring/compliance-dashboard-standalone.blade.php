@@ -19,8 +19,12 @@
         .head { display: flex; gap: 14px; }
         .icon { width: 46px; height: 46px; border-radius: 12px; background: #e9f8f3; color: #079b6d; display: grid; place-items: center; font-size: 22px; }
         .title { margin: 0; color: #101a31; font-size: 24px; font-weight: 750; display: flex; align-items: center; gap: 10px; }
-        .info-icon { width: 24px; height: 24px; border-radius: 50%; background: #3b82f6; color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-style: normal; }
-        .info-icon:hover { background: #2563eb; transform: scale(1.1); }
+        .info-icon { width: 24px; height: 24px; border-radius: 50%; background: #3b82f6; color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-style: italic; animation: pulse 2s ease-in-out infinite; }
+        .info-icon:hover { background: #2563eb; transform: scale(1.1); animation: none; }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+        }
         .sub { margin-top: 5px; color: #718096; font-size: 13px; }
         .back { padding: 10px 17px; border: 1px solid #ccd6df; border-radius: 8px; background: white; color: #101a31; font-weight: 650; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
         .back:hover { background: #f8fafb; }
