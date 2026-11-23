@@ -51,10 +51,6 @@
             <i class="fa-solid fa-repeat w-4 text-center text-orange-600"></i>
             <span>Repeat Incident Patterns</span>
         </a>
-        <a href="{{ route('hsc.risk.assessment') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] {{ request()->routeIs('hsc.risk.assessment') ? 'border-brand' : 'border-transparent' }} hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-exclamation-triangle w-4 text-center text-orange-600"></i>
-            <span>Risk Assessment</span>
-        </a>
     </div>
 </div>
 
