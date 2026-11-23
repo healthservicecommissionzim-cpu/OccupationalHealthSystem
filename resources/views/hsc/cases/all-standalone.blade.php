@@ -187,6 +187,7 @@
                                 <th>DATE</th>
                                 <th>EMPLOYEE</th>
                                 <th>FACILITY</th>
+                                <th>DEPARTMENT</th>
                                 <th>DISTRICT</th>
                                 <th>PROVINCE</th>
                                 <th>CASE TYPE</th>
@@ -260,6 +261,7 @@
                                     <td>{{ $incident->created_at->format('M d, Y') }}</td>
                                     <td>{{ $incident->first_name }} {{ $incident->surname }}</td>
                                     <td>{{ Str::limit($incident->facility?->name ?? 'N/A', 30) }}</td>
+                                    <td>{{ $incident->department?->name ?? 'N/A' }}</td>
                                     <td>{{ $incident->facility?->district?->name ?? 'N/A' }}</td>
                                     <td>{{ $incident->facility?->district?->province?->name ?? 'N/A' }}</td>
                                     <td>{{ $incident->incidentType?->name ?? 'Unknown' }}</td>
