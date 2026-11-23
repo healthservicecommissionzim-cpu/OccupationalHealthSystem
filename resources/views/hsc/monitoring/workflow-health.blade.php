@@ -101,47 +101,49 @@
             
             @if($total > 0)
                 @foreach($stageCounts as $stage => $count)
-                    @php
-                        $percentage = ($count / $total) * 100;
-                        
-                        // Map technical statuses to user-friendly, actionable labels
-                        $statusMap = [
-                            'PENDING_SUPERVISOR_VERIFICATION' => 'Awaiting Supervisor to Verify',
-                            'VERIFIED_SUPERVISOR' => 'Verified - Ready for Next Stage',
-                            'REJECTED_SUPERVISOR' => 'Rejected by Supervisor',
-                            'ESCALATED_TO_HR' => 'Awaiting HR Review',
-                            'PENDING_HR_REVIEW' => 'Awaiting HR to Review',
-                            'APPROVED_BY_HR' => 'HR Approved - Processing',
-                            'REJECTED_BY_HR' => 'Rejected by HR',
-                            'ESCALATED_TO_DMO' => 'Awaiting District Medical Officer to Action',
-                            'ESCALATED_TO_MEDICAL_SUPERINTENDENT' => 'Awaiting Medical Superintendent to Action',
-                            'ESCALATED_TO_PMD' => 'Awaiting Provincial Medical Director to Action',
-                            'PENDING_PMD_REVIEW' => 'Awaiting PMD to Review and Decide',
-                            'APPROVED_BY_PMD' => 'PMD Approved - Ready for Closure',
-                            'REJECTED_BY_PMD' => 'Rejected by PMD',
-                            'UNDER_MEDICAL_REVIEW' => 'Medical Board Reviewing',
-                            'PENDING_MEDICAL_BOARD' => 'Awaiting Medical Board Decision',
-                            'RESOLVED' => 'Case Resolved',
-                            'CLOSED' => 'Case Closed',
-                        ];
-                        
-                        $formattedStage = $statusMap[$stage] ?? str_replace('_', ' ', ucwords(strtolower($stage)));
-                    @endphp
-                    <div class="workflow-row">
-                        <div class="stage-info">
-                            <span class="stage-name">{{ $formattedStage }}</span>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" style="width: {{ $percentage }}%"></div>
+                    @if($count > 0)
+                        @php
+                            $percentage = ($count / $total) * 100;
+                            
+                            // Map technical statuses to user-friendly, actionable labels
+                            $statusMap = [
+                                'PENDING_SUPERVISOR_VERIFICATION' => 'Awaiting Supervisor to Verify',
+                                'VERIFIED_SUPERVISOR' => 'Supervisor Verified',
+                                'REJECTED_SUPERVISOR' => 'Rejected by Supervisor',
+                                'ESCALATED_TO_HR' => 'Awaiting HR Review',
+                                'PENDING_HR_REVIEW' => 'Awaiting HR to Review',
+                                'APPROVED_BY_HR' => 'HR Approved - Processing',
+                                'REJECTED_BY_HR' => 'Rejected by HR',
+                                'ESCALATED_TO_DMO' => 'Awaiting District Medical Officer to Action',
+                                'ESCALATED_TO_MEDICAL_SUPERINTENDENT' => 'Awaiting Medical Superintendent to Action',
+                                'ESCALATED_TO_PMD' => 'Awaiting Provincial Medical Director to Action',
+                                'PENDING_PMD_REVIEW' => 'Awaiting PMD to Review and Decide',
+                                'APPROVED_BY_PMD' => 'PMD Approved - Ready for Closure',
+                                'REJECTED_BY_PMD' => 'Rejected by PMD',
+                                'UNDER_MEDICAL_REVIEW' => 'Medical Board Reviewing',
+                                'PENDING_MEDICAL_BOARD' => 'Awaiting Medical Board Decision',
+                                'RESOLVED' => 'Case Resolved',
+                                'CLOSED' => 'Case Closed',
+                            ];
+                            
+                            $formattedStage = $statusMap[$stage] ?? str_replace('_', ' ', ucwords(strtolower($stage)));
+                        @endphp
+                        <div class="workflow-row">
+                            <div class="stage-info">
+                                <span class="stage-name">{{ $formattedStage }}</span>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width: {{ $percentage }}%"></div>
+                                </div>
+                            </div>
+                            <div class="stage-count">
+                                <span class="count-number">{{ $count }}</span>
+                                <div class="count-label">Cases</div>
+                            </div>
+                            <div class="stage-percent">
+                                {{ number_format($percentage, 1) }}%
                             </div>
                         </div>
-                        <div class="stage-count">
-                            <span class="count-number">{{ $count }}</span>
-                            <div class="count-label">Cases</div>
-                        </div>
-                        <div class="stage-percent">
-                            {{ number_format($percentage, 1) }}%
-                        </div>
-                    </div>
+                    @endif
                 @endforeach
                 
                 <div class="footer-total">
