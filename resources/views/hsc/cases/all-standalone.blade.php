@@ -110,6 +110,10 @@
             background: #f8fafb; 
         }
         
+        /* Button */
+        .btn-view { display: inline-flex; align-items: center; gap: 5px; padding: 7px 14px; border: none; border-radius: 7px; background: #079b6d; color: white; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s; text-decoration: none; white-space: nowrap; }
+        .btn-view:hover { background: #06845d; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(7, 155, 109, 0.2); }
+        
         /* Responsive */
         @media (max-width: 900px) {
             .chead { flex-direction: column; align-items: stretch; }
@@ -187,6 +191,7 @@
                                 <th>PROVINCE</th>
                                 <th>CASE TYPE</th>
                                 <th>STATUS</th>
+                                <th style="width: 120px; text-align: center;">ACTION</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -260,6 +265,11 @@
                                     <td>{{ $incident->incidentType?->name ?? 'Unknown' }}</td>
                                     <td>
                                         <span class="status-text">{{ $statusLabel }}</span>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <a href="{{ route('incidents.hsc_view', $incident) }}" class="btn-view">
+                                            <i class="fa-solid fa-eye"></i> View Case
+                                        </a>
                                     </td>
                                 </tr>
                             @endforeach
