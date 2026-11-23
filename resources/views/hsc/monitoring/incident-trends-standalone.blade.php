@@ -24,14 +24,14 @@
         .back:hover { background: #f8fafb; }
         
         /* Stats Cards */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 22px; }
-        .stat-card { background: #fff; border: 1px solid #e1e7ee; border-radius: 14px; padding: 20px; box-shadow: 0 4px 12px rgba(16,26,49,.04); }
-        .stat-label { font-size: 11px; font-weight: 700; color: #8a95a5; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-        .stat-value { font-size: 32px; font-weight: 800; color: #101a31; line-height: 1; margin-bottom: 6px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 22px; }
+        .stat-card { background: #fff; border: 1px solid #e1e7ee; border-radius: 10px; padding: 14px 16px; box-shadow: 0 2px 8px rgba(16,26,49,.03); }
+        .stat-label { font-size: 10px; font-weight: 700; color: #8a95a5; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+        .stat-value { font-size: 24px; font-weight: 800; color: #101a31; line-height: 1; margin-bottom: 4px; }
         .stat-value.orange { color: #f57c00; }
         .stat-value.red { color: #dc2626; }
         .stat-value.blue { color: #2563eb; }
-        .stat-desc { font-size: 11px; color: #718096; }
+        .stat-desc { font-size: 10px; color: #718096; }
         
         /* Card */
         .card { background: #fff; border: 1px solid #e1e7ee; border-radius: 14px; box-shadow: 0 8px 25px rgba(16,26,49,.06); overflow: hidden; }
@@ -172,14 +172,14 @@
                                 <th>INCIDENT TYPE</th>
                                 <th>DESCRIPTION</th>
                                 <th class="center" style="width: 120px;">REPEAT COUNT</th>
-                                <th class="center" style="width: 120px;">ACTION</th>
+                                <th class="center" style="width: 150px;">ACTION</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($repeatPatterns as $index => $pattern)
                                 <tr>
                                     <td class="center">
-                                        <span class="rank">#{{ $index + 1 }}</span>
+                                        <span class="rank">{{ $index + 1 }}</span>
                                     </td>
                                     <td>
                                         <span class="incident-type">{{ $pattern->incidentType->name ?? 'Unknown Type' }}</span>
