@@ -18,7 +18,9 @@
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
         .head { display: flex; gap: 14px; }
         .icon { width: 46px; height: 46px; border-radius: 12px; background: #e9f8f3; color: #079b6d; display: grid; place-items: center; font-size: 22px; }
-        .title { margin: 0; color: #101a31; font-size: 24px; font-weight: 750; }
+        .title { margin: 0; color: #101a31; font-size: 24px; font-weight: 750; display: flex; align-items: center; gap: 10px; }
+        .info-icon { width: 24px; height: 24px; border-radius: 50%; background: #3b82f6; color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-style: normal; }
+        .info-icon:hover { background: #2563eb; transform: scale(1.1); }
         .sub { margin-top: 5px; color: #718096; font-size: 13px; }
         .back { padding: 10px 17px; border: 1px solid #ccd6df; border-radius: 8px; background: white; color: #101a31; font-weight: 650; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
         .back:hover { background: #f8fafb; }
@@ -79,6 +81,24 @@
         .empty-state i { font-size: 48px; color: #e4e9ee; display: block; margin-bottom: 12px; }
         .empty-state p { font-size: 14px; color: #8a95a5; font-weight: 600; }
         
+        /* Modal */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 9999; padding: 20px; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 100%; max-width: 700px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; }
+        .modal-header { padding: 20px 24px; border-bottom: 1px solid #e1e7ee; display: flex; justify-content: space-between; align-items: center; background: #f8fafb; }
+        .modal-title { display: flex; align-items: center; gap: 10px; color: #101a31; font-size: 18px; font-weight: 750; }
+        .modal-close { background: none; border: none; font-size: 28px; color: #8a95a5; cursor: pointer; line-height: 1; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+        .modal-close:hover { color: #263149; }
+        .modal-body { padding: 24px; overflow-y: auto; flex: 1; }
+        .modal-body h3 { color: #101a31; font-size: 15px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .modal-body p { color: #4e596c; font-size: 13px; line-height: 1.6; margin-bottom: 16px; }
+        .modal-body ul { margin: 12px 0 16px 20px; }
+        .modal-body li { color: #4e596c; font-size: 13px; line-height: 1.8; margin-bottom: 8px; }
+        .modal-body strong { color: #101a31; font-weight: 700; }
+        .compliance-example { background: #f8fafb; border-left: 3px solid #3b82f6; padding: 12px 16px; border-radius: 6px; margin: 12px 0; }
+        .compliance-example-title { font-size: 12px; font-weight: 700; color: #3b82f6; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .compliance-example-text { font-size: 12px; color: #4e596c; line-height: 1.6; }
+        
         /* Responsive */
         @media (max-width: 900px) {
             .stats-grid { grid-template-columns: 1fr; }
@@ -100,7 +120,10 @@
             <div class="head">
                 <div class="icon"><i class="fa-solid fa-clipboard-check"></i></div>
                 <div>
-                    <h1 class="title">Compliance Dashboard</h1>
+                    <h1 class="title">
+                        Compliance Dashboard
+                        <i class="info-icon" onclick="openComplianceModal()" title="What is compliance?">i</i>
+                    </h1>
                     <div class="sub">Real-time overview of system compliance metrics and facility performance</div>
                 </div>
             </div>
@@ -232,7 +255,87 @@
         </div>
     </div>
 
+    <!-- Compliance Information Modal -->
+    <div id="complianceModal" class="modal" onclick="closeComplianceModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fa-solid fa-info-circle" style="color: #3b82f6;"></i>
+                    Understanding Compliance
+                </div>
+                <button onclick="closeComplianceModal()" class="modal-close">
+                    &times;
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <h3><i class="fa-solid fa-clipboard-check" style="color: #067c58;"></i> What is Compliance?</h3>
+                <p>
+                    In the context of this Occupational Health & Safety system, <strong>compliance</strong> refers to the adherence to proper incident documentation, reporting procedures, and statutory requirements as outlined by Zimbabwe's labor laws and Health Service Commission (HSC) policies.
+                </p>
+
+                <h3><i class="fa-solid fa-list-check" style="color: #3b82f6;"></i> A Case is Considered Compliant When:</h3>
+                <ul>
+                    <li><strong>Complete Documentation:</strong> All required forms, reports, and witness statements have been submitted</li>
+                    <li><strong>Timely Reporting:</strong> Incident was reported within the stipulated timeframe (within 24-48 hours of occurrence)</li>
+                    <li><strong>Proper Verification:</strong> Supervisor has verified and endorsed the incident report</li>
+                    <li><strong>Medical Records:</strong> Relevant medical documentation has been attached where applicable</li>
+                    <li><strong>Follow-up Actions:</strong> Appropriate corrective actions or medical board referrals have been completed</li>
+                    <li><strong>Workflow Completion:</strong> Case has progressed through all required approval stages (Supervisor → HR → Medical Review)</li>
+                </ul>
+
+                <div class="compliance-example">
+                    <div class="compliance-example-title">
+                        <i class="fa-solid fa-lightbulb"></i> Example of a Compliant Case
+                    </div>
+                    <div class="compliance-example-text">
+                        A worker sustains a back injury while lifting equipment. The incident is reported immediately, supervisor verifies within 24 hours, medical records from initial treatment are uploaded, witness statements collected, HOD report submitted, HR reviews and approves documentation, and case is forwarded to medical board with all required paperwork complete. This case would be marked as <strong>COMPLIANT</strong>.
+                    </div>
+                </div>
+
+                <h3><i class="fa-solid fa-triangle-exclamation" style="color: #dc2626;"></i> Non-Compliant Cases</h3>
+                <p>
+                    Cases are marked as <strong>non-compliant</strong> when they have missing documentation, delayed reporting, incomplete medical records, pending supervisor verification, or have not completed the required workflow stages. These cases require immediate attention to ensure proper documentation and legal protection for both the employee and the institution.
+                </p>
+
+                <h3><i class="fa-solid fa-chart-line" style="color: #f59e0b;"></i> Why Compliance Matters</h3>
+                <ul>
+                    <li><strong>Legal Protection:</strong> Ensures the institution meets statutory requirements under Zimbabwe's labor laws</li>
+                    <li><strong>Worker Benefits:</strong> Proper documentation supports IOD compensation claims and medical board applications</li>
+                    <li><strong>Data Integrity:</strong> Complete records enable accurate trend analysis and risk assessments</li>
+                    <li><strong>Accountability:</strong> Clear audit trails for internal and external reviews</li>
+                    <li><strong>Continuous Improvement:</strong> Identifying compliance gaps helps strengthen OHS processes</li>
+                </ul>
+
+                <p style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e1e7ee; font-size: 12px; color: #718096;">
+                    <i class="fa-solid fa-circle-info"></i> <strong>Note:</strong> The compliance status of each case is automatically calculated based on the presence of required documentation and completion of mandatory workflow stages. Cases can transition from non-compliant to compliant as missing items are submitted.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Compliance Modal Functions
+        function openComplianceModal() {
+            document.getElementById('complianceModal').classList.add('show');
+        }
+
+        function closeComplianceModal(event) {
+            const modal = document.getElementById('complianceModal');
+            if (!event || event.target === modal || event.type === 'click') {
+                modal.classList.remove('show');
+            }
+        }
+
+        // Close modal on ESC key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeComplianceModal();
+            }
+        });
+
         // Live search functionality
         document.getElementById('searchInput').addEventListener('keyup', function() {
             const searchValue = this.value.toLowerCase();
