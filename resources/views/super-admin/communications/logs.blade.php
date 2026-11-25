@@ -264,12 +264,12 @@
 </div>
 
 <!-- Modal -->
-<div id="logModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto;">
+<div id="logModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; overflow-y: auto;">
     <div style="max-width: 900px; margin: 20px auto; background: white; border-radius: 14px; box-shadow: 0 25px 50px rgba(0,0,0,0.2);">
         <!-- Modal Header -->
         <div style="padding: 24px; border-bottom: 1px solid #e1e7ee; display: flex; justify-content: space-between; align-items: center;">
             <h2 id="modalTitle" style="margin: 0; font-size: 20px; font-weight: 700; color: #101a31;">Communication Details</h2>
-            <button onclick="closeLogModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #8a95a5;">
+            <button onclick="closeLogModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #8a95a5; padding: 0;">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>

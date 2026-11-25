@@ -953,14 +953,20 @@ class IncidentController extends Controller
 
             // Task 6.2: Dispatch reminder SMS via SMS Service
             $smsService = new SMSService();
-            $facilityName = $incident->facility?->name ?? 'Your Facility';
             
             // Format reminder message
             $message = "HSC-OHS REMINDER: Please submit your witness statement for incident {$incident->reference_number}. " .
                        "Visit: " . url("/incidents/witness/{$witnessToken->token}");
 
-            // Send SMS and check the actual return value
-            $smsSent = $smsService->send($witnessToken->phone_number, $message);
+            // Send SMS with proper logging parameters
+            $smsSent = $smsService->send(
+                $witnessToken->phone_number,
+                $message,
+                'WITNESS_REMINDER_SMS',
+                $user->id,
+                'App\\Models\\Incident',
+                $incident->id
+            );
             
             // Task 6.3: Update witness_last_reminder_sent_at timestamp (only if SMS sent successfully)
             if ($smsSent) {
@@ -968,8 +974,7 @@ class IncidentController extends Controller
                     'witness_last_reminder_sent_at' => now(),
                 ]);
 
-                // Task 6.2: Log SMS send in incident_notifications table
-                // Task 7.3: Include initiated_by_user_id for audit logging
+                // Task 6.2: Log SMS send in incident_notifications table (internal tracking)
                 \App\Models\IncidentNotification::create([
                     'incident_id' => $incident->id,
                     'witness_token_id' => $witnessToken->id,
@@ -981,17 +986,6 @@ class IncidentController extends Controller
                     'initiated_by_user_id' => $user->id,
                     'sent_at' => now(),
                 ]);
-
-                // ALSO log to communication_logs table for centralized tracking
-                \App\Services\CommunicationLogger::logSms(
-                    type: 'WITNESS_REMINDER_SMS',
-                    recipientPhone: $witnessToken->phone_number,
-                    message: $message,
-                    status: 'SENT',
-                    relatedEntityType: 'Incident',
-                    relatedEntityId: $incident->id,
-                    provider: 'Econet SMS'
-                );
 
                 Log::info('Witness reminder SMS sent', [
                     'incident_id' => $incident->id,
@@ -1012,7 +1006,7 @@ class IncidentController extends Controller
                     'phone' => $witnessToken->phone_number,
                 ]);
 
-                // Log failed attempt in incident_notifications
+                // Log failed attempt in incident_notifications (internal tracking)
                 \App\Models\IncidentNotification::create([
                     'incident_id' => $incident->id,
                     'witness_token_id' => $witnessToken->id,
@@ -1025,18 +1019,6 @@ class IncidentController extends Controller
                     'initiated_by_user_id' => $user->id,
                     'sent_at' => now(),
                 ]);
-
-                // ALSO log to communication_logs table
-                \App\Services\CommunicationLogger::logSms(
-                    type: 'WITNESS_REMINDER_SMS',
-                    recipientPhone: $witnessToken->phone_number,
-                    message: $message,
-                    status: 'FAILED',
-                    errorMessage: 'SMS service disabled or delivery failed',
-                    relatedEntityType: 'Incident',
-                    relatedEntityId: $incident->id,
-                    provider: 'Econet SMS'
-                );
 
                 return response()->json([
                     'success' => false,
