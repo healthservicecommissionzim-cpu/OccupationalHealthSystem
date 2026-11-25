@@ -52,22 +52,6 @@
             margin-bottom: 15px;
             border-radius: 4px;
         }
-        .row {
-            display: flex;
-            margin-bottom: 12px;
-        }
-        .label {
-            flex: 0 0 30%;
-            font-weight: bold;
-            color: #1D4533;
-            font-size: 12px;
-        }
-        .value {
-            flex: 1;
-            color: #333;
-            font-size: 12px;
-            word-break: break-word;
-        }
         .status-badge {
             display: inline-block;
             padding: 5px 10px;
@@ -139,26 +123,30 @@
         <!-- Injured Person Section -->
         <div class="section">
             <div class="section-title">Injured Person Information</div>
-            <div class="row">
-                <div class="label">Name:</div>
-                <div class="value">{{ $incident->first_name }} {{ $incident->surname }}</div>
-            </div>
-            <div class="row">
-                <div class="label">Designation:</div>
-                <div class="value">{{ $incident->designation->name ?? 'N/A' }}</div>
-            </div>
-            <div class="row">
-                <div class="label">Department:</div>
-                <div class="value">{{ $incident->department->name ?? 'N/A' }}</div>
-            </div>
-            <div class="row">
-                <div class="label">Phone:</div>
-                <div class="value">{{ $incident->phone_number }}</div>
-            </div>
-            <div class="row">
-                <div class="label">Email:</div>
-                <div class="value">{{ $incident->email }}</div>
-            </div>
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Name:</td>
+                        <td>{{ $incident->first_name }} {{ $incident->surname }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Designation:</td>
+                        <td>{{ $incident->designation->name ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Department:</td>
+                        <td>{{ $incident->department->name ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Phone:</td>
+                        <td>{{ $incident->phone_number }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Email:</td>
+                        <td>{{ $incident->email }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <div class="divider"></div>
@@ -166,59 +154,63 @@
         <!-- Incident Details Section -->
         <div class="section">
             <div class="section-title">Incident Details</div>
-            <div class="row">
-                <div class="label">Date:</div>
-                <div class="value">{{ $incident->incident_date->format('Y-m-d') }}</div>
-            </div>
-            <div class="row">
-                <div class="label">Time:</div>
-                <div class="value">{{ $incident->incident_time }}</div>
-            </div>
-            <div class="row">
-                <div class="label">Description:</div>
-                <div class="value">{{ $incident->incident_description }}</div>
-            </div>
-            <div class="row">
-                <div class="label">Status:</div>
-                <div class="value">
-                    @php
-                        // Map technical statuses to user-friendly labels
-                        $statusMap = [
-                            'PENDING_SUPERVISOR_VERIFICATION' => 'Awaiting Supervisor Verification',
-                            'VERIFIED_SUPERVISOR' => 'Supervisor Verified',
-                            'REJECTED_SUPERVISOR' => 'Rejected by Supervisor',
-                            'ESCALATED_TO_HR' => 'Awaiting HR Review',
-                            'PENDING_HR_REVIEW' => 'Awaiting HR Review',
-                            'APPROVED_BY_HR' => 'HR Approved',
-                            'REJECTED_BY_HR' => 'Rejected by HR',
-                            'ESCALATED_TO_DMO' => 'Awaiting District Medical Officer',
-                            'ESCALATED_TO_MEDICAL_SUPERINTENDENT' => 'Awaiting Medical Superintendent',
-                            'ESCALATED_TO_PMD' => 'Under PMD Review',
-                            'PENDING_PMD_REVIEW' => 'Awaiting PMD Review',
-                            'APPROVED_BY_PMD' => 'PMD Approved',
-                            'REJECTED_BY_PMD' => 'Rejected by PMD',
-                            'UNDER_MEDICAL_REVIEW' => 'Medical Board Reviewing',
-                            'PENDING_MEDICAL_BOARD' => 'Awaiting Medical Board',
-                            'RESOLVED' => 'Case Resolved',
-                            'CLOSED' => 'Case Closed',
-                        ];
-                        
-                        $statusLabel = $statusMap[$incident->status] ?? str_replace('_', ' ', ucwords(strtolower($incident->status)));
-                        
-                        $statusClass = 'pending';
-                        if (in_array($incident->status, ['VERIFIED_SUPERVISOR', 'APPROVED_BY_HR', 'APPROVED_BY_PMD'])) {
-                            $statusClass = 'verified';
-                        } elseif (in_array($incident->status, ['UNDER_MEDICAL_REVIEW', 'PENDING_MEDICAL_BOARD'])) {
-                            $statusClass = 'investigating';
-                        } elseif (in_array($incident->status, ['RESOLVED', 'CLOSED'])) {
-                            $statusClass = 'resolved';
-                        }
-                    @endphp
-                    <span class="status-badge {{ $statusClass }}">
-                        {{ $statusLabel }}
-                    </span>
-                </div>
-            </div>
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Date:</td>
+                        <td>{{ $incident->incident_date->format('Y-m-d') }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Time:</td>
+                        <td>{{ $incident->incident_time }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Description:</td>
+                        <td>{{ $incident->incident_description }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Status:</td>
+                        <td>
+                            @php
+                                // Map technical statuses to user-friendly labels
+                                $statusMap = [
+                                    'PENDING_SUPERVISOR_VERIFICATION' => 'Awaiting Supervisor Verification',
+                                    'VERIFIED_SUPERVISOR' => 'Supervisor Verified',
+                                    'REJECTED_SUPERVISOR' => 'Rejected by Supervisor',
+                                    'ESCALATED_TO_HR' => 'Awaiting HR Review',
+                                    'PENDING_HR_REVIEW' => 'Awaiting HR Review',
+                                    'APPROVED_BY_HR' => 'HR Approved',
+                                    'REJECTED_BY_HR' => 'Rejected by HR',
+                                    'ESCALATED_TO_DMO' => 'Awaiting District Medical Officer',
+                                    'ESCALATED_TO_MEDICAL_SUPERINTENDENT' => 'Awaiting Medical Superintendent',
+                                    'ESCALATED_TO_PMD' => 'Under PMD Review',
+                                    'PENDING_PMD_REVIEW' => 'Awaiting PMD Review',
+                                    'APPROVED_BY_PMD' => 'PMD Approved',
+                                    'REJECTED_BY_PMD' => 'Rejected by PMD',
+                                    'UNDER_MEDICAL_REVIEW' => 'Medical Board Reviewing',
+                                    'PENDING_MEDICAL_BOARD' => 'Awaiting Medical Board',
+                                    'RESOLVED' => 'Case Resolved',
+                                    'CLOSED' => 'Case Closed',
+                                ];
+                                
+                                $statusLabel = $statusMap[$incident->status] ?? str_replace('_', ' ', ucwords(strtolower($incident->status)));
+                                
+                                $statusClass = 'pending';
+                                if (in_array($incident->status, ['VERIFIED_SUPERVISOR', 'APPROVED_BY_HR', 'APPROVED_BY_PMD'])) {
+                                    $statusClass = 'verified';
+                                } elseif (in_array($incident->status, ['UNDER_MEDICAL_REVIEW', 'PENDING_MEDICAL_BOARD'])) {
+                                    $statusClass = 'investigating';
+                                } elseif (in_array($incident->status, ['RESOLVED', 'CLOSED'])) {
+                                    $statusClass = 'resolved';
+                                }
+                            @endphp
+                            <span class="status-badge {{ $statusClass }}">
+                                {{ $statusLabel }}
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <div class="divider"></div>
@@ -226,18 +218,22 @@
         <!-- Location Section -->
         <div class="section">
             <div class="section-title">Location Information</div>
-            <div class="row">
-                <div class="label">Facility:</div>
-                <div class="value">{{ $incident->facility->name ?? 'N/A' }}</div>
-            </div>
-            <div class="row">
-                <div class="label">District:</div>
-                <div class="value">{{ $incident->district->name ?? 'N/A' }}</div>
-            </div>
-            <div class="row">
-                <div class="label">Province:</div>
-                <div class="value">{{ $incident->province->name ?? 'N/A' }}</div>
-            </div>
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Facility:</td>
+                        <td>{{ $incident->facility->name ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">District:</td>
+                        <td>{{ $incident->district->name ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Province:</td>
+                        <td>{{ $incident->province->name ?? 'N/A' }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <div class="divider"></div>
@@ -245,14 +241,18 @@
         <!-- Supervisor Section -->
         <div class="section">
             <div class="section-title">Supervisor Information</div>
-            <div class="row">
-                <div class="label">Name:</div>
-                <div class="value">{{ $incident->supervisor_name }}</div>
-            </div>
-            <div class="row">
-                <div class="label">Designation:</div>
-                <div class="value">{{ $incident->supervisorDesignation->name ?? 'N/A' }}</div>
-            </div>
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Name:</td>
+                        <td>{{ $incident->supervisor_name }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Designation:</td>
+                        <td>{{ $incident->supervisorDesignation->name ?? 'N/A' }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         @if ($incident->firstAidRecords->count() > 0)
@@ -262,48 +262,52 @@
             <div class="section">
                 <div class="section-title">First Aid Record</div>
                 @foreach ($incident->firstAidRecords as $record)
-                    <div class="row">
-                        <div class="label">Nurse Name:</div>
-                        <div class="value">{{ $record->nurse_name }}</div>
-                    </div>
-                    <div class="row">
-                        <div class="label">License/EC Number:</div>
-                        <div class="value">{{ $record->nurse_license_number }}</div>
-                    </div>
-                    <div class="row">
-                        <div class="label">Injury Description:</div>
-                        <div class="value">{{ $record->injury_description }}</div>
-                    </div>
-                    <div class="row">
-                        <div class="label">First Aid Provided:</div>
-                        <div class="value">{{ $record->first_aid_description }}</div>
-                    </div>
-                    <div class="row">
-                        <div class="label">Time Administered:</div>
-                        <div class="value">{{ $record->time_administered->format('Y-m-d H:i') }}</div>
-                    </div>
-                    <div class="row">
-                        <div class="label">Location:</div>
-                        <div class="value">{{ $record->location }}</div>
-                    </div>
-                    <div class="row">
-                        <div class="label">Severity:</div>
-                        <div class="value">{{ ucfirst($record->severity_level) }}</div>
-                    </div>
-                    @if ($record->notes)
-                        <div class="row">
-                            <div class="label">Notes:</div>
-                            <div class="value">{{ $record->notes }}</div>
-                        </div>
-                    @endif
-                    <div class="row">
-                        <div class="label">Status:</div>
-                        <div class="value">
-                            <span class="status-badge {{ $record->status }}">
-                                {{ ucfirst($record->status) }}
-                            </span>
-                        </div>
-                    </div>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style="width: 30%; font-weight: bold; color: #1D4533;">Nurse Name:</td>
+                                <td>{{ $record->nurse_name }}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 30%; font-weight: bold; color: #1D4533;">License/EC Number:</td>
+                                <td>{{ $record->nurse_license_number }}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 30%; font-weight: bold; color: #1D4533;">Injury Description:</td>
+                                <td>{{ $record->injury_description }}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 30%; font-weight: bold; color: #1D4533;">First Aid Provided:</td>
+                                <td>{{ $record->first_aid_description }}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 30%; font-weight: bold; color: #1D4533;">Time Administered:</td>
+                                <td>{{ $record->time_administered->format('Y-m-d H:i') }}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 30%; font-weight: bold; color: #1D4533;">Location:</td>
+                                <td>{{ $record->location }}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 30%; font-weight: bold; color: #1D4533;">Severity:</td>
+                                <td>{{ ucfirst($record->severity_level) }}</td>
+                            </tr>
+                            @if ($record->notes)
+                                <tr>
+                                    <td style="width: 30%; font-weight: bold; color: #1D4533;">Notes:</td>
+                                    <td>{{ $record->notes }}</td>
+                                </tr>
+                            @endif
+                            <tr>
+                                <td style="width: 30%; font-weight: bold; color: #1D4533;">Status:</td>
+                                <td>
+                                    <span class="status-badge {{ $record->status }}">
+                                        {{ ucfirst($record->status) }}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 @endforeach
             </div>
         @endif
@@ -366,14 +370,18 @@
         <!-- Timeline Section -->
         <div class="section">
             <div class="section-title">Timeline</div>
-            <div class="row">
-                <div class="label">Reported On:</div>
-                <div class="value">{{ $incident->created_at->format('Y-m-d H:i') }}</div>
-            </div>
-            <div class="row">
-                <div class="label">Last Updated:</div>
-                <div class="value">{{ $incident->updated_at->format('Y-m-d H:i') }}</div>
-            </div>
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Reported On:</td>
+                        <td>{{ $incident->created_at->format('Y-m-d H:i') }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Last Updated:</td>
+                        <td>{{ $incident->updated_at->format('Y-m-d H:i') }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <div class="footer">
