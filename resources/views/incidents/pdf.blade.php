@@ -13,20 +13,20 @@
             position: relative;
         }
         
-        /* Watermark */
+        /* Watermark - more visible */
         body::before {
             content: '';
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 400px;
-            height: 400px;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            width: 500px;
+            height: 500px;
             background-image: url('{{ asset('images/hsc-logo.png') }}');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-            opacity: 0.05;
+            opacity: 0.08;
             z-index: -1;
         }
         
@@ -37,111 +37,41 @@
             position: relative;
             z-index: 1;
         }
+        
+        /* Clean Professional Header */
         .header {
-            background: linear-gradient(135deg, #1D4533 0%, #0f2818 100%);
-            padding: 20px 25px;
-            margin: -20px -20px 25px -20px;
-            border-bottom: 4px solid #079b6d;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-        .header-top {
+            border-bottom: 3px solid #1D4533;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+            gap: 20px;
         }
         .header-logo {
-            width: 70px;
-            height: 70px;
-            background: white;
-            padding: 8px;
-            border-radius: 50%;
-            border: 3px solid #079b6d;
+            width: 85px;
+            height: 85px;
             flex-shrink: 0;
         }
         .header-text {
-            text-align: left;
+            flex: 1;
         }
-        .header h1 {
-            color: white;
+        .header-text h1 {
+            color: #1D4533;
             font-size: 24px;
-            margin-bottom: 4px;
             font-weight: bold;
+            margin: 0 0 5px 0;
             line-height: 1.2;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
-        .header .subtitle {
-            color: #a7f3d0;
-            font-size: 12px;
-            margin-bottom: 0;
-            line-height: 1.3;
-            font-weight: 600;
-        }
-        .header .tagline {
-            color: #d1fae5;
-            font-size: 10px;
-            font-style: italic;
-            margin-top: 2px;
-        }
-        .header-right {
-            text-align: right;
-        }
-        .doc-id {
-            background: rgba(255,255,255,0.15);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 10px;
-            font-weight: bold;
-            margin-bottom: 6px;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-        .qr-placeholder {
-            width: 70px;
-            height: 70px;
-            background: white;
-            border: 2px solid #079b6d;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 8px;
+        .header-text .subtitle {
             color: #666;
-            text-align: center;
-            padding: 5px;
+            font-size: 12px;
+            margin: 0 0 5px 0;
         }
-        .security-strip {
-            background: rgba(255,255,255,0.1);
-            padding: 10px 15px;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 9px;
-            color: #d1fae5;
-            border: 1px dashed rgba(255,255,255,0.3);
-        }
-        .security-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .security-icon {
+        .header-text .tagline {
             color: #079b6d;
-            background: white;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            margin: 0;
         }
         .reference-number {
             background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
@@ -241,42 +171,11 @@
 <body>
     <div class="container">
         <div class="header">
-            <div class="header-top">
-                <div class="header-left">
-                    <img src="{{ public_path('images/hsc-logo.png') }}" alt="HSC Logo" class="header-logo">
-                    <div class="header-text">
-                        <h1>Health Service Commission</h1>
-                        <p class="subtitle">Republic of Zimbabwe</p>
-                        <p class="tagline">Occupational Health & Safety System · Official Incident Report</p>
-                    </div>
-                </div>
-                <div class="header-right">
-                    <div class="doc-id">
-                        DOC ID: HSC-{{ date('Ymd') }}-{{ substr(md5($incident->reference_number), 0, 6) }}
-                    </div>
-                    <div class="qr-placeholder">
-                        Verification Code:<br>
-                        {{ strtoupper(substr(md5($incident->reference_number . $incident->created_at), 0, 8)) }}
-                    </div>
-                </div>
-            </div>
-            <div class="security-strip">
-                <div class="security-item">
-                    <span class="security-icon">🔒</span>
-                    <span>Official Document</span>
-                </div>
-                <div class="security-item">
-                    <span class="security-icon">✓</span>
-                    <span>Digitally Generated: {{ now()->format('Y-m-d H:i:s') }}</span>
-                </div>
-                <div class="security-item">
-                    <span class="security-icon">📄</span>
-                    <span>HSC Authorized</span>
-                </div>
-                <div class="security-item">
-                    <span class="security-icon">⚠</span>
-                    <span>Confidential</span>
-                </div>
+            <img src="{{ public_path('images/hsc-logo.png') }}" alt="HSC Logo" class="header-logo">
+            <div class="header-text">
+                <h1>Health Service Commission</h1>
+                <p class="subtitle">Republic of Zimbabwe</p>
+                <p class="tagline">Occupational Health & Safety System · Official Incident Report</p>
             </div>
         </div>
 
