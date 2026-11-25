@@ -13,21 +13,20 @@
             position: relative;
         }
         
-        /* Watermark - more visible */
+        /* Text Watermark */
         body::before {
-            content: '';
+            content: 'Health Service Commission';
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) rotate(-45deg);
-            width: 500px;
-            height: 500px;
-            background-image: url('{{ asset('images/hsc-logo.png') }}');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0.08;
+            font-size: 72px;
+            font-weight: bold;
+            color: #1D4533;
+            opacity: 0.06;
             z-index: -1;
+            white-space: nowrap;
+            letter-spacing: 2px;
         }
         
         .container {
@@ -57,9 +56,11 @@
             gap: 20px;
         }
         .header-logo {
-            width: 85px;
-            height: 85px;
+            width: 80px;
+            height: 80px;
             flex-shrink: 0;
+            border-radius: 50%;
+            object-fit: cover;
         }
         .header-text h1 {
             color: #1D4533;
@@ -105,10 +106,10 @@
         .section-title {
             background: #1D4533;
             color: white;
-            padding: 10px 15px;
-            font-size: 14px;
+            padding: 8px 12px;
+            font-size: 12px;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             border-radius: 4px;
         }
         .status-badge {
@@ -176,7 +177,6 @@
                     <img src="{{ public_path('images/hsc-logo.png') }}" alt="HSC Logo" class="header-logo">
                     <div class="header-text">
                         <h1>Health Service Commission</h1>
-                        <p class="subtitle">Republic of Zimbabwe</p>
                         <p class="tagline">Occupational Health & Safety System · Official Incident Report</p>
                     </div>
                 </div>
