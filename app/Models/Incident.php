@@ -84,7 +84,6 @@ class Incident extends Model
         'saved_by_user_id',
         'worker_primary_facility_id',
         'cost_center_facility_id',
-        'roster_assignment_id',
         'is_rotational_staff',
     ];
 
@@ -208,14 +207,6 @@ class Incident extends Model
     public function costCenterFacility()
     {
         return $this->belongsTo(Facility::class, 'cost_center_facility_id');
-    }
-
-    /**
-     * Get the roster assignment linked to this incident.
-     */
-    public function rosterAssignment()
-    {
-        return $this->belongsTo(RosterAssignment::class, 'roster_assignment_id');
     }
 
     /**
