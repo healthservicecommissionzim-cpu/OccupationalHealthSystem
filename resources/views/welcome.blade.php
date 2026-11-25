@@ -55,12 +55,24 @@
             box-sizing: border-box;
         }
         
+        html {
+            height: 100%;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             color: #0f172a;
             overflow-x: hidden;
             background: linear-gradient(to bottom, #ffffff 0%, #f9fafb 100%);
             position: relative;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
         }
         
         body::before {
@@ -807,6 +819,8 @@
             color: rgba(255, 255, 255, 0.9);
             padding: 2rem 4%;
             text-align: center;
+            margin-top: auto;
+            width: 100%;
         }
         
         footer h3 {
