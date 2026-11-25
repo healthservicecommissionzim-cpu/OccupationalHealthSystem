@@ -43,11 +43,15 @@
             border-bottom: 3px solid #1D4533;
             padding-bottom: 20px;
             margin-bottom: 25px;
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
+            display: table;
+            width: 100%;
         }
         .header-left {
+            display: table-cell;
+            vertical-align: middle;
+            width: 70%;
+        }
+        .header-left-inner {
             display: flex;
             align-items: center;
             gap: 20px;
@@ -76,8 +80,10 @@
             margin: 0;
         }
         .header-reference {
+            display: table-cell;
+            vertical-align: middle;
             text-align: right;
-            padding-top: 0;
+            width: 30%;
         }
         .header-reference .ref-label {
             font-size: 9px;
@@ -166,11 +172,13 @@
     <div class="container">
         <div class="header">
             <div class="header-left">
-                <img src="{{ public_path('images/hsc-logo.png') }}" alt="HSC Logo" class="header-logo">
-                <div class="header-text">
-                    <h1>Health Service Commission</h1>
-                    <p class="subtitle">Republic of Zimbabwe</p>
-                    <p class="tagline">Occupational Health & Safety System · Official Incident Report</p>
+                <div class="header-left-inner">
+                    <img src="{{ public_path('images/hsc-logo.png') }}" alt="HSC Logo" class="header-logo">
+                    <div class="header-text">
+                        <h1>Health Service Commission</h1>
+                        <p class="subtitle">Republic of Zimbabwe</p>
+                        <p class="tagline">Occupational Health & Safety System · Official Incident Report</p>
+                    </div>
                 </div>
             </div>
             <div class="header-reference">
