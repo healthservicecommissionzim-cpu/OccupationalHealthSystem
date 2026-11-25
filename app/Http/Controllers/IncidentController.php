@@ -761,7 +761,9 @@ class IncidentController extends Controller
      */
     public function downloadPdf($referenceNumber)
     {
-        $incident = Incident::where('reference_number', $referenceNumber)->firstOrFail();
+        $incident = Incident::where('reference_number', $referenceNumber)
+            ->with(['attachments', 'facility', 'department', 'designation', 'supervisorDesignation', 'firstAidRecords'])
+            ->firstOrFail();
 
         // Generate PDF using the existing PDF view
         $pdf = Pdf::loadView('incidents.pdf', ['incident' => $incident])
