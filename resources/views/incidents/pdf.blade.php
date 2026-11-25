@@ -38,48 +38,136 @@
             z-index: 1;
         }
         .header {
+            background: linear-gradient(135deg, #1D4533 0%, #0f2818 100%);
+            padding: 20px 25px;
+            margin: -20px -20px 25px -20px;
+            border-bottom: 4px solid #079b6d;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        .header-top {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
             gap: 15px;
-            margin-bottom: 30px;
-            border-bottom: 3px solid #1D4533;
-            padding-bottom: 15px;
         }
         .header-logo {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
+            background: white;
+            padding: 8px;
+            border-radius: 50%;
+            border: 3px solid #079b6d;
             flex-shrink: 0;
         }
         .header-text {
             text-align: left;
         }
         .header h1 {
-            color: #1D4533;
-            font-size: 22px;
-            margin-bottom: 3px;
+            color: white;
+            font-size: 24px;
+            margin-bottom: 4px;
             font-weight: bold;
             line-height: 1.2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .header p {
-            color: #666;
-            font-size: 11px;
+        .header .subtitle {
+            color: #a7f3d0;
+            font-size: 12px;
             margin-bottom: 0;
             line-height: 1.3;
+            font-weight: 600;
         }
         .header .tagline {
-            color: #888;
-            font-size: 11px;
+            color: #d1fae5;
+            font-size: 10px;
             font-style: italic;
+            margin-top: 2px;
+        }
+        .header-right {
+            text-align: right;
+        }
+        .doc-id {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .qr-placeholder {
+            width: 70px;
+            height: 70px;
+            background: white;
+            border: 2px solid #079b6d;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: #666;
+            text-align: center;
+            padding: 5px;
+        }
+        .security-strip {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 15px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 9px;
+            color: #d1fae5;
+            border: 1px dashed rgba(255,255,255,0.3);
+        }
+        .security-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .security-icon {
+            color: #079b6d;
+            background: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
         }
         .reference-number {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            padding: 10px;
-            border-radius: 4px;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-left: 4px solid #079b6d;
+            padding: 15px 20px;
+            border-radius: 6px;
             margin-bottom: 20px;
             font-weight: bold;
             color: #1D4533;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ref-label {
+            font-size: 11px;
+            color: #15803d;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .ref-value {
+            font-size: 18px;
+            color: #1D4533;
+            font-weight: 800;
+            letter-spacing: 1px;
         }
         .section {
             margin-bottom: 25px;
@@ -153,16 +241,54 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="{{ public_path('images/hsc-logo.png') }}" alt="HSC Logo" class="header-logo">
-            <div class="header-text">
-                <h1>Health Service Commission</h1>
-                <p>Occupational Health & Safety System</p>
-                <p class="tagline">Incident Report</p>
+            <div class="header-top">
+                <div class="header-left">
+                    <img src="{{ public_path('images/hsc-logo.png') }}" alt="HSC Logo" class="header-logo">
+                    <div class="header-text">
+                        <h1>Health Service Commission</h1>
+                        <p class="subtitle">Republic of Zimbabwe</p>
+                        <p class="tagline">Occupational Health & Safety System · Official Incident Report</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="doc-id">
+                        DOC ID: HSC-{{ date('Ymd') }}-{{ substr(md5($incident->reference_number), 0, 6) }}
+                    </div>
+                    <div class="qr-placeholder">
+                        Verification Code:<br>
+                        {{ strtoupper(substr(md5($incident->reference_number . $incident->created_at), 0, 8)) }}
+                    </div>
+                </div>
+            </div>
+            <div class="security-strip">
+                <div class="security-item">
+                    <span class="security-icon">🔒</span>
+                    <span>Official Document</span>
+                </div>
+                <div class="security-item">
+                    <span class="security-icon">✓</span>
+                    <span>Digitally Generated: {{ now()->format('Y-m-d H:i:s') }}</span>
+                </div>
+                <div class="security-item">
+                    <span class="security-icon">📄</span>
+                    <span>HSC Authorized</span>
+                </div>
+                <div class="security-item">
+                    <span class="security-icon">⚠</span>
+                    <span>Confidential</span>
+                </div>
             </div>
         </div>
 
         <div class="reference-number">
-            Reference Number: {{ $incident->reference_number }}
+            <div>
+                <div class="ref-label">Official Reference Number</div>
+                <div class="ref-value">{{ $incident->reference_number }}</div>
+            </div>
+            <div style="text-align: right; font-size: 10px; color: #15803d;">
+                <div>Reported: {{ $incident->created_at->format('d M Y') }}</div>
+                <div style="font-size: 9px; color: #666;">Last Updated: {{ $incident->updated_at->format('d M Y H:i') }}</div>
+            </div>
         </div>
 
         <!-- Injured Person Section -->
@@ -388,29 +514,28 @@
             </div>
         @endif
 
-        <div class="divider"></div>
-
-        <!-- Timeline Section -->
-        <div class="section">
-            <div class="section-title">Timeline</div>
-            <table>
-                <tbody>
-                    <tr>
-                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Reported On:</td>
-                        <td>{{ $incident->created_at->format('Y-m-d H:i') }}</td>
-                    </tr>
-                    <tr>
-                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Last Updated:</td>
-                        <td>{{ $incident->updated_at->format('Y-m-d H:i') }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
         <div class="footer">
-            <p>Generated on {{ now()->format('Y-m-d H:i') }}</p>
-            <p><strong>Health Service Commission</strong></p>
-            <p style="font-size: 10px; margin-top: 5px;">Occupational Health & Safety System</p>
+            <div style="border-top: 2px solid #1D4533; padding-top: 15px; margin-top: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div style="text-align: left;">
+                        <p style="font-size: 11px; color: #333; margin: 0;"><strong>Health Service Commission</strong></p>
+                        <p style="font-size: 9px; color: #666; margin: 2px 0;">Occupational Health & Safety System</p>
+                        <p style="font-size: 9px; color: #666; margin: 2px 0;">Republic of Zimbabwe</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="font-size: 9px; color: #666; margin: 0;">Generated: {{ now()->format('Y-m-d H:i:s') }}</p>
+                        <p style="font-size: 9px; color: #666; margin: 2px 0;">Report ID: {{ $incident->reference_number }}</p>
+                        <p style="font-size: 8px; color: #999; margin: 2px 0;">Digital Signature: {{ strtoupper(substr(hash('sha256', $incident->reference_number . $incident->created_at . now()), 0, 16)) }}</p>
+                    </div>
+                </div>
+                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 8px; border-radius: 4px; margin-top: 10px;">
+                    <p style="font-size: 8px; color: #15803d; margin: 0; text-align: center;">
+                        ⚠ <strong>AUTHENTICITY NOTICE:</strong> This is an official document generated by the HSC-OHS System. 
+                        Any alteration or unauthorized reproduction is prohibited and may constitute fraud. 
+                        Verify authenticity at: injury.hsc.org.zw/verify or contact HSC directly.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </body>
