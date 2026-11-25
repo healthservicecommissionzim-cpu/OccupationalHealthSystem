@@ -11,6 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Drop foreign key constraint from incidents table first
+        Schema::table('incidents', function (Blueprint $table) {
+            $table->dropForeign(['roster_assignment_id']);
+            $table->dropColumn('roster_assignment_id');
+        });
+
         // Drop tables in reverse order of foreign key dependencies
         Schema::dropIfExists('roster_audit_logs');
         Schema::dropIfExists('roster_assignments');
