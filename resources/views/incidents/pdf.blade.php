@@ -10,26 +10,64 @@
             font-family: Arial, sans-serif;
             color: #333;
             line-height: 1.6;
+            position: relative;
         }
+        
+        /* Watermark */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            background-image: url('{{ asset('images/hsc-logo.png') }}');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.05;
+            z-index: -1;
+        }
+        
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 1;
         }
         .header {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 15px;
             margin-bottom: 30px;
             border-bottom: 3px solid #1D4533;
             padding-bottom: 15px;
+        }
+        .header-logo {
+            width: 60px;
+            height: 60px;
+            flex-shrink: 0;
+        }
+        .header-text {
+            flex: 1;
         }
         .header h1 {
             color: #1D4533;
             font-size: 24px;
             margin-bottom: 5px;
+            font-weight: bold;
         }
         .header p {
             color: #666;
             font-size: 12px;
+            margin-bottom: 2px;
+        }
+        .header .tagline {
+            color: #888;
+            font-size: 11px;
+            font-style: italic;
         }
         .reference-number {
             background: #f0fdf4;
@@ -112,8 +150,12 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Occupational Health & Safety System</h1>
-            <p>Incident Report</p>
+            <img src="{{ public_path('images/hsc-logo.png') }}" alt="HSC Logo" class="header-logo">
+            <div class="header-text">
+                <h1>Health Service Commission</h1>
+                <p>Occupational Health & Safety System</p>
+                <p class="tagline">Incident Report</p>
+            </div>
         </div>
 
         <div class="reference-number">
@@ -386,7 +428,8 @@
 
         <div class="footer">
             <p>Generated on {{ now()->format('Y-m-d H:i') }}</p>
-            <p>Occupational Health & Safety System</p>
+            <p><strong>Health Service Commission</strong></p>
+            <p style="font-size: 10px; margin-top: 5px;">Occupational Health & Safety System</p>
         </div>
     </div>
 </body>
