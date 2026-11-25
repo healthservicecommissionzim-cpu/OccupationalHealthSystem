@@ -12,12 +12,12 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { margin: 0; background: #f5f7fa; color: #263149; font: 14px Inter, 'Segoe UI', Arial, sans-serif; }
-        .page { max-width: 1400px; margin: auto; padding: 35px 25px 70px; }
+        .page { max-width: 1600px; margin: auto; padding: 35px 25px 70px; }
         
         /* Header */
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
         .head { display: flex; gap: 14px; }
-        .icon { width: 46px; height: 46px; border-radius: 12px; background: #e8f5ff; color: #0ea5e9; display: grid; place-items: center; font-size: 22px; }
+        .icon { width: 46px; height: 46px; border-radius: 12px; background: #e9f8f3; color: #079b6d; display: grid; place-items: center; font-size: 22px; }
         .title { margin: 0; color: #101a31; font-size: 24px; font-weight: 750; }
         .sub { margin-top: 5px; color: #718096; font-size: 13px; }
         .case { display: inline-block; margin-top: 9px; padding: 5px 10px; border-radius: 6px; background: #eef2f6; color: #5d687b; font-size: 11px; font-weight: 700; }
@@ -31,18 +31,18 @@
         
         /* Search and Filter */
         .search-box { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: white; border: 1px solid #e4e9ee; border-radius: 8px; min-width: 250px; }
-        .search-box:focus-within { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
+        .search-box:focus-within { border-color: #079b6d; box-shadow: 0 0 0 3px rgba(7, 155, 109, 0.1); }
         .search-box input { border: none; background: transparent; outline: none; width: 100%; font-size: 12px; color: #263149; }
         .search-box input::placeholder { color: #8a95a5; }
         .search-box i { color: #8a95a5; font-size: 13px; }
         
         .filter-select { padding: 8px 12px; background: white; border: 1px solid #e4e9ee; border-radius: 8px; font-size: 12px; color: #263149; font-weight: 600; cursor: pointer; outline: none; }
-        .filter-select:hover { border-color: #0ea5e9; }
-        .filter-select:focus { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
+        .filter-select:hover { border-color: #079b6d; }
+        .filter-select:focus { border-color: #079b6d; box-shadow: 0 0 0 3px rgba(7, 155, 109, 0.1); }
         
         .btn { padding: 8px 14px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 12px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-        .btn-primary { background: #0ea5e9; color: white; }
-        .btn-primary:hover { background: #0284c7; }
+        .btn-primary { background: #079b6d; color: white; }
+        .btn-primary:hover { background: #06845d; }
         .btn-secondary { background: #e2e8f0; color: #334155; }
         .btn-secondary:hover { background: #cbd5e1; }
         .btn-success { background: #10b981; color: white; }
@@ -54,8 +54,8 @@
         .table-container { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; }
         thead { background: #f8fafb; }
-        th { text-align: left; padding: 12px; font-size: 10px; font-weight: 750; color: #8a95a5; text-transform: uppercase; border-bottom: 2px solid #e4e9ee; letter-spacing: 0.5px; white-space: nowrap; }
-        td { padding: 14px 12px; border-bottom: 1px solid #e4e9ee; color: #4e596c; font-size: 12px; }
+        th { text-align: left; padding: 14px 12px; font-size: 10px; font-weight: 750; color: #8a95a5; text-transform: uppercase; border-bottom: 2px solid #e4e9ee; letter-spacing: 0.5px; white-space: nowrap; }
+        td { padding: 16px 12px; border-bottom: 1px solid #e4e9ee; color: #4e596c; font-size: 12px; }
         tbody tr { transition: background-color 0.2s ease; }
         tbody tr:hover { background: #f8fafb; }
         tbody tr:last-child td { border-bottom: none; }
@@ -84,8 +84,8 @@
         .pagination-wrapper { padding: 16px 22px; background: white; border-top: 1px solid #e4e9ee; }
         .pagination { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; align-items: center; }
         .pagination a, .pagination span { padding: 8px 12px; border: 1px solid #e4e9ee; background: white; cursor: pointer; border-radius: 6px; font-size: 11px; font-weight: 650; transition: all 0.2s; text-decoration: none; color: #4e596c; min-width: 36px; text-align: center; }
-        .pagination a:hover { border-color: #0ea5e9; color: #0ea5e9; background: #f0f9fd; }
-        .pagination .active span { background: #0ea5e9; color: white; border-color: #0ea5e9; }
+        .pagination a:hover { border-color: #079b6d; color: #079b6d; background: #f0f9f7; }
+        .pagination .active span { background: #079b6d; color: white; border-color: #079b6d; }
         .pagination .disabled span { color: #cbd5e1; cursor: not-allowed; background: #f8fafb; }
         
         @media (max-width: 900px) {
@@ -236,7 +236,7 @@
         <div id="modalContent" style="padding: 24px; overflow-y: auto; max-height: 70vh;">
             <div style="text-align: center; padding: 40px;">
                 <div style="display: inline-block; padding: 20px; background: #f0f4f8; border-radius: 50%; margin-bottom: 15px;">
-                    <i class="fa-solid fa-spinner" style="font-size: 30px; color: #0ea5e9; animation: spin 1s linear infinite;"></i>
+                    <i class="fa-solid fa-spinner" style="font-size: 30px; color: #079b6d; animation: spin 1s linear infinite;"></i>
                 </div>
                 <p style="color: #64748b; font-weight: 600;">Loading details...</p>
             </div>
