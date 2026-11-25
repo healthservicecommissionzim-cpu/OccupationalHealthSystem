@@ -162,15 +162,6 @@
         table tr:nth-child(even) {
             background: #f9fafb;
         }
-        .doc-status {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-        .doc-status.verified { background: #dcfce7; color: #15803d; }
-        .doc-status.pending { background: #fef3c7; color: #92400e; }
     </style>
 </head>
 <body>
@@ -358,59 +349,6 @@
                         </tbody>
                     </table>
                 @endforeach
-            </div>
-        @endif
-
-        @if ($incident->attachments->count() > 0)
-            <div class="divider"></div>
-
-            <!-- Submitted Documents Section -->
-            <div class="section">
-                <div class="section-title">Submitted Documents</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 10%;">#</th>
-                            <th style="width: 60%;">Document Type</th>
-                            <th style="width: 30%;">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($incident->attachments as $index => $attachment)
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>
-                                    @php
-                                        $docTypeLabels = [
-                                            'doctors_report' => 'Doctor\'s Report',
-                                            'medical_records' => 'Medical Records',
-                                            'witness_statement' => 'Witness Statement',
-                                            'photos' => 'Photos/Images',
-                                            'lab_results' => 'Laboratory Results',
-                                            'xray_scan' => 'X-ray/Scan Results',
-                                            'police_report' => 'Police Report',
-                                            'insurance_claim' => 'Insurance Claim Form',
-                                            'other' => 'Other Supporting Document',
-                                            'injury_report' => 'INJURY REPORT FORM ZII49',
-                                            'treatment_records' => 'Certified Copies of Initial Treatment Records',
-                                            'birth_certificate' => 'Certified Long Children\'s Birth Certificates',
-                                        ];
-                                        $docLabel = $docTypeLabels[$attachment->document_type] ?? ucwords(str_replace('_', ' ', $attachment->document_type));
-                                    @endphp
-                                    {{ $docLabel }}
-                                </td>
-                                <td>
-                                    @php
-                                        $docStatus = $attachment->verification_status ?? 'PENDING';
-                                        $docStatusLabel = $docStatus === 'VERIFIED' ? 'Verified' : 'Submitted';
-                                        $docStatusClass = $docStatus === 'VERIFIED' ? 'verified' : 'pending';
-                                    @endphp
-                                    <span class="doc-status {{ $docStatusClass }}">{{ $docStatusLabel }}</span>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
             </div>
         @endif
 
