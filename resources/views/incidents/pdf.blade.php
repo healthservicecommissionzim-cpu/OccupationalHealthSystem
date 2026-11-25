@@ -45,15 +45,17 @@
             margin-bottom: 25px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
             gap: 20px;
         }
         .header-logo {
             width: 85px;
             height: 85px;
             flex-shrink: 0;
-        }
-        .header-text {
-            flex: 1;
         }
         .header-text h1 {
             color: #1D4533;
@@ -73,31 +75,22 @@
             font-weight: 600;
             margin: 0;
         }
-        .reference-number {
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border-left: 4px solid #079b6d;
-            padding: 15px 20px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            font-weight: bold;
-            color: #1D4533;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .header-reference {
+            text-align: right;
         }
-        .ref-label {
-            font-size: 11px;
-            color: #15803d;
-            font-weight: 600;
+        .header-reference .ref-label {
+            font-size: 10px;
+            color: #666;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            margin: 0 0 5px 0;
         }
-        .ref-value {
+        .header-reference .ref-number {
             font-size: 18px;
             color: #1D4533;
             font-weight: 800;
             letter-spacing: 1px;
+            margin: 0;
         }
         .section {
             margin-bottom: 25px;
@@ -171,22 +164,17 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="{{ public_path('images/hsc-logo.png') }}" alt="HSC Logo" class="header-logo">
-            <div class="header-text">
-                <h1>Health Service Commission</h1>
-                <p class="subtitle">Republic of Zimbabwe</p>
-                <p class="tagline">Occupational Health & Safety System · Official Incident Report</p>
+            <div class="header-left">
+                <img src="{{ public_path('images/hsc-logo.png') }}" alt="HSC Logo" class="header-logo">
+                <div class="header-text">
+                    <h1>Health Service Commission</h1>
+                    <p class="subtitle">Republic of Zimbabwe</p>
+                    <p class="tagline">Occupational Health & Safety System · Official Incident Report</p>
+                </div>
             </div>
-        </div>
-
-        <div class="reference-number">
-            <div>
-                <div class="ref-label">Official Reference Number</div>
-                <div class="ref-value">{{ $incident->reference_number }}</div>
-            </div>
-            <div style="text-align: right; font-size: 10px; color: #15803d;">
-                <div>Reported: {{ $incident->created_at->format('d M Y') }}</div>
-                <div style="font-size: 9px; color: #666;">Last Updated: {{ $incident->updated_at->format('d M Y H:i') }}</div>
+            <div class="header-reference">
+                <p class="ref-label">Official Reference Number</p>
+                <p class="ref-number">{{ $incident->reference_number }}</p>
             </div>
         </div>
 
@@ -415,19 +403,7 @@
 
         <div class="footer">
             <div style="border-top: 2px solid #1D4533; padding-top: 15px; margin-top: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <div style="text-align: left;">
-                        <p style="font-size: 11px; color: #333; margin: 0;"><strong>Health Service Commission</strong></p>
-                        <p style="font-size: 9px; color: #666; margin: 2px 0;">Occupational Health & Safety System</p>
-                        <p style="font-size: 9px; color: #666; margin: 2px 0;">Republic of Zimbabwe</p>
-                    </div>
-                    <div style="text-align: right;">
-                        <p style="font-size: 9px; color: #666; margin: 0;">Generated: {{ now()->format('Y-m-d H:i:s') }}</p>
-                        <p style="font-size: 9px; color: #666; margin: 2px 0;">Report ID: {{ $incident->reference_number }}</p>
-                        <p style="font-size: 8px; color: #999; margin: 2px 0;">Digital Signature: {{ strtoupper(substr(hash('sha256', $incident->reference_number . $incident->created_at . now()), 0, 16)) }}</p>
-                    </div>
-                </div>
-                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 8px; border-radius: 4px; margin-top: 10px;">
+                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 8px; border-radius: 4px;">
                     <p style="font-size: 8px; color: #15803d; margin: 0; text-align: center;">
                         ⚠ <strong>AUTHENTICITY NOTICE:</strong> This is an official document generated by the HSC-OHS System. 
                         Any alteration or unauthorized reproduction is prohibited and may constitute fraud. 
