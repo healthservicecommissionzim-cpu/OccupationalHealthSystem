@@ -40,6 +40,7 @@
         .header {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 15px;
             margin-bottom: 30px;
             border-bottom: 3px solid #1D4533;
@@ -51,18 +52,20 @@
             flex-shrink: 0;
         }
         .header-text {
-            flex: 1;
+            text-align: left;
         }
         .header h1 {
             color: #1D4533;
-            font-size: 24px;
-            margin-bottom: 5px;
+            font-size: 22px;
+            margin-bottom: 3px;
             font-weight: bold;
+            line-height: 1.2;
         }
         .header p {
             color: #666;
-            font-size: 12px;
-            margin-bottom: 2px;
+            font-size: 11px;
+            margin-bottom: 0;
+            line-height: 1.3;
         }
         .header .tagline {
             color: #888;
@@ -207,8 +210,28 @@
                         <td>{{ $incident->incident_time }}</td>
                     </tr>
                     <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Facility:</td>
+                        <td>{{ $incident->facility->name ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">District:</td>
+                        <td>{{ $incident->district->name ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Province:</td>
+                        <td>{{ $incident->province->name ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
                         <td style="width: 30%; font-weight: bold; color: #1D4533;">Description:</td>
                         <td>{{ $incident->incident_description }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Supervisor Name:</td>
+                        <td>{{ $incident->supervisor_name }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Supervisor Designation:</td>
+                        <td>{{ $incident->supervisorDesignation->name ?? 'N/A' }}</td>
                     </tr>
                     <tr>
                         <td style="width: 30%; font-weight: bold; color: #1D4533;">Status:</td>
@@ -250,48 +273,6 @@
                                 {{ $statusLabel }}
                             </span>
                         </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="divider"></div>
-
-        <!-- Location Section -->
-        <div class="section">
-            <div class="section-title">Location Information</div>
-            <table>
-                <tbody>
-                    <tr>
-                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Facility:</td>
-                        <td>{{ $incident->facility->name ?? 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td style="width: 30%; font-weight: bold; color: #1D4533;">District:</td>
-                        <td>{{ $incident->district->name ?? 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Province:</td>
-                        <td>{{ $incident->province->name ?? 'N/A' }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="divider"></div>
-
-        <!-- Supervisor Section -->
-        <div class="section">
-            <div class="section-title">Supervisor Information</div>
-            <table>
-                <tbody>
-                    <tr>
-                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Name:</td>
-                        <td>{{ $incident->supervisor_name }}</td>
-                    </tr>
-                    <tr>
-                        <td style="width: 30%; font-weight: bold; color: #1D4533;">Designation:</td>
-                        <td>{{ $incident->supervisorDesignation->name ?? 'N/A' }}</td>
                     </tr>
                 </tbody>
             </table>
