@@ -44,7 +44,7 @@
             padding-bottom: 20px;
             margin-bottom: 25px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
         }
         .header-left {
@@ -77,16 +77,17 @@
         }
         .header-reference {
             text-align: right;
+            padding-top: 0;
         }
         .header-reference .ref-label {
-            font-size: 10px;
+            font-size: 9px;
             color: #666;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin: 0 0 5px 0;
+            margin: 0 0 3px 0;
         }
         .header-reference .ref-number {
-            font-size: 18px;
+            font-size: 20px;
             color: #1D4533;
             font-weight: 800;
             letter-spacing: 1px;
