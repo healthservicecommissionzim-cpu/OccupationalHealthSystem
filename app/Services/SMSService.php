@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\CommunicationLog;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -27,21 +28,49 @@ class SMSService
     /**
      * Send SMS message
      */
-    public function send($phoneNumber, $message)
+    public function send($phoneNumber, $message, $communicationType = 'GENERAL', $userId = null, $relatedEntityType = null, $relatedEntityId = null)
     {
+        $logData = [
+            'communication_type' => $communicationType,
+            'channel' => 'sms',
+            'recipient_phone' => $phoneNumber,
+            'recipient_user_id' => $userId,
+            'subject' => substr($message, 0, 100),
+            'message_preview' => substr($message, 0, 500),
+            'full_content' => $message,
+            'status' => 'PENDING',
+            'delivery_status' => 'PENDING',
+            'delivery_attempts' => 1,
+            'first_attempt_at' => now(),
+            'provider' => 'Econet',
+            'related_entity_type' => $relatedEntityType,
+            'related_entity_id' => $relatedEntityId,
+        ];
+
         if (!$this->enabled) {
             Log::info('SMS sending is disabled');
+            $logData['status'] = 'FAILED';
+            $logData['delivery_status'] = 'FAILED';
+            $logData['error_message'] = 'SMS sending is disabled';
+            $logData['failure_reason'] = 'SMS service is disabled in configuration';
+            CommunicationLog::create($logData);
             return false;
         }
 
         if (!$this->isValidPhoneNumber($phoneNumber)) {
             Log::warning('Invalid phone number provided', ['phone' => $phoneNumber]);
+            $logData['status'] = 'FAILED';
+            $logData['delivery_status'] = 'FAILED';
+            $logData['error_message'] = 'Invalid phone number';
+            $logData['failure_reason'] = 'Phone number validation failed';
+            CommunicationLog::create($logData);
             return false;
         }
 
         // Truncate message if it exceeds max length
         if (strlen($message) > $this->maxLength) {
             $message = substr($message, 0, $this->maxLength);
+            $logData['full_content'] = $message;
         }
 
         try {
@@ -86,6 +115,16 @@ class SMSService
                     'length' => strlen($message),
                     'response' => $response->body()
                 ]);
+                
+                $logData['status'] = 'SENT';
+                $logData['delivery_status'] = 'SENT';
+                $logData['sent_at'] = now();
+                $logData['delivered_at'] = now();
+                $logData['provider_message_id'] = $responseData['message-id'] ?? null;
+                $logData['delivery_response'] = json_encode($responseData);
+                $logData['provider_metadata'] = $responseData;
+                CommunicationLog::create($logData);
+                
                 return true;
             } else {
                 $errorDesc = $responseData['status']['error-description'] ?? 'Unknown error';
@@ -97,6 +136,16 @@ class SMSService
                     'response' => $response->body(),
                     'endpoint' => $endpoint
                 ]);
+                
+                $logData['status'] = 'FAILED';
+                $logData['delivery_status'] = 'FAILED';
+                $logData['sent_at'] = now();
+                $logData['error_message'] = $errorDesc;
+                $logData['failure_reason'] = "Error code: {$errorCode} - {$errorDesc}";
+                $logData['failure_code'] = $errorCode;
+                $logData['delivery_response'] = json_encode($responseData);
+                CommunicationLog::create($logData);
+                
                 return false;
             }
         } catch (\Exception $e) {
@@ -106,6 +155,13 @@ class SMSService
                 'endpoint' => $this->baseUrl . '/client/api/sendmessage',
                 'trace' => $e->getTraceAsString()
             ]);
+            
+            $logData['status'] = 'FAILED';
+            $logData['delivery_status'] = 'FAILED';
+            $logData['error_message'] = $e->getMessage();
+            $logData['failure_reason'] = 'Exception: ' . $e->getMessage();
+            CommunicationLog::create($logData);
+            
             return false;
         }
     }
@@ -113,13 +169,13 @@ class SMSService
     /**
      * Send witness notification SMS
      */
-    public function sendWitnessNotification($phoneNumber, $incidentReference, $workerName, $incidentDate)
+    public function sendWitnessNotification($phoneNumber, $incidentReference, $workerName, $incidentDate, $incidentId = null)
     {
         $message = "You have been listed as a witness for incident {$incidentReference} involving {$workerName} on {$incidentDate}. "
                  . "Please contact your supervisor or HR for statement details. "
                  . "Visit {$this->siteHost} for more information.";
 
-        return $this->send($phoneNumber, $message);
+        return $this->send($phoneNumber, $message, 'WITNESS_NOTIFICATION', null, 'App\\Models\\Incident', $incidentId);
     }
 
     /**
@@ -154,72 +210,72 @@ class SMSService
     /**
      * Send witness token notification SMS with link
      */
-    public function sendWitnessTokenNotification($phoneNumber, $witnessName, $incidentReference, $workerName, $incidentDate, $witnessLink, $facilityName)
+    public function sendWitnessTokenNotification($phoneNumber, $witnessName, $incidentReference, $workerName, $incidentDate, $witnessLink, $facilityName, $incidentId = null)
     {
         $message = "Hello {$witnessName}, You have been listed as a witness for an incident involving {$workerName} on {$incidentDate} at {$facilityName}. "
                  . "Please use this link to provide your statement: {$witnessLink}";
 
-        return $this->send($phoneNumber, $message);
+        return $this->send($phoneNumber, $message, 'WITNESS_TOKEN_NOTIFICATION', null, 'App\\Models\\Incident', $incidentId);
     }
 
     /**
      * Send account registration confirmation SMS
      */
-    public function sendRegistrationConfirmation($phoneNumber, $firstName, $surname)
+    public function sendRegistrationConfirmation($phoneNumber, $firstName, $surname, $userId = null)
     {
         $fullName = "{$firstName} {$surname}";
         $message = "Dear {$fullName}, Welcome to HSC-OHS. Your account has been successfully created. "
                  . "You are now awaiting admin approval for full access. "
                  . "You will be notified via SMS once your account is approved. Thank you.";
 
-        return $this->send($phoneNumber, $message);
+        return $this->send($phoneNumber, $message, 'REGISTRATION', $userId, 'App\\Models\\User', $userId);
     }
 
     /**
      * Send account approval SMS
      */
-    public function sendApprovalNotification($phoneNumber, $firstName, $surname)
+    public function sendApprovalNotification($phoneNumber, $firstName, $surname, $userId = null)
     {
         $fullName = "{$firstName} {$surname}";
         $message = "Dear {$fullName}, Congratulations! Your HSC-OHS account has been approved. "
                  . "You can now log in to the system. Visit {$this->siteHost} to access your account. Welcome onboard!";
 
-        return $this->send($phoneNumber, $message);
+        return $this->send($phoneNumber, $message, 'APPROVAL', $userId, 'App\\Models\\User', $userId);
     }
 
     /**
      * Send incident report confirmation SMS to the reporter
      */
-    public function sendIncidentReportConfirmation($phoneNumber, $firstName, $incidentReference, $facilityName)
+    public function sendIncidentReportConfirmation($phoneNumber, $firstName, $incidentReference, $facilityName, $incidentId = null, $userId = null)
     {
         $message = "Dear {$firstName}, Your occupational health incident has been successfully reported. "
                  . "Reference: {$incidentReference} at {$facilityName}. "
                  . "Your supervisor will be notified and will contact you shortly. Thank you.";
 
-        return $this->send($phoneNumber, $message);
+        return $this->send($phoneNumber, $message, 'INCIDENT_CONFIRMATION', $userId, 'App\\Models\\Incident', $incidentId);
     }
 
     /**
      * Send incident alert SMS to the assigned supervisor
      */
-    public function sendIncidentAlertToSupervisor($phoneNumber, $supervisorName, $workerName, $incidentReference, $facilityName)
+    public function sendIncidentAlertToSupervisor($phoneNumber, $supervisorName, $workerName, $incidentReference, $facilityName, $incidentId = null, $userId = null)
     {
         $message = "Dear {$supervisorName}, A new occupational health incident requires your attention. "
                  . "Employee: {$workerName}, Reference: {$incidentReference} at {$facilityName}. "
                  . "Please log into HSC-OHS to review and take action. Thank you.";
 
-        return $this->send($phoneNumber, $message);
+        return $this->send($phoneNumber, $message, 'INCIDENT_ALERT_SUPERVISOR', $userId, 'App\\Models\\Incident', $incidentId);
     }
 
     /**
      * Send first aid token SMS to the incident reporter
      */
-    public function sendFirstAidTokenNotification($phoneNumber, $firstName, $incidentReference, $facilityName, $firstAidToken)
+    public function sendFirstAidTokenNotification($phoneNumber, $firstName, $incidentReference, $facilityName, $firstAidToken, $incidentId = null, $userId = null)
     {
         $message = "Dear {$firstName}, Your incident report {$incidentReference} at {$facilityName} has been successfully recorded. "
                  . "Please provide this 4-digit First Aid Code to the Nurse or person who rendered first aid within 7 days: {$firstAidToken}. "
                  . "They will use this code to record the first aid details in the system.";
 
-        return $this->send($phoneNumber, $message);
+        return $this->send($phoneNumber, $message, 'FIRST_AID_TOKEN', $userId, 'App\\Models\\Incident', $incidentId);
     }
 }
