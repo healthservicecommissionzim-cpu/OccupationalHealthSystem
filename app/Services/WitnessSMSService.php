@@ -115,14 +115,21 @@ class WitnessSMSService
         foreach ($witnesses as $witness) {
             try {
                 $message = $this->formatInitialSMS($incident, $witness->witness_name, $witness->token);
-                $sent = $this->smsService->send($witness->phone_number, $message);
+                $sent = $this->smsService->send(
+                    $witness->phone_number,
+                    $message,
+                    'WITNESS_INITIAL_SMS',
+                    null,
+                    'App\\Models\\Incident',
+                    $incident->id
+                );
 
                 if ($sent) {
                     // Update witness token_sent_at timestamp
                     $witness->update(['token_sent_at' => now()]);
                     
-                    // Log successful SMS
-                    $this->logSMSHistory(
+                    // Log to incident_notifications for internal tracking
+                    $this->logIncidentNotification(
                         $incident->id,
                         $witness->id,
                         'WITNESS_INITIAL_SMS',
@@ -133,8 +140,8 @@ class WitnessSMSService
                     
                     $results['success']++;
                 } else {
-                    // Log failure
-                    $this->logSMSHistory(
+                    // Log failure to incident_notifications
+                    $this->logIncidentNotification(
                         $incident->id,
                         $witness->id,
                         'WITNESS_INITIAL_SMS',
@@ -154,7 +161,7 @@ class WitnessSMSService
                     'error' => $e->getMessage()
                 ]);
                 
-                $this->logSMSHistory(
+                $this->logIncidentNotification(
                     $incident->id,
                     $witness->id,
                     'WITNESS_INITIAL_SMS',
@@ -199,14 +206,21 @@ class WitnessSMSService
             }
 
             $message = $this->formatReminderSMS($incident, $witnessToken->witness_name, $witnessToken->token);
-            $sent = $this->smsService->send($witnessToken->phone_number, $message);
+            $sent = $this->smsService->send(
+                $witnessToken->phone_number,
+                $message,
+                'WITNESS_REMINDER_SMS',
+                null,
+                'App\\Models\\Incident',
+                $incident->id
+            );
 
             if ($sent) {
                 // Update last reminder timestamp
                 $witnessToken->update(['witness_last_reminder_sent_at' => now()]);
                 
-                // Log successful reminder
-                $this->logSMSHistory(
+                // Log to incident_notifications for internal tracking
+                $this->logIncidentNotification(
                     $incident->id,
                     $witnessToken->id,
                     'WITNESS_REMINDER_SMS',
@@ -222,8 +236,8 @@ class WitnessSMSService
 
                 return true;
             } else {
-                // Log failure
-                $this->logSMSHistory(
+                // Log failure to incident_notifications
+                $this->logIncidentNotification(
                     $incident->id,
                     $witnessToken->id,
                     'WITNESS_REMINDER_SMS',
@@ -247,7 +261,7 @@ class WitnessSMSService
                 'error' => $e->getMessage()
             ]);
 
-            $this->logSMSHistory(
+            $this->logIncidentNotification(
                 $incident->id,
                 $witnessToken->id,
                 'WITNESS_REMINDER_SMS',
@@ -262,14 +276,7 @@ class WitnessSMSService
     }
 
     /**
-     * Log SMS history in incident_notifications table
-     * 
-     * Logs each SMS attempt with:
-     * - incident_id, witness_token_id
-     * - type (WITNESS_INITIAL_SMS/WITNESS_REMINDER_SMS)
-     * - status (SENT/FAILED)
-     * - timestamp, phone, message content
-     * - error message if failed
+     * Log to incident_notifications table for internal tracking
      * 
      * @param int $incidentId
      * @param int $witnessTokenId
@@ -280,7 +287,7 @@ class WitnessSMSService
      * @param string|null $errorMessage
      * @return void
      */
-    private function logSMSHistory(
+    private function logIncidentNotification(
         int $incidentId,
         int $witnessTokenId,
         string $type,
@@ -301,20 +308,8 @@ class WitnessSMSService
                 'sent_at' => now(),
                 'error_message' => $errorMessage
             ]);
-
-            // Also log to CommunicationLogger
-            \App\Services\CommunicationLogger::logSms(
-                $type,
-                $phone,
-                $message,
-                $status,
-                $errorMessage,
-                'Incident',
-                $incidentId,
-                null
-            );
         } catch (\Exception $e) {
-            Log::error('Failed to log SMS history', [
+            Log::error('Failed to log incident notification', [
                 'incident_id' => $incidentId,
                 'witness_token_id' => $witnessTokenId,
                 'error' => $e->getMessage()
