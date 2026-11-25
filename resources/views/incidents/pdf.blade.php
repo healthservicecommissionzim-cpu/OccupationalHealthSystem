@@ -6,6 +6,11 @@
     <title>Incident Report</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        @page {
+            margin: 40px 20px 30px 20px;
+        }
+        
         body {
             font-family: Arial, sans-serif;
             color: #333;
@@ -56,11 +61,10 @@
             gap: 20px;
         }
         .header-logo {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             flex-shrink: 0;
-            border-radius: 50%;
-            object-fit: cover;
+            object-fit: contain;
         }
         .header-text h1 {
             color: #1D4533;
