@@ -130,8 +130,8 @@
 </div>
 
 <!-- Failover Controls Dropdown -->
-<div x-data="{ open: false }" class="mx-2">
-    <button @click="open = !open" class="flex items-center justify-between w-full gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
+<div x-data="{ open: false }" class="space-y-1">
+    <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
         <span class="flex items-center gap-3">
             <i class="fa-solid fa-clock-rotate-left w-5 text-center text-blue-600 text-sm"></i>
             Failover Controls
