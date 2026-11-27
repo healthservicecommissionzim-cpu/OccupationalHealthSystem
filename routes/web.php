@@ -308,6 +308,10 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
         Route::get('/communication-logs/export/csv', [\App\Http\Controllers\SuperAdmin\CommunicationLogsController::class, 'export'])->name('communication_logs.export');
         Route::get('/communication-logs/{log}', [\App\Http\Controllers\SuperAdmin\CommunicationLogsController::class, 'show'])->name('communication_logs.show');
         Route::get('/communication-logs/{log}/details', [\App\Http\Controllers\SuperAdmin\CommunicationLogsController::class, 'getDetails'])->name('communication_logs.details');
+        
+        // Broadcast Message Routes
+        Route::get('/broadcast-message', [\App\Http\Controllers\SuperAdmin\BroadcastMessageController::class, 'create'])->name('broadcast_message.create');
+        Route::post('/broadcast-message/send', [\App\Http\Controllers\SuperAdmin\BroadcastMessageController::class, 'send'])->name('broadcast_message.send');
     });
 
     // Security & Audit Routes (Super Admin)
