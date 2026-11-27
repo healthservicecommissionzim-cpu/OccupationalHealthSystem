@@ -4,9 +4,40 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class DocumentationController extends Controller
 {
+    /**
+     * Verify password before allowing access to documentation
+     */
+    public function verifyPassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string',
+        ]);
+
+        $user = auth()->user();
+
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Incorrect password. Please try again.',
+            ], 401);
+        }
+
+        // Store verification in session (valid for 30 minutes)
+        session([
+            'documentation_verified' => true,
+            'documentation_verified_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password verified successfully.',
+        ]);
+    }
+
     public function index()
     {
         $docs = $this->getDocumentationStructure();
