@@ -387,244 +387,132 @@
 </style>
 
 <script>
-    // Debug logging
-    console.log('Communication logs script loaded');
+console.log('Communication logs script loaded');
 
-    // Explicitly attach functions to window object for inline onclick handlers
-    window.openLogModal = function(logId) {
-        console.log('openLogModal called with ID:', logId);
-        
-        const modal = document.getElementById('logModal');
-        const modalContent = document.getElementById('modalContent');
-        
-        console.log('Modal element:', modal);
-        console.log('Modal content element:', modalContent);
-        
-        if (!modal) {
-            console.error('Modal element not found!');
-            alert('Error: Modal element not found');
-            return;
-        }
-        
-        if (!modalContent) {
-            console.error('Modal content element not found!');
-            alert('Error: Modal content element not found');
-            return;
-        }
-        
-        // Show loading state
-        modalContent.innerHTML = '<p style="text-align: center; padding: 40px; color: #8a95a5;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</p>';
-        modal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        
-        console.log('Fetching details from:', `/system/communication-logs/${logId}/details`);
-        
-        // Fetch log details
-        fetch(`/system/communication-logs/${logId}/details`)
-            .then(response => {
-                console.log('Fetch response:', response);
-                if (!response.ok) {
-                    throw new Error('Failed to load details (HTTP ' + response.status + ')');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Received data:', data);
-                modalContent.innerHTML = window.buildModalContent(data);
-            })
-            .catch(error => {
-                console.error('Error loading details:', error);
-                modalContent.innerHTML = '<p style="color: #ef4444; text-align: center; padding: 20px;">Error loading details: ' + error.message + '</p>';
-            });
-    };
+// Helper function - define FIRST
+window.escapeHtml = function(text) {
+    if (!text) return '';
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+};
+
+// Main modal opening function
+window.openLogModal = function(logId) {
+    console.log('openLogModal called with ID:', logId);
     
-    window.closeLogModal = function() {
-        console.log('closeLogModal called');
-        const modal = document.getElementById('logModal');
-        if (modal) {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-    };
+    var modal = document.getElementById('logModal');
+    var modalContent = document.getElementById('modalContent');
     
-    window.buildModalContent = function(data) {
-        let html = '';
-        
-        // Status badges
-        html += `
-            <div class="modal-grid" style="margin-bottom: 20px;">
-                <div class="modal-field">
-                    <div class="modal-label">Type</div>
-                    <div class="modal-value">${escapeHtml(data.communication_type)}</div>
-                </div>
-                <div class="modal-field">
-                    <div class="modal-label">Channel</div>
-                    <div class="modal-value">${escapeHtml(data.channel)}</div>
-                </div>
-                <div class="modal-field">
-                    <div class="modal-label">Status</div>
-                    <div class="modal-value">${escapeHtml(data.status)}</div>
-                </div>
-                <div class="modal-field">
-                    <div class="modal-label">Delivery Status</div>
-                    <div class="modal-value">${escapeHtml(data.delivery_status || 'PENDING')}</div>
-                </div>
-            </div>
-        `;
-        
-        // Recipient info
-        html += `
-            <div class="modal-section">
-                <div class="modal-section-title"><i class="fa-solid fa-user"></i> Recipient Information</div>
-                <div class="modal-grid">
-                    ${data.recipient_email ? `<div class="modal-field"><div class="modal-label">Email</div><div class="modal-value">${escapeHtml(data.recipient_email)}</div></div>` : ''}
-                    ${data.recipient_phone ? `<div class="modal-field"><div class="modal-label">Phone</div><div class="modal-value">${escapeHtml(data.recipient_phone)}</div></div>` : ''}
-                    ${data.recipient_name ? `<div class="modal-field"><div class="modal-label">User</div><div class="modal-value">${escapeHtml(data.recipient_name)}</div></div>` : ''}
-                </div>
-            </div>
-        `;
-        
-        // Message
-        html += `
-            <div class="modal-section">
-                <div class="modal-section-title"><i class="fa-solid fa-envelope"></i> Message</div>
-                <div class="modal-field">
-                    <div class="modal-label">Subject</div>
-                    <div class="modal-value">${escapeHtml(data.subject)}</div>
-                </div>
-                ${data.message_preview ? `
-                    <div class="modal-field" style="margin-top: 12px;">
-                        <div class="modal-label">Preview</div>
-                        <div class="content-box">${escapeHtml(data.message_preview)}</div>
-                    </div>
-                ` : ''}
-            </div>
-        `;
-        
-        // Delivery timeline
-        if (data.timeline && data.timeline.length > 0) {
-            html += `
-                <div class="modal-section">
-                    <div class="modal-section-title"><i class="fa-solid fa-timeline"></i> Delivery Timeline</div>
-                    ${data.timeline.map(event => `
-                        <div class="timeline-item">
-                            <div class="timeline-dot" style="background: ${event.color};"></div>
-                            <div>
-                                <div style="font-weight: 700; color: #263149; font-size: 12px;">${escapeHtml(event.title)}</div>
-                                <div style="font-size: 11px; color: #8a95a5;">${escapeHtml(event.timestamp)}</div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        }
-        
-        // Failure info
-        if (data.failure_reason) {
-            html += `
-                <div class="failure-box">
-                    <div class="failure-box-title">
-                        <i class="fa-solid fa-exclamation-circle"></i>
-                        Delivery Failed
-                    </div>
-                    <div class="failure-box-content">
-                        ${data.failure_reason ? `<strong>Reason:</strong> ${escapeHtml(data.failure_reason)}<br>` : ''}
-                        ${data.failure_code ? `<strong>Code:</strong> ${escapeHtml(data.failure_code)}` : ''}
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Retry history
-        if (data.retry_history && data.retry_history.length > 0) {
-            html += `
-                <div class="modal-section">
-                    <div class="modal-section-title"><i class="fa-solid fa-redo"></i> Retry History</div>
-                    ${data.retry_history.map(retry => `
-                        <div style="padding: 8px; background: #f8fafb; border-radius: 6px; margin-bottom: 8px; font-size: 11px;">
-                            <strong>Attempt ${retry.attempt}:</strong> ${escapeHtml(retry.status)} - ${escapeHtml(retry.reason || 'No reason')}
-                            <br><span style="color: #8a95a5;">${escapeHtml(retry.timestamp)}</span>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        }
-        
-        // Provider info
-        if (data.provider) {
-            html += `
-                <div class="modal-section">
-                    <div class="modal-section-title"><i class="fa-solid fa-server"></i> Provider Details</div>
-                    <div class="modal-grid">
-                        <div class="modal-field">
-                            <div class="modal-label">Provider</div>
-                            <div class="modal-value">${escapeHtml(data.provider)}</div>
-                        </div>
-                        ${data.provider_message_id ? `
-                            <div class="modal-field">
-                                <div class="modal-label">Message ID</div>
-                                <div class="modal-value" style="font-family: monospace; font-size: 11px;">${escapeHtml(data.provider_message_id)}</div>
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Metadata
-        html += `
-            <div class="modal-section">
-                <div class="modal-section-title">Metadata</div>
-                <div class="modal-grid">
-                    <div class="modal-field">
-                        <div class="modal-label">Attempts</div>
-                        <div class="modal-value">${data.delivery_attempts || 1}</div>
-                    </div>
-                    <div class="modal-field">
-                        <div class="modal-label">Sent At</div>
-                        <div class="modal-value">${escapeHtml(data.sent_at_formatted || '-')}</div>
-                    </div>
-                    ${data.delivered_at_formatted ? `
-                        <div class="modal-field">
-                            <div class="modal-label">Delivered At</div>
-                            <div class="modal-value">${escapeHtml(data.delivered_at_formatted)}</div>
-                        </div>
-                    ` : ''}
-                </div>
-            </div>
-        `;
-        
-        return html;
+    if (!modal || !modalContent) {
+        console.error('Modal elements not found');
+        return;
     }
     
-    window.escapeHtml = function(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
+    // Show loading
+    modalContent.innerHTML = '<p style="text-align:center;padding:40px;color:#8a95a5;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</p>';
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
     
-    // Close modal when clicking outside - wait for DOM to be ready
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM ready, attaching modal click listener');
-        const modal = document.getElementById('logModal');
-        if (modal) {
-            modal.addEventListener('click', function(event) {
-                if (event.target === this) {
-                    window.closeLogModal();
-                }
-            });
-            console.log('Modal click listener attached');
-        } else {
-            console.error('Could not find modal element for click listener');
-        }
-        
-        // Verify functions are globally accessible
-        console.log('Functions attached to window:', {
-            openLogModal: typeof window.openLogModal,
-            closeLogModal: typeof window.closeLogModal,
-            buildModalContent: typeof window.buildModalContent,
-            escapeHtml: typeof window.escapeHtml
+    // Fetch details
+    fetch('/system/communication-logs/' + logId + '/details')
+        .then(function(response) {
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            return response.json();
+        })
+        .then(function(data) {
+            modalContent.innerHTML = window.buildModalContent(data);
+        })
+        .catch(function(error) {
+            modalContent.innerHTML = '<p style="color:#ef4444;text-align:center;padding:20px;">Error: ' + error.message + '</p>';
         });
-    });
+};
+
+// Close modal function
+window.closeLogModal = function() {
+    var modal = document.getElementById('logModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+};
+
+// Build modal HTML
+window.buildModalContent = function(data) {
+    var html = '';
+    var esc = window.escapeHtml;
+    
+    // Status section
+    html += '<div class="modal-grid" style="margin-bottom:20px;">';
+    html += '<div class="modal-field"><div class="modal-label">Type</div><div class="modal-value">' + esc(data.communication_type) + '</div></div>';
+    html += '<div class="modal-field"><div class="modal-label">Channel</div><div class="modal-value">' + esc(data.channel) + '</div></div>';
+    html += '<div class="modal-field"><div class="modal-label">Status</div><div class="modal-value">' + esc(data.status) + '</div></div>';
+    html += '<div class="modal-field"><div class="modal-label">Delivery Status</div><div class="modal-value">' + esc(data.delivery_status || 'PENDING') + '</div></div>';
+    html += '</div>';
+    
+    // Recipient section
+    html += '<div class="modal-section"><div class="modal-section-title"><i class="fa-solid fa-user"></i> Recipient Information</div><div class="modal-grid">';
+    if (data.recipient_email) html += '<div class="modal-field"><div class="modal-label">Email</div><div class="modal-value">' + esc(data.recipient_email) + '</div></div>';
+    if (data.recipient_phone) html += '<div class="modal-field"><div class="modal-label">Phone</div><div class="modal-value">' + esc(data.recipient_phone) + '</div></div>';
+    if (data.recipient_name) html += '<div class="modal-field"><div class="modal-label">User</div><div class="modal-value">' + esc(data.recipient_name) + '</div></div>';
+    html += '</div></div>';
+    
+    // Message section
+    html += '<div class="modal-section"><div class="modal-section-title"><i class="fa-solid fa-envelope"></i> Message</div>';
+    html += '<div class="modal-field"><div class="modal-label">Subject</div><div class="modal-value">' + esc(data.subject) + '</div></div>';
+    if (data.message_preview) html += '<div class="modal-field" style="margin-top:12px;"><div class="modal-label">Preview</div><div class="content-box">' + esc(data.message_preview) + '</div></div>';
+    html += '</div>';
+    
+    // Timeline section
+    if (data.timeline && data.timeline.length > 0) {
+        html += '<div class="modal-section"><div class="modal-section-title"><i class="fa-solid fa-timeline"></i> Delivery Timeline</div>';
+        for (var i = 0; i < data.timeline.length; i++) {
+            var evt = data.timeline[i];
+            html += '<div class="timeline-item"><div class="timeline-dot" style="background:' + evt.color + ';"></div><div>';
+            html += '<div style="font-weight:700;color:#263149;font-size:12px;">' + esc(evt.title) + '</div>';
+            html += '<div style="font-size:11px;color:#8a95a5;">' + esc(evt.timestamp) + '</div>';
+            html += '</div></div>';
+        }
+        html += '</div>';
+    }
+    
+    // Failure section
+    if (data.failure_reason) {
+        html += '<div class="failure-box"><div class="failure-box-title"><i class="fa-solid fa-exclamation-circle"></i> Delivery Failed</div><div class="failure-box-content">';
+        if (data.failure_reason) html += '<strong>Reason:</strong> ' + esc(data.failure_reason) + '<br>';
+        if (data.failure_code) html += '<strong>Code:</strong> ' + esc(data.failure_code);
+        html += '</div></div>';
+    }
+    
+    // Provider section
+    if (data.provider) {
+        html += '<div class="modal-section"><div class="modal-section-title"><i class="fa-solid fa-server"></i> Provider Details</div><div class="modal-grid">';
+        html += '<div class="modal-field"><div class="modal-label">Provider</div><div class="modal-value">' + esc(data.provider) + '</div></div>';
+        if (data.provider_message_id) html += '<div class="modal-field"><div class="modal-label">Message ID</div><div class="modal-value" style="font-family:monospace;font-size:11px;">' + esc(data.provider_message_id) + '</div></div>';
+        html += '</div></div>';
+    }
+    
+    // Metadata section
+    html += '<div class="modal-section"><div class="modal-section-title">Metadata</div><div class="modal-grid">';
+    html += '<div class="modal-field"><div class="modal-label">Attempts</div><div class="modal-value">' + (data.delivery_attempts || 1) + '</div></div>';
+    html += '<div class="modal-field"><div class="modal-label">Sent At</div><div class="modal-value">' + esc(data.sent_at_formatted || '-') + '</div></div>';
+    if (data.delivered_at_formatted) html += '<div class="modal-field"><div class="modal-label">Delivered At</div><div class="modal-value">' + esc(data.delivered_at_formatted) + '</div></div>';
+    html += '</div></div>';
+    
+    return html;
+};
+
+// Modal click listener
+document.addEventListener('DOMContentLoaded', function() {
+    var modal = document.getElementById('logModal');
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) window.closeLogModal();
+        });
+    }
+    console.log('Modal functions registered:', typeof window.openLogModal, typeof window.closeLogModal);
+});
+</script>
+
+@endsection
 
