@@ -120,15 +120,14 @@
 
         <!-- Channel & Recipient Selection -->
         <div class="card">
-            <div class="chead">
-                <h2 class="ctitle">1. Channel & Recipients</h2>
-                <p class="cdesc">Select delivery method and who will receive this message</p>
-            </div>
-            <div class="cbody">
-                <!-- Channel Selection -->
-                <div class="form-group">
-                    <label class="label">Delivery Channel <span class="required">*</span></label>
-                    <div class="radio-group">
+            <div class="chead" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2 class="ctitle">1. Channel & Recipients</h2>
+                    <p class="cdesc">Select delivery method and who will receive this message</p>
+                </div>
+                <div>
+                    <label class="label" style="margin-bottom: 8px; font-size: 12px; text-align: right;">Delivery Channel <span class="required">*</span></label>
+                    <div class="radio-group" style="margin-top: 0;">
                         <label class="radio-label">
                             <input type="radio" name="channel" value="email" x-model="channel" checked />
                             <span><i class="fa-solid fa-envelope"></i> Email</span>
@@ -139,7 +138,8 @@
                         </label>
                     </div>
                 </div>
-
+            </div>
+            <div class="cbody">
                 <!-- Recipient Type -->
                 <div class="form-group">
                     <label class="label">Recipient Type <span class="required">*</span></label>
