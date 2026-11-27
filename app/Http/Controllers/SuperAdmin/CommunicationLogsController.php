@@ -48,7 +48,7 @@ class CommunicationLogsController extends Controller
             });
         }
 
-        $logs = $query->paginate(25);
+        $logs = $query->paginate(50);
 
         // Get statistics
         $stats = [
