@@ -444,16 +444,17 @@
         
         try {
             const response = await fetch(currentDeleteUrl, {
-                method: 'POST',
+                method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
-                },
-                body: JSON.stringify({ _method: 'DELETE' })
+                }
             });
 
-            if (response.ok) {
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
                 document.getElementById('successTitle').textContent = 'Backup Deleted';
                 document.getElementById('successMessage').textContent = 'The backup file has been successfully deleted.';
                 showModal('successModal');
@@ -463,25 +464,19 @@
                     window.location.reload();
                 }, 2000);
             } else {
-                const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-                alert('Failed to delete backup: ' + (errorData.message || 'Please try again.'));
+                alert('Failed to delete backup: ' + (data.message || 'Please try again.'));
             }
         } catch (error) {
             console.error('Delete error:', error);
-            alert('An error occurred while deleting the backup.');
+            alert('An error occurred while deleting the backup. Please try again.');
         }
     }
 
     function executeDownload() {
         closeModal('downloadModal');
         
-        // Create a hidden link and trigger download
-        const link = document.createElement('a');
-        link.href = currentDownloadUrl;
-        link.download = '';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        // Direct window location navigation for more reliable download
+        window.location.href = currentDownloadUrl;
         
         // Show success modal after a short delay
         setTimeout(() => {
