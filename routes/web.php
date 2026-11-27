@@ -299,6 +299,9 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
         Route::get('/database-backup/download/{filename}', [\App\Http\Controllers\SuperAdmin\DatabaseBackupController::class, 'download'])->name('database_backup.download');
         Route::match(['post', 'delete'], '/database-backup/delete/{filename}', [\App\Http\Controllers\SuperAdmin\DatabaseBackupController::class, 'delete'])->name('database_backup.delete');
         
+        // System Restoration Route
+        Route::get('/restoration', [\App\Http\Controllers\SuperAdmin\SystemRestorationController::class, 'index'])->name('restoration');
+        
         // System Documentation Routes
         Route::get('/documentation', [\App\Http\Controllers\SuperAdmin\DocumentationController::class, 'index'])->name('documentation');
         Route::get('/documentation/{slug}', [\App\Http\Controllers\SuperAdmin\DocumentationController::class, 'show'])->name('documentation.show');

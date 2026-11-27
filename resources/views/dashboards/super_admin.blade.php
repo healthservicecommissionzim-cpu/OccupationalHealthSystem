@@ -129,10 +129,26 @@
     </div>
 </div>
 
-<a href="{{ route('system.database_backup') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
-    <i class="fa-solid fa-database w-5 text-center text-blue-600 text-sm"></i>
-    <span>Database Backup</span>
-</a>
+<!-- Restoration Points and Backups Dropdown -->
+<div x-data="{ open: false }" class="mx-2">
+    <button @click="open = !open" class="flex items-center justify-between w-full gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
+        <span class="flex items-center gap-3">
+            <i class="fa-solid fa-clock-rotate-left w-5 text-center text-blue-600 text-sm"></i>
+            Restoration Points and Backups
+        </span>
+        <i class="fa-solid fa-chevron-down text-xs transition-transform" :class="{ 'rotate-180': open }"></i>
+    </button>
+    <div x-show="open" class="space-y-1 pl-2">
+        <a href="{{ route('system.database_backup') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
+            <i class="fa-solid fa-database w-4 text-center text-slate-700"></i>
+            <span>Database Backup</span>
+        </a>
+        <a href="{{ route('system.restoration') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
+            <i class="fa-solid fa-rotate-left w-4 text-center text-slate-700"></i>
+            <span>System Restoration / Fall Back</span>
+        </a>
+    </div>
+</div>
 
 <a href="{{ route('user-approval.audit_logs') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
     <i class="fa-solid fa-shield w-5 text-center text-slate-700 text-sm"></i>
