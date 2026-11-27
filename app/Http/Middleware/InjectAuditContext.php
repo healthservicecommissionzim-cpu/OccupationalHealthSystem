@@ -31,7 +31,12 @@ class InjectAuditContext
         $request->attributes->set('duration_ms', $duration);
 
         // Add request ID to response headers
-        $response->header('X-Request-ID', $requestId);
+        // Use headers->set() for compatibility with BinaryFileResponse (file downloads)
+        if (method_exists($response, 'header')) {
+            $response->header('X-Request-ID', $requestId);
+        } else {
+            $response->headers->set('X-Request-ID', $requestId);
+        }
 
         return $response;
     }
