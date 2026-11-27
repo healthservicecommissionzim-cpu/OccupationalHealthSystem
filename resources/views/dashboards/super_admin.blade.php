@@ -122,14 +122,6 @@
             <i class="fa-solid fa-envelope w-4 text-center text-slate-700"></i>
             <span>Communication Logs</span>
         </a>
-        <a href="{{ route('system.communication_logs.index', ['channel' => 'email']) }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-envelope-open w-4 text-center text-slate-700"></i>
-            <span>Email Logs</span>
-        </a>
-        <a href="{{ route('system.communication_logs.index', ['channel' => 'sms']) }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-solid fa-sms w-4 text-center text-slate-700"></i>
-            <span>SMS Logs</span>
-        </a>
     </div>
 </div>
 
