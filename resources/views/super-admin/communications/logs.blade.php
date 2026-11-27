@@ -390,7 +390,8 @@
     // Debug logging
     console.log('Communication logs script loaded');
 
-    function openLogModal(logId) {
+    // Explicitly attach functions to window object for inline onclick handlers
+    window.openLogModal = function(logId) {
         console.log('openLogModal called with ID:', logId);
         
         const modal = document.getElementById('logModal');
@@ -429,24 +430,24 @@
             })
             .then(data => {
                 console.log('Received data:', data);
-                modalContent.innerHTML = buildModalContent(data);
+                modalContent.innerHTML = window.buildModalContent(data);
             })
             .catch(error => {
                 console.error('Error loading details:', error);
                 modalContent.innerHTML = '<p style="color: #ef4444; text-align: center; padding: 20px;">Error loading details: ' + error.message + '</p>';
             });
-    }
+    };
     
-    function closeLogModal() {
+    window.closeLogModal = function() {
         console.log('closeLogModal called');
         const modal = document.getElementById('logModal');
         if (modal) {
             modal.style.display = 'none';
             document.body.style.overflow = 'auto';
         }
-    }
+    };
     
-    function buildModalContent(data) {
+    window.buildModalContent = function(data) {
         let html = '';
         
         // Status badges
@@ -596,7 +597,7 @@
         return html;
     }
     
-    function escapeHtml(text) {
+    window.escapeHtml = function(text) {
         if (!text) return '';
         const div = document.createElement('div');
         div.textContent = text;
@@ -610,12 +611,20 @@
         if (modal) {
             modal.addEventListener('click', function(event) {
                 if (event.target === this) {
-                    closeLogModal();
+                    window.closeLogModal();
                 }
             });
             console.log('Modal click listener attached');
         } else {
             console.error('Could not find modal element for click listener');
         }
+        
+        // Verify functions are globally accessible
+        console.log('Functions attached to window:', {
+            openLogModal: typeof window.openLogModal,
+            closeLogModal: typeof window.closeLogModal,
+            buildModalContent: typeof window.buildModalContent,
+            escapeHtml: typeof window.escapeHtml
+        });
     });
 
