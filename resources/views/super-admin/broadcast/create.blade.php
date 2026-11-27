@@ -118,50 +118,49 @@
     }">
         @csrf
 
-        <!-- Channel Selection -->
+        <!-- Channel & Recipient Selection -->
         <div class="card">
             <div class="chead">
-                <h2 class="ctitle">1. Choose Channel</h2>
-                <p class="cdesc">Select whether to send via Email or SMS</p>
+                <h2 class="ctitle">1. Channel & Recipients</h2>
+                <p class="cdesc">Select delivery method and who will receive this message</p>
             </div>
             <div class="cbody">
-                <div class="radio-group">
-                    <label class="radio-label">
-                        <input type="radio" name="channel" value="email" x-model="channel" checked />
-                        <span><i class="fa-solid fa-envelope"></i> Email</span>
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="channel" value="sms" x-model="channel" />
-                        <span><i class="fa-solid fa-sms"></i> SMS</span>
-                    </label>
+                <!-- Channel Selection -->
+                <div class="form-group">
+                    <label class="label">Delivery Channel <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="channel" value="email" x-model="channel" checked />
+                            <span><i class="fa-solid fa-envelope"></i> Email</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="channel" value="sms" x-model="channel" />
+                            <span><i class="fa-solid fa-sms"></i> SMS</span>
+                        </label>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Recipient Selection -->
-        <div class="card">
-            <div class="chead">
-                <h2 class="ctitle">2. Select Recipients</h2>
-                <p class="cdesc">Choose who will receive this message</p>
-            </div>
-            <div class="cbody">
-                <div class="radio-group">
-                    <label class="radio-label">
-                        <input type="radio" name="recipient_type" value="single" x-model="recipientType" checked />
-                        <span>Single User</span>
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="recipient_type" value="multiple" x-model="recipientType" />
-                        <span>Multiple Users</span>
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="recipient_type" value="all" x-model="recipientType" />
-                        <span>All Users</span>
-                    </label>
+                <!-- Recipient Type -->
+                <div class="form-group">
+                    <label class="label">Recipient Type <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="recipient_type" value="single" x-model="recipientType" checked />
+                            <span>Single User</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="recipient_type" value="multiple" x-model="recipientType" />
+                            <span>Multiple Users</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="recipient_type" value="all" x-model="recipientType" />
+                            <span>All Users</span>
+                        </label>
+                    </div>
                 </div>
 
                 <!-- Single User Select -->
-                <div x-show="recipientType === 'single'" x-transition class="form-group" style="margin-top: 20px;">
+                <div x-show="recipientType === 'single'" x-transition class="form-group">
                     <label class="label">Select User <span class="required">*</span></label>
                     <select name="recipient_id" class="select">
                         <option value="">-- Choose User --</option>
@@ -176,7 +175,7 @@
                 </div>
 
                 <!-- Multiple Users Select -->
-                <div x-show="recipientType === 'multiple'" x-transition style="margin-top: 20px;">
+                <div x-show="recipientType === 'multiple'" x-transition>
                     <label class="label">Select Users <span class="required">*</span></label>
                     <div class="multi-select">
                         @foreach($users as $user)
@@ -194,7 +193,7 @@
                 </div>
 
                 <!-- All Users Notice -->
-                <div x-show="recipientType === 'all'" x-transition style="margin-top: 20px;">
+                <div x-show="recipientType === 'all'" x-transition>
                     <div style="background: #fef3c7; border: 1px solid #fbbf24; border-radius: 8px; padding: 14px;">
                         <i class="fa-solid fa-exclamation-triangle" style="color: #f59e0b;"></i>
                         <strong>Warning:</strong> This will send the message to all {{ $users->count() }} approved users in the system.
@@ -206,7 +205,7 @@
         <!-- Message Content -->
         <div class="card">
             <div class="chead">
-                <h2 class="ctitle">3. Compose Message</h2>
+                <h2 class="ctitle">2. Compose Message</h2>
                 <p class="cdesc">Write your message content</p>
             </div>
             <div class="cbody">
