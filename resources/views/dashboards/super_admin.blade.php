@@ -154,6 +154,12 @@
     <i class="fa-solid fa-shield w-5 text-center text-slate-700 text-sm"></i>
     <span>Audit Logs</span>
 </a>
+
+<a href="{{ route('system.documentation') }}" class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
+    <i class="fa-solid fa-book w-5 text-center text-slate-700 text-sm"></i>
+    <span>System Documentation</span>
+</a>
+
 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
 @endsection
 
