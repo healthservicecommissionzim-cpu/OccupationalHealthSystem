@@ -387,34 +387,63 @@
 </style>
 
 <script>
+    // Debug logging
+    console.log('Communication logs script loaded');
+
     function openLogModal(logId) {
+        console.log('openLogModal called with ID:', logId);
+        
         const modal = document.getElementById('logModal');
         const modalContent = document.getElementById('modalContent');
+        
+        console.log('Modal element:', modal);
+        console.log('Modal content element:', modalContent);
+        
+        if (!modal) {
+            console.error('Modal element not found!');
+            alert('Error: Modal element not found');
+            return;
+        }
+        
+        if (!modalContent) {
+            console.error('Modal content element not found!');
+            alert('Error: Modal content element not found');
+            return;
+        }
+        
+        // Show loading state
+        modalContent.innerHTML = '<p style="text-align: center; padding: 40px; color: #8a95a5;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</p>';
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        
+        console.log('Fetching details from:', `/system/communication-logs/${logId}/details`);
         
         // Fetch log details
         fetch(`/system/communication-logs/${logId}/details`)
             .then(response => {
+                console.log('Fetch response:', response);
                 if (!response.ok) {
-                    throw new Error('Failed to load details');
+                    throw new Error('Failed to load details (HTTP ' + response.status + ')');
                 }
                 return response.json();
             })
             .then(data => {
+                console.log('Received data:', data);
                 modalContent.innerHTML = buildModalContent(data);
-                modal.style.display = 'block';
-                document.body.style.overflow = 'hidden';
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Error loading details:', error);
                 modalContent.innerHTML = '<p style="color: #ef4444; text-align: center; padding: 20px;">Error loading details: ' + error.message + '</p>';
-                modal.style.display = 'block';
             });
     }
     
     function closeLogModal() {
+        console.log('closeLogModal called');
         const modal = document.getElementById('logModal');
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
     }
     
     function buildModalContent(data) {
@@ -574,10 +603,19 @@
         return div.innerHTML;
     }
     
-    // Close modal when clicking outside
-    document.getElementById('logModal').addEventListener('click', function(event) {
-        if (event.target === this) {
-            closeLogModal();
+    // Close modal when clicking outside - wait for DOM to be ready
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM ready, attaching modal click listener');
+        const modal = document.getElementById('logModal');
+        if (modal) {
+            modal.addEventListener('click', function(event) {
+                if (event.target === this) {
+                    closeLogModal();
+                }
+            });
+            console.log('Modal click listener attached');
+        } else {
+            console.error('Could not find modal element for click listener');
         }
     });
 
