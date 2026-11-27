@@ -303,6 +303,15 @@ class DatabaseBackupController extends Controller
         try {
             $filepath = $this->backupPath . '/' . $filename;
             
+            Log::info('Attempting to delete backup', [
+                'filename' => $filename,
+                'filepath' => $filepath,
+                'full_path' => storage_path('app/' . $filepath),
+                'exists_check' => Storage::exists($filepath),
+                'file_exists_check' => file_exists(storage_path('app/' . $filepath)),
+                'user' => auth()->user()->email
+            ]);
+            
             if (Storage::exists($filepath)) {
                 Storage::delete($filepath);
                 
@@ -322,6 +331,33 @@ class DatabaseBackupController extends Controller
                 return back()->with('success', 'Backup deleted successfully.');
             }
             
+            // Try alternate path without subdirectory
+            $alternatePath = $filename;
+            if (Storage::exists($alternatePath)) {
+                Storage::delete($alternatePath);
+                
+                Log::info('Database backup deleted (alternate path)', [
+                    'filename' => $filename,
+                    'user' => auth()->user()->email
+                ]);
+                
+                if (request()->wantsJson() || request()->ajax()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Backup deleted successfully.'
+                    ]);
+                }
+                
+                return back()->with('success', 'Backup deleted successfully.');
+            }
+            
+            Log::warning('Backup file not found for deletion', [
+                'filename' => $filename,
+                'filepath' => $filepath,
+                'alternate_path' => $alternatePath,
+                'user' => auth()->user()->email
+            ]);
+            
             // Check if request wants JSON (AJAX)
             if (request()->wantsJson() || request()->ajax()) {
                 return response()->json([
@@ -336,6 +372,7 @@ class DatabaseBackupController extends Controller
             Log::error('Database backup deletion failed', [
                 'error' => $e->getMessage(),
                 'filename' => $filename,
+                'trace' => $e->getTraceAsString(),
                 'user' => auth()->user()->email
             ]);
             
@@ -343,7 +380,7 @@ class DatabaseBackupController extends Controller
             if (request()->wantsJson() || request()->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to delete backup file.'
+                    'message' => 'Failed to delete backup file: ' . $e->getMessage()
                 ], 500);
             }
             
