@@ -66,6 +66,8 @@
         .badge-rejection { background: #fee2e2; color: #991b1b; }
         .badge-incident-confirmation { background: #f3e8ff; color: #6d28d9; }
         .badge-document-upload { background: #f3e8ff; color: #6d28d9; }
+        .badge-broadcast-email { background: #fef3c7; color: #92400e; }
+        .badge-broadcast-sms { background: #fef3c7; color: #92400e; }
         .badge-email { background: #cffafe; color: #164e63; }
         .badge-sms { background: #ccfbf1; color: #134e4a; }
         .badge-database { background: #f3f4f6; color: #374151; }
