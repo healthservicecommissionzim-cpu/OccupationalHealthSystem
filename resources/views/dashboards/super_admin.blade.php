@@ -129,12 +129,12 @@
     </div>
 </div>
 
-<!-- Restoration Points and Backups Dropdown -->
+<!-- Failover Controls Dropdown -->
 <div x-data="{ open: false }" class="mx-2">
     <button @click="open = !open" class="flex items-center justify-between w-full gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-brand transition-all font-medium text-[13px]">
         <span class="flex items-center gap-3">
             <i class="fa-solid fa-clock-rotate-left w-5 text-center text-blue-600 text-sm"></i>
-            Restoration Points and Backups
+            Failover Controls
         </span>
         <i class="fa-solid fa-chevron-down text-xs transition-transform" :class="{ 'rotate-180': open }"></i>
     </button>
