@@ -85,7 +85,7 @@
                 <p class="sub">Send email or SMS to one or multiple users</p>
             </div>
         </div>
-        <a href="{{ route('super_admin.dashboard') }}" class="back">
+        <a href="{{ route('dashboards.super_admin') }}" class="back">
             <i class="fa-solid fa-arrow-left"></i>
             Back to Dashboard
         </a>
@@ -235,7 +235,7 @@
 
         <!-- Submit -->
         <div style="display: flex; gap: 12px; justify-content: flex-end;">
-            <a href="{{ route('super_admin.dashboard') }}" class="btn btn-secondary">
+            <a href="{{ route('dashboards.super_admin') }}" class="btn btn-secondary">
                 <i class="fa-solid fa-times"></i>
                 Cancel
             </a>
