@@ -463,12 +463,23 @@
                 setTimeout(() => {
                     window.location.reload();
                 }, 2000);
+            } else if (response.status === 404) {
+                // File already deleted or doesn't exist
+                console.warn('Backup file not found on server - may have been deleted already');
+                document.getElementById('successTitle').textContent = 'File Not Found';
+                document.getElementById('successMessage').textContent = 'This backup file no longer exists on the server. The list will refresh.';
+                showModal('successModal');
+                
+                // Reload page to sync UI
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
             } else {
                 alert('Failed to delete backup: ' + (data.message || 'Please try again.'));
             }
         } catch (error) {
             console.error('Delete error:', error);
-            alert('An error occurred while deleting the backup. Please try again.');
+            alert('An error occurred while deleting the backup. Please refresh the page and try again.');
         }
     }
 
