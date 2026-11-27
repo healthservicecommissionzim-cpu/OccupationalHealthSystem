@@ -147,10 +147,6 @@
             <i class="fa-solid fa-rotate-left w-4 text-center text-slate-700"></i>
             <span>System Restoration / Fall Back</span>
         </a>
-        <a href="{{ route('system.git_commit') }}" class="flex items-center gap-3 px-4 py-2 mx-2 rounded-lg text-slate-600 hover:bg-slate-50 border-l-[3px] border-transparent hover:border-slate-300 transition-all text-[12px]">
-            <i class="fa-brands fa-git-alt w-4 text-center text-slate-700"></i>
-            <span>Git Commit</span>
-        </a>
     </div>
 </div>
 

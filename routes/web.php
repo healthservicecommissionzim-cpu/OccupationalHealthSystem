@@ -302,14 +302,6 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
         // System Restoration Route
         Route::get('/restoration', [\App\Http\Controllers\SuperAdmin\SystemRestorationController::class, 'index'])->name('restoration');
         
-        // Git Commit Routes
-        Route::get('/git-commit', [\App\Http\Controllers\SuperAdmin\GitCommitController::class, 'index'])->name('git_commit');
-        Route::get('/git-commit/status', [\App\Http\Controllers\SuperAdmin\GitCommitController::class, 'status'])->name('git_commit.status');
-        Route::get('/git-commit/log', [\App\Http\Controllers\SuperAdmin\GitCommitController::class, 'log'])->name('git_commit.log');
-        Route::post('/git-commit/commit', [\App\Http\Controllers\SuperAdmin\GitCommitController::class, 'commit'])->name('git_commit.commit');
-        Route::post('/git-commit/push', [\App\Http\Controllers\SuperAdmin\GitCommitController::class, 'push'])->name('git_commit.push');
-        Route::post('/git-commit/pull', [\App\Http\Controllers\SuperAdmin\GitCommitController::class, 'pull'])->name('git_commit.pull');
-        
         // System Documentation Routes
         Route::get('/documentation', [\App\Http\Controllers\SuperAdmin\DocumentationController::class, 'index'])->name('documentation');
         Route::get('/documentation/{slug}', [\App\Http\Controllers\SuperAdmin\DocumentationController::class, 'show'])->name('documentation.show');
