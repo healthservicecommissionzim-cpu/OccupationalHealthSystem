@@ -303,11 +303,8 @@ Route::middleware(['auth', 'approval_status', 'prevent_back'])->group(function (
         Route::get('/restoration', [\App\Http\Controllers\SuperAdmin\SystemRestorationController::class, 'index'])->name('restoration');
         
         // System Documentation Routes
-        Route::post('/documentation/verify-password', [\App\Http\Controllers\SuperAdmin\DocumentationController::class, 'verifyPassword'])->name('documentation.verify_password');
-        Route::middleware([\App\Http\Middleware\VerifyDocumentationAccess::class])->group(function () {
-            Route::get('/documentation', [\App\Http\Controllers\SuperAdmin\DocumentationController::class, 'index'])->name('documentation');
-            Route::get('/documentation/{slug}', [\App\Http\Controllers\SuperAdmin\DocumentationController::class, 'show'])->name('documentation.show');
-        });
+        Route::get('/documentation', [\App\Http\Controllers\SuperAdmin\DocumentationController::class, 'index'])->name('documentation');
+        Route::get('/documentation/{slug}', [\App\Http\Controllers\SuperAdmin\DocumentationController::class, 'show'])->name('documentation.show');
         
         // Communication Logs Routes
         Route::get('/communication-logs', [\App\Http\Controllers\SuperAdmin\CommunicationLogsController::class, 'index'])->name('communication_logs.index');
