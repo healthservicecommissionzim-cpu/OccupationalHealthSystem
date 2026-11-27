@@ -274,9 +274,16 @@ class DatabaseBackupController extends Controller
     public function download($filename)
     {
         try {
-            $filepath = storage_path('app/' . $this->backupPath . '/' . $filename);
+            // Use the same path structure as getBackupFiles() for consistency
+            $fullBackupPath = storage_path('app/' . $this->backupPath);
+            $filepath = $fullBackupPath . '/' . $filename;
             
             if (!file_exists($filepath)) {
+                Log::warning('Backup file not found for download', [
+                    'filename' => $filename,
+                    'full_path' => $filepath,
+                    'user' => auth()->user()->email
+                ]);
                 return back()->with('error', 'Backup file not found.');
             }
             
@@ -301,60 +308,44 @@ class DatabaseBackupController extends Controller
     public function delete($filename)
     {
         try {
-            $filepath = $this->backupPath . '/' . $filename;
+            // Use the same path structure as getBackupFiles() for consistency
+            $fullBackupPath = storage_path('app/' . $this->backupPath);
+            $filepath = $fullBackupPath . '/' . $filename;
             
             Log::info('Attempting to delete backup', [
                 'filename' => $filename,
-                'filepath' => $filepath,
-                'full_path' => storage_path('app/' . $filepath),
-                'exists_check' => Storage::exists($filepath),
-                'file_exists_check' => file_exists(storage_path('app/' . $filepath)),
+                'full_path' => $filepath,
+                'directory_exists' => file_exists($fullBackupPath),
+                'file_exists' => file_exists($filepath),
                 'user' => auth()->user()->email
             ]);
             
-            if (Storage::exists($filepath)) {
-                Storage::delete($filepath);
-                
-                Log::info('Database backup deleted', [
-                    'filename' => $filename,
-                    'user' => auth()->user()->email
-                ]);
-                
-                // Check if request wants JSON (AJAX)
-                if (request()->wantsJson() || request()->ajax()) {
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Backup deleted successfully.'
+            // Check if file exists using direct filesystem check (same as listing)
+            if (file_exists($filepath)) {
+                // Delete using direct filesystem
+                if (unlink($filepath)) {
+                    Log::info('Database backup deleted', [
+                        'filename' => $filename,
+                        'user' => auth()->user()->email
                     ]);
+                    
+                    // Check if request wants JSON (AJAX)
+                    if (request()->wantsJson() || request()->ajax()) {
+                        return response()->json([
+                            'success' => true,
+                            'message' => 'Backup deleted successfully.'
+                        ]);
+                    }
+                    
+                    return back()->with('success', 'Backup deleted successfully.');
+                } else {
+                    throw new \Exception('Failed to delete file - permission denied or file locked');
                 }
-                
-                return back()->with('success', 'Backup deleted successfully.');
-            }
-            
-            // Try alternate path without subdirectory
-            $alternatePath = $filename;
-            if (Storage::exists($alternatePath)) {
-                Storage::delete($alternatePath);
-                
-                Log::info('Database backup deleted (alternate path)', [
-                    'filename' => $filename,
-                    'user' => auth()->user()->email
-                ]);
-                
-                if (request()->wantsJson() || request()->ajax()) {
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Backup deleted successfully.'
-                    ]);
-                }
-                
-                return back()->with('success', 'Backup deleted successfully.');
             }
             
             Log::warning('Backup file not found for deletion', [
                 'filename' => $filename,
-                'filepath' => $filepath,
-                'alternate_path' => $alternatePath,
+                'full_path' => $filepath,
                 'user' => auth()->user()->email
             ]);
             
